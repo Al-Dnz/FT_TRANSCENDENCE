@@ -1,0 +1,6 @@
+# IDE - VSCode
+.vscode/*
+.vscode
+
+# env
+.env
