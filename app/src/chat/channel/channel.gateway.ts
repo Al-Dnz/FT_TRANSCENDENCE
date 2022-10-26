@@ -27,7 +27,7 @@ export class ChannelGateway
 
   @WebSocketServer() server: Server;
 
-  private logger: Logger = new Logger('MessageGateway');
+  private logger: Logger = new Logger('ChannelGateway');
 
 
   @SubscribeMessage('chanToServer')
@@ -39,7 +39,7 @@ export class ChannelGateway
 
 
   afterInit(server: Server) {
-    this.logger.log('Initialisation of chat websocket');
+    this.logger.log('Initialisation of Chan websocket');
   }
   handleDisconnect(client: Socket) {
     this.logger.log(`Client disconnected: ${client.id}`);

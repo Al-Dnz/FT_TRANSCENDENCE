@@ -40,7 +40,7 @@ export class MessageGateway
 
 
   afterInit(server: Server) {
-    this.logger.log('Initialisation of chat websocket');
+    this.logger.log('Initialisation of Message websocket');
   }
   handleDisconnect(client: Socket) {
     this.logger.log(`Client disconnected: ${client.id}`);
