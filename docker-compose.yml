@@ -35,6 +35,19 @@ services:
       - type: bind
         source: ./nginx/nginx.conf
         target: /etc/nginx/nginx.conf
+  swagger-ui:
+    container_name: swagger-ui
+    image: swaggerapi/swagger-ui:v4.15.2
+    networks:
+      - backend
+    ports:
+      - 8080:8080
+    environment:
+      API_URL: docs/swagger.yml
+    volumes:
+      - type: bind
+        source: ./swagger-ui/swagger.yml
+        target: /usr/share/nginx/html/docs/swagger.yml
   # nestjs:
   #   container_name: nestjs
   #   build:
