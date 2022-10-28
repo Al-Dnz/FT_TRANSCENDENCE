@@ -38,7 +38,6 @@ export class MessageGateway
     this.server.emit(`msgToChannel`, payload);
   }
 
-
   afterInit(server: Server) {
     this.logger.log('Initialisation of Message websocket');
   }
