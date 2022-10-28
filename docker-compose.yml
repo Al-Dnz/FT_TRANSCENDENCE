@@ -23,8 +23,18 @@ services:
       - backend
     ports:
       - 3000:3000
-    # env_file: <your_env_file>  uncomment this in order to use a .env file
-  
+    env_file: ./auth-api/.env
+  nginx:
+    container_name: nginx
+    image: nginx:1.22.1-alpine
+    networks:
+      - backend
+    ports:
+      - 80:80
+    volumes:
+      - type: bind
+        source: ./nginx/nginx.conf
+        target: /etc/nginx/nginx.conf
   # nestjs:
   #   container_name: nestjs
   #   build:
