@@ -14,7 +14,17 @@ services:
         - 5432:5432
       logging:
         driver: none
-
+  auth-api:
+    container_name: auth-api
+    build:
+      context: auth-api
+      dockerfile: Dockerfile
+    networks:
+      - backend
+    ports:
+      - 3000:3000
+    # env_file: <your_env_file>  uncomment this in order to use a .env file
+  
   # nestjs:
   #   container_name: nestjs
   #   build:
