@@ -27,14 +27,14 @@ const app = new Vue({
         getMessages(chanId)
         {
             this.messages = [];
-            fetch(`http://localhost:3000/channel/${chanId}/messages`)
+            fetch(`http://0.0.0.0:3000/channel/${chanId}/messages`)
             .then((response) => response.json())
             .then((data) => {this.messages = [...data]});
         },
         getChannels()
         {
             this.channels = [];
-            fetch('http://localhost:3000/channel')
+            fetch('http://0.0.0.0:3000/channel')
             .then((response) => response.json())
             .then((data) => {this.channels = [...data]});
         },
@@ -87,7 +87,7 @@ const app = new Vue({
     {
         this.getMessages(1);
         this.getChannels();
-        this.socket = io('http://localhost:3000');
+        this.socket = io('http://0.0.0.0:3000');
         this.socket.on(`msgToChannel`, (message) => {
             this.receivedMessage(message)
         })

@@ -8,7 +8,7 @@ import { ChatModule } from './chat/chat.module';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: '127.0.0.1',
+      host: 'postgres',
       port: 5432,
       username: 'root',
       password: 'root',
