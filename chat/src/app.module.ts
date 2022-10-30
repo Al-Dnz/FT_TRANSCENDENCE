@@ -4,20 +4,28 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ChatModule } from './chat/chat.module';
 
+import { ConfigModule } from '@nestjs/config';
+import { ChannelModule } from './chat/channel/channel.module';
+import { Channel } from './chat/channel/channel.entity';
+
 @Module({
   imports: [
+	TypeOrmModule.forFeature([ Channel]),
+	ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'postgres',
+      host: process.env.POSTGRES_HOST,
       port: 5432,
-      username: 'root',
-      password: 'root',
-      database: 'transcendencedb',
+      username: process.env.POSTGRES_USER,
+      password: process.env.POSTGRES_PASSWORD,
+      database: process.env.POSTGRES_DB,
       // entities: [],
       autoLoadEntities: true,
       synchronize: true,
     }),
     ChatModule,
+	// ChannelModule,
+	
   ],
   controllers: [AppController],
   providers: [AppService],

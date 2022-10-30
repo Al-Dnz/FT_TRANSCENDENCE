@@ -87,7 +87,7 @@ const app = new Vue({
     {
         this.getMessages(1);
         this.getChannels();
-        this.socket = io('http://0.0.0.0:3000');
+        this.socket = io(`http://0.0.0.0:3000`);
         this.socket.on(`msgToChannel`, (message) => {
             this.receivedMessage(message)
         })
