@@ -65,6 +65,7 @@ services:
   
 volumes:
   postgres-data:
+    name: postgres-data
 
 networks:
   backend:
