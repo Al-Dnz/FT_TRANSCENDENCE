@@ -20,6 +20,9 @@ export class Channel
 	@CreateDateColumn()
 	createdAt: Date;
 
+	@Column('boolean', {default: false})
+	unremovable: boolean = false;
+
 	@OneToMany(() => Message, (message) => message.channel)
     messages: Message[]
 
