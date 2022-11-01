@@ -17,9 +17,6 @@
         <canvas id = "Game"></canvas>
     </div> 
   </div>
-	<script type="application/javascript" src="../../game/Js/classes.js"></script>
-	<script type="application/javascript" src="../../game/Js/utils.js"></script>
-    <script type="application/javascript" src="../../game/game.js"></script>
 </template>
 
 <script>
@@ -28,7 +25,24 @@ export default {
   components : {
   },
   mounted() {
-
+	const Script1 = document.createElement("script");
+    Script1.setAttribute(
+      "src",
+      require("../../game/Js/classes.js")
+    );
+    document.head.appendChild(Script1);
+	const Script2 = document.createElement("script");
+    Script2.setAttribute(
+      "src",
+      require("../../game/Js/utils.js")
+    );
+    document.head.appendChild(Script2);
+	const Script3 = document.createElement("script");
+    Script3.setAttribute(
+      "src",
+      require("../../game/game.js")
+    );
+    document.head.appendChild(Script3);
   }
 }
 </script>
