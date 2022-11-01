@@ -29,6 +29,7 @@ services:
     image: nginx:1.22.1-alpine
     networks:
       - backend
+      - frontend
     ports:
       - 80:80
     volumes:
@@ -50,15 +51,15 @@ services:
         source: ./swagger-ui/swagger.yml
         target: /usr/share/nginx/html/docs/swagger.yml
 
-  # front:
-  #   container_name: front
-  #   build:
-  #     context: front
-  #     dockerfile: Dockerfile
-  #   networks:
-  #     - frontend
-  #   ports:
-  #     - 3002:80
+  front-end:
+    container_name: front-end
+    build:
+      context: front
+      dockerfile: Dockerfile
+    networks:
+      - frontend
+    ports:
+      - 3002:80
 
   chat:
     container_name: chat
