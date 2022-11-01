@@ -28,12 +28,12 @@ export default {
 	const Script1 = document.createElement("script");
     Script1.setAttribute(
       "src",
-      require("../../game/game.js")
+      "./game/game.js"
     );
 	console.log(Script1);
-    document.head.appendChild(Script1);
+    document.body.appendChild(Script1);
   }
 }
 </script>
 
-<style src="../../game/oelourd.css" />
+<style src="../../public/game/oelourd.css" />
