@@ -1,5 +1,5 @@
 <template>
-  <div className="absolute flex justify-center h-full w-full">
+  <div id="hi" className="absolute flex justify-center h-full w-full">
     <div style="position: relative;display: inline-block;">
         <!-- player 1 name -->
         <div style="position: relative; display: flex; width: 90%;">
@@ -28,21 +28,10 @@ export default {
 	const Script1 = document.createElement("script");
     Script1.setAttribute(
       "src",
-      require("../../game/Js/classes.js")
-    );
-    document.head.appendChild(Script1);
-	const Script2 = document.createElement("script");
-    Script2.setAttribute(
-      "src",
-      require("../../game/Js/utils.js")
-    );
-    document.head.appendChild(Script2);
-	const Script3 = document.createElement("script");
-    Script3.setAttribute(
-      "src",
       require("../../game/game.js")
     );
-    document.head.appendChild(Script3);
+	console.log(Script1);
+    document.head.appendChild(Script1);
   }
 }
 </script>
