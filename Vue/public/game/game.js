@@ -271,8 +271,8 @@ function Goal(ball, player) {
 const canvas = document.querySelector("#Game");
 const ctx = canvas.getContext("2d");
 
-canvas.width = 10240;
-canvas.height = 5760;
+canvas.width = 1024;
+canvas.height = 576;
 
 console.log(canvas.width);
 console.log(canvas.height);

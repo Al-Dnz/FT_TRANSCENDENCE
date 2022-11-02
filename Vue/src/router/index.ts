@@ -137,6 +137,22 @@ const routes: Array<RouteRecordRaw> = [
         type: String
       }
     }
+  },
+  {
+	path: "/:pathMatch(.*)*",
+	name: "not-found",
+	components: {
+	default: ()=> import('@/views/404.vue'),
+	navbar:	()=> import('@/components/Nav.vue'),
+    headbar: ()=> import('@/components/Header.vue')
+	},
+    props : 
+    {
+      headbar: {
+        sectionTitle: "Cette page n'existe pas",
+        type: String
+      }
+    }
   }
 ]
 

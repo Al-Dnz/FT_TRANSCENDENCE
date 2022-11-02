@@ -1,5 +1,5 @@
 <template>
-  <div id="hi" className="absolute flex justify-center h-full w-full">
+  <div className="absolute flex justify-center h-full w-full">
     <div style="position: relative;display: inline-block;">
         <!-- player 1 name -->
         <div style="position: relative; display: flex; width: 90%;">
@@ -24,16 +24,7 @@ export default {
   name: 'homePage',
   components : {
   },
-  mounted() {
-	const Script1 = document.createElement("script");
-    Script1.setAttribute(
-      "src",
-      "./game/game.js"
-    );
-	console.log(Script1);
-    document.body.appendChild(Script1);
-  }
 }
 </script>
 
-<style src="../../public/game/oelourd.css" />
+<style src="@/assets/game/game.css" />

@@ -10,7 +10,7 @@
 			<router-view name="headbar" />
 		</div>
 		<div className="fixed bottom-0 right-0 w-11/12 h-content">
-			<router-view/>
+			<router-view />
 		</div>
 	</div>
 </template>
