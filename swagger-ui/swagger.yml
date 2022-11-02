@@ -509,7 +509,7 @@ components:
       required:
         - id
         - username
-        - 2fa
+        - two_fa
         - status
         - actual_avatar
         - stats
@@ -523,7 +523,7 @@ components:
         username:
           type: string
           example: dboyer
-        2fa:
+        two_fa:
           type: boolean
           example: true
         status:
@@ -558,7 +558,7 @@ components:
               username:
                 type: string
                 example: dboyer
-              2fa:
+              two_fa:
                 type: boolean
                 example: false
     CreateUserInput:
