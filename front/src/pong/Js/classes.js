@@ -226,13 +226,13 @@ export class ball extends Sprite {
       if (gameState === "On") {
         score_2++;
         document.querySelector("#score_2").innerHTML = score_2;
-        Goal(this, paddle2, paddle1);
+        Goal(this, paddle2, paddle1, gameState);
       }
     } else if (ballon.coord.right >= background.coord.right) {
       if (gameState === "On") {
         score_1++;
         document.querySelector("#score_1").innerHTML = score_1;
-        Goal(this, paddle1, paddle2);
+        Goal(this, paddle1, paddle2, gameState);
       }
     }
   }

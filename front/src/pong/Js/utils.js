@@ -1,4 +1,4 @@
-function Goal(ball, player, enemy) {
+export function Goal(ball, player, enemy, gameState) {
   ball.reset();
   ball.velocity.x = 0;
   // reset paddle speed
@@ -22,3 +22,17 @@ function Goal(ball, player, enemy) {
     }
   }, 3000);
 }
+
+export function checkWinner(score_1, score_2, message, gameState, ballon) {
+	if (score_1 > score_2) {
+		message.innerHTML = "Player 1 Win";
+	} else if (score_2 > score_1) {
+		message.innerHTML = "Player 2 Win";
+	} else {
+		message.innerHTML = "Tie";
+	}
+	gameState = "Off";
+	ballon.reset();
+	ballon.velocity.x = 0;
+	ballon.velocity.y = 0;
+  }

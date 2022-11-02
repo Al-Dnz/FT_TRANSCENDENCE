@@ -24,6 +24,8 @@
 import {paddle} from '@/pong/Js/classes.js'
 import {ball} from '@/pong/Js/classes.js'
 import {Sprite} from '@/pong/Js/classes.js'
+import {Goal} from '@/pong/Js/utils.js'
+import {checkWinner} from '@/pong/Js/utils.js'
 export default {
   name: 'homePage',
   components : {
@@ -43,9 +45,9 @@ export default {
   console.log(this.background);
   console.log(this.ctx);
   this.background.update(this.ctx);
-  this.paddle1.update(this.ctx);
-  this.paddle2.update(this.ctx);
-  this.ballon.update(this.paddle1, this.paddle2, this.ctx);
+  this.paddle1.update(this.ctx, this.canvas);
+  this.paddle2.update(this.ctx, this.canvas);
+  this.ballon.update(this.paddle1, this.paddle2, this.ctx, this.background, this.ballon, this.gameState, this.score_2, this.score_1, Goal);
   if (this.paddle1.GoalAnim.display === true) this.paddle1.GoalAnim.update(this.ctx);
   if (this.paddle2.GoalAnim.display === true) this.paddle2.GoalAnim.update(this.ctx);
 
@@ -71,7 +73,7 @@ export default {
 	background : null,
 	ballon : null,
 	keys : null,
-	gameState : '',
+	gameState : 'Off',
 	message : '',
 	score_1 : 0,
 	score_2 : 0,
@@ -187,7 +189,79 @@ this.keys = {
   },
 };
   this.timer = 99;
+
+  window.addEventListener("keydown", (event) => {
+  // paddle1
+  switch (event.key) {
+    case "z":
+      this.keys.z.pressed = true;
+      this.paddle1.lastKey = "z";
+      break;
+    case "s":
+      this.keys.s.pressed = true;
+      this.paddle1.lastKey = "s";
+      break;
   }
+
+  // paddle2
+  switch (event.key) {
+    case "ArrowUp":
+      this.keys.ArrowUp.pressed = true;
+      this.paddle2.lastKey = "ArrowUp";
+      break;
+    case "ArrowDown":
+      this.keys.ArrowDown.pressed = true;
+      this.paddle2.lastKey = "ArrowDown";
+      break;
+  }
+
+  switch (event.key) {
+    case " ":
+      if (this.gameState === "Off") {
+		alert('hi');
+        this.gameState = "On";
+        this.ballon.getCoord();
+        this.ballon.velocity.x = 7;
+		this.ballon.velocity.y = 0;
+      }
+      break;
+    case "i":
+      console.log("Ball pos X --> ", this.ballon.position.x);
+      console.log("Ball pos Y --> ", this.ballon.position.y);
+      break;
+  }
+});
+window.addEventListener("keyup", (event) => {
+  // paddle1
+  switch (event.key) {
+    case "z":
+      this.keys.z.pressed = false;
+      break;
+    case "s":
+      this.keys.s.pressed = false;
+      break;
+  }
+
+  // paddle2
+  switch (event.key) {
+    case "ArrowUp":
+      this.keys.ArrowUp.pressed = false;
+      break;
+    case "ArrowDown":
+      this.keys.ArrowDown.pressed = false;
+      break;
+  }
+});
+(function decreaseTimer() {
+  setTimeout(decreaseTimer, 1000);
+  if (this.gameState === "On" && this.timer >= 0) {
+    if (this.timer > 0) {
+      this.timer--;
+      document.querySelector("#timer").innerHTML = this.timer;
+    } else checkWinner(this.score_1, this.score_2, this.message, this.gameState, this.ballon);
+  }
+})();
+}
 }
 </script>
 
