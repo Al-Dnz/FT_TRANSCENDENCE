@@ -13,8 +13,9 @@
             <!-- player 2 name -->
             <div class='player_2_name'> Joueur 2</div>
         </div>
-        <div class="message" id="message"> Space for Start</div>
+        <div class="message" id="message" :class="gameOn ? 'flex' : 'none' "> Space for Start</div>
         <canvas id = "Game"></canvas>
+		<button @click="animate">Join game</button> 
     </div> 
   </div>
 </template>
@@ -31,7 +32,38 @@ export default {
 	getImgUrl: function (img) {
 				return require('@/assets' + img);
 			},
-},
+	animate : function() {
+  window.requestAnimationFrame(this.animate);
+  /*
+  if (this.gameState === "Off") {
+    this.message.style.display = "flex";
+  } else {
+    this.message.style.display = "none";
+  }*/
+  console.log(this.background);
+  console.log(this.ctx);
+  this.background.update(this.ctx);
+  this.paddle1.update(this.ctx);
+  this.paddle2.update(this.ctx);
+  this.ballon.update(this.paddle1, this.paddle2, this.ctx);
+  if (this.paddle1.GoalAnim.display === true) this.paddle1.GoalAnim.update(this.ctx);
+  if (this.paddle2.GoalAnim.display === true) this.paddle2.GoalAnim.update(this.ctx);
+
+  // paddle1 movement
+  if (this.keys.z.pressed && this.paddle1.lastKey === "z") {
+    this.paddle1.velocity.y = -this.paddle1.speed;
+  } else if (this.keys.s.pressed && this.paddle1.lastKey === "s") {
+    this.paddle1.velocity.y = this.paddle1.speed;
+  }
+
+  // paddle2 movement
+  if (this.keys.ArrowUp.pressed && this.paddle2.lastKey === "ArrowUp") {
+    this.paddle2.velocity.y = -this.paddle2.speed;
+  } else if (this.keys.ArrowDown.pressed && this.paddle2.lastKey === "ArrowDown") {
+    this.paddle2.velocity.y = this.paddle2.speed;
+  }
+}
+	},
   data() {
 	return {
 	paddle1 : null,
@@ -46,7 +78,8 @@ export default {
 	timer : 0,
 	canvas : null,
 	loaded : false,
-	ctx : ''
+	ctx : '',
+	gameOn: false
 	}
 	},
   mounted() {
@@ -69,7 +102,7 @@ let message = document.querySelector("#message");
 
 console.log();
 
-const background = new Sprite({
+this.background = new Sprite({
   position: {
     x: 0,
     y: 0,
