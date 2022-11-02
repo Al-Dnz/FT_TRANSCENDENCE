@@ -9,10 +9,11 @@ const routes: Array<RouteRecordRaw> = [
     {
       logpage: () => import('@/views/logscreen.vue'),
     }
-      },
-      {
-          path: '/home',
-          components: 
+	},
+	{
+		name:"homePage",
+    	path: '/home',
+        components: 
     {
       default: () => import('@/views/Home.vue'),
       navbar:	()=> import('@/components/Nav.vue'),
@@ -27,6 +28,7 @@ const routes: Array<RouteRecordRaw> = [
     }
       },
   {
+	name:"accPage",
     path: '/user/:id',
     components: 
     {
@@ -76,6 +78,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/friendList',
+	name:"friendPage",
     components: 
     {
       default: () => import('@/views/Friendlist.vue'),
@@ -92,6 +95,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/spectate',
+	name:"spectatePage",
     components: 
     {
       default: () => import('@/views/Spectate.vue'),
@@ -108,9 +112,10 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/blocked',
+	name:"blockedPage",
     components: 
     {
-      default: () => import('@/views/BlockList.vue'),
+    	default: () => import('@/views/BlockList.vue'),
       navbar:	()=> import('@/components/Nav.vue'),
       headbar: ()=> import('@/components/Header.vue')
     },
@@ -124,6 +129,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/param',
+	name:"paramPage",
     components: 
     {
       default: () => import('@/views/Param.vue'),
