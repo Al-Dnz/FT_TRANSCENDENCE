@@ -1,4 +1,4 @@
-class Sprite {
+export class Sprite {
   constructor({
     position,
     imageSrc,
@@ -81,7 +81,7 @@ class Sprite {
   }
 }
 
-class paddle extends Sprite {
+export class paddle extends Sprite {
   constructor({
     position,
     velocity,
@@ -144,7 +144,7 @@ class paddle extends Sprite {
   }
 }
 
-class ball extends Sprite {
+export class ball extends Sprite {
   constructor({
     position,
     velocity,
