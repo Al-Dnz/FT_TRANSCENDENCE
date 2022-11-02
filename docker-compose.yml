@@ -3,6 +3,7 @@ version: "3"
 services:
   postgres:
     container_name: postgres
+
     image: postgres:latest
     networks:
       - backend
@@ -81,6 +82,8 @@ networks:
   backend:
     name: backend_net
     driver: bridge
+
   frontend:
     name: frontend_net
     driver: bridge
+
