@@ -24,15 +24,6 @@ export default {
   name: 'homePage',
   components : {
   },
-  mounted() {
-	const Script1 = document.createElement("script");
-    Script1.setAttribute(
-      "src",
-      "./game/game.js"
-    );
-	console.log(Script1);
-    document.body.appendChild(Script1);
-  }
 }
 </script>
 
