@@ -3,9 +3,9 @@ import {
     Catch,
     ArgumentsHost,
     HttpException,
-} from '@nestjs/common';
-import { Response } from 'express';
-import { Error } from './oauth/oauth.dto';
+} from "@nestjs/common";
+import { Response } from "express";
+import { Error } from "./oauth/oauth.dto";
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
