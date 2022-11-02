@@ -95,6 +95,7 @@ class paddle extends Sprite {
     GoalAnimFrame,
     height = 0,
     width = 0,
+    canvas,
   }) {
     super({
       position,
@@ -127,7 +128,7 @@ class paddle extends Sprite {
     });
     // this.GoalAnim.imageSrc = GoalAnimSrc;
   }
-  update(ctx) {
+  update(ctx, canvas) {
     this.draw(ctx);
     // movement paddle
     if (
@@ -154,6 +155,7 @@ class ball extends Sprite {
     width,
     height,
     speed,
+    canvas
   }) {
     super({
       position,
@@ -184,14 +186,14 @@ class ball extends Sprite {
       this.coord.bottom > paddle.coord.top
     );
   }
-  reset() {
+  reset(canvas) {
     this.position.x = (canvas.width - 40) / 2;
     this.position.y = (canvas.height - 40) / 2;
     this.speed = 5;
     this.velocity.y = 0;
   }
 
-  update(paddle1, paddle2, ctx) {
+  update(paddle1, paddle2, ctx, background, ballon, gameState, score_2, score_1, Goal) {
     this.draw(ctx);
     if (this.velocity.x !== 0 || this.velocity.y !== 0) this.animateFrames();
     this.position.x += this.velocity.x;

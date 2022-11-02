@@ -50,6 +50,7 @@ const paddle1 = new paddle({
   GoalSoundSrc: "./assets/Siuu.mp3",
   GoalAnimSrc: "./assets/nyancat-removebg-preview.png",
   GoalAnimFrame: 9,
+  canvas,
 });
 
 const paddle2 = new paddle({
@@ -67,6 +68,7 @@ const paddle2 = new paddle({
   GoalSoundSrc: "./assets/Marex.wav",
   GoalAnimSrc: "./assets/horny-jail-bonk.png",
   GoalAnimFrame: 6,
+  canvas: canvas
 });
 
 const ballon = new ball({
@@ -121,8 +123,8 @@ const keys = {
   paddle1.update(ctx);
   paddle2.update(ctx);
   ballon.update(paddle1, paddle2, ctx);
-  if (paddle1.GoalAnim.display === true) paddle1.GoalAnim.update();
-  if (paddle2.GoalAnim.display === true) paddle2.GoalAnim.update();
+  if (paddle1.GoalAnim.display === true) paddle1.GoalAnim.update(ctx);
+  if (paddle2.GoalAnim.display === true) paddle2.GoalAnim.update(ctx);
 
   // paddle1 movement
   if (keys.z.pressed && paddle1.lastKey === "z") {
