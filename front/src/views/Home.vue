@@ -251,7 +251,7 @@ window.addEventListener("keyup", (event) => {
       this.keys.ArrowDown.pressed = false;
       break;
   }
-});
+});/*
 (function decreaseTimer() {
   setTimeout(decreaseTimer, 1000);
   if (this.gameState === "On" && this.timer >= 0) {
@@ -260,7 +260,7 @@ window.addEventListener("keyup", (event) => {
       document.querySelector("#timer").innerHTML = this.timer;
     } else checkWinner(this.score_1, this.score_2, this.message, this.gameState, this.ballon);
   }
-})();
+})();*/
 }
 }
 </script>
