@@ -2,15 +2,15 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 
 
 const routes: Array<RouteRecordRaw> = [
-  {
-    name : 'log',
-          path: '/',
-          components: 
+{
+    name : "log",
+    path: '/',
+    components: 
     {
-      logpage: () => import('@/views/logscreen.vue'),
+      log: () => import('@/views/logscreen.vue')
     }
-	},
-	{
+},
+{
 		name:"homePage",
     	path: '/home',
         components: 
@@ -26,7 +26,7 @@ const routes: Array<RouteRecordRaw> = [
         type: String
       }
     }
-      },
+},
   {
 	name:"accPage",
     path: '/user/:id',
