@@ -7,7 +7,7 @@
             <!-- player 1 score -->
             <div class='player_score' id="score_1">0 </div>
             <!-- timer -->
-            <div class="timer" id="timer"> XXX </div>
+            <div class="timer" id="timer" > XXX </div>
             <!-- player 2 score -->
             <div class='player_score' id="score_2"> 0 </div>
             <!-- player 2 name -->
@@ -23,8 +23,8 @@
 export default {
   name: 'homePage',
   components : {
-  }
+  },
 }
 </script>
 
-<style src="../../game/oelourd.css" />
+<style src="@/assets/game/game.css" />
