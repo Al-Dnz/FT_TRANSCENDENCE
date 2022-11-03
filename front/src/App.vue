@@ -1,6 +1,6 @@
 <template>
 	<div v-if="this.$route.name === 'log'" class="GlobalLoggin">
-		<RouterView name="log" />
+		<router-view name="log" />
 	</div>
 	<div v-else class="GlobalApp">
 		<div className="fixed top-0 left-0 w-1/12 h-full">

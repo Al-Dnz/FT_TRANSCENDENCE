@@ -16,6 +16,12 @@
 import friendBox from '../components/FriendBox.vue';
   export default {
 	name: 'friendPage',
+	created() {
+		console.log ("hello");
+	},
+	beforeUnmount() {
+		console.log ("bye");
+	},
 	data() {
 		return(
 		{
