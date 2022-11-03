@@ -9,6 +9,7 @@ class Sprite {
     width,
     coord = { top: 0, left: 0, right: 0, bottom: 0, center: { x: 0, y: 0 } },
     display = true,
+	ctx
   }) {
     this.width = width;
     this.height = height;
@@ -38,7 +39,7 @@ class Sprite {
   }
 
   draw() {
-    ctx.drawImage(
+    this.ctx.drawImage(
       this.image,
       this.framesCurrent * (this.image.width / this.framesMax),
       0,
@@ -95,6 +96,7 @@ class paddle extends Sprite {
     GoalAnimFrame,
     height = 0,
     width = 0,
+	canvas
   }) {
     super({
       position,
@@ -154,6 +156,7 @@ class ball extends Sprite {
     width,
     height,
     speed,
+	background
   }) {
     super({
       position,

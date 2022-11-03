@@ -1,5 +1,5 @@
 <template>
-  <div className="flex flex-row justify-center w-full h-full ">
+  <div  v-if="finished" className="flex flex-row justify-center w-full h-full ">
   <div className = "flex flex-col justify-between w-full h-full bg-slate-200 lg:w-3/4 rounded-2xl">
     <div className = "w-full h-friendbox">
       <div className = "w-full h-full flex flex-col justify-center"> 
@@ -10,18 +10,18 @@
       </div>
     </div>
     <div className ="center-x h-1/6">
-      <img :src="getImgUrl(pp)" className = "rounded-xl"/>
+      <img :src="getImgUrl(obj.pp)" className = "rounded-xl"/>
     </div>
-    <span className="center-x">{{ usernam }}</span>
-    <span className="center-x">Elo :{{ elo }}</span>
+    <span className="center-x">{{ obj.username }}</span>
+    <span className="center-x">Elo :{{ obj.elo }}</span>
     <div className="flex flex-row justify-center w-full">
-      <span>Win : {{wins}} </span>
+      <span>Win : {{obj.wins}} </span>
       <div className="w-1/4"> </div>
-      <span>Looses : {{looses}} </span>
+      <span>Looses : {{obj.looses}} </span>
     </div>
     <div className=" h-3/5 w-full flex justify-center items-center">
       <div className="bg-slate-300 w-3/4 h-5/6 flex flex-col justify-start items-center overflow-auto rounded-2xl">
-          <div v-for="(item, index) in this.matchHistory" v-bind:key="index" className="h-24 w-5/6 pt-3">
+          <div v-for="(item, index) in this.obj.matchHistory" v-bind:key="index" className="h-24 w-5/6 pt-3">
             <history-box :obj=item :index="index"/>
           </div>
       </div>
@@ -34,7 +34,14 @@
   import historyBox from '../components/HistoryBox.vue'
   export default {
 	name: 'accPage',
-  methods :{
+	data() {
+		return {
+		obj : "",
+		finished : false,
+		newSearch : ''
+		}
+	},
+  	methods :{
     getImgUrl: function (img) {
 			return require('@/assets/' + img);
 		},
@@ -42,137 +49,21 @@
       this.$router.push('/user/' + this.newSearch);
       this.newSearch = '';
       //this.$forceUpdate();
-    }
+    },
+	async fetchData()
+	{
+		const response = await fetch("http://localhost:3000/data");
+  		const data = await response.json();
+ 		this.obj = data;
+		this.finished = true;
+	}
   },
   components :
   {
     historyBox
   },
-  computed : {
-    usernam: function() {
-      return this.$route.params.id;
-    }
-  },
-  data () {
-    return {
-      username : this.$route.params.id,
-      elo : 1000,
-      wins: 15,
-      looses : 15,
-      pp : 'Accountpp.jpeg',
-      newSearch: '',
-      components : {},
-      matchHistory : [
-        {
-          p1 : "Player1",
-          pp1 : 'pp.jpeg',
-          pts1 : 9,
-          p2 : 'David',
-          pp2 : 'madgeleft.jpeg',
-          pts2 : 8,
-          results : 'W'
-        },
-        {
-          p1 : "Player1",
-          pp1 : 'Accountpp.jpeg',
-          pts1 : 150,
-          p2 : "Player1",
-          pp2 : 'Accountpp.jpeg',
-          pts2 : 8,
-          results : 'W'
-        },
-        {
-          p1 : "Player1",
-          pp1 : 'Accountpp.jpeg',
-          pts1 : 0,
-          p2 : "Player1",
-          pp2 : 'Accountpp.jpeg',
-          pts2 : 8,
-          results : 'L'
-        },
-        {
-          p1 : "Player1",
-          pp1 : 'Accountpp.jpeg',
-          pts1 : 9,
-          p2 : 'David',
-          pp2 : 'Accountpp.jpeg',
-          pts2 : 8,
-          results : 'W'
-        },
-        {
-          p1 : "Player1",
-          pp1 : 'Accountpp.jpeg',
-          pts1 : 150,
-          p2 : "Player1",
-          pp2 : 'Accountpp.jpeg',
-          pts2 : 8,
-          results : 'W'
-        },
-        {
-          p1 : "Player1",
-          pp1 : 'Accountpp.jpeg',
-          pts1 : 0,
-          p2 : "Player1",
-          pp2 : 'Accountpp.jpeg',
-          pts2 : 8,
-          results : 'L'
-        },
-        {
-          p1 : "Player1",
-          pp1 : 'Accountpp.jpeg',
-          pts1 : 9,
-          p2 : 'David',
-          pp2 : 'Accountpp.jpeg',
-          pts2 : 8,
-          results : 'W'
-        },
-        {
-          p1 : "Player1",
-          pp1 : 'Accountpp.jpeg',
-          pts1 : 150,
-          p2 : "Player1",
-          pp2 : 'Accountpp.jpeg',
-          pts2 : 8,
-          results : 'W'
-        },
-        {
-          p1 : "Player1",
-          pp1 : 'Accountpp.jpeg',
-          pts1 : 0,
-          p2 : "Player1",
-          pp2 : 'Accountpp.jpeg',
-          pts2 : 8,
-          results : 'L'
-        },
-        {
-          p1 : "Player1",
-          pp1 : 'Accountpp.jpeg',
-          pts1 : 9,
-          p2 : 'David',
-          pp2 : 'Accountpp.jpeg',
-          pts2 : 8,
-          results : 'W'
-        },
-        {
-          p1 : "Player1",
-          pp1 : 'Accountpp.jpeg',
-          pts1 : 150,
-          p2 : "Player1",
-          pp2 : 'Accountpp.jpeg',
-          pts2 : 8,
-          results : 'W'
-        },
-        {
-          p1 : "Player1",
-          pp1 : 'Accountpp.jpeg',
-          pts1 : 0,
-          p2 : "Player1",
-          pp2 : 'Accountpp.jpeg',
-          pts2 : 8,
-          results : 'L'
-        }
-      ]
-    }
+  async created() {
+	this.fetchData()
   }
   }
   </script>
