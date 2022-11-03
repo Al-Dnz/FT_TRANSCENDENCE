@@ -34,5 +34,5 @@ lerna-debug.log*
 logfile
 
 # Private docker-compose
-docker-compose.yml
-Makefile
+# docker-compose.yml
+# Makefile

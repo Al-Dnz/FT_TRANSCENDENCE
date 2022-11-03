@@ -8,6 +8,8 @@ import { Message } from '../message/message.entity';
 
 import { Logger } from '@nestjs/common';
 
+import { HttpException, HttpStatus } from '@nestjs/common';
+
 @Injectable()
 export class ChannelService {
 
@@ -29,8 +31,12 @@ export class ChannelService {
     return this.channelsRepository.find();
   }
 
-  findOne(id: number) {
-    return this.channelsRepository.findOneBy({ id: id });
+  async findOne(id: number) {
+    const channel = await this.channelsRepository.findOneBy({ id: id });
+	if (!channel)
+		throw new HttpException('Channel not found', HttpStatus.NOT_FOUND);
+	else
+		return channel;
   }
 
   private logger: Logger = new Logger('MessageGateway');
@@ -54,7 +60,12 @@ export class ChannelService {
   }
 
   async remove(id: number) {
-    await this.channelsRepository.delete(id);
+	const channel = await this.channelsRepository.findOneBy({ id: id })
+	if (!channel)
+		throw new HttpException('Channel not found', HttpStatus.NOT_FOUND);
+	else if (channel.unremovable == false)
+		await this.channelsRepository.delete(id);
+	else
+		throw new HttpException('Forbidden: unremovable channel', HttpStatus.FORBIDDEN);
   }
-
 }

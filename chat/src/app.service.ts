@@ -27,6 +27,7 @@ export class AppService implements OnApplicationBootstrap
 			const channel = new Channel();
 			channel.id = 1;
 			channel.name = "main_chan";
+			channel.unremovable = true;
 			this.channelsRepository.save(channel);
 		}
 	}

@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.0.0
 info:
   title: ft_transcendance API
   description: |-
@@ -8,8 +8,10 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: 1.0.11
 servers:
-  - url: /api/v1
+  - url: /api
 tags:
+  - name: Authentication
+    description: Operations about authentication
   - name: Users
     description: Operations about users
   - name: Friends
@@ -19,6 +21,38 @@ tags:
   - name: Matchs
     description: Operations about matchs
 paths:
+  /auth/oauth/callback:
+    get:
+      tags:
+        - Authentication
+      summary: Oauth authentication code flow
+      description: Resolve oauth authentication code flow
+      operationId: OauthAuthentication
+      parameters:
+        - $ref: "#/components/parameters/OauthCode"
+      responses:
+        "200":
+          $ref: "#/components/responses/OauthTokenResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /auth/token:
+    post:
+      tags:
+        - Authentication
+      summary: Get new tokens
+      description: Allow you to get a new access and refresh token from your refresh token
+      operationId: RefreshToken
+      requestBody:
+        $ref: "#/components/requestBodies/RefreshTokenInput"
+      responses:
+        "200":
+          $ref: "#/components/responses/OauthTokenResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
   /users:
     get:
       tags:
@@ -31,11 +65,11 @@ paths:
         - $ref: "#/components/parameters/Length"
         - $ref: "#/components/parameters/Search"
       responses:
-        '200':
+        "200":
           $ref: "#/components/responses/UserListResponse"
-        '401':
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        '500':
+        "500":
           $ref: "#/components/responses/InternalServerError"
     post:
       tags:
@@ -43,15 +77,15 @@ paths:
       summary: Create one user
       operationId: CreateUser
       requestBody:
-        $ref: '#/components/requestBodies/CreateUserInput'
+        $ref: "#/components/requestBodies/CreateUserInput"
       responses:
-        '201':
-          $ref : "#/components/responses/UserResponse"
-        '400':
+        "201":
+          $ref: "#/components/responses/UserResponse"
+        "400":
           $ref: "#/components/responses/BadRequest"
-        '401':
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        '500':
+        "500":
           $ref: "#/components/responses/InternalServerError"
   /users/me:
     get:
@@ -60,11 +94,11 @@ paths:
       summary: Get details information about the connected user
       operationId: GetUserMe
       responses:
-        '200':
-          $ref : "#/components/responses/UserResponse"
-        '401':
+        "200":
+          $ref: "#/components/responses/UserResponse"
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        '500':
+        "500":
           $ref: "#/components/responses/InternalServerError"
     patch:
       tags:
@@ -74,13 +108,13 @@ paths:
       requestBody:
         $ref: "#/components/requestBodies/PartialUpdateUserInput"
       responses:
-        '200':
-          $ref : "#/components/responses/UserResponse"
-        '400':
+        "200":
+          $ref: "#/components/responses/UserResponse"
+        "400":
           $ref: "#/components/responses/BadRequest"
-        '401':
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        '500':
+        "500":
           $ref: "#/components/responses/InternalServerError"
     delete:
       tags:
@@ -88,13 +122,13 @@ paths:
       summary: Delete the connected user
       operationId: DeleteUser
       responses:
-        '204':
+        "204":
           description: "Successful delete"
-        '401':
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        '500':
+        "500":
           $ref: "#/components/responses/InternalServerError"
-  /users/{userID}:
+  /users/{user_id}:
     get:
       tags:
         - Users
@@ -103,13 +137,13 @@ paths:
       parameters:
         - $ref: "#/components/parameters/UserID"
       responses:
-        '200':
+        "200":
           $ref: "#/components/responses/UserResponse"
-        '401':
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        '404':
+        "404":
           $ref: "#/components/responses/NotFound"
-        '500':
+        "500":
           $ref: "#/components/responses/InternalServerError"
   /users/me/friends:
     get:
@@ -122,11 +156,11 @@ paths:
         - $ref: "#/components/parameters/Length"
         - $ref: "#/components/parameters/Search"
       responses:
-        '200':
+        "200":
           $ref: "#/components/responses/UserListResponse"
-        '401':
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        '500':
+        "500":
           $ref: "#/components/responses/InternalServerError"
   /users/me/friends/{user_id}:
     put:
@@ -137,13 +171,13 @@ paths:
       parameters:
         - $ref: "#/components/parameters/UserID"
       responses:
-        '204':
-            description: "success response"
-        '401':
+        "204":
+          description: "success response"
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        '404':
+        "404":
           $ref: "#/components/responses/NotFound"
-        '500':
+        "500":
           $ref: "#/components/responses/InternalServerError"
     delete:
       tags:
@@ -153,29 +187,29 @@ paths:
       parameters:
         - $ref: "#/components/parameters/UserID"
       responses:
-        '204':
-            description: "success response"
-        '401':
+        "204":
+          description: "success response"
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        '404':
+        "404":
           $ref: "#/components/responses/NotFound"
-        '500':
+        "500":
           $ref: "#/components/responses/InternalServerError"
   /users/me/avatars:
     get:
       tags:
-       - Avatars
+        - Avatars
       summary: List the users avatar
       parameters:
         - $ref: "#/components/parameters/Onset"
         - $ref: "#/components/parameters/Length"
       operationId: ListUserAvatars
       responses:
-        '200':
+        "200":
           $ref: "#/components/responses/AvatarListResponse"
-        '401':
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        '500':
+        "500":
           $ref: "#/components/responses/InternalServerError"
     post:
       tags:
@@ -198,13 +232,13 @@ paths:
                   type: string
                   format: binary
       responses:
-        '201':
+        "201":
           $ref: "#/components/responses/AvatarResponse"
-        '400':
+        "400":
           $ref: "#/components/responses/BadRequest"
-        '401':
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        '500':
+        "500":
           $ref: "#/components/responses/InternalServerError"
   /users/me/avatars/{avatar_id}:
     delete:
@@ -213,15 +247,15 @@ paths:
       summary: Delete an avatar for the connected user
       operationId: DeleteUserAvatar
       parameters:
-        - $ref: '#/components/parameters/AvatarID'
+        - $ref: "#/components/parameters/AvatarID"
       responses:
-        '204':
+        "204":
           description: "successfull delete"
-        '401':
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        '404':
+        "404":
           $ref: "#/components/responses/NotFound"
-        '500':
+        "500":
           $ref: "#/components/responses/InternalServerError"
   /users/me/match_history:
     get:
@@ -233,45 +267,51 @@ paths:
         - $ref: "#/components/parameters/Onset"
         - $ref: "#/components/parameters/Length"
       responses:
-        '200':
+        "200":
           $ref: "#/components/responses/MatchHistoryResponse"
-        '401':
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        '500':
+        "500":
           $ref: "#/components/responses/InternalServerError"
 
 components:
   responses:
+    OauthTokenResponse:
+      description: success response
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/OauthToken"
     Unauthorized:
       description: No token provided or invalid token provided
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
     NotFound:
       description: Ressource not found
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
     BadRequest:
       description: Invalid request
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
     InternalServerError:
       description: Internal server error
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
     UserResponse:
       description: success response
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/UserOutput'
+            $ref: "#/components/schemas/UserOutput"
     UserListResponse:
       description: success response
       content:
@@ -279,7 +319,7 @@ components:
           schema:
             type: array
             items:
-              $ref: '#/components/schemas/UserOutput'
+              $ref: "#/components/schemas/UserOutput"
     AvatarListResponse:
       description: success response
       content:
@@ -287,13 +327,13 @@ components:
           schema:
             type: array
             items:
-              $ref: '#/components/schemas/AvatarOutput'
+              $ref: "#/components/schemas/AvatarOutput"
     AvatarResponse:
       description: success response
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/AvatarOutput'
+            $ref: "#/components/schemas/AvatarOutput"
     AvatarBinaryResponse:
       description: "success response"
       content:
@@ -310,6 +350,14 @@ components:
             items:
               $ref: "#/components/schemas/MatchOutput"
   parameters:
+    OauthCode:
+      description: Authorisation code provided by 42 oauth flow
+      in: query
+      name: code
+      required: true
+      schema:
+        type: string
+        example: 60f915735add207fb3a7c1d251d0a16fb2ec2d9d0238945cd74a86edbcc03717
     Onset:
       description: "beginning index of the list (default: 0)"
       in: query
@@ -329,7 +377,7 @@ components:
     Search:
       description: "pattern to search for"
       in: query
-      name: search
+      name: Search
       required: false
       schema:
         type: string
@@ -346,6 +394,36 @@ components:
       schema:
         type: string
   schemas:
+    OauthToken:
+      type: object
+      required:
+        - access_token
+        - token_type
+        - expires_in
+        - refresh_token
+        - scope
+        - created_at
+      properties:
+        access_token:
+          type: string
+          example: 07af7983c67ebf4c30f4484e8231a09eb847f270690027f3c8d43f044e0cd21d
+        token_type:
+          type: string
+          example: "bearer"
+        expires_in:
+          type: integer
+          format: int64
+          example: 7200
+        refresh_token:
+          type: string
+          example: d7d198196efcfe61cd131cb0fd6192365ae7248c2acc68c6323f83ca8917546a
+        scope:
+          type: string
+          example: public
+        created_at:
+          type: integer
+          format: int64
+          example: 16665511
     Error:
       type: object
       required:
@@ -429,12 +507,12 @@ components:
     UserOutput:
       type: object
       required:
-       - id
-       - username
-       - 2fa
-       - status
-       - actual_avatar
-       - stats
+        - id
+        - username
+        - 2fa
+        - status
+        - actual_avatar
+        - stats
       properties:
         id:
           type: integer
@@ -459,6 +537,18 @@ components:
         stats:
           $ref: "#/components/schemas/UserStatsOutput"
   requestBodies:
+    RefreshTokenInput:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - token
+            properties:
+              token:
+                description: refresh token
+                type: string
+                example: d7d198196efcfe61cd131cb0fd6192365ae7248c2acc68c6323f83ca8917546a
     PartialUpdateUserInput:
       content:
         application/json:
