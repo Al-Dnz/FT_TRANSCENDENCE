@@ -64,6 +64,12 @@ export default {
       user : 'Jean_didier'
     }
   },
+	created() {
+		console.log ("hello nav");
+	},
+	beforeUnmount() {
+		console.log ("bye nav");
+	},
   methods : {
 	goHome()
 	{
