@@ -43,11 +43,13 @@
 
 <script>
 import { defineComponent } from 'vue'
+import axios from "axios";
 export default defineComponent({
   name : 'logScreen',
   methods : {
     log()
     {
+      axios.get("https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-63fa7cac48b861bde4e8614636e48e03d5c8ccfe0a2e2b60f8555a0610a37dac&redirect_uri=http%3A%2F%2Flocalhost%2F&response_type=code").then(response => console.log(response));
       this.$cookies.set("trans_cook", "Hello World", "1y");
       this.$router.push('/home');
     }
