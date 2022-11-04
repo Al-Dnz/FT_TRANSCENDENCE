@@ -5,6 +5,7 @@
 /dist
 /node_modules
 /Vue/node_modules
+/front/node_modules
 
 # Logs
 logs

@@ -48,6 +48,7 @@ export default defineComponent({
   methods : {
     log()
     {
+      this.$cookies.set("trans_cook", "Hello World", "1y");
       this.$router.push('/home');
     }
   }
