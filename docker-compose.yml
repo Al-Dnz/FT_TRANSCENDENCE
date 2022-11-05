@@ -52,15 +52,15 @@ services:
         source: ./swagger-ui/swagger.yml
         target: /usr/share/nginx/html/docs/swagger.yml
 
-  front-end:
-    container_name: front-end
-    build:
-      context: front
-      dockerfile: Dockerfile
-    networks:
-      - frontend
-    ports:
-      - 3002:80
+  # front-end:
+  #   container_name: front-end
+  #   build:
+  #     context: front
+  #     dockerfile: Dockerfile
+  #   networks:
+  #     - frontend
+  #   ports:
+  #     - 3002:80
 
   chat:
     container_name: chat
@@ -86,4 +86,3 @@ networks:
   frontend:
     name: frontend_net
     driver: bridge
-
