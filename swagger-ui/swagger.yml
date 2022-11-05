@@ -21,7 +21,7 @@ tags:
   - name: Matchs
     description: Operations about matchs
 paths:
-  /auth/oauth/callback:
+  /auth/callback:
     get:
       tags:
         - Authentication
