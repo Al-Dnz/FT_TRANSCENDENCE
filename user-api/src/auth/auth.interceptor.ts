@@ -11,7 +11,7 @@ import { Identity } from 'user-api/user.decorator';
 const userFromJWT = (token: string): Identity => {
     let jwt = require('jsonwebtoken');
     try {
-        return jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+        return jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
     } catch (err: any) {
         throw new UnauthorizedException(err.message);
     }
@@ -32,11 +32,7 @@ export class LoggingInterceptor implements NestInterceptor {
         ) {
             throw new UnauthorizedException('malformed authorization header');
         }
-
-        console.log(splitted);
-
         request.user = userFromJWT(splitted[1]);
-        // request.user = { login: 'dboyer', image_url: 'test' };
 
         return next.handle();
     }
