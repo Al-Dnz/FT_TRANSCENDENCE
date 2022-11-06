@@ -9,7 +9,6 @@ import { Logger } from '@nestjs/common';
 @Injectable()
 export class AppService implements OnApplicationBootstrap
 {
-
 	constructor(
 		@InjectRepository(Channel)
 		private readonly channelsRepository: Repository<Channel>,
