@@ -128,14 +128,14 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "500":
           $ref: "#/components/responses/InternalServerError"
-  /users/{user_id}:
+  /users/{login}:
     get:
       tags:
         - Users
       summary: Get details information on one user
       operationId: GetUserByID
       parameters:
-        - $ref: "#/components/parameters/UserID"
+        - $ref: "#/components/parameters/Login"
       responses:
         "200":
           $ref: "#/components/responses/UserResponse"
@@ -162,14 +162,14 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "500":
           $ref: "#/components/responses/InternalServerError"
-  /users/me/friends/{user_id}:
+  /users/me/friends/{login}:
     put:
       tags:
         - Friends
       summary: Add a user to the friends list of the connected user
       operationId: CreateFriendship
       parameters:
-        - $ref: "#/components/parameters/UserID"
+        - $ref: "#/components/parameters/Login"
       responses:
         "204":
           description: "success response"
@@ -185,7 +185,7 @@ paths:
       summary: Remove a user to the friends list of the connected user
       operationId: DeleteFriendship
       parameters:
-        - $ref: "#/components/parameters/UserID"
+        - $ref: "#/components/parameters/Login"
       responses:
         "204":
           description: "success response"
@@ -381,8 +381,8 @@ components:
       required: false
       schema:
         type: string
-    UserID:
-      name: user_id
+    Login:
+      name: login
       in: path
       required: true
       schema:
@@ -507,17 +507,16 @@ components:
     UserOutput:
       type: object
       required:
-        - id
+        - login
         - username
         - two_fa
         - status
         - actual_avatar
         - stats
       properties:
-        id:
-          type: integer
-          format: int64
-          example: 11
+        login:
+          type: string
+          example: dboyer
         actual_avatar:
           $ref: "#/components/schemas/AvatarOutput"
         username:

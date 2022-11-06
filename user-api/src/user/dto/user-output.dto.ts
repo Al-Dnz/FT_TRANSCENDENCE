@@ -1,5 +1,5 @@
 import { InternalServerErrorException } from '@nestjs/common';
-import { Avatar, User, UserStats } from 'db-interface/Core';
+import { Avatar, User, UserStats, UserStatus } from 'db-interface/Core';
 
 export class UserStatsOutputDto {
     constructor(stats: UserStats) {
@@ -35,14 +35,16 @@ export class AvatarOutputDto {
 export class UserOutputDto {
     constructor(user: User) {
         this.stats = new UserStatsOutputDto(user.stats);
-        this.id = user.id;
+        this.login = user.login;
         this.username = user.userName;
         this.two_fa = user.twoFa;
         this.actual_avatar = new AvatarOutputDto(user.avatars);
+        this.status = user.status;
     }
-    id: number;
+    login: string;
     actual_avatar: AvatarOutputDto;
     username: string;
     two_fa: boolean;
     stats: UserStatsOutputDto;
+    status: UserStatus;
 }
