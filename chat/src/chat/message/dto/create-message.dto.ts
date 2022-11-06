@@ -1,6 +1,6 @@
 export class CreateMessageDto
 {
 	text: string;
-	sender: string;
+	senderId: number;
 	channelId: number;
 }

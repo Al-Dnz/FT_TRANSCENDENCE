@@ -43,6 +43,9 @@ export class ChannelService {
 
   async findMessages(id: number)
   {
+	const channel = await this.channelsRepository.findOneBy({ id: id });
+	if (!channel)
+		throw new HttpException('Channel not found', HttpStatus.NOT_FOUND);
     return await this.messagesRepository.find({
       relations: {
         channel: true,

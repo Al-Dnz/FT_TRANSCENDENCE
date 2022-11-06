@@ -3,6 +3,9 @@ import { ChannelService } from './channel.service';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
 
+import { HttpException } from '@nestjs/common';
+import { HttpStatus } from '@nestjs/common';
+
 @Controller('channel')
 export class ChannelController {
   constructor(private readonly channelService: ChannelService) {}
@@ -18,12 +21,15 @@ export class ChannelController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.channelService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const chan = this.channelService.findOne(+id);
+	if (chan)
+		return chan
   }
 
   @Get(':id/messages')
-  getMessages(@Param('id') id: string) {
+  async getMessages(@Param('id') id: string)
+  {
     return this.channelService.findMessages(+id);  
   }
 
@@ -33,7 +39,10 @@ export class ChannelController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.channelService.remove(+id);
+  async remove(@Param('id') id: string)
+  {
+	const chan = this.channelService.findOne(+id);
+	if (chan)
+   		return this.channelService.remove(+id);
   }
 }

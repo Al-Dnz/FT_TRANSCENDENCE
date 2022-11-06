@@ -5,9 +5,13 @@ import { UpdateMessageDto } from './dto/update-message.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import { HttpException, HttpStatus } from '@nestjs/common';
+
 import { Message } from './message.entity';
 
 import { Channel } from 'src/chat/channel/channel.entity';
+
+import { User } from 'src/user/user.entity';
 
 @Injectable()
 export class MessageService {
@@ -16,19 +20,20 @@ export class MessageService {
     private readonly messagesRepository: Repository<Message>,
     @InjectRepository(Channel)
     private readonly channelsRepository: Repository<Channel>,
+	@InjectRepository(User)
+    private readonly usersRepository: Repository<User>,
   ) {}
-
-
-  // @Inject(ChannelService)
-  // private readonly channelService: ChannelService;
 
   async create(data: CreateMessageDto): Promise<Message> 
   {
     const message = new Message();
     message.text = data.text;
-    message.sender = data.sender;
 
+	const sender = await this.usersRepository.findOneBy({id: data.senderId}) ;
+	
+    message.sender = sender;
     const channel = await this.channelsRepository.findOneBy({id: data.channelId}) ;
+	
     message.channel = channel;
 
     return this.messagesRepository.save(message);
@@ -39,8 +44,11 @@ export class MessageService {
     return this.messagesRepository.find();
   }
 
-  findOne(id: number)
+  async findOne(id: number)
   {
+	const message = await this.messagesRepository.findOneBy({ id: id })
+	if (!message)
+		throw new HttpException('Message not found', HttpStatus.NOT_FOUND);
     return this.messagesRepository.findOneBy({ id: id });
   }
 
@@ -51,6 +59,9 @@ export class MessageService {
 
   async remove(id: number) 
   {
+	const message = await this.messagesRepository.findOneBy({ id: id })
+	if (!message)
+		throw new HttpException('Message not found', HttpStatus.NOT_FOUND);
     return this.messagesRepository.delete(id);
   }
 }
