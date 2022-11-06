@@ -1,32 +1,83 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Delete,
-  Patch,
-  Body,
-  Param,
+    Controller,
+    Get,
+    Post,
+    Body,
+    Patch,
+    Param,
+    Delete,
+    Query,
+    HttpCode,
+    NotFoundException,
+    UseGuards,
+    UseInterceptors,
 } from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { CreateUserInput, UpdateUserInput, UserOutput } from './user.dto';
+import { UserService } from './user.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { QueryFilterDto } from 'validation/query.dto';
+import { User } from 'db-interface/Core';
+import { UserOutputDto } from 'user-api/dto/user-output.dto';
+import { Identity } from './user.decorator';
+import { DeleteResult } from 'typeorm';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { LoggingInterceptor } from 'src/auth/auth.interceptor';
 
 @Controller('api/users')
+@UseGuards(AuthGuard)
+@UseInterceptors(LoggingInterceptor)
 export class UserController {
-  @Get()
-  ListUsers(): Observable<UserOutput[]> {}
+    constructor(private readonly userService: UserService) { }
 
-  @Post()
-  CreateOneUser(@Body() body: CreateUserInput): Observable<UserOutput> {}
+    @Post()
+    async create(
+        @Body() createUserDto: CreateUserDto,
+        @Identity() user: Identity,
+    ): Promise<UserOutputDto> {
+        return new UserOutputDto(
+            await this.userService.create(createUserDto, user.image_url),
+        );
+    }
 
-  @Get('me')
-  GetUserMe(): Observable<UserOutput> {}
+    @Get()
+    async findAll(@Query() query: QueryFilterDto): Promise<UserOutputDto[]> {
+        return this.userService
+            .findAll(query)
+            .then((users: User[]) =>
+                users.map((value: User) => new UserOutputDto(value)),
+            );
+    }
 
-  @Patch('me')
-  PartialUserMeUpdate(@Body() body: UpdateUserInput): Observable<UserOutput> {}
+    @Get(':login')
+    async findOne(@Param('login') login: string): Promise<UserOutputDto> {
+        return this.userService
+            .findOne(login)
+            .then((value: User) => new UserOutputDto(value));
+    }
 
-  @Delete('me')
-  DeleteUserMe() {}
+    @Patch('me')
+    async update(
+        @Body() updateUserDto: UpdateUserDto,
+        @Identity() user: Identity,
+    ): Promise<UserOutputDto> {
+        return this.userService
+            .updateByLogin(user.login, updateUserDto)
+            .then(() =>
+                this.userService
+                    .findOne(user.login)
+                    .then((value: User) => new UserOutputDto(value)),
+            );
+    }
 
-  @Get(':user_id')
-  GetUserByID(@Param('user_id') user_id: string): Observable<UserOutput> {}
+    @Delete('me')
+    @HttpCode(204)
+    async remove(@Identity() user: Identity) {
+        return this.userService
+            .removeByLogin(user.login)
+            .then((value: DeleteResult) => {
+                if (value.affected != 1) {
+                    throw new NotFoundException(`user ${user.login} not found`);
+                }
+            });
+    }
 }

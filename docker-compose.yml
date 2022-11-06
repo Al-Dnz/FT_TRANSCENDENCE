@@ -3,7 +3,6 @@ version: "3"
 services:
   postgres:
     container_name: postgres
-
     image: postgres:latest
     networks:
       - backend
@@ -23,6 +22,16 @@ services:
       - backend
     ports:
       - 3000:3000
+    env_file: .env
+  user-api:
+    container_name: user-api
+    build:
+      context: ./
+      dockerfile: ./user-api/Dockerfile
+    networks:
+      - backend
+    ports:
+      - 3002:3000
     env_file: .env
 
   nginx:
