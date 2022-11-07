@@ -3,12 +3,19 @@ import { MessageService } from './message.service';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
 
+import { Logger } from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
+
+
 @Controller('message')
 export class MessageController {
   constructor(private readonly messageService: MessageService) {}
 
+  private logger: Logger = new Logger('MessageController');
+
   @Post()
-  create(@Body() createMessageDto: CreateMessageDto) {
+  create(@Body() createMessageDto: CreateMessageDto)
+  {
     return this.messageService.create(createMessageDto);
   }
 

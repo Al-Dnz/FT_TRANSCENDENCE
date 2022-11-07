@@ -17,15 +17,15 @@ export class Message
 	@PrimaryGeneratedColumn()
   	id: number;
 
-	@Column({ unique: true })
-	text: string;
-	
 	@CreateDateColumn()
 	createdAt: Date;
 
 	@Column('boolean', {default: false})
 	private: boolean = false;
 
+	@Column()
+	text: string;
+	
 	@ManyToOne(() =>User, (user) => user.messages)
 	@JoinColumn({name: "sender_id"})   
     sender: User

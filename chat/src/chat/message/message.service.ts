@@ -6,11 +6,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 
 import { Message } from './message.entity';
-
 import { Channel } from 'src/chat/channel/channel.entity';
-
 import { User } from 'src/user/user.entity';
 
 @Injectable()
@@ -24,18 +23,30 @@ export class MessageService {
     private readonly usersRepository: Repository<User>,
   ) {}
 
+  private logger: Logger = new Logger('MessageService');
+
   async create(data: CreateMessageDto): Promise<Message> 
   {
     const message = new Message();
-    message.text = data.text;
+	if (data.text && data.text.length > 0)	
+		message.text = data.text;
+	else
+		throw new HttpException("message text is empty", HttpStatus.FAILED_DEPENDENCY);
 
-	const sender = await this.usersRepository.findOneBy({id: data.senderId}) ;
-	
-    message.sender = sender;
-    const channel = await this.channelsRepository.findOneBy({id: data.channelId}) ;
-	
-    message.channel = channel;
-
+	if (data.senderId)
+	{
+		const sender = await this.usersRepository.findOneBy({id: data.senderId});
+		if (!sender)
+			throw new HttpException("this user sender doesn't exist", HttpStatus.FAILED_DEPENDENCY);
+		message.sender = sender;
+	}
+	if (data.channelId)
+	{
+		const channel = await this.channelsRepository.findOneBy({id: data.channelId}) ;
+		if (!channel)
+			throw new HttpException("this channel doesn't exist", HttpStatus.FAILED_DEPENDENCY);
+		message.channel = channel;
+	}
     return this.messagesRepository.save(message);
   }
 
@@ -62,6 +73,10 @@ export class MessageService {
 	const message = await this.messagesRepository.findOneBy({ id: id })
 	if (!message)
 		throw new HttpException('Message not found', HttpStatus.NOT_FOUND);
-    return this.messagesRepository.delete(id);
+	else
+	{
+		this.messagesRepository.delete(id);
+		throw new HttpException(`message #${id} was deleted successfully`, HttpStatus.OK);
+	}
   }
 }

@@ -37,7 +37,6 @@ export class ChannelGateway
     this.server.emit('chanToClient', payload);
   }
 
-
   afterInit(server: Server) {
     this.logger.log('Initialisation of Chan websocket');
   }
