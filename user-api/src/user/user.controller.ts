@@ -4,6 +4,7 @@ import {
     Post,
     Body,
     Patch,
+    Put,
     Param,
     Delete,
     Query,
@@ -86,5 +87,35 @@ export class UserController {
         return this.userService
             .findOne(login)
             .then((value: User) => new UserOutputDto(value));
+    }
+
+    @Get('me/friends')
+    async findFriends(
+        @Identity() user: Identity,
+        @Query() query: QueryFilterDto,
+    ): Promise<UserOutputDto[]> {
+        return this.userService
+            .findFriends(user.login, query)
+            .then((value: User[]) =>
+                value.map((user: User) => new UserOutputDto(user)),
+            );
+    }
+
+    @Put('me/friends/:login')
+    @HttpCode(204)
+    async addMeFriends(
+        @Identity() user: Identity,
+        @Param('login') login: string,
+    ): Promise<void> {
+        this.userService.addFriends(user.login, login);
+    }
+
+    @Delete('me/friends/:login')
+    @HttpCode(204)
+    async removeMeFriends(
+        @Identity() user: Identity,
+        @Param('login') login: string,
+    ): Promise<void> {
+        this.userService.removeFriends(user.login, login);
     }
 }
