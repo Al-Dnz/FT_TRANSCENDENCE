@@ -29,6 +29,15 @@ import { LoggingInterceptor } from 'src/auth/auth.interceptor';
 export class UserController {
     constructor(private readonly userService: UserService) { }
 
+    @Get()
+    async findAll(@Query() query: QueryFilterDto): Promise<UserOutputDto[]> {
+        return this.userService
+            .findAll(query)
+            .then((users: User[]) =>
+                users.map((value: User) => new UserOutputDto(value)),
+            );
+    }
+
     @Post()
     async create(
         @Body() createUserDto: CreateUserDto,
@@ -39,19 +48,10 @@ export class UserController {
         );
     }
 
-    @Get()
-    async findAll(@Query() query: QueryFilterDto): Promise<UserOutputDto[]> {
+    @Get('me')
+    async userMe(@Identity() user: Identity): Promise<UserOutputDto> {
         return this.userService
-            .findAll(query)
-            .then((users: User[]) =>
-                users.map((value: User) => new UserOutputDto(value)),
-            );
-    }
-
-    @Get(':login')
-    async findOne(@Param('login') login: string): Promise<UserOutputDto> {
-        return this.userService
-            .findOne(login)
+            .findOne(user.login)
             .then((value: User) => new UserOutputDto(value));
     }
 
@@ -79,5 +79,12 @@ export class UserController {
                     throw new NotFoundException(`user ${user.login} not found`);
                 }
             });
+    }
+
+    @Get(':login')
+    async findOne(@Param('login') login: string): Promise<UserOutputDto> {
+        return this.userService
+            .findOne(login)
+            .then((value: User) => new UserOutputDto(value));
     }
 }
