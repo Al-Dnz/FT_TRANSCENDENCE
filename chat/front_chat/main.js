@@ -43,7 +43,7 @@ const app = new Vue({
             if(this.validateInput())
             {
                 const message = {
-                    sender: this.sender,
+                    // sender: this.sender,
                     text: this.text,
                     channelId: this.current_chan_id
                 }
