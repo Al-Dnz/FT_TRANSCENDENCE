@@ -33,6 +33,9 @@ export class MessageService {
 	else
 		throw new HttpException("message text is empty", HttpStatus.FAILED_DEPENDENCY);
 
+	if (data.private)
+		message.private = data.private;
+
 	if (data.senderId)
 	{
 		const sender = await this.usersRepository.findOneBy({id: data.senderId});
