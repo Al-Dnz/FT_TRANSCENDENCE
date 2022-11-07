@@ -15,6 +15,15 @@ export class UserStatsOutputDto {
 }
 
 export class AvatarOutputDto {
+    constructor(avatar: Avatar) {
+        this.id = avatar.id;
+        this.path = avatar.path;
+    }
+    id: number;
+    path: string;
+}
+
+export class ActualAvatarOutputDto {
     constructor(avatars: Avatar[]) {
         let actual_avatar: Avatar[] = avatars.map((value: Avatar) => {
             return value.activate ? value : undefined;
@@ -38,11 +47,11 @@ export class UserOutputDto {
         this.login = user.login;
         this.username = user.userName;
         this.two_fa = user.twoFa;
-        this.actual_avatar = new AvatarOutputDto(user.avatars);
+        this.actual_avatar = new ActualAvatarOutputDto(user.avatars);
         this.status = user.status;
     }
     login: string;
-    actual_avatar: AvatarOutputDto;
+    actual_avatar: ActualAvatarOutputDto;
     username: string;
     two_fa: boolean;
     stats: UserStatsOutputDto;

@@ -17,8 +17,12 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { QueryFilterDto } from 'validation/query.dto';
-import { User } from 'db-interface/Core';
-import { UserOutputDto } from 'user-api/dto/user-output.dto';
+import { User, Avatar } from 'db-interface/Core';
+import {
+    ActualAvatarOutputDto,
+    UserOutputDto,
+    AvatarOutputDto,
+} from 'user-api/dto/user-output.dto';
 import { Identity } from './user.decorator';
 import { DeleteResult } from 'typeorm';
 import { AuthGuard } from 'src/auth/auth.guard';
@@ -117,5 +121,17 @@ export class UserController {
         @Param('login') login: string,
     ): Promise<void> {
         this.userService.removeFriends(user.login, login);
+    }
+
+    @Get('me/avatars')
+    async listUserAvatars(
+        @Identity() user: Identity,
+        @Query() query: QueryFilterDto,
+    ): Promise<ActualAvatarOutputDto[]> {
+        return this.userService
+            .listAvatars(user.login, query)
+            .then((avatars: Avatar[]) =>
+                avatars.map((avatar: Avatar) => new AvatarOutputDto(avatar)),
+            );
     }
 }

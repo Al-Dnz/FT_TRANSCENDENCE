@@ -12,6 +12,9 @@ export class UserService {
     constructor(
         @InjectRepository(User)
         private userRepository: Repository<User>,
+
+        @InjectRepository(Avatar)
+        private avatarRepository: Repository<Avatar>,
     ) { }
 
     create(createUserDto: CreateUserDto, avatarPath: string): Promise<User> {
@@ -95,5 +98,26 @@ export class UserService {
             .relation(User, 'friends')
             .of({ login: userLogin })
             .remove({ login: friendLogin });
+    }
+
+    async listAvatars(login: string, query: QueryFilterDto): Promise<Avatar[]> {
+        let user: User = await this.userRepository.findOne({
+            where: {
+                login: login,
+            },
+            relations: {
+                avatars: true,
+            },
+        });
+
+        let avatars: Avatar[] = user.avatars;
+
+        avatars =
+            query.onset && query.onset < avatars.length
+                ? avatars.slice(query.onset, avatars.length)
+                : [];
+        return query.length && query.length < avatars.length
+            ? avatars.slice(0, query.length)
+            : avatars;
     }
 }
