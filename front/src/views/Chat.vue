@@ -7,7 +7,9 @@
         @changeConv="changeConv" />
     </div>
     <div class="h-full w-4/5 bg-gray-50">
-      <ChatConv :messages="currentConv" />
+      <ChatConv
+        :head="currentHead"
+        :messages="currentConv" />
     </div>
   </div>
 </template>
@@ -19,26 +21,52 @@ import ChatConv from "../components/ChatConv.vue";
 export default {
   name: "ChatPage",
   methods: {
-    changeConv: function (convId) {
-			this.currentConv = this.convList[convId]
+    changeConv: function (convType, convId) {
+      if (convType === 'privConv') {
+        this.currentHead = this.privHeadList[convId];
+        this.currentConv = this.privConvList[convId];
+      }
+      else if (convType === 'channel') {
+        this.currentHead = this.chanHeadList[convId];
+        this.currentConv = this.convList[convId];
+      }
 		},
   },
   data() {
-    let defMsg1 = [
-      { id: 1, from: 'You', pic: 'Bannedpp.png', text: 'Salut' },
-      { id: 2, from: 'Bob', pic: 'pp.jpeg', text: 'Bonjour' },
-      { id: 3, from: 'You', pic: 'Bannedpp.png', text: 'Comment vas-tu ?' },
-      { id: 4, from: 'Bob', pic: 'pp.jpeg', text: 'Bien, et toi ?' },
+    let defUser = { name: 'Jean_didier', pic: 'Bannedpp.png' };
+    let defUser1 = { name: 'Bob', pic: 'pp.jpeg' };
+    let defUser2 = { name: 'Jeff', pic: 'Accountpp.jpeg' };
+    let defUser3 = { name: 'Sam', pic: 'madgeleft.jpeg' };
+    let defChan1 = { name: 'Work Group', pic: 'MultipleUsers.png' };
+    let defChan2 = { name: 'The Boys', pic: 'MultipleUsers.png' };
+
+    let defPrivConv1 = [
+      { id: 1, from: defUser.name, pic: defUser.pic, text: 'Salut' },
+      { id: 2, from: defUser1.name, pic: defUser1.pic, text: 'Bonjour' },
+      { id: 3, from: defUser.name, pic: defUser.pic, text: 'Comment vas-tu ?' },
+      { id: 4, from: defUser1.name, pic: defUser1.pic, text: 'Bien, et toi ?' },
     ];
-    let defMsg2 = [
-      { id: 1, from: 'You', pic: 'Bannedpp.png', text: 'Waza?' },
-      { id: 2, from: 'Jeff', pic: 'Accountpp.jpeg', text: 'WAZAAAAA!!' },
+    let defPrivConv2 = [
+      { id: 1, from: defUser.name, pic: defUser.pic, text: 'Waza?' },
+      { id: 2, from: defUser2.name, pic: defUser2.pic, text: 'WAZAAAAA!!' },
     ];
-    let defMsg3 = [
-      { id: 1, from: 'Sam', pic: 'madgeleft.jpeg', text: 'Yo !' },
-      { id: 2, from: 'Sam', pic: 'madgeleft.jpeg', text: 'T\'es la ?' },
-      { id: 3, from: 'Sam', pic: 'madgeleft.jpeg', text: 'oh jte parle!!' },
-      { id: 4, from: 'Sam', pic: 'madgeleft.jpeg', text: 'va te faire' },
+    let defPrivConv3 = [
+      { id: 1, from: defUser3.name, pic: defUser3.pic, text: 'Yo !' },
+      { id: 2, from: defUser3.name, pic: defUser3.pic, text: 'T\'es là ?' },
+      { id: 3, from: defUser3.name, pic: defUser3.pic, text: 'oh jte parle!!' },
+      { id: 4, from: defUser3.name, pic: defUser3.pic, text: 'va te faire' },
+    ];
+    let defConv1 = [
+      { id: 1, from: defUser.name, pic: defUser.pic, text: 'Tout le monde est là ?' },
+      { id: 2, from: defUser3.name, pic: defUser3.pic, text: 'Yep' },
+      { id: 3, from: defUser1.name, pic: defUser1.pic, text: 'Présent !' },
+      { id: 4, from: defUser2.name, pic: defUser2.pic, text: 'Chuis là' },
+      { id: 5, from: defUser.name, pic: defUser.pic, text: 'Ok parfait, on va pouvoir commencer' },
+    ];
+    let defConv2 = [
+      { id: 1, from: defUser.name, pic: defUser.pic, text: 'Bon entre nous, Sam est super relou nan ?' },
+      { id: 2, from: defUser3.name, pic: defUser3.pic, text: 'Oui' },
+      { id: 3, from: defUser1.name, pic: defUser1.pic, text: 'Carrément' },
     ];
     return {
       friends: [
@@ -47,12 +75,15 @@ export default {
         { id: 3, name: 'Sam', pic: 'madgeleft.jpeg' },
       ],
       channels: [
-        { id: 1, name: 'channel1' },
-        { id: 2, name: 'channel2' },
-        { id: 3, name: 'channel3' },
+        { id: 1, name: 'Work Group', pic: 'MultipleUsers.png' },
+        { id: 2, name: 'The Boys', pic: 'MultipleUsers.png' },
       ],
-      convList: [ defMsg1, defMsg2, defMsg3 ],
-      currentConv: defMsg1,
+      privConvList: [ defPrivConv1, defPrivConv2, defPrivConv3, ],
+      convList: [ defConv1, defConv2 ],
+      currentConv: defPrivConv1,
+      privHeadList: [ defUser1, defUser2, defUser3, ],
+      chanHeadList: [ defChan1, defChan2, ],
+      currentHead: defUser1,
     };
   },
   components: {
