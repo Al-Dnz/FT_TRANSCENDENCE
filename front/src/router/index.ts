@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
+import {getCookie} from "@/frontJS/cookies";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -126,6 +127,22 @@ const routes: Array<RouteRecordRaw> = [
       },
     },
   },
+
+  {
+    path: "/callback",
+    name: "callbackPage",
+    components: {
+      default: () => import("@/views/Callback.vue"),
+      navbar: () => import("@/components/Nav.vue"),
+      headbar: () => import("@/components/Header.vue"),
+    },
+    props: {
+      headbar: {
+        sectionTitle: "TokenLoading",
+        type: String,
+      },
+    },
+  },
   {
     path: "/:pathMatch(.*)*",
     name: "not-found",
@@ -149,21 +166,8 @@ const router = createRouter({
   routes,
 });
 
-function getCookie(name: string) : string {
-  const value = `; ${document.cookie}`;
-  // eslint-disable-next-line
-  const parts: any = value.split(`; ${name}=`); // Fuck type script fuck Es lint A voir si on peux fix
-  if (parts.length === 2)
-  {
-    return (parts.pop().split(';').shift());
-    
-  }
-  else
-    return "";
-}
-
 router.beforeEach((to) => {
-  if (!getCookie('trans_cook') && to.name != 'log')
+  if (!getCookie('trans') && !(to.name == 'callbackPage' || to.name == 'log'))
   {
     return { name: 'log' }
   }
