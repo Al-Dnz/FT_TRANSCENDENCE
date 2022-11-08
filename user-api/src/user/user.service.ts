@@ -5,7 +5,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User, Avatar } from 'db-interface/Core';
 import { DeleteResult, Like, Repository, UpdateResult } from 'typeorm';
 import { QueryFilterDto } from 'validation/query.dto';
-import { length } from 'class-validator';
 
 @Injectable()
 export class UserService {
@@ -66,20 +65,11 @@ export class UserService {
             },
         });
 
-        let friends: User[] = user.friends;
-
-        friends =
-            query.onset && query.onset < friends.length
-                ? friends.slice(query.onset, friends.length)
-                : [];
-        friends =
-            query.length && query.length < friends.length
-                ? friends.slice(0, query.length)
-                : friends;
+        let friends: User[] = user.friends.slice(query.onset, query.length);
         if (query.search) {
-            return friends.map((value: User) => {
-                return value.userName.includes(query.search) ? value : undefined;
-            });
+            return friends.map((value: User) =>
+                value.userName.includes(query.search) ? value : undefined,
+            );
         }
         return friends;
     }
@@ -110,14 +100,10 @@ export class UserService {
             },
         });
 
-        let avatars: Avatar[] = user.avatars;
+        return user.avatars.slice(query.onset, query.length);
+    }
 
-        avatars =
-            query.onset && query.onset < avatars.length
-                ? avatars.slice(query.onset, avatars.length)
-                : [];
-        return query.length && query.length < avatars.length
-            ? avatars.slice(0, query.length)
-            : avatars;
+    async deleteAvatarByID(login: string, avatarID: number): Promise<void> {
+        this.avatarRepository.delete({ user: { login: login }, id: avatarID });
     }
 }

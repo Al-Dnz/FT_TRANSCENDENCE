@@ -10,6 +10,7 @@ import {
     Query,
     HttpCode,
     NotFoundException,
+    BadRequestException,
     UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
@@ -76,7 +77,7 @@ export class UserController {
 
     @Delete('me')
     @HttpCode(204)
-    async remove(@Identity() user: Identity) {
+    async remove(@Identity() user: Identity): Promise<void> {
         return this.userService
             .removeByLogin(user.login)
             .then((value: DeleteResult) => {
@@ -133,5 +134,22 @@ export class UserController {
             .then((avatars: Avatar[]) =>
                 avatars.map((avatar: Avatar) => new AvatarOutputDto(avatar)),
             );
+    }
+
+    @Delete('me/avatars/:avatar_id')
+    @HttpCode(204)
+    async deleteUserAvatar(
+        @Identity() user: Identity,
+        @Param('avatar_id') id: number,
+    ): Promise<void> {
+        this.userService
+            .listAvatars(user.login, new QueryFilterDto())
+            .then((avatars: Avatar[]) => {
+                if (avatars.length > 1) {
+                    this.userService.deleteAvatarByID(user.login, id);
+                } else {
+                    throw new BadRequestException('cannot delete the default avatar');
+                }
+            });
     }
 }
