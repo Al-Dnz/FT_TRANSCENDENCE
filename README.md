@@ -20,7 +20,7 @@ make down
 
 don't forget to set up a .env file at the root of the project with env variable:
 
-```
+```bash
 POSTGRES_HOST=postgres
 POSTGRES_USER=root
 POSTGRES_PASSWORD=root

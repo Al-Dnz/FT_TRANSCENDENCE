@@ -65,8 +65,9 @@ export class Match extends Base {
     @Column({ type: "date" })
     finishedAt: Date;
 
-    @OneToOne(() => UserMatch, { onDelete: "SET NULL", nullable: true })
-    winner: Relation<UserMatch>;
+    @OneToMany(() => UserMatch, (userMatch: UserMatch) => userMatch.match)
+    @JoinTable()
+    participants: Relation<UserMatch[]>;
 }
 
 @Entity()
@@ -231,11 +232,15 @@ export class User extends Base {
 export class UserMatch extends Base {
     @ManyToOne(() => User, (user: User) => user.userMatchs, {
         onDelete: "CASCADE",
+        nullable: false,
+        eager: true,
     })
     user: User;
 
-    @OneToOne(() => Match, { onDelete: "CASCADE" })
-    @JoinColumn()
+    @ManyToOne(() => Match, (match: Match) => match.participants, {
+        onDelete: "CASCADE",
+        nullable: false,
+    })
     match: Match;
 
     @Column({ default: 0 })
