@@ -1,0 +1,85 @@
+this.background = new Sprite({
+  position: {
+    x: 0,
+    y: 0,
+  },
+  imageSrc: this.getImgUrl("/game/SpaceBackground.png"),
+  width: this.canvas.width,
+  height: this.canvas.height,
+});
+
+this.paddle1 = new paddle({
+  position: {
+    x: 0,
+    y: 0,
+  },
+  velocity: {
+    x: 0,
+    y: 0,
+  },
+  width: parseInt(this.canvas.width / 34, 10),
+  height: parseInt(this.canvas.height / 3.5, 10),
+  imageSrc: this.getImgUrl("/game/Paddle1.png"),
+  GoalSoundSrc: this.getImgUrl("/game/Siuu.mp3"),
+  GoalAnimSrc: this.getImgUrl("/game/nyancat-removebg-preview.png"),
+  GoalAnimFrame: 9,
+  canvas : this.canvas
+});
+
+this.paddle2 = new paddle({
+  position: {
+    x: this.canvas.width - parseInt(this.canvas.width / 34, 10),
+    y: 0,
+  },
+  velocity: {
+    x: 0,
+    y: 0,
+  },
+  width: parseInt(this.canvas.width / 34, 10),
+  height: parseInt(this.canvas.height / 3.5, 10),
+  imageSrc: this.getImgUrl("/game/Paddle2.png"),
+  GoalSoundSrc: this.getImgUrl("/game/Marex.wav"),
+  GoalAnimSrc: this.getImgUrl("/game/horny-jail-bonk.png"),
+  GoalAnimFrame: 6,
+  canvas: this.canvas
+});
+
+this.ballon = new ball({
+  position: {
+    x: (this.canvas.width - parseInt(this.canvas.height / 19.2, 10)) / 2,
+    y: (this.canvas.height - parseInt(this.canvas.height / 19.2, 10)) / 2,
+  },
+  velocity: {
+    x: 0,
+    y: 0,
+  },
+  coord: {
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  width: parseInt(this.canvas.height / 19.2, 10),
+  height: parseInt(this.canvas.height / 19.2, 10),
+  imageSrc: this.getImgUrl("/game/Balls.png"),
+  speed: 4,
+  framesMax: 10,
+  canvas: this.canvas
+});
+
+
+this.keys = {
+  z: {
+    pressed: false,
+  },
+  s: {
+    pressed: false,
+  },
+  ArrowUp: {
+    pressed: false,
+  },
+  ArrowDown: {
+    pressed: false,
+  },
+};
+  this.timer = 9;

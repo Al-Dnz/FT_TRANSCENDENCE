@@ -13,8 +13,8 @@ const ctx = canvas.getContext("2d");
 canvas.width = 1024;
 canvas.height = 576;
 
-console.log(canvas.width);
-console.log(canvas.height);
+// console.log(canvas.width);
+// console.log(canvas.height);
 
 let score_1 = 0;
 let score_2 = 0;
@@ -23,7 +23,7 @@ let gameState = "Off";
 
 let message = document.querySelector("#message");
 
-console.log();
+// console.log();
 
 const background = new Sprite({
   position: {
@@ -68,7 +68,7 @@ const paddle2 = new paddle({
   GoalSoundSrc: "./assets/Marex.wav",
   GoalAnimSrc: "./assets/horny-jail-bonk.png",
   GoalAnimFrame: 6,
-  canvas: canvas
+  canvas: canvas,
 });
 
 const ballon = new ball({
@@ -91,6 +91,7 @@ const ballon = new ball({
   imageSrc: "./assets/Balls.png",
   speed: 4,
   framesMax: 10,
+  canvas: this.canvas,
 });
 
 ballon.image.tr;
@@ -224,7 +225,7 @@ function checkWinner() {
     message.innerHTML = "Tie";
   }
   gameState = "Off";
-  ballon.reset();
+  ballon.reset(this.canvas);
   ballon.velocity.x = 0;
   ballon.velocity.y = 0;
 }

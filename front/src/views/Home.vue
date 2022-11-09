@@ -2,7 +2,7 @@
   <div className="absolute flex justify-center h-full w-full">
     <div style="position: relative;display: inline-block;">
         <!-- player 1 name -->
-        <div style="position: relative; display: flex; width: 90%;">
+        <div style="position: relative; display: flex; width: 100%;">
             <div class='player_1_name'> Joueur 1</div>
             <!-- player 1 score -->
             <div class='player_score' id="score_1">0 </div>
@@ -13,9 +13,9 @@
             <!-- player 2 name -->
             <div class='player_2_name'> Joueur 2</div>
         </div>
-        <div class="message" id="message" :class="gameOn ? 'flex' : 'none' "> Space for Start</div>
-        <canvas id = "Game"></canvas>
-		<button @click="animate">Join game</button> 
+        <div class="message" id="message" > {{ message }}</div>
+        <canvas ref = "game" style="border: 1px solid black;"></canvas>
+		<button @click="animate(); decreaseTimer()">Join game</button> 
     </div> 
   </div>
 </template>
@@ -36,14 +36,12 @@ export default {
 			},
 	animate : function() {
   window.requestAnimationFrame(this.animate);
-  /*
-  if (this.gameState === "Off") {
-    this.message.style.display = "flex";
-  } else {
-    this.message.style.display = "none";
-  }*/
-  console.log(this.background);
-  console.log(this.ctx);
+  
+  // if (this.gameState === "Off") {
+  //   this.message = "flex";
+  // } else {
+  //   this.message = "none";
+  // }
   this.background.update(this.ctx);
   this.paddle1.update(this.ctx, this.canvas);
   this.paddle2.update(this.ctx, this.canvas);
@@ -64,6 +62,29 @@ export default {
   } else if (this.keys.ArrowDown.pressed && this.paddle2.lastKey === "ArrowDown") {
     this.paddle2.velocity.y = this.paddle2.speed;
   }
+},
+  decreaseTimer : function () {
+  setTimeout(this.decreaseTimer, 1000);
+  if (this.gameState === "On" && this.timer >= 0) {
+    if (this.timer > 0) {
+      this.timer--;
+      document.querySelector("#timer").innerHTML = this.timer;
+    } else this.message = checkWinner(this.score_1, this.score_2, this.message, this.gameState, this.ballon, this.canvas);
+  }
+},
+  checkWinner : function () {
+  if (this.score_1 > this.score_2) {
+    this.message = "Player 1 Win";
+  } else if (this.score_2 > this.score_1) {
+    this.message = "Player 2 Win";
+  } else {
+    this.message = "Tie";
+  }
+  this.gameState = "Off";
+  this.ballon.reset(this.canvas);
+  this.ballon.velocity.x = 0;
+  this.ballon.velocity.y = 0;
+  return this.message;
 }
 	},
   data() {
@@ -80,29 +101,21 @@ export default {
 	timer : 0,
 	canvas : null,
 	loaded : false,
-	ctx : '',
+	ctx : {},
 	gameOn: false
 	}
 	},
   mounted() {
-this.canvas = document.querySelector("#Game");
-console.log(this.canvas);
-this.ctx = this.canvas.getContext("2d");
+this.canvas = this.$refs.game;
+this.ctx = this.$refs.game.getContext("2d");
 
 this.canvas.width = 1024;
 this.canvas.height = 576;
 
-console.log(this.canvas.width);
-console.log(this.canvas.height);
+// this.message = document.querySelector("#message").innerHTML;
 
-let score_1 = 0;
-let score_2 = 0;
 
-let gameState = "Off";
-
-let message = document.querySelector("#message");
-
-console.log();
+this.timer = 99;
 
 this.background = new Sprite({
   position: {
@@ -170,9 +183,9 @@ this.ballon = new ball({
   imageSrc: this.getImgUrl("/game/Balls.png"),
   speed: 4,
   framesMax: 10,
+  canvas: this.canvas
 });
 
-this.ballon.image.tr;
 
 this.keys = {
   z: {
@@ -188,7 +201,7 @@ this.keys = {
     pressed: false,
   },
 };
-  this.timer = 99;
+  this.timer = 9;
 
   window.addEventListener("keydown", (event) => {
   // paddle1
@@ -218,11 +231,10 @@ this.keys = {
   switch (event.key) {
     case " ":
       if (this.gameState === "Off") {
-		alert('hi');
         this.gameState = "On";
         this.ballon.getCoord();
         this.ballon.velocity.x = 7;
-		this.ballon.velocity.y = 0;
+        this.ballon.velocity.y = 0;
       }
       break;
     case "i":
@@ -251,16 +263,7 @@ window.addEventListener("keyup", (event) => {
       this.keys.ArrowDown.pressed = false;
       break;
   }
-});/*
-(function decreaseTimer() {
-  setTimeout(decreaseTimer, 1000);
-  if (this.gameState === "On" && this.timer >= 0) {
-    if (this.timer > 0) {
-      this.timer--;
-      document.querySelector("#timer").innerHTML = this.timer;
-    } else checkWinner(this.score_1, this.score_2, this.message, this.gameState, this.ballon);
-  }
-})();*/
+});
 }
 }
 </script>

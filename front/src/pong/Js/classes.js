@@ -155,7 +155,7 @@ export class ball extends Sprite {
     width,
     height,
     speed,
-    canvas
+    canvas,
   }) {
     super({
       position,
@@ -174,6 +174,7 @@ export class ball extends Sprite {
     this.framesHold = 5;
     this.radius = this.height / 2;
     this.speed = speed;
+    this.canvas = canvas;
   }
 
   collision(paddle) {
@@ -187,13 +188,24 @@ export class ball extends Sprite {
     );
   }
   reset(canvas) {
+    console.log(canvas);
     this.position.x = (canvas.width - 40) / 2;
     this.position.y = (canvas.height - 40) / 2;
     this.speed = 5;
     this.velocity.y = 0;
   }
 
-  update(paddle1, paddle2, ctx, background, ballon, gameState, score_2, score_1, Goal) {
+  update(
+    paddle1,
+    paddle2,
+    ctx,
+    background,
+    ballon,
+    gameState,
+    score_2,
+    score_1,
+    Goal
+  ) {
     this.draw(ctx);
     if (this.velocity.x !== 0 || this.velocity.y !== 0) this.animateFrames();
     this.position.x += this.velocity.x;
@@ -224,15 +236,17 @@ export class ball extends Sprite {
     }
     if (ballon.coord.left <= background.coord.left) {
       if (gameState === "On") {
+        console.log("score_2", score_2);
         score_2++;
         document.querySelector("#score_2").innerHTML = score_2;
-        Goal(this, paddle2, paddle1, gameState);
+        Goal(this, paddle2, paddle1, gameState, this.canvas);
       }
     } else if (ballon.coord.right >= background.coord.right) {
       if (gameState === "On") {
+        console.log("score_1", score_1);
         score_1++;
         document.querySelector("#score_1").innerHTML = score_1;
-        Goal(this, paddle1, paddle2, gameState);
+        Goal(this, paddle1, paddle2, gameState, this.canvas);
       }
     }
   }
