@@ -1,0 +1,12 @@
+{
+  "sortParamsByRequiredFlag": true,
+  "ensureUniqueParams": true,
+  "allowUnicodeIdentifiers": false,
+  "modelPropertyNaming": "original",
+  "supportsES6": true,
+  "npmName": "@ft_transcendance/client",
+  "npmVersion": "1.0.0",
+  "npmRepository": "",
+  "snapshot": false,
+  "withInterfaces": false
+}
