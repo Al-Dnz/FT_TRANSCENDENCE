@@ -22,14 +22,14 @@ tags:
     description: Operations about matchs
 paths:
   /auth/callback:
-    get:
+    post:
       tags:
         - Authentication
       summary: Oauth authentication code flow
       description: Resolve oauth authentication code flow
       operationId: OauthAuthentication
-      parameters:
-        - $ref: "#/components/parameters/OauthCode"
+      requestBody:
+        $ref: "#/components/requestBodies/OauthCode"
       responses:
         "200":
           $ref: "#/components/responses/OauthTokenResponse"
@@ -60,6 +60,9 @@ paths:
       summary: List users
       description: Get a list of users
       operationId: ListUsers
+      security:
+        - 42oauth: [public]
+        - bearerAuth: []
       parameters:
         - $ref: "#/components/parameters/Onset"
         - $ref: "#/components/parameters/Length"
@@ -76,6 +79,9 @@ paths:
         - Users
       summary: Create one user
       operationId: CreateUser
+      security:
+        - 42oauth: [public]
+        - bearerAuth: []
       requestBody:
         $ref: "#/components/requestBodies/CreateUserInput"
       responses:
@@ -93,6 +99,9 @@ paths:
         - Users
       summary: Get details information about the connected user
       operationId: GetUserMe
+      security:
+        - 42oauth: [public]
+        - bearerAuth: []
       responses:
         "200":
           $ref: "#/components/responses/UserResponse"
@@ -105,6 +114,9 @@ paths:
         - Users
       summary: Partial update of the connected user
       operationId: UserPartialUpdate"
+      security:
+        - 42oauth: [public]
+        - bearerAuth: []
       requestBody:
         $ref: "#/components/requestBodies/PartialUpdateUserInput"
       responses:
@@ -120,6 +132,9 @@ paths:
       tags:
         - Users
       summary: Delete the connected user
+      security:
+        - 42oauth: [public]
+        - bearerAuth: []
       operationId: DeleteUser
       responses:
         "204":
@@ -134,6 +149,9 @@ paths:
         - Users
       summary: Get details information on one user
       operationId: GetUserByID
+      security:
+        - 42oauth: [public]
+        - bearerAuth: []
       parameters:
         - $ref: "#/components/parameters/Login"
       responses:
@@ -151,6 +169,9 @@ paths:
         - Friends
       summary: Retrieve the list of friends of the connected user
       operationId: ListUsersFriends
+      security:
+        - 42oauth: [public]
+        - bearerAuth: []
       parameters:
         - $ref: "#/components/parameters/Onset"
         - $ref: "#/components/parameters/Length"
@@ -168,6 +189,9 @@ paths:
         - Friends
       summary: Add a user to the friends list of the connected user
       operationId: CreateFriendship
+      security:
+        - 42oauth: [public]
+        - bearerAuth: []
       parameters:
         - $ref: "#/components/parameters/Login"
       responses:
@@ -184,6 +208,9 @@ paths:
         - Friends
       summary: Remove a user to the friends list of the connected user
       operationId: DeleteFriendship
+      security:
+        - 42oauth: [public]
+        - bearerAuth: []
       parameters:
         - $ref: "#/components/parameters/Login"
       responses:
@@ -200,6 +227,9 @@ paths:
       tags:
         - Avatars
       summary: List the users avatar
+      security:
+        - 42oauth: [public]
+        - bearerAuth: []
       parameters:
         - $ref: "#/components/parameters/Onset"
         - $ref: "#/components/parameters/Length"
@@ -216,6 +246,9 @@ paths:
         - Avatars
       summary: Upload an avatar for the connected user
       operationId: UploadUserAvatar
+      security:
+        - 42oauth: [public]
+        - bearerAuth: []
       requestBody:
         content:
           multipart/form-data:
@@ -246,6 +279,9 @@ paths:
         - Avatars
       summary: Delete an avatar for the connected user
       operationId: DeleteUserAvatar
+      security:
+        - 42oauth: [public]
+        - bearerAuth: []
       parameters:
         - $ref: "#/components/parameters/AvatarID"
       responses:
@@ -262,6 +298,9 @@ paths:
       tags:
         - Matchs
       summary: Get the match history for the connected user
+      security:
+        - 42oauth: [public]
+        - bearerAuth: []
       operationId: GetMatchHistory
       parameters:
         - $ref: "#/components/parameters/Onset"
@@ -350,14 +389,6 @@ components:
             items:
               $ref: "#/components/schemas/MatchOutput"
   parameters:
-    OauthCode:
-      description: Authorisation code provided by 42 oauth flow
-      in: query
-      name: code
-      required: true
-      schema:
-        type: string
-        example: 60f915735add207fb3a7c1d251d0a16fb2ec2d9d0238945cd74a86edbcc03717
     Onset:
       description: "beginning index of the list (default: 0)"
       in: query
@@ -536,6 +567,18 @@ components:
         stats:
           $ref: "#/components/schemas/UserStatsOutput"
   requestBodies:
+    OauthCode:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - code
+            properties:
+              code:
+                description: Authorisation code provided by 42 oauth flow
+                type: string
+                example: 60f915735add207fb3a7c1d251d0a16fb2ec2d9d0238945cd74a86edbcc03717
     RefreshTokenInput:
       content:
         application/json:
@@ -572,15 +615,16 @@ components:
                 type: string
                 example: dboyer
   securitySchemes:
-    petstore_auth:
+    42oauth2:
       type: oauth2
       flows:
-        implicit:
-          authorizationUrl: https://petstore3.swagger.io/oauth/authorize
+        authorizationCode:
+          authorizationUrl: "https://api.intra.42.fr/oauth/authorize"
+          tokenUrl: /api/auth/callback
+          refreshUrl: /api/token
           scopes:
-            write:pets: modify pets in your account
-            read:pets: read your pets
-    api_key:
-      type: apiKey
-      name: api_key
-      in: header
+            public: Grant access to 42 public data
+    bearerAuth: # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
