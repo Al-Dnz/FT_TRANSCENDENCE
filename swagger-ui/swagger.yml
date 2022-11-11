@@ -255,13 +255,9 @@ paths:
             schema:
               type: object
               required:
-                - file_name
-                - file_content
+                - file
               properties:
-                file_name:
-                  type: string
-                  example: "me.png"
-                file_content:
+                file:
                   type: string
                   format: binary
       responses:
