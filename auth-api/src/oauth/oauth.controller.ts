@@ -1,11 +1,20 @@
-import { Body, Controller, Get, Post, Query } from "@nestjs/common";
+import {
+    Body,
+    Controller,
+    Get,
+    Post,
+    Query,
+    UnauthorizedException,
+} from "@nestjs/common";
 import { OauthService } from "./oauth.service";
-import { Observable } from "rxjs";
+import { Observable, map, mergeMap } from "rxjs";
 import {
     RefreshTokenInput,
-    AuthorizationCodeQuery,
+    AuthorizationCode,
     TokenPayload,
+    UserPayload,
     Error,
+    NewJwtToken,
 } from "./oauth.dto";
 import {
     ApiBadRequestResponse,
@@ -17,7 +26,7 @@ import {
 } from "@nestjs/swagger";
 
 @ApiTags("oauth")
-@Controller("api/oauth")
+@Controller("api")
 export class OauthController {
     constructor(private readonly api42: OauthService) { }
 
@@ -39,11 +48,25 @@ export class OauthController {
         type: "string",
         description: "oauth authorization code",
     })
-    @Get("callback")
-    oauthCallback(
-        @Query() query: AuthorizationCodeQuery
-    ): Observable<TokenPayload> {
-        return this.api42.validAuthCode(query.code);
+    @Post("callback")
+    oauthCallback(@Body() body: AuthorizationCode): Observable<TokenPayload> {
+        return this.api42
+            .validAuthCode(body.code)
+            .pipe(
+                mergeMap((token: TokenPayload) =>
+                    this.api42.getUserInfo(token.access_token)
+                )
+            )
+            .pipe(
+                map((value: UserPayload) =>
+                    NewJwtToken({
+                        id: value.id,
+                        email: value.email,
+                        login: value.login,
+                        image_url: value.image_url,
+                    })
+                )
+            );
     }
 
     @ApiOkResponse({
@@ -63,7 +86,22 @@ export class OauthController {
         type: Error,
     })
     @Post("token")
-    refreshToken(@Body() body: RefreshTokenInput): Observable<TokenPayload> {
-        return this.api42.refreshToken(body.token);
+    refreshToken(@Body() body: RefreshTokenInput): TokenPayload {
+        let jwt = require("jsonwebtoken");
+
+        try {
+            let decoded: UserPayload = jwt.verify(
+                body.token,
+                process.env.REFRESH_TOKEN_SECRET
+            );
+            return NewJwtToken({
+                id: decoded.id,
+                email: decoded.email,
+                login: decoded.login,
+                image_url: decoded.image_url,
+            });
+        } catch (err: any) {
+            throw new UnauthorizedException(err.message);
+        }
     }
 }

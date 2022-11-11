@@ -6,7 +6,9 @@ import { HttpExceptionFilter } from "./http-exception.filters";
 import { ValidationError } from "class-validator";
 
 async function bootstrap() {
-    const app = await NestFactory.create(AppModule);
+    const app = await NestFactory.create(AppModule, {
+        logger: ["debug", "verbose"],
+    });
 
     // Use body, query and parameter validator
     app.useGlobalPipes(
