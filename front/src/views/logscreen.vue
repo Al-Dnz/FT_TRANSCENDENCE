@@ -74,7 +74,7 @@ import { getCookie } from "@/frontJS/cookies";
 export default defineComponent({
   name: "logScreen",
   created() {
-    if (getCookie("trans")) {
+    if (getCookie("trans_refresh")) {
       this.$router.push("/home");
     }
   },
