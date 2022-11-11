@@ -10,62 +10,76 @@
       </div>
     </div>
     <div className ="center-x h-1/6">
-      <img :src="getImgUrl(obj.pp)" className = "rounded-xl"/>
+      <img :src="obj?.actualAvatar.path" className = "rounded-xl"/>
     </div>
-    <span className="center-x">{{ obj.username }}</span>
-    <span className="center-x">Elo :{{ obj.elo }}</span>
+    <span className="center-x">{{ obj?.username }}</span>
+    <span className="center-x">Elo :{{ obj?.stats.level }}</span>
     <div className="flex flex-row justify-center w-full">
-      <span>Win : {{obj.wins}} </span>
+      <span>Win : {{obj?.stats.victories}} </span>
       <div className="w-1/4"> </div>
-      <span>Looses : {{obj.looses}} </span>
+      <span>Looses : {{obj?.stats.defeats}} </span>
     </div>
     <div className=" h-3/5 w-full flex justify-center items-center">
       <div className="bg-slate-300 w-3/4 h-5/6 flex flex-col justify-start items-center overflow-auto rounded-2xl">
-          <div v-for="(item, index) in this.obj.matchHistory" v-bind:key="index" className="h-24 w-5/6 pt-3">
+          <!-- <div v-for="(item, index) in this.obj.matchHistory" v-bind:key="index" className="h-24 w-5/6 pt-3">
             <history-box :obj=item :index="index"/>
-          </div>
+          </div> -->
       </div>
     </div>
   </div>
   </div>
 </template>
   
-  <script>
-  import historyBox from '../components/HistoryBox.vue'
-  export default {
+  <script lang="ts">
+  import { UsersApi, Configuration, UserOutput } from '@/api';
+import { getCredentials } from "@/frontJS/cookies"
+
+interface UserData {
+    obj?: UserOutput;
+    finished: boolean;
+    newSearch: string;
+}
+
+import historyBox from '../components/HistoryBox.vue'
+import { defineComponent } from "vue"; 
+
+export default defineComponent({
 	name: 'accPage',
-	data() {
+	data(): UserData {
 		return {
-		obj : "",
-		finished : false,
-		newSearch : ''
+            obj: undefined,
+            finished : false,
+            newSearch : ''
 		}
 	},
-  	methods :{
-    getImgUrl: function (img) {
+  	methods: {
+    getImgUrl: function (img: string) {
 			return require('@/assets/' + img);
 		},
     search : function() {
-      this.$router.push('/user/' + this.newSearch);
+      this?.$router?.push('/user/' + this.newSearch);
       this.newSearch = '';
       //this.$forceUpdate();
     },
 	async fetchData()
-	{
-		const response = await fetch("http://localhost:3000/data");
-  		const data = await response.json();
- 		this.obj = data;
-		this.finished = true;
+	{   
+        getCredentials().then((accessToken: string ) => {
+            const userAPI = new UsersApi(new Configuration({accessToken: accessToken}))
+            userAPI.getUserMe().then((user: UserOutput ) => {
+                this.obj = user
+                this.finished = true
+            })
+        })        
 	}
   },
-  components :
-  {
-    historyBox
-  },
+//   components :
+//   {
+//     historyBox
+//   },
   async created() {
 	this.fetchData()
   }
-  }
+  })
   </script>
   
   <style src="../assets/tailwind.css" />
