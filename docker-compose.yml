@@ -31,7 +31,7 @@ services:
     networks:
       - backend
     ports:
-      - 3002:3000
+      - 3003:3000
     env_file: .env
 
   nginx:
@@ -61,15 +61,15 @@ services:
         source: ./swagger-ui/swagger.yml
         target: /usr/share/nginx/html/docs/swagger.yml
 
-  # front-end:
-  #   container_name: front-end
-  #   build:
-  #     context: front
-  #     dockerfile: Dockerfile
-  #   networks:
-  #     - frontend
-  #   ports:
-  #     - 3002:80
+  front-end:
+    container_name: front-end
+    build:
+      context: front
+      dockerfile: Dockerfile
+    networks:
+      - frontend
+    ports:
+      - 3002:80
 
   chat:
     container_name: chat
