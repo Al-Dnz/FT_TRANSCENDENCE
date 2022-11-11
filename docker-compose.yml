@@ -64,13 +64,8 @@ services:
   front-end:
     container_name: front-end
     build:
-<<<<<<< HEAD
-      context: front
-      dockerfile: Dockerfile
-=======
       context: ./
       dockerfile: front/Dockerfile
->>>>>>> 18051108f30c3f3c7d7163b7f659b2ad4d8b85c8
     networks:
       - frontend
     ports:
