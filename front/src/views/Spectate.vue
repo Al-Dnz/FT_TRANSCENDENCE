@@ -1,5 +1,5 @@
 <template>
-	<div className="absolute flex flex-col justify-start items-center w-full h-full overflow-auto">
+	<div className="flex flex-col justify-start items-center w-full h-full overflow-auto">
 		<div v-for="(item, index) in this.tab" v-bind:key="index" className="h-1/4 w-3/4 pt-3">
 			<spectateBox :obj=item :index="index"/>
 		</div>
