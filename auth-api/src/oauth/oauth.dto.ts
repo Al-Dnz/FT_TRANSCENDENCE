@@ -13,7 +13,7 @@ export class RefreshTokenInput {
     token: string;
 }
 
-export class AuthorizationCodeQuery {
+export class AuthorizationCode {
     @IsNotEmpty()
     code: string;
 }

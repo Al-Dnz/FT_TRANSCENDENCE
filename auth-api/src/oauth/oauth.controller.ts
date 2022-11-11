@@ -10,7 +10,7 @@ import { OauthService } from "./oauth.service";
 import { Observable, map, mergeMap } from "rxjs";
 import {
     RefreshTokenInput,
-    AuthorizationCodeQuery,
+    AuthorizationCode,
     TokenPayload,
     UserPayload,
     Error,
@@ -48,12 +48,10 @@ export class OauthController {
         type: "string",
         description: "oauth authorization code",
     })
-    @Get("callback")
-    oauthCallback(
-        @Query() query: AuthorizationCodeQuery
-    ): Observable<TokenPayload> {
+    @Post("callback")
+    oauthCallback(@Body() body: AuthorizationCode): Observable<TokenPayload> {
         return this.api42
-            .validAuthCode(query.code)
+            .validAuthCode(body.code)
             .pipe(
                 mergeMap((token: TokenPayload) =>
                     this.api42.getUserInfo(token.access_token)
