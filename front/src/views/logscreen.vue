@@ -54,7 +54,7 @@ export default defineComponent({
   },
   methods : {
     log() {
-		location.href = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-63fa7cac48b861bde4e8614636e48e03d5c8ccfe0a2e2b60f8555a0610a37dac&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fcallback%2F&response_type=code";
+		location.href = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-5ab70555bfa46d107ad4aad7001afe0aebd346fbda51f7c31c1b4e4881d33717&redirect_uri=http%3A%2F%2Flocalhost%2Fapp%2Fcallback&response_type=code";
 	}
     }
   }
