@@ -820,11 +820,11 @@ export const FriendsApiFetchParamCreator = function (configuration?: Configurati
          * @summary Retrieve the list of friends of the connected user
          * @param {number} [onset] beginning index of the list (default: 0)
          * @param {number} [length] size of the list (default: all)
-         * @param {string} [Search] pattern to search for
+         * @param {string} [search] pattern to search for
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listUsersFriends(onset?: number, length?: number, Search?: string, options: any = {}): FetchArgs {
+        listUsersFriends(onset?: number, length?: number, search?: string, options: any = {}): FetchArgs {
             const localVarPath = `/users/me/friends`;
             const localVarUrlObj = url.parse(localVarPath, true);
             const localVarRequestOptions = Object.assign({ method: 'GET' }, options);
@@ -841,8 +841,8 @@ export const FriendsApiFetchParamCreator = function (configuration?: Configurati
                 localVarQueryParameter['length'] = length;
             }
 
-            if (Search !== undefined) {
-                localVarQueryParameter['Search'] = Search;
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
             }
 
             localVarUrlObj.query = Object.assign({}, localVarUrlObj.query, localVarQueryParameter, options.query);
@@ -907,12 +907,12 @@ export const FriendsApiFp = function(configuration?: Configuration) {
          * @summary Retrieve the list of friends of the connected user
          * @param {number} [onset] beginning index of the list (default: 0)
          * @param {number} [length] size of the list (default: all)
-         * @param {string} [Search] pattern to search for
+         * @param {string} [search] pattern to search for
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listUsersFriends(onset?: number, length?: number, Search?: string, options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<Array<UserOutput>> {
-            const localVarFetchArgs = FriendsApiFetchParamCreator(configuration).listUsersFriends(onset, length, Search, options);
+        listUsersFriends(onset?: number, length?: number, search?: string, options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<Array<UserOutput>> {
+            const localVarFetchArgs = FriendsApiFetchParamCreator(configuration).listUsersFriends(onset, length, search, options);
             return (fetch: FetchAPI = isomorphicFetch, basePath: string = BASE_PATH) => {
                 return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                     if (response.status >= 200 && response.status < 300) {
@@ -957,12 +957,12 @@ export const FriendsApiFactory = function (configuration?: Configuration, fetch?
          * @summary Retrieve the list of friends of the connected user
          * @param {number} [onset] beginning index of the list (default: 0)
          * @param {number} [length] size of the list (default: all)
-         * @param {string} [Search] pattern to search for
+         * @param {string} [search] pattern to search for
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listUsersFriends(onset?: number, length?: number, Search?: string, options?: any) {
-            return FriendsApiFp(configuration).listUsersFriends(onset, length, Search, options)(fetch, basePath);
+        listUsersFriends(onset?: number, length?: number, search?: string, options?: any) {
+            return FriendsApiFp(configuration).listUsersFriends(onset, length, search, options)(fetch, basePath);
         },
     };
 };
@@ -1003,13 +1003,13 @@ export class FriendsApi extends BaseAPI {
      * @summary Retrieve the list of friends of the connected user
      * @param {number} [onset] beginning index of the list (default: 0)
      * @param {number} [length] size of the list (default: all)
-     * @param {string} [Search] pattern to search for
+     * @param {string} [search] pattern to search for
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof FriendsApi
      */
-    public listUsersFriends(onset?: number, length?: number, Search?: string, options?: any) {
-        return FriendsApiFp(this.configuration).listUsersFriends(onset, length, Search, options)(this.fetch, this.basePath);
+    public listUsersFriends(onset?: number, length?: number, search?: string, options?: any) {
+        return FriendsApiFp(this.configuration).listUsersFriends(onset, length, search, options)(this.fetch, this.basePath);
     }
 
 }
@@ -1249,11 +1249,11 @@ export const UsersApiFetchParamCreator = function (configuration?: Configuration
          * @summary List users
          * @param {number} [onset] beginning index of the list (default: 0)
          * @param {number} [length] size of the list (default: all)
-         * @param {string} [Search] pattern to search for
+         * @param {string} [search] pattern to search for
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listUsers(onset?: number, length?: number, Search?: string, options: any = {}): FetchArgs {
+        listUsers(onset?: number, length?: number, search?: string, options: any = {}): FetchArgs {
             const localVarPath = `/users`;
             const localVarUrlObj = url.parse(localVarPath, true);
             const localVarRequestOptions = Object.assign({ method: 'GET' }, options);
@@ -1270,8 +1270,8 @@ export const UsersApiFetchParamCreator = function (configuration?: Configuration
                 localVarQueryParameter['length'] = length;
             }
 
-            if (Search !== undefined) {
-                localVarQueryParameter['Search'] = Search;
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
             }
 
             localVarUrlObj.query = Object.assign({}, localVarUrlObj.query, localVarQueryParameter, options.query);
@@ -1402,12 +1402,12 @@ export const UsersApiFp = function(configuration?: Configuration) {
          * @summary List users
          * @param {number} [onset] beginning index of the list (default: 0)
          * @param {number} [length] size of the list (default: all)
-         * @param {string} [Search] pattern to search for
+         * @param {string} [search] pattern to search for
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listUsers(onset?: number, length?: number, Search?: string, options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<Array<UserOutput>> {
-            const localVarFetchArgs = UsersApiFetchParamCreator(configuration).listUsers(onset, length, Search, options);
+        listUsers(onset?: number, length?: number, search?: string, options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<Array<UserOutput>> {
+            const localVarFetchArgs = UsersApiFetchParamCreator(configuration).listUsers(onset, length, search, options);
             return (fetch: FetchAPI = isomorphicFetch, basePath: string = BASE_PATH) => {
                 return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                     if (response.status >= 200 && response.status < 300) {
@@ -1489,12 +1489,12 @@ export const UsersApiFactory = function (configuration?: Configuration, fetch?: 
          * @summary List users
          * @param {number} [onset] beginning index of the list (default: 0)
          * @param {number} [length] size of the list (default: all)
-         * @param {string} [Search] pattern to search for
+         * @param {string} [search] pattern to search for
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listUsers(onset?: number, length?: number, Search?: string, options?: any) {
-            return UsersApiFp(configuration).listUsers(onset, length, Search, options)(fetch, basePath);
+        listUsers(onset?: number, length?: number, search?: string, options?: any) {
+            return UsersApiFp(configuration).listUsers(onset, length, search, options)(fetch, basePath);
         },
         /**
          * 
@@ -1567,13 +1567,13 @@ export class UsersApi extends BaseAPI {
      * @summary List users
      * @param {number} [onset] beginning index of the list (default: 0)
      * @param {number} [length] size of the list (default: all)
-     * @param {string} [Search] pattern to search for
+     * @param {string} [search] pattern to search for
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    public listUsers(onset?: number, length?: number, Search?: string, options?: any) {
-        return UsersApiFp(this.configuration).listUsers(onset, length, Search, options)(this.fetch, this.basePath);
+    public listUsers(onset?: number, length?: number, search?: string, options?: any) {
+        return UsersApiFp(this.configuration).listUsers(onset, length, search, options)(this.fetch, this.basePath);
     }
 
     /**

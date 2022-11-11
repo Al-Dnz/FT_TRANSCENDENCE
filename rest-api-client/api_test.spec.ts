@@ -69,8 +69,8 @@ describe("FriendsApi", () => {
   test("listUsersFriends", () => {
     const onset: number = 789
     const length: number = 789
-    const Search: string = "Search_example"
-    return expect(instance.listUsersFriends(onset, length, Search, {})).resolves.toBe(null)
+    const search: string = "search_example"
+    return expect(instance.listUsersFriends(onset, length, search, {})).resolves.toBe(null)
   })
 })
 
@@ -110,8 +110,8 @@ describe("UsersApi", () => {
   test("listUsers", () => {
     const onset: number = 789
     const length: number = 789
-    const Search: string = "Search_example"
-    return expect(instance.listUsers(onset, length, Search, {})).resolves.toBe(null)
+    const search: string = "search_example"
+    return expect(instance.listUsers(onset, length, search, {})).resolves.toBe(null)
   })
   test("userPartialUpdate", () => {
     const body: api.any = undefined

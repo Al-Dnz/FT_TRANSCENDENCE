@@ -404,7 +404,7 @@ components:
     Search:
       description: "pattern to search for"
       in: query
-      name: Search
+      name: search
       required: false
       schema:
         type: string
