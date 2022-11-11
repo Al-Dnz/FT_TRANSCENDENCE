@@ -17,7 +17,13 @@
 <script>
 import { defineComponent } from 'vue'
 export default defineComponent({
-  name: 'App'
+  name: 'App',
+  created() {
+		console.log(document.cookie);
+	},
+	beforeUnmount() {
+		console.log ("bye app");
+	},
 })
 </script>
 

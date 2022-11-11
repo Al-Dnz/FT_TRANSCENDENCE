@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
+import {getCookie} from "@/frontJS/cookies";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -126,6 +127,22 @@ const routes: Array<RouteRecordRaw> = [
       },
     },
   },
+
+  {
+    path: "/callback",
+    name: "callbackPage",
+    components: {
+      default: () => import("@/views/Callback.vue"),
+      navbar: () => import("@/components/Nav.vue"),
+      headbar: () => import("@/components/Header.vue"),
+    },
+    props: {
+      headbar: {
+        sectionTitle: "TokenLoading",
+        type: String,
+      },
+    },
+  },
   {
     path: "/:pathMatch(.*)*",
     name: "not-found",
@@ -148,5 +165,12 @@ const router = createRouter({
   history: createWebHistory(baseURL),
   routes,
 });
+
+router.beforeEach((to) => {
+  if (!getCookie('trans') && !(to.name == 'callbackPage' || to.name == 'log'))
+  {
+    return { name: 'log' }
+  }
+})
 
 export default router;

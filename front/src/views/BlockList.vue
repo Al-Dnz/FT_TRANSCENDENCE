@@ -6,7 +6,7 @@
 				<PaperAirplaneIcon @click="add()" />
 			</div>
 		</div>
-		<div v-for="(item, index) in sortedTab()" v-bind:key="index" className="h-friendbox w-3/4 pt-3">
+		<div v-for="(item, index) in sortedTab()" v-bind:key="index" className="lg:h-friendbox h-12 w-3/4 pt-3">
 			<blockBox :obj=item :index="index" :delI="delIndex" :mod="modify"/>
 		</div>
 	</div>

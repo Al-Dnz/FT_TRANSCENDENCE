@@ -32,7 +32,7 @@
                         <img src="../assets/NoImage.jpeg" className="h-36 w-36 ">
                     </div>
                     <div v-else>
-                        <img :src="imageData" @click="set_avatar(4)" class="h-36 w-36 border-4 bg-slate-200 rounded-xl" :class="current_avatar === 4 ? 'border-green-600' : 'border-transparent hover:border-green-300'">
+                        <img :src="getImgUrl(imageData)" @click="set_avatar(4)" class="h-36 w-36 border-4 bg-slate-200 rounded-xl" :class="current_avatar === 4 ? 'border-green-600' : 'border-transparent hover:border-green-300'">
                     </div>
             </div>
         </div>
@@ -76,7 +76,7 @@ export default {
             this.new_username = '';
         },
 		getImgUrl: function (img) {
-			return require(img);
+			return require("@/assets/" + img);
 		},
         previewImage: function(event) {
             // Reference to the DOM input element
