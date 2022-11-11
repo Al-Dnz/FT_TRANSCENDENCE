@@ -19,8 +19,8 @@ export class UserService {
     private matchRepository: Repository<Match>,
   ) {}
 
-  create(createUserDto: CreateUserDto, avatarPath: string): Promise<User> {
-    let user = new User(createUserDto.username);
+  create(login: string, avatarPath: string): Promise<User> {
+    let user = new User(login);
     user.avatars = [new Avatar(avatarPath, true)];
     return this.userRepository.save(user);
   }

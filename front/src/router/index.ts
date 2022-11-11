@@ -1,5 +1,11 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import {getCookie} from "@/frontJS/cookies";
+import {
+  getCookie,
+  setAccessCookie,
+  setRefreshCookie,
+} from "@/frontJS/cookies";
+import { AuthenticationApi } from "@/api";
+import { OauthToken } from "@/api/models";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -167,10 +173,23 @@ const router = createRouter({
 });
 
 router.beforeEach((to) => {
-  if (!getCookie('trans') && !(to.name == 'callbackPage' || to.name == 'log'))
-  {
-    return { name: 'log' }
+  const access = getCookie("trans_access");
+  const refresh = getCookie("trans_refresh");
+  const page = to.name == "callbackPage" || to.name == "log";
+
+  if (!refresh && !page) {
+    return { name: "log" };
   }
-})
+  if (!access && !page) {
+    new AuthenticationApi()
+      .refreshToken({
+        refreshTokenRequest: { token: refresh },
+      })
+      .then((response: OauthToken) => {
+        setAccessCookie(response.accessToken);
+        setRefreshCookie(response.refreshToken);
+      });
+  }
+});
 
 export default router;

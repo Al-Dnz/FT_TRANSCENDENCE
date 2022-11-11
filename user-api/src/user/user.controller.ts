@@ -14,6 +14,7 @@ import {
     UseGuards,
     UseInterceptors,
     UploadedFile,
+    InternalServerErrorException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -48,13 +49,19 @@ export class UserController {
     }
 
     @Post()
-    async create(
-        @Body() createUserDto: CreateUserDto,
-        @Identity() user: Identity,
-    ): Promise<UserOutputDto> {
-        return new UserOutputDto(
-            await this.userService.create(createUserDto, user.image_url),
-        );
+    async create(@Identity() user: Identity): Promise<UserOutputDto> {
+        return this.userService
+            .findOne(user.login)
+            .then(async (value?: User) => {
+                return value
+                    ? new UserOutputDto(value)
+                    : new UserOutputDto(
+                        await this.userService.create(user.login, user.image_url),
+                    );
+            })
+            .catch((error: Error) => {
+                throw new InternalServerErrorException(error.message);
+            });
     }
 
     @Get('me')

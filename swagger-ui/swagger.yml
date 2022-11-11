@@ -82,8 +82,6 @@ paths:
       security:
         - 42oauth: [public]
         - bearerAuth: []
-      requestBody:
-        $ref: "#/components/requestBodies/CreateUserInput"
       responses:
         "201":
           $ref: "#/components/responses/UserResponse"
@@ -322,25 +320,25 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/Error"
+            $ref: "#/components/schemas/ErrorOutput"
     NotFound:
       description: Ressource not found
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/Error"
+            $ref: "#/components/schemas/ErrorOutput"
     BadRequest:
       description: Invalid request
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/Error"
+            $ref: "#/components/schemas/ErrorOutput"
     InternalServerError:
       description: Internal server error
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/Error"
+            $ref: "#/components/schemas/ErrorOutput"
     UserResponse:
       description: success response
       content:
@@ -451,7 +449,7 @@ components:
           type: integer
           format: int64
           example: 16665511
-    Error:
+    ErrorOutput:
       type: object
       required:
         - message
@@ -599,17 +597,6 @@ components:
               two_fa:
                 type: boolean
                 example: false
-    CreateUserInput:
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - username
-            properties:
-              username:
-                type: string
-                example: dboyer
   securitySchemes:
     42oauth2:
       type: oauth2
