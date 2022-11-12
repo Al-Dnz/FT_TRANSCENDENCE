@@ -1,6 +1,6 @@
 <template>
-    <div className="h-full w-full flex flex-col justify-center items-center">
-        <img src="@/assets/crying.png" className="h-4/5">
+    <div className="h-58 w-58 flex flex-col justify-center items-center">
+        <img src="@/assets/crying.png" className="h-46 w-56">
         <p> {{str}}</p>
     </div>
 </template>

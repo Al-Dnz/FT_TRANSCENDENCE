@@ -32,12 +32,12 @@
   </div>
   </div>
   <div v-else-if="error" className="w-full h-full">
-    <brokePage :str="error?.name" />
+    <brokePage :str="error?.message" />
   </div>
 </template>
   
 <script lang="ts">
-import { UsersApi, Configuration, UserOutput, ResponseError } from '@/api';
+import { UsersApi, Configuration, UserOutput, ErrorOutput } from '@/api';
 import { getCredentials } from "@/frontJS/cookies";
 import  brokePage  from "@/components/Broke.vue"
 
@@ -45,7 +45,7 @@ interface UserData {
     obj?: UserOutput;
     loading: boolean;
     newSearch: string;
-    error?: ResponseError;
+    error?: ErrorOutput;
 }
 
 //import historyBox from '../components/HistoryBox.vue'
@@ -72,26 +72,25 @@ export default defineComponent({
     },
 	async fetchData()
 	{
-        this.loading = true;
-        getCredentials().then((accessToken: string ) => {
-            const userAPI = new UsersApi(new Configuration({accessToken: accessToken}))
-            userAPI.getUserByID({login: this.$route?.params.id as string}).then((user: UserOutput ) => {
-                this.obj = user
-            })
-        })
-        .catch((message: any) => {
-          console.log("hi");
-          this.error = message;
-        })
-        this.loading = false       
+    console.log(this.$route?.params.id as string);
+    this.loading = true;
+    getCredentials()
+    .then((accessToken: string ) => {
+      const userAPI = new UsersApi(new Configuration({accessToken: accessToken}))
+      userAPI.getUserByID({login: this.$route?.params.id as string})
+        .then((user: UserOutput ) => {
+          this.obj = user})
+        .catch((msg : ErrorOutput) => {
+          this.error = msg;})})
+    this.loading = false       
 	}
   },
   components :
   {
     brokePage
   },
-  async created() {
-	this.fetchData()
+  async mounted() {
+	  this.fetchData()
   }
   })
   </script>
