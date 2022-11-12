@@ -80,8 +80,7 @@ export default defineComponent({
   },
   methods: {
     log() {
-      location.href =
-        "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-8dc368c5997523d41406bd66175d01ff935a1913dab998493a00a63515607133&redirect_uri=http%3A%2F%2Flocalhost%2Fapp%2Fcallback&response_type=code";
+      location.href = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-5ab70555bfa46d107ad4aad7001afe0aebd346fbda51f7c31c1b4e4881d33717&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Fapp%2Fcallback&response_type=code";
     },
   },
 });
