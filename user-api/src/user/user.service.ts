@@ -1,21 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User, Avatar, Match } from 'db-interface/Core';
-import { DeleteResult, Equal, Like, Repository, UpdateResult } from 'typeorm';
+import { User, Avatar } from 'db-interface/Core';
+import { DeleteResult, Like, Repository, UpdateResult } from 'typeorm';
 import { QueryFilterDto } from 'validation/query.dto';
 
 @Injectable()
 export class UserService {
     constructor(
         @InjectRepository(User)
-        private userRepository: Repository<User>,
-
-        @InjectRepository(Avatar)
-        private avatarRepository: Repository<Avatar>,
-
-        @InjectRepository(Match)
-        private matchRepository: Repository<Match>,
+        private userRepository: Repository<User>, // @InjectRepository(Match) // private matchRepository: Repository<Match>,
     ) { }
 
     create(login: string, avatarPath: string): Promise<User> {
@@ -24,7 +18,7 @@ export class UserService {
         return this.userRepository.save(user);
     }
 
-    findAll(query: QueryFilterDto): Promise<User[]> {
+    list(query: QueryFilterDto): Promise<User[]> {
         return this.userRepository.find({
             skip: query.onset,
             take: query.length,
@@ -92,34 +86,17 @@ export class UserService {
             .remove({ login: friendLogin });
     }
 
-    async listAvatars(login: string, query: QueryFilterDto): Promise<Avatar[]> {
-        let user: User = await this.userRepository.findOne({
-            where: {
-                login: login,
-            },
-            relations: {
-                avatars: true,
-            },
-        });
-
-        return user.avatars.slice(query.onset, query.length);
-    }
-
-    async deleteAvatarByID(login: string, avatarID: number): Promise<void> {
-        this.avatarRepository.delete({ user: { login: login }, id: avatarID });
-    }
-
-    async listMatchByUserID(
-        login: string,
-        query: QueryFilterDto,
-    ): Promise<Match[]> {
-        return this.matchRepository.find({
-            skip: query.onset,
-            take: query.length,
-            where: { participants: Equal(login) },
-            relations: {
-                participants: true,
-            },
-        });
-    }
+    // async listMatchByUserID(
+    //     login: string,
+    //     query: QueryFilterDto,
+    // ): Promise<Match[]> {
+    //     return this.matchRepository.find({
+    //         skip: query.onset,
+    //         take: query.length,
+    //         where: { participants: Equal(login) },
+    //         relations: {
+    //             participants: true,
+    //         },
+    //     });
+    // }
 }

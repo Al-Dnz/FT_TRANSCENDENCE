@@ -1,7 +1,7 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { Avatar, User, UserStats, UserStatus } from 'db-interface/Core';
 
-export class UserStatsOutputDto {
+class UserStatsOutputDto {
     constructor(stats: UserStats) {
         this.id = stats.id;
         this.level = stats.level;
@@ -14,20 +14,12 @@ export class UserStatsOutputDto {
     defeats: number;
 }
 
-export class AvatarOutputDto {
-    constructor(avatar: Avatar) {
-        this.id = avatar.id;
-        this.path = avatar.path;
-    }
-    id: number;
-    path: string;
-}
-
-export class ActualAvatarOutputDto {
+class ActualAvatarOutputDto {
     constructor(avatars: Avatar[]) {
-        let actual_avatar: Avatar[] = avatars.map((value: Avatar) => {
+        let actual_avatar: Avatar[] = avatars.filter((value: Avatar) => {
             return value.activate ? value : undefined;
         });
+        console.log(actual_avatar);
 
         if (actual_avatar.length !== 1) {
             throw new InternalServerErrorException(

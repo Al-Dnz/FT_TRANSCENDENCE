@@ -33,6 +33,8 @@ services:
     ports:
       - 3003:3000
     env_file: .env
+    volumes:
+      - ./upload:/app/upload
 
   nginx:
     container_name: nginx
