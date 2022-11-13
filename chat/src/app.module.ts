@@ -7,10 +7,11 @@ import { ChatModule } from './chat/chat.module';
 import { ConfigModule } from '@nestjs/config';
 import { ChannelModule } from './chat/channel/channel.module';
 import { Channel } from './chat/channel/channel.entity';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
-	TypeOrmModule.forFeature([ Channel]),
+	TypeOrmModule.forFeature([Channel]),
 	ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -24,8 +25,6 @@ import { Channel } from './chat/channel/channel.entity';
       synchronize: true,
     }),
     ChatModule,
-	// ChannelModule,
-	
   ],
   controllers: [AppController],
   providers: [AppService],

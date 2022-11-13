@@ -1,14 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ValidationPipe } from '@nestjs/common';
 import { MessageService } from './message.service';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
+
+import { Logger } from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
+
 
 @Controller('message')
 export class MessageController {
   constructor(private readonly messageService: MessageService) {}
 
+  private logger: Logger = new Logger('MessageController');
+
   @Post()
-  create(@Body() createMessageDto: CreateMessageDto) {
+  create(@Body(ValidationPipe) createMessageDto: CreateMessageDto)
+  {
     return this.messageService.create(createMessageDto);
   }
 
