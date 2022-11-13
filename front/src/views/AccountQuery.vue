@@ -32,14 +32,14 @@
     </div>
   </div>
   <div v-else-if="error" className="flex items-center w-full h-full" >
-    <errorPage :str="error?.message" />
+    <errorPage :str="error" />
   </div>
 </div>
 </div>
 </template>
   
 <script lang="ts">
-import { UsersApi, Configuration, UserOutput, ErrorOutput } from '@/api';
+import { UsersApi, Configuration, UserOutput, ErrorOutput, ResponseError } from '@/api';
 import { getCredentials } from "@/frontJS/cookies";
 import  errorPage  from "@/components/Error.vue";
 import  loadingPage  from "@/components/Loading.vue"
@@ -48,7 +48,7 @@ interface UserData {
     obj?: UserOutput;
     loading: boolean;
     newSearch: string;
-    error?: ErrorOutput;
+    error: string;
 }
 
 //import historyBox from '../components/HistoryBox.vue'
@@ -61,7 +61,7 @@ export default defineComponent({
             obj: undefined,
             loading : false,
             newSearch : '',
-            error: undefined
+            error: ''
 		}
 	},
   	methods: {
@@ -83,8 +83,8 @@ export default defineComponent({
       userAPI.getUserByID({login: this.$route?.params.id as string})
         .then((user: UserOutput ) => {
           this.obj = user})
-        .catch((msg : ErrorOutput) => {
-          this.error = msg;})})
+        .catch((msg : ResponseError) => { msg.response.json().then((str : ErrorOutput) => {this.error = str.message;});}
+        )})
     this.loading = false       
 	}
   },
