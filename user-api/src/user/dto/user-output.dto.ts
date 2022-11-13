@@ -19,7 +19,6 @@ class ActualAvatarOutputDto {
         let actual_avatar: Avatar[] = avatars.filter((value: Avatar) => {
             return value.activate ? value : undefined;
         });
-        console.log(actual_avatar);
 
         if (actual_avatar.length !== 1) {
             throw new InternalServerErrorException(

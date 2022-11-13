@@ -9,7 +9,7 @@ import { QueryFilterDto } from 'validation/query.dto';
 export class UserService {
     constructor(
         @InjectRepository(User)
-        private userRepository: Repository<User>, // @InjectRepository(Match) // private matchRepository: Repository<Match>,
+        private userRepository: Repository<User>,
     ) { }
 
     create(login: string, avatarPath: string): Promise<User> {
@@ -63,7 +63,7 @@ export class UserService {
 
         let friends: User[] = user.friends.slice(query.onset, query.length);
         if (query.search) {
-            return friends.map((value: User) =>
+            return friends.filter((value: User) =>
                 value.userName.includes(query.search) ? value : undefined,
             );
         }
@@ -85,18 +85,4 @@ export class UserService {
             .of({ login: userLogin })
             .remove({ login: friendLogin });
     }
-
-    // async listMatchByUserID(
-    //     login: string,
-    //     query: QueryFilterDto,
-    // ): Promise<Match[]> {
-    //     return this.matchRepository.find({
-    //         skip: query.onset,
-    //         take: query.length,
-    //         where: { participants: Equal(login) },
-    //         relations: {
-    //             participants: true,
-    //         },
-    //     });
-    // }
 }

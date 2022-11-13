@@ -160,25 +160,4 @@ export class UserController {
             throw new InternalServerErrorException(error.message);
         });
     }
-
-    // @Get('me/match_history')
-    // async listUserMatchHistory(
-    //     @Identity() user: Identity,
-    //     @Query() query: QueryFilterDto,
-    // ): Promise<MatchOutputDto[]> {
-    //     const userFound: User | undefined = await this.userService.findOne(
-    //         user.login,
-    //     );
-    //     if (!userFound) {
-    //         throw new NotFoundException(`user ${user.login} not found`);
-    //     }
-    //     return this.userService
-    //         .listMatchByUserID(user.login, query)
-    //         .then((matchs: Match[]) => {
-    //             return matchs.map((match: Match) => new MatchOutputDto(match));
-    //         })
-    //         .catch((error: Error) => {
-    //             throw new InternalServerErrorException(error.message);
-    //         });
-    // }
 }

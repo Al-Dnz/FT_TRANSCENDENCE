@@ -12,11 +12,13 @@ import {
     Avatar,
 } from 'db-interface/Core';
 import { AvatarModule } from './avatar/avatar.module';
+import { MatchModule } from './match/match.module';
 
 @Module({
     imports: [
         UserModule,
         AvatarModule,
+        MatchModule,
         TypeOrmModule.forRoot({
             type: 'postgres',
             host: process.env.POSTGRES_HOST,
