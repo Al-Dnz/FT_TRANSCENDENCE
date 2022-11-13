@@ -65,9 +65,6 @@ export default defineComponent({
 		}
 	},
   	methods: {
-    getImgUrl: function (img: string) {
-			return require('@/assets/' + img);
-		},
     search : function() {
       this?.$router?.push('/user/' + this.newSearch);
       this.newSearch = '';
@@ -75,17 +72,16 @@ export default defineComponent({
     },
 	async fetchData()
 	{
-    console.log(this.$route?.params.id as string);
     this.loading = true;
     getCredentials()
     .then((accessToken: string ) => {
       const userAPI = new UsersApi(new Configuration({accessToken: accessToken}))
       userAPI.getUserByID({login: this.$route?.params.id as string})
         .then((user: UserOutput ) => {
-          this.obj = user})
+          this.obj = user;})
         .catch((msg : ResponseError) => { msg.response.json().then((str : ErrorOutput) => {this.error = str.message;});}
         )})
-    this.loading = false       
+    this.loading = false;
 	}
   },
   components :
@@ -94,7 +90,7 @@ export default defineComponent({
     loadingPage
   },
   async mounted() {
-	  this.fetchData()
+	  await this.fetchData()
   }
   })
   </script>

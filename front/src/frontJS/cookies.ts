@@ -22,22 +22,20 @@ export async function getCredentials(): Promise<string> {
         location.href = "http://localhost";
         return "";
     }
-
     if (!accessToken) {
-        new AuthenticationApi()
+        await new AuthenticationApi()
             .refreshToken({
                 refreshTokenRequest: { token: refreshToken },
             })
             .then((value: OauthToken) => {
                 setAccessCookie(value.accessToken);
                 setRefreshCookie(value.refreshToken);
-                return value.accessToken;
             })
             .catch(() => {
                 location.href = "http://localhost";
             });
     }
-    return accessToken;
+    return getCookie("trans_access");
 }
 
 export function addMinutes(date: Date, minutes: number) {
@@ -45,7 +43,7 @@ export function addMinutes(date: Date, minutes: number) {
 }
 
 export function setAccessCookie(accessToken: string) {
-    setCookie("trans_access", accessToken, addMinutes(new Date(), 15));
+    setCookie("trans_access", accessToken, addMinutes(new Date(), 1));
 }
 
 export function setRefreshCookie(accessToken: string) {

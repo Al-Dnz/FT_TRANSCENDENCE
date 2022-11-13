@@ -25,11 +25,10 @@ export default defineComponent({
       .oauthAuthentication({
         oauthAuthenticationRequest: { code: this.$route.query.code as string },
       })
-      .then((value: OauthToken) => {
+      .then(async (value: OauthToken) => {
         setAccessCookie(value.accessToken)
         setRefreshCookie(value.refreshToken)
-
-        new UsersApi(new Configuration({accessToken: value.accessToken}))
+        await new UsersApi(new Configuration({accessToken: value.accessToken}))
         .createUser().catch((error: Error) => {
             throw new Error(error.message)
         })
