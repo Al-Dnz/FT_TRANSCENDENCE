@@ -3,10 +3,15 @@ import {
 	Column,
 	PrimaryGeneratedColumn,
 	CreateDateColumn,
-	OneToMany
+	ManyToMany,
+	OneToMany,
+	JoinTable,
+	ManyToOne,
    } from 'typeorm';
 
 import { Message } from '../message/message.entity';
+
+import { User } from 'src/user/user.entity';
 
 @Entity()
 export class Channel 
@@ -25,5 +30,21 @@ export class Channel
 
 	@OneToMany(() => Message, (message) => message.channel)
     messages: Message[]
+	
+    @ManyToMany(() => User, (user) => user.channels)
+    @JoinTable({
+			name: 'channel_user',
+			joinColumn: 
+			{
+				name: 'channel_id',
+				referencedColumnName: 'id',
+    		},
+			inverseJoinColumn: 
+			{
+				name: 'user_id',
+				referencedColumnName: 'id',
+   			},
+	})
+    users: User[]
 
 }

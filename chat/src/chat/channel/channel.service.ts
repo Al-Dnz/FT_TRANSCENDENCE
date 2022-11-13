@@ -20,10 +20,18 @@ export class ChannelService {
     private readonly messagesRepository: Repository<Message>,
   ) {}
 
-  create(createChannelDto: CreateChannelDto) {
+  private logger: Logger = new Logger('ChannelService');
+
+  async create(createChannelDto: CreateChannelDto) {
     const channel = new Channel();
+	if (!createChannelDto.name || createChannelDto.name.length < 1)
+		throw new HttpException("chan name is empty", HttpStatus.FAILED_DEPENDENCY);
+
     channel.name = createChannelDto.name;
- 
+	const same_named_channel = await this.channelsRepository.findOneBy({ name: channel.name });
+	if (same_named_channel)
+		throw new HttpException("another chan with this name still exists", HttpStatus.FAILED_DEPENDENCY);
+
     return this.channelsRepository.save(channel);
   }
 
@@ -39,10 +47,11 @@ export class ChannelService {
 		return channel;
   }
 
-  private logger: Logger = new Logger('MessageGateway');
-
   async findMessages(id: number)
   {
+	const channel = await this.channelsRepository.findOneBy({ id: id });
+	if (!channel)
+		throw new HttpException('Channel not found', HttpStatus.NOT_FOUND);
     return await this.messagesRepository.find({
       relations: {
         channel: true,
@@ -64,7 +73,10 @@ export class ChannelService {
 	if (!channel)
 		throw new HttpException('Channel not found', HttpStatus.NOT_FOUND);
 	else if (channel.unremovable == false)
+	{
 		await this.channelsRepository.delete(id);
+		throw new HttpException(`Channel #${id} wa deleted succesfully`, HttpStatus.OK);
+	}
 	else
 		throw new HttpException('Forbidden: unremovable channel', HttpStatus.FORBIDDEN);
   }

@@ -1,16 +1,14 @@
 FROM node:18 AS builder
 WORKDIR /app
 
-RUN mkdir -p /app
-
-ADD front /app/front
-WORKDIR /app/front
+ADD . /app
+WORKDIR /app
 RUN npm install && npm run build
 
 # production stage
 FROM nginx:1.22.1-alpine
-COPY --from=builder /app/front/dist /app
-COPY front/nginx.conf /etc/nginx/nginx.conf 
+COPY --from=builder /app/dist /app
+COPY nginx.conf /etc/nginx/nginx.conf 
 
 EXPOSE 80
 

@@ -9,8 +9,8 @@
 			</div>
       </div>
     </div>
-    <div className ="center-x h-1/6">
-      <img :src="obj?.actualAvatar.path" className = "rounded-xl"/>
+    <div className ="center-x h-2/6">
+      <img :src="obj?.actualAvatar.path" className = "h-44 w-44 rounded-xl"/>
     </div>
     <span className="center-x">{{ obj?.username }}</span>
     <span className="center-x">Elo :{{ obj?.stats.level }}</span>

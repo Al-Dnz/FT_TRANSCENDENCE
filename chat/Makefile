@@ -6,7 +6,7 @@ launch:
 	@-docker-compose -f ${DOCKER_COMPOSE_FILE} up --build -d
 
 nestjs:
-	cd chat ; npm install ; npm run start:dev
+	npm install ; npm run start:dev
 
 down:
 	@-docker-compose -f ${DOCKER_COMPOSE_FILE} down

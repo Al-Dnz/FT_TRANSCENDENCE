@@ -3,10 +3,13 @@ import {
 	Column,
 	PrimaryGeneratedColumn,
 	CreateDateColumn,
-	ManyToOne
+	ManyToOne,
+	JoinColumn,
+	OneToMany
    } from 'typeorm';
 
 import { Channel } from 'src/chat/channel/channel.entity';
+import { User } from 'src/user/user.entity';
 
 @Entity()
 export class Message 
@@ -14,17 +17,21 @@ export class Message
 	@PrimaryGeneratedColumn()
   	id: number;
 
-	@Column({ unique: true })
-	text: string;
-	
 	@CreateDateColumn()
 	createdAt: Date;
 
-	// to remove with channel table
+	@Column('boolean', {default: false})
+	private: boolean = false;
+
 	@Column()
-	sender: string;
+	text: string;
+	
+	@ManyToOne(() =>User, (user) => user.messages)
+	@JoinColumn({name: "sender_id"})   
+    sender: User
 
     @ManyToOne(() =>Channel, (channel) => channel.messages)
+	@JoinColumn({name: "channel_id"})   
     channel: Channel
 
 }
