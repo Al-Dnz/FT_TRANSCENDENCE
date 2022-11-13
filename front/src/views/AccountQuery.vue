@@ -1,9 +1,6 @@
 <template>
-  <div v-if="loading">
-    <p>Loading...</p>
-  </div>
-  <div  v-else-if="obj" className="flex flex-row justify-center w-full h-full ">
-  <div className = "flex flex-col justify-between w-full h-full bg-slate-200 lg:w-3/4 rounded-2xl">
+  <div className ="center-x h-full w-full">
+  <div className = "flex flex-col justify-start w-full h-full lg:w-3/4 rounded-2xl bg-slate-200">
     <div className = "w-full h-friendbox">
       <div className = "w-full h-full flex flex-col justify-center"> 
       <div className="flex flex-row justify-center w-full rounded-2xl h-4/6 text-slate-500 focus-within:text-green-500 cursor-pointer">
@@ -12,8 +9,12 @@
 			</div>
       </div>
     </div>
-    <div className ="center-x h-1/6">
-      <img :src="obj?.actualAvatar.path" className = "rounded-xl"/>
+  <div v-if="loading">
+    <loadingPage />
+  </div>
+  <div  v-else-if="obj" className="flex flex-col justify-center items-center w-full h-full ">
+    <div className ="center-x h-2/6">
+      <img :src="obj?.actualAvatar.path" className = "h-44 w-44 rounded-xl"/>
     </div>
     <span className="center-x">{{ obj?.username }}</span>
     <span className="center-x">Elo :{{ obj?.stats.level }}</span>
@@ -30,16 +31,18 @@
       </div>
     </div>
   </div>
+  <div v-else-if="error" className="flex items-center w-full h-full" >
+    <errorPage :str="error?.message" />
   </div>
-  <div v-else-if="error" className="w-full h-full">
-    <brokePage :str="error?.message" />
-  </div>
+</div>
+</div>
 </template>
   
 <script lang="ts">
 import { UsersApi, Configuration, UserOutput, ErrorOutput } from '@/api';
 import { getCredentials } from "@/frontJS/cookies";
-import  brokePage  from "@/components/Broke.vue"
+import  errorPage  from "@/components/Error.vue";
+import  loadingPage  from "@/components/Loading.vue"
 
 interface UserData {
     obj?: UserOutput;
@@ -87,7 +90,8 @@ export default defineComponent({
   },
   components :
   {
-    brokePage
+    errorPage,
+    loadingPage
   },
   async mounted() {
 	  this.fetchData()
