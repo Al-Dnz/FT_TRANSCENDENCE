@@ -43,7 +43,7 @@ services:
       - backend
       - frontend
     ports:
-      - 80:80
+      - 8000:80
     volumes:
       - type: bind
         source: ./nginx/nginx.conf

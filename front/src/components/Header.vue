@@ -13,7 +13,8 @@ props: {
 methods : {
 	goLog()
 	{
-		this.$cookies.remove("trans")
+		this.$cookies.remove("trans_access")
+		this.$cookies.remove("trans_refresh")
 		this.$router.push('/');
 
 	}

@@ -58,12 +58,6 @@
 <script>
 export default {
   name : 'navBar',
-  data ()
-  {
-    return {
-      user : 'Jean_didier'
-    }
-  },
 	created() {
 		console.log ("hello nav");
 	},
@@ -77,7 +71,7 @@ export default {
 	},
 	goAccount()
 	{
-		this.$router.push('/user/' + this.user);
+		this.$router.push('/user');
 	},
 	goChat()
 	{

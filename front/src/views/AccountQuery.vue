@@ -1,6 +1,6 @@
 <template>
-  <div  v-if="finished" className="flex flex-row justify-center w-full h-full ">
-  <div className = "flex flex-col justify-between w-full h-full bg-slate-200 lg:w-3/4 rounded-2xl">
+  <div className ="center-x h-full w-full">
+  <div className = "flex flex-col justify-start w-full h-full lg:w-3/4 rounded-2xl bg-slate-200">
     <div className = "w-full h-friendbox">
       <div className = "w-full h-full flex flex-col justify-center"> 
       <div className="flex flex-row justify-center w-full rounded-2xl h-4/6 text-slate-500 focus-within:text-green-500 cursor-pointer">
@@ -9,6 +9,10 @@
 			</div>
       </div>
     </div>
+  <div v-if="loading">
+    <loadingPage />
+  </div>
+  <div  v-else-if="obj" className="flex flex-col justify-center items-center w-full h-full ">
     <div className ="center-x h-2/6">
       <img :src="obj?.actualAvatar.path" className = "h-44 w-44 rounded-xl"/>
     </div>
@@ -27,20 +31,27 @@
       </div>
     </div>
   </div>
+  <div v-else-if="error" className="flex items-center w-full h-full" >
+    <errorPage :str="error" />
   </div>
+</div>
+</div>
 </template>
   
-  <script lang="ts">
-  import { UsersApi, Configuration, UserOutput } from '@/api';
-import { getCredentials } from "@/frontJS/cookies"
+<script lang="ts">
+import { UsersApi, Configuration, UserOutput, ErrorOutput, ResponseError } from '@/api';
+import { getCredentials } from "@/frontJS/cookies";
+import  errorPage  from "@/components/Error.vue";
+import  loadingPage  from "@/components/Loading.vue"
 
 interface UserData {
     obj?: UserOutput;
-    finished: boolean;
+    loading: boolean;
     newSearch: string;
+    error: string;
 }
 
-import historyBox from '../components/HistoryBox.vue'
+//import historyBox from '../components/HistoryBox.vue'
 import { defineComponent } from "vue"; 
 
 export default defineComponent({
@@ -48,8 +59,9 @@ export default defineComponent({
 	data(): UserData {
 		return {
             obj: undefined,
-            finished : false,
-            newSearch : ''
+            loading : false,
+            newSearch : '',
+            error: ''
 		}
 	},
   	methods: {
@@ -62,22 +74,27 @@ export default defineComponent({
       //this.$forceUpdate();
     },
 	async fetchData()
-	{   
-        getCredentials().then((accessToken: string ) => {
-            const userAPI = new UsersApi(new Configuration({accessToken: accessToken}))
-            userAPI.getUserMe().then((user: UserOutput ) => {
-                this.obj = user
-                this.finished = true
-            })
-        })        
+	{
+    console.log(this.$route?.params.id as string);
+    this.loading = true;
+    getCredentials()
+    .then((accessToken: string ) => {
+      const userAPI = new UsersApi(new Configuration({accessToken: accessToken}))
+      userAPI.getUserByID({login: this.$route?.params.id as string})
+        .then((user: UserOutput ) => {
+          this.obj = user})
+        .catch((msg : ResponseError) => { msg.response.json().then((str : ErrorOutput) => {this.error = str.message;});}
+        )})
+    this.loading = false       
 	}
   },
-//   components :
-//   {
-//     historyBox
-//   },
-  async created() {
-	this.fetchData()
+  components :
+  {
+    errorPage,
+    loadingPage
+  },
+  async mounted() {
+	  this.fetchData()
   }
   })
   </script>

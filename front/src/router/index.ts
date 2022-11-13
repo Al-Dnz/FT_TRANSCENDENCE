@@ -32,9 +32,24 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     name: "accPage",
-    path: "/user/:id",
+    path: "/user",
     components: {
       default: () => import("@/views/Account.vue"),
+      navbar: () => import("@/components/Nav.vue"),
+      headbar: () => import("@/components/Header.vue"),
+    },
+    props: {
+      headbar: {
+        sectionTitle: "Account",
+        type: String,
+      },
+    },
+  },
+  {
+    name: "accQuery",
+    path: "/user/:id",
+    components: {
+      default: () => import("@/views/AccountQuery.vue"),
       navbar: () => import("@/components/Nav.vue"),
       headbar: () => import("@/components/Header.vue"),
     },
