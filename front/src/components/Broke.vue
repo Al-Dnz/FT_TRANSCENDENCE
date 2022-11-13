@@ -1,23 +1,23 @@
 <template>
-    <div className="h-58 w-58 flex flex-col justify-center items-center">
-        <img src="@/assets/crying.png" className="h-46 w-56">
-        <p> {{str}}</p>
+    <div className="h-full w-full flex flex-col justify-start items-center bg-slate-200">
+        <div className="h-1/3 flex flex-col justify-end pb-10">
+                <img src="@/assets/crying.gif" className="object-scale-down h-56 w-56 rounded-xl">
+        </div>
+        <p>Oh no! An error as occured :</p>
+        <p>404 bang bang</p>
     </div>
 </template>
 
-<script lang="ts">
+<script>
 
-import { defineComponent } from "@vue/runtime-core";
-
-
-export default defineComponent({
+export default {
     name: "brokePage",
-    props: {
+    /*props: {
         str : {
             type: String
         }
-    }
-})
+    }*/
+}
 </script>
 
 <style>
