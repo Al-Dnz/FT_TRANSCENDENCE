@@ -4,14 +4,13 @@
       <div>
         <ul class="list-none">
           <li
-            v-for="friend in friends"
-            :key="friend.id"
+            v-for="conv in convList"
           >
             <div class="pb-2 font-semibold">
-              <button @click="goPrivConv(friend.name), $emit('changeConv', 'privConv', friend.id - 1)">
+              <button @click="goConv(conv.name), $emit('changeConv', conv)">
                 <div class="flex flex-row">
-                  <img :src="getImgUrl(friend.pic)" class="w-8 h-8 rounded-full" />
-                  <div class="pl-2">{{ friend.name }}</div>
+                  <img :src="getImgUrl(conv.pic)" class="w-8 h-8 rounded-full" />
+                  <div class="pl-2">{{ conv.name }}</div>
                 </div>
               </button>
             </div>
@@ -33,12 +32,11 @@
       <div class="mt-5 mb-3">
         <ul class="list-none">
           <li
-            v-for="channel in channels"
-            :key="channel.id"
+            v-for="conv in convList"
           >
             <div class="mb-4 font-semibold">
-              <button @click="goChan(channel.name), $emit('changeConv', 'channel', channel.id - 1)">
-                # {{ channel.name }}
+              <button @click="goConv(conv.name), $emit('changeConv', conv)">
+                # {{ conv.name }}
               </button>
             </div>
           </li>
@@ -58,20 +56,36 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+/*interface UserI {
+  name: string;
+  pic: string;
+}
+
+interface MsgI {
+  from: UserI;
+  text: string;
+}
+
+interface ConvI {
+  name: string;
+  pic: string;
+  userList?: UserI[];
+  msgList?: MsgI[];
+}*/
 export default {
-  name: "ChatConvList",
+  name: "chatConvList",
   methods: {
-    getImgUrl: function (img) {
+    getImgUrl: function (img: string) {
 			return require('@/assets/' + img);
 		},
-    goPrivConv(user)
+    goConv(convName: string)
     {
-      this.$router.push('/chat/@' + user);
-    },
-    goChan(chan)
-    {
-      this.$router.push('/chat/' + chan);
+      if (convName[0] === '@')
+        this.$router.push('/chat/@');
+      else
+        this.$router.push('/chat/' + convName);
+
     },
     newPrivConv()
 		{
@@ -84,8 +98,7 @@ export default {
   },
   components: {},
   props: {
-    friends: Object,
-    channels: Object,
+    convList: Object
   },
 };
 </script>

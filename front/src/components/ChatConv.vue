@@ -2,9 +2,9 @@
   <div class="flex flex-col h-full w-full pt-3 pl-4 pr-4 divide-y-2">
     <div class="flex flex-row pb-8">
       <div class="flex flex-col">
-        <img :src="getImgUrl(head.pic)" class="w-20 h-20 rounded-full" />
-        <h1 class="text-3xl font-bold">{{ head.name }}</h1>
-        <p>This is the beginning of your direct message history with @{{ head.name }}</p>
+        <img :src="getImgUrl(conv?.pic)" class="w-20 h-20 rounded-full" />
+        <h1 class="text-3xl font-bold">{{ conv?.name }}</h1>
+        <p>This is the beginning of your direct message history with @{{ conv?.name }}</p>
       </div>
       <div class="pt-8 pl-16">
         <div class="relative flex items-center justify-center 
@@ -14,7 +14,7 @@
         hover:rounded-xl rounded-3xl
         transition-all duration-300 ease-linear
         cursor-pointer shadow-lg">
-          <UserIcon @click="goProfile(head.name)"/>
+          <UserIcon @click="goProfile(conv?.name)"/>
         </div>  
       </div>
       <div class="pt-8 pl-10">
@@ -25,7 +25,7 @@
         hover:rounded-xl rounded-3xl
         transition-all duration-300 ease-linear
         cursor-pointer shadow-lg">
-          <PlayIcon @click="gameInvite(head.name)"/>
+          <PlayIcon @click="gameInvite(conv?.name)"/>
         </div>  
       </div>
     </div>
@@ -33,8 +33,7 @@
       <div class="h-5/6">
         <ul class="list-none">
           <li
-            v-for="message in messages"
-            :key="message.id"
+            v-for="message in conv?.msgList"
           >
             <div class="flex flex-row pt-8">
               <img :src="getImgUrl(message.pic)" class="w-10 h-10 rounded-full" />
@@ -60,28 +59,27 @@
   
 </template>
 
-<script>
+<script lang="ts">
 export default {
-  name: "ChatConv",
+  name: "chatConv",
   data ()
   {
     return {
-      user : 'Jean_didier',
-      newMsg : '',
+      newMsg : ''
     }
   },
   methods: {
-    getImgUrl: function (img) {
+    getImgUrl: function (img: string) {
 			return require('@/assets/' + img);
 		},
-    goProfile(user)
+    goProfile(userName: string)
     {
-      this.$router.push('/user/' + user);
-      alert("going to " + user + "'s user account");
+      this.$router.push('/user/' + userName);
+      alert("going to " + userName + "'s user account");
     },
-    gameInvite(user)
+    gameInvite(userName: string)
     {
-      alert("a game invitation has been sent to " + user);
+      alert("a game invitation has been sent to " + userName);
     },
     send()
     {
@@ -93,8 +91,7 @@ export default {
   },
   components: {},
   props: {
-    head: Object,
-    messages: Object
+    conv: Object
   },
 };
 </script>
