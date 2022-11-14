@@ -53,6 +53,20 @@ export enum ChannelType {
     direct = "direct",
 }
 
+export enum MapID {
+    map1,
+    map2,
+    map3,
+    map4,
+}
+
+export enum PaddleID {
+    paddle1,
+    paddle2,
+    paddle3,
+    paddle4,
+}
+
 /**********************************************************************************************
  *                                     Entities
  **********************************************************************************************/
@@ -137,17 +151,28 @@ export class Avatar extends Base {
     @Column({ unique: true })
     path: string;
 
-    @ManyToOne(() => User, { onDelete: "CASCADE" })
+    @OneToOne(() => User, { onDelete: "CASCADE" })
     user: Relation<User>;
 
-    @Column({ default: false })
-    activate: boolean;
-
-    constructor(path: string, activate?: boolean) {
+    constructor(path: string) {
         super();
         this.path = path;
-        this.activate = activate ? activate : false;
     }
+}
+
+@Entity()
+export class UserSettings extends Base {
+    @Column({ default: false })
+    twoFa: boolean;
+
+    @Column({ default: MapID.map1 })
+    mapId: MapID;
+
+    @Column({ default: PaddleID.paddle1 })
+    paddleId: PaddleID;
+
+    @OneToOne(() => User, { onDelete: "CASCADE" })
+    user: Relation<User>;
 }
 
 @Entity()
@@ -213,11 +238,22 @@ export class User extends Base {
     @JoinColumn({ name: "userStatsId", referencedColumnName: "id" })
     stats: UserStats;
 
-    @OneToMany(() => Avatar, (avatar: Avatar) => avatar.user, {
+    @OneToOne(() => UserSettings, (settings: UserSettings) => settings.user, {
+        onDelete: "RESTRICT",
         cascade: true,
         eager: true,
+        nullable: false,
     })
-    avatars: Avatar[];
+    @JoinColumn()
+    settings: UserSettings;
+
+    @OneToOne(() => Avatar, (avatar: Avatar) => avatar.user, {
+        cascade: true,
+        eager: true,
+        nullable: false,
+    })
+    @JoinColumn()
+    avatar: Avatar;
 
     constructor(login: string) {
         super();
@@ -225,6 +261,7 @@ export class User extends Base {
         this.login = login;
         this.userName = login;
         this.stats = new UserStats();
+        this.settings = new UserSettings();
     }
 }
 

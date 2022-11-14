@@ -72,19 +72,15 @@ export class UserController {
         @Body() updateUserDto: UpdateUserDto,
         @Identity() user: Identity,
     ): Promise<UserOutputDto> {
-        const result: UpdateResult = await this.userService.updateByLogin(
-            user.login,
-            updateUserDto,
-        );
-        if (result.affected && result.affected > 0) {
-            return this.userService
-                .findOne(user.login)
-                .then((user: User) => new UserOutputDto(user))
-                .catch((error: Error) => {
-                    throw new InternalServerErrorException(error.message);
-                });
+        const found: User | undefined = await this.userService.findOne(user.login);
+
+        if (!found) {
+            throw new NotFoundException(`user ${user.login} not found`);
         }
-        throw new NotFoundException(`user ${user.login} not found`);
+
+        return this.userService
+            .updateOne(found, updateUserDto)
+            .then((value: User) => new UserOutputDto(value));
     }
 
     @Delete('me')
