@@ -23,6 +23,7 @@ services:
     ports:
       - 3000:3000
     env_file: .env
+
   user-api:
     container_name: user-api
     build:
@@ -38,7 +39,7 @@ services:
 
   nginx:
     container_name: nginx
-    image: nginx:1.22.1-alpine
+    image: nginx:1.19-alpine
     networks:
       - backend
       - frontend
@@ -77,14 +78,15 @@ services:
   chat:
     container_name: chat
     build:
-      context: chat
-      dockerfile: Dockerfile
+      context: ./
+      dockerfile: ./chat/Dockerfile
     networks:
       - backend
     ports:
-      - 3001:3000
+      - 3008:3000
     depends_on:
       - "postgres"
+    env_file: .env
 
 volumes:
   postgres-data:

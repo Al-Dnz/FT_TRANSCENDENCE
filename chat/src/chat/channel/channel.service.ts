@@ -3,8 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
-import { Channel } from './channel.entity';
-import { Message } from '../message/message.entity';
+
+
+import {
+    Channel,
+	Message
+} from 'db-interface/Core';
 
 import { Logger } from '@nestjs/common';
 
@@ -75,7 +79,7 @@ export class ChannelService {
 	else if (channel.unremovable == false)
 	{
 		await this.channelsRepository.delete(id);
-		throw new HttpException(`Channel #${id} wa deleted succesfully`, HttpStatus.OK);
+		throw new HttpException(`Channel #${id} was deleted succesfully`, HttpStatus.OK);
 	}
 	else
 		throw new HttpException('Forbidden: unremovable channel', HttpStatus.FORBIDDEN);

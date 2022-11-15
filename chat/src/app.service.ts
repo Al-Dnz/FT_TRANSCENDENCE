@@ -2,7 +2,7 @@ import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Channel } from './chat/channel/channel.entity';
+import { Channel } from 'db-interface/Core';
 
 import { Logger } from '@nestjs/common';
 

@@ -6,9 +6,9 @@ export class CreateMessageDto
 	@IsNotEmpty()
 	text: string;
 
-	@IsBoolean()
-	@IsOptional()
-	private: boolean;
+	// @IsBoolean()
+	// @IsOptional()
+	// private: boolean;
 
 	@IsInt()
   	@Min(1)
