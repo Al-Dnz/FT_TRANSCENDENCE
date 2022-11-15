@@ -1,12 +1,9 @@
 DOCKER_COMPOSE_FILE = docker-compose.yml
 
-all: launch #nestjs
+all: up
 
-launch:
-	@-docker-compose -f ${DOCKER_COMPOSE_FILE} up --build -d
-
-nestjs:
-	cd chat ; npm install ; npm run start:dev
+up:
+	@-docker-compose -f ${DOCKER_COMPOSE_FILE} up -d
 
 down:
 	@-docker-compose -f ${DOCKER_COMPOSE_FILE} down
@@ -18,4 +15,4 @@ nuke:
 	@-docker volume prune --force
 	@-docker network prune --force
 
-.PHONY: all launch nestjs down nuke
+.PHONY: all up down nuke
