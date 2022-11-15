@@ -92,45 +92,45 @@ export class UserChannel extends Base {
     mutedBy: UserChannel;
 }
 
-@Entity()
-export class Channel extends Base {
-    @OneToMany(
-        () => UserChannel,
-        (userChannel: UserChannel) => userChannel.channel
-    )
-    members: UserChannel[];
+// @Entity()
+// export class Channel extends Base {
+//     @OneToMany(
+//         () => UserChannel,
+//         (userChannel: UserChannel) => userChannel.channel
+//     )
+//     members: UserChannel[];
 
-    @OneToOne(() => UserChannel)
-    createdBy: UserChannel;
+//     @OneToOne(() => UserChannel)
+//     createdBy: UserChannel;
 
-    @OneToMany(() => Message, (message: Message) => message.channel, {
-        cascade: true,
-    })
-    messages: Message[];
+//     @OneToMany(() => Message, (message: Message) => message.channel, {
+//         cascade: true,
+//     })
+//     messages: Message[];
 
-    @Column()
-    type: ChannelType;
+//     @Column()
+//     type: ChannelType;
 
-    @Column({ nullable: true })
-    password: string;
-}
+//     @Column({ nullable: true })
+//     password: string;
+// }
 
-@Entity()
-export class Message extends Base {
-    @UpdateDateColumn()
-    updatedAt: Date;
+// @Entity()
+// export class Message extends Base {
+//     @UpdateDateColumn()
+//     updatedAt: Date;
 
-    @Column()
-    content: string;
+//     @Column()
+//     content: string;
 
-    @OneToOne(() => UserChannel)
-    sentBy: UserChannel;
+//     @OneToOne(() => UserChannel)
+//     sentBy: UserChannel;
 
-    @ManyToOne(() => Channel, (channel: Channel) => channel.messages, {
-        onDelete: "CASCADE",
-    })
-    channel: Channel;
-}
+//     @ManyToOne(() => Channel, (channel: Channel) => channel.messages, {
+//         onDelete: "CASCADE",
+//     })
+//     channel: Channel;
+// }
 
 @Entity()
 export class Avatar extends Base {
@@ -194,7 +194,7 @@ export class User extends Base {
     @OneToMany(() => UserMatch, (userMatch: UserMatch) => userMatch.user, {
         cascade: true,
     })
-    userMatchs: UserMatch[];
+    userMatchs: Relation<UserMatch>[];
 
     @OneToMany(
         () => UserChannel,
@@ -226,6 +226,17 @@ export class User extends Base {
         this.userName = login;
         this.stats = new UserStats();
     }
+
+	@OneToMany(() => Message, (message: Message) => message.sender, {
+        cascade: true,
+    })
+    messages: Relation<Message>[];
+
+
+	@OneToMany(() => Channel, (channel: Channel) => channel.creator, {
+        cascade: true,
+    })
+    channels: Relation<Channel>[];
 }
 
 @Entity()
@@ -250,3 +261,55 @@ export class UserMatch extends Base {
     @Column()
     role: UserMatchRole;
 }
+
+@Entity()
+export class Message extends Base 
+{
+    @UpdateDateColumn()
+    updatedAt: Date;
+
+    @Column()
+    text: string;
+
+	@ManyToOne(() =>User, (user: User) => user.messages, { onDelete: "CASCADE" })
+	// @JoinColumn({name: "sender_id"})   
+    sender: Relation<User>
+
+    @ManyToOne(() =>Channel, (channel: Channel) => channel.messages, { onDelete: "CASCADE" })
+	// @JoinColumn({name: "channel_id"})   
+    channel: Relation<Channel>
+
+}
+
+
+@Entity()
+export class Channel extends Base {
+
+	@Column({ unique: true })
+	name: string;
+
+	@Column('boolean', {default: false})
+	unremovable: boolean = false;
+
+	@Column({default: ChannelType.public})
+    type: ChannelType;
+
+    @Column({ nullable: true, default: null})
+    password: string;
+
+    @OneToMany(
+        () => UserChannel,
+        (userChannel: UserChannel) => userChannel.channel
+    )
+    members: UserChannel[];
+
+	@ManyToOne(() => User, (user: User) => user.channels, { onDelete: "CASCADE" })
+	// @JoinColumn({name: "creator_id"})   
+    creator: Relation<User>
+
+    @OneToMany(() => Message, (message: Message) => message.channel, {
+        cascade: true,
+    })
+	messages: Message[];
+}
+
