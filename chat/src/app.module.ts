@@ -6,13 +6,15 @@ import { ChatModule } from './chat/chat.module';
 
 import { ConfigModule } from '@nestjs/config';
 
-import { ChannelModule } from './chat/channel/channel.module';
-
 import {
     User,
+    UserMatch,
+    Match,
     Channel,
     UserChannel,
+    UserStats,
     Message,
+    Avatar,
 } from 'db-interface/Core';
 
 @Module({
@@ -27,10 +29,14 @@ import {
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
 	  entities: [
-		Channel,
-		UserChannel,
-		Message,
-		User,
+		Avatar,
+                Match,
+                UserMatch,
+                Channel,
+                UserChannel,
+                Message,
+                UserStats,
+                User,
 	],
       autoLoadEntities: true,
       synchronize: true,

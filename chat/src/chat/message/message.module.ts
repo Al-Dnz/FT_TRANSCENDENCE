@@ -4,12 +4,11 @@ import { MessageController } from './message.controller';
 
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MessageGateway } from './message.gateway';
-import { ChannelService } from 'src/chat/channel/channel.service';
 
 import {
     Channel,
 	Message,
-	User
+	User,
 } from 'db-interface/Core';
 
 @Module({

@@ -18,8 +18,7 @@ export class AppService implements OnApplicationBootstrap
 	
 	async onApplicationBootstrap()
 	{
-		this.logger.log(`this is a bootstrapp`);
-
+		this.logger.log(`Creation of main_chan`);
 		let chan = await this.channelsRepository.findOne({ where: {name: "main_chan"} })
 		if (!chan)
 		{
@@ -32,7 +31,7 @@ export class AppService implements OnApplicationBootstrap
 	}
 
   getHello(): string {
-    return 'Welcome on FT_TRANSCENDENCE 42 project';
+    return 'Welcome on FT_TRANSCENDENCE 42 project: chat service';
   }
 
 
