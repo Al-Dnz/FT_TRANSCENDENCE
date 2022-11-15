@@ -5,7 +5,7 @@
         <input type="checkbox"> <span class="slider round">2FA</span>
     </div>
     <div className = "h-48 w-3/6 lg:w-3/5 flex flex-col justify-center items-center  overflow-hidden">
-        <span>Nom d'utilisateur actuel : {{this.username}} </span>
+        <span>Nom d'utilisateur actuel : {{username}} </span>
         <input type="text" v-model="new_username" name="search" placeholder="Changer de nom d'utilisateur" autocomplete="off" aria-label="Changer de nom d'utilisateur" className="rounded-2xl px-3 placeholder-slate-500 text-slate-500 focus-within:border-green-500 focus-within:outline-0 border-2 border-slate-500 w-1/2"/>
     </div>
     <div className= "h-48 w-2/6 lg:w-1/5 flex justify-center items-center ">
@@ -17,9 +17,6 @@
   </div>
   <div className= "h-50 w-full  ptb-3">
     <imageBox :current_obj="current_paddle" :obj="paddles" :set_object="set_paddle" :declare_text="'Choose your paddle :'" />
-  </div>
-  <div className= "h-50 w-full ptb-3">
-    <imageBox :current_obj="current_avatar" :obj="avatars" :set_object="set_avatar" :declare_text="'Choose your Avatar :'" />
   </div>
     <div className= "h-50 w-full ptb-3 flex flex-col justify-around">
         <p className = "h-6">Use a custom Avatar :</p>
@@ -40,43 +37,47 @@
 </div>
 </template>
 
-<script>
+<script lang="ts">
+
+interface paramData {
+    loading: boolean;
+    obj: any; //mettre l'interface param quand recup
+    new_username: string;
+    new_image: string;
+    error: string;
+    maps: Array<string>;
+    paddle: Array<string>;
+}
+
 import imageBox from '../components/ImageBox.vue'
 export default {
     name: 'paramPage',
     data () {
         return {
-            username : 'Bob',
+            loading : false,
+            obj : undefined,
             new_username : '',
-            current_map : 1,
-            current_paddle : 1,
-            current_avatar: 1,
-            imageData: "",
+            new_image: '',
+            error : '',
             maps: ['map1.jpeg', 'map2.jpeg', 'map3.jpeg', 'map4.jpeg'],
-            paddles: ['pad1.jpeg', 'pad2.jpeg', 'pad3.jpeg','pad4.jpeg'],
-            avatars : ['pp.jpeg', 'pepethekid.png', 'Bannedpp.png', 'Accountpp.jpeg']
+            paddles: ['pad1.jpeg', 'pad2.jpeg', 'pad3.jpeg','pad4.jpeg']
         }
     },
     methods : {
-        set_map(num)
+        set_map(num : number)
         {
-            this.current_map = num;
+            this.obj.current_map = num;// Need param Object
         },
-        set_paddle(num)
+        set_paddle(num :number)
         {
-            this.current_paddle = num;
-        },
-        set_avatar(num)
-        {
-            this.current_avatar = num;
-        },
+            this.current_paddle = num;// Need param Object
+        }
         send()
         {
-            alert("New Username: " + this.new_username + " New map: " + this.current_map);
             this.new_username = '';
         },
-		getImgUrl: function (img) {
-			return require("@/assets/" + img);
+		getImgUrl: function (img : string) { // A voir si ça marche
+			return import("@/assets/" + img);
 		},
         previewImage: function(event) {
             // Reference to the DOM input element
@@ -93,7 +94,6 @@ export default {
                 }
                 // Start the reader job - read file as a data url (base64 format)
                 reader.readAsDataURL(input.files[0]);
-                this.set_avatar(4)
             }
         }
     },
