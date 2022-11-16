@@ -38,6 +38,8 @@ https://www.codementor.io/@engineerapart/getting-started-with-postgresql-on-mac-
 
 ## EXPLORE POSTGRESQL DB
 
+` docker compose exec postgres psql transcendencedb `
+
 go on container:
 
 ```
