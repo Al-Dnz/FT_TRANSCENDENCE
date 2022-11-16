@@ -5,6 +5,7 @@
         <ul class="list-none">
           <li
             v-for="conv in convList"
+            v-bind:key="conv.id"
           >
             <div class="pb-2 font-semibold">
               <button @click="goConv(conv.name), $emit('changeConv', conv)">
@@ -33,10 +34,11 @@
         <ul class="list-none">
           <li
             v-for="conv in convList"
+            v-bind:key="conv.id"
           >
             <div class="mb-4 font-semibold">
               <button @click="goConv(conv.name), $emit('changeConv', conv)">
-                # {{ conv.name }}
+                {{ conv.name }}
               </button>
             </div>
           </li>
@@ -57,6 +59,7 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from "vue";
 /*interface UserI {
   name: string;
   pic: string;
@@ -73,7 +76,7 @@ interface ConvI {
   userList?: UserI[];
   msgList?: MsgI[];
 }*/
-export default {
+export default defineComponent({
   name: "chatConvList",
   methods: {
     getImgUrl: function (img: string) {
@@ -82,7 +85,7 @@ export default {
     goConv(convName: string)
     {
       if (convName[0] === '@')
-        this.$router.push('/chat/@');
+        this.$router.push('/chat/' + convName);
       else
         this.$router.push('/chat/' + convName);
 
@@ -100,7 +103,7 @@ export default {
   props: {
     convList: Object
   },
-};
+});
 </script>
 
 <style src="../assets/tailwind.css" />

@@ -4,7 +4,7 @@
       <div class="flex flex-col">
         <img :src="getImgUrl(conv?.pic)" class="w-20 h-20 rounded-full" />
         <h1 class="text-3xl font-bold">{{ conv?.name }}</h1>
-        <p>This is the beginning of your direct message history with @{{ conv?.name }}</p>
+        <p>This is the beginning of your direct message history with {{ conv?.name }}</p>
       </div>
       <div class="pt-8 pl-16">
         <div class="relative flex items-center justify-center 
@@ -34,12 +34,13 @@
         <ul class="list-none">
           <li
             v-for="message in conv?.msgList"
+            v-bind:key="message.id"
           >
             <div class="flex flex-row pt-8">
-              <img :src="getImgUrl(message.pic)" class="w-10 h-10 rounded-full" />
+              <img :src="getImgUrl(message.from.pic)" class="w-10 h-10 rounded-full" />
               <div class="pl-2">
                 <div class="font-bold">
-                  {{ message.from }}
+                  {{ message.from.name }}
                 </div>
                 <div class="">
                   {{ message.text }}
@@ -60,7 +61,9 @@
 </template>
 
 <script lang="ts">
-export default {
+import { defineComponent } from "vue";
+
+export default defineComponent({
   name: "chatConv",
   data ()
   {
@@ -93,7 +96,7 @@ export default {
   props: {
     conv: Object
   },
-};
+});
 </script>
 
 <style src="../assets/tailwind.css" />

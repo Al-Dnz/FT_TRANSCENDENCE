@@ -23,11 +23,13 @@ interface UserI {
 }
 
 interface MsgI {
+  id: number;
   from: UserI;
   text: string;
 }
 
 interface ConvI {
+  id: number;
   name: string;
   pic: string;
   userList?: UserI[];
@@ -45,56 +47,61 @@ let user1: UserI = { name: 'Bob', pic: 'pp.jpeg' };
 let user2: UserI = { name: 'Jeff', pic: 'Accountpp.jpeg' };
 let user3: UserI = { name: 'Sam', pic: 'madgeleft.jpeg' };
 let conv1: ConvI = {
+  id: 1,
   name: '@' + user1.name,
   pic: user1.pic,
   userList: [ user0, user1 ],
   msgList: [
-    { from: user0, text: 'Salut' },
-    { from: user1, text: 'Bonjour' },
-    { from: user0, text: 'Comment vas-tu ?' },
-    { from: user1, text: 'Bien, et toi ?' }
+    { id: 1, from: user0, text: 'Salut' },
+    { id: 2, from: user1, text: 'Bonjour' },
+    { id: 3, from: user0, text: 'Comment vas-tu ?' },
+    { id: 4, from: user1, text: 'Bien, et toi ?' }
   ]
 };
 let conv2: ConvI = {
+  id: 2,
   name: '@' + user2.name,
   pic: user2.pic,
   userList: [ user0, user2 ],
   msgList: [
-    { from: user0, text: 'Waza?' },
-    { from: user2, text: 'WAZAAAAA!!' }
+    { id: 1, from: user0, text: 'Waza?' },
+    { id: 2, from: user2, text: 'WAZAAAAA!!' }
   ]
 };
 let conv3: ConvI = {
-  name: '@' + user2.name,
-  pic: user2.pic,
+  id: 3,
+  name: '@' + user3.name,
+  pic: user3.pic,
   userList: [ user0, user3 ],
   msgList: [
-    { from: user3, text: 'Yo !' },
-    { from: user3, text: 'T\'es là ?' },
-    { from: user3, text: 'oh jte parle!!' },
-    { from: user3, text: 'va te faire' }
+    { id: 1, from: user3, text: 'Yo !' },
+    { id: 2, from: user3, text: 'T\'es là ?' },
+    { id: 3, from: user3, text: 'oh jte parle!!' },
+    { id: 4, from: user3, text: 'va te faire' }
   ]
 };
 let conv4: ConvI = {
+  id: 4,
   name: '#' + 'Work Group',
   pic: 'MultipleUsers.png',
   userList: [ user0, user1, user2, user3 ],
   msgList: [
-    { from: user0, text: 'Tout le monde est là ?' },
-    { from: user3, text: 'Yep' },
-    { from: user1, text: 'Présent !' },
-    { from: user2, text: 'Chuis là' },
-    { from: user2, text: 'Ok parfait, on va pouvoir commencer' }
+    { id: 1, from: user0, text: 'Tout le monde est là ?' },
+    { id: 2, from: user3, text: 'Yep' },
+    { id: 3, from: user1, text: 'Présent !' },
+    { id: 4, from: user2, text: 'Chuis là' },
+    { id: 5, from: user2, text: 'Ok parfait, on va pouvoir commencer' }
   ]
 };
 let conv5: ConvI = {
+  id: 5,
   name: '#' + 'The Boys',
   pic: 'MultipleUsers.png',
   userList: [ user0, user1, user2 ],
   msgList: [
-    { from: user0, text: 'Bon entre nous, Sam est super relou nan ?' },
-    { from: user3, text: 'Oui' },
-    { from: user1, text: 'Carrément' },
+    { id: 1, from: user0, text: 'Bon entre nous, Sam est super relou nan ?' },
+    { id: 2, from: user3, text: 'Oui' },
+    { id: 3, from: user1, text: 'Carrément' },
   ]
 };
 export default defineComponent({
