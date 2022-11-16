@@ -26,15 +26,23 @@ export class ChannelService {
 
   private logger: Logger = new Logger('ChannelService');
 
-  async create(createChannelDto: CreateChannelDto) {
+  async create(createChannelDto: CreateChannelDto) 
+  {
+
+	this.logger.log("createChannelDto => ");
+	this.logger.log(createChannelDto);
+
     const channel = new Channel();
 	if (!createChannelDto.name || createChannelDto.name.length < 1)
 		throw new HttpException("chan name is empty", HttpStatus.FAILED_DEPENDENCY);
+	channel.name = createChannelDto.name;
 
-    channel.name = createChannelDto.name;
 	const same_named_channel = await this.channelsRepository.findOneBy({ name: channel.name });
 	if (same_named_channel)
 		throw new HttpException("another chan with this name still exists", HttpStatus.FAILED_DEPENDENCY);
+
+	if (createChannelDto.password)
+		channel.password = createChannelDto.password 
 
     return this.channelsRepository.save(channel);
   }

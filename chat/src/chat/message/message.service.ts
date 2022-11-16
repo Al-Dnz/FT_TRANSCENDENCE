@@ -58,7 +58,7 @@ export class MessageService {
 
   async findAll(): Promise<Message[]> 
   {
-    return this.messagesRepository.find();
+    return this.messagesRepository.find({ relations: ["sender", "channel"] });
   }
 
   async findOne(id: number)
