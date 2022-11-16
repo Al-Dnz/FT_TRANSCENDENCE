@@ -294,7 +294,7 @@ export class Channel extends Base {
 	@Column({default: ChannelType.public})
     type: ChannelType;
 
-    @Column({ nullable: true, default: null})
+    @Column({ nullable: true, default: null, select: false })
     password: string;
 
     @OneToMany(
