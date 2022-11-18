@@ -1,29 +1,21 @@
-FROM	node:16
+FROM node:18 AS builder
 
-WORKDIR	/usr/app
+RUN mkdir -p /app 
 
-COPY	. .
+ADD db-interface/ /app/db-interface
+WORKDIR /app/db-interface
+RUN npm install
 
-RUN		npm install
+ADD chat/ /app/chat
+WORKDIR /app/chat
+RUN npm install && npm run build
 
-EXPOSE 	3000
+FROM gcr.io/distroless/nodejs:18
+COPY --from=builder /app/chat /app
 
-CMD		[ "npm", "run", "start:dev" ]
+WORKDIR /app/dist
 
-# CMD ["node", "dist/main"]
+ENV PORT="3000"
 
-# FROM node:18 AS builder
+CMD [ "chat/src/main.js" ]
 
-# ADD . /app
-# WORKDIR /app
-
-# RUN npm install && npm run build
-
-# FROM gcr.io/distroless/nodejs:18
-# COPY --from=builder /app /app
-
-# WORKDIR /app/dist
-
-# EXPOSE 3000
-
-# CMD [ "main.js" ]

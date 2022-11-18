@@ -8,9 +8,12 @@ import { Repository } from 'typeorm';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { Logger } from '@nestjs/common';
 
-import { Message } from './message.entity';
-import { Channel } from 'src/chat/channel/channel.entity';
-import { User } from 'src/user/user.entity';
+import {
+    Channel,
+	Message,
+	User
+} from 'db-interface/Core';
+
 
 @Injectable()
 export class MessageService {
@@ -33,8 +36,8 @@ export class MessageService {
 	else
 		throw new HttpException("message text is empty", HttpStatus.FAILED_DEPENDENCY);
 
-	if (data.private)
-		message.private = data.private;
+	// if (data.private)
+	// 	message.private = data.private;
 
 	if (data.senderId)
 	{
@@ -55,7 +58,7 @@ export class MessageService {
 
   async findAll(): Promise<Message[]> 
   {
-    return this.messagesRepository.find();
+    return this.messagesRepository.find({ relations: ["sender", "channel"] });
   }
 
   async findOne(id: number)

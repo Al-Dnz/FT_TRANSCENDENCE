@@ -3,8 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
-import { Channel } from './channel.entity';
-import { Message } from '../message/message.entity';
+
+
+import {
+    Channel,
+	Message
+} from 'db-interface/Core';
 
 import { Logger } from '@nestjs/common';
 
@@ -22,15 +26,23 @@ export class ChannelService {
 
   private logger: Logger = new Logger('ChannelService');
 
-  async create(createChannelDto: CreateChannelDto) {
+  async create(createChannelDto: CreateChannelDto) 
+  {
+
+	this.logger.log("createChannelDto => ");
+	this.logger.log(createChannelDto);
+
     const channel = new Channel();
 	if (!createChannelDto.name || createChannelDto.name.length < 1)
 		throw new HttpException("chan name is empty", HttpStatus.FAILED_DEPENDENCY);
+	channel.name = createChannelDto.name;
 
-    channel.name = createChannelDto.name;
 	const same_named_channel = await this.channelsRepository.findOneBy({ name: channel.name });
 	if (same_named_channel)
 		throw new HttpException("another chan with this name still exists", HttpStatus.FAILED_DEPENDENCY);
+
+	if (createChannelDto.password)
+		channel.password = createChannelDto.password 
 
     return this.channelsRepository.save(channel);
   }
@@ -75,7 +87,7 @@ export class ChannelService {
 	else if (channel.unremovable == false)
 	{
 		await this.channelsRepository.delete(id);
-		throw new HttpException(`Channel #${id} wa deleted succesfully`, HttpStatus.OK);
+		throw new HttpException(`Channel #${id} was deleted succesfully`, HttpStatus.OK);
 	}
 	else
 		throw new HttpException('Forbidden: unremovable channel', HttpStatus.FORBIDDEN);

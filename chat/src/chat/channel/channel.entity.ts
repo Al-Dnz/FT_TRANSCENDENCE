@@ -9,42 +9,43 @@ import {
 	ManyToOne,
    } from 'typeorm';
 
-import { Message } from '../message/message.entity';
+   import {
+    User,
+	Message
+} from 'db-interface/Core';
 
-import { User } from 'src/user/user.entity';
+// @Entity()
+// export class Channel 
+// {
+// 	@PrimaryGeneratedColumn()
+//   	id: number;
 
-@Entity()
-export class Channel 
-{
-	@PrimaryGeneratedColumn()
-  	id: number;
-
-	@Column({ unique: true })
-	name: string;
+// 	@Column({ unique: true })
+// 	name: string;
 	
-	@CreateDateColumn()
-	createdAt: Date;
+// 	@CreateDateColumn()
+// 	createdAt: Date;
 
-	@Column('boolean', {default: false})
-	unremovable: boolean = false;
+// 	@Column('boolean', {default: false})
+// 	unremovable: boolean = false;
 
-	@OneToMany(() => Message, (message) => message.channel)
-    messages: Message[]
+// 	@OneToMany(() => Message, (message) => message.channel)
+//     messages: Message[]
 	
-    @ManyToMany(() => User, (user) => user.channels)
-    @JoinTable({
-			name: 'channel_user',
-			joinColumn: 
-			{
-				name: 'channel_id',
-				referencedColumnName: 'id',
-    		},
-			inverseJoinColumn: 
-			{
-				name: 'user_id',
-				referencedColumnName: 'id',
-   			},
-	})
-    users: User[]
+//     @ManyToMany(() => User, (user) => user.channels)
+//     @JoinTable({
+// 			name: 'channel_user',
+// 			joinColumn: 
+// 			{
+// 				name: 'channel_id',
+// 				referencedColumnName: 'id',
+//     		},
+// 			inverseJoinColumn: 
+// 			{
+// 				name: 'user_id',
+// 				referencedColumnName: 'id',
+//    			},
+// 	})
+//     users: User[]
 
-}
+// }

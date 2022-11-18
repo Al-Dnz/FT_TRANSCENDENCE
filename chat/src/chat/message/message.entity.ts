@@ -8,30 +8,30 @@ import {
 	OneToMany
    } from 'typeorm';
 
-import { Channel } from 'src/chat/channel/channel.entity';
-import { User } from 'src/user/user.entity';
+// import { Channel } from 'src/chat/channel/channel.entity';
+// import { User } from 'src/user/user.entity';
 
-@Entity()
-export class Message 
-{
-	@PrimaryGeneratedColumn()
-  	id: number;
+// @Entity()
+// export class Message 
+// {
+// 	@PrimaryGeneratedColumn()
+//   	id: number;
 
-	@CreateDateColumn()
-	createdAt: Date;
+// 	@CreateDateColumn()
+// 	createdAt: Date;
 
-	@Column('boolean', {default: false})
-	private: boolean = false;
+// 	@Column('boolean', {default: false})
+// 	private: boolean = false;
 
-	@Column()
-	text: string;
+// 	@Column()
+// 	text: string;
 	
-	@ManyToOne(() =>User, (user) => user.messages)
-	@JoinColumn({name: "sender_id"})   
-    sender: User
+// 	@ManyToOne(() =>User, (user) => user.messages)
+// 	@JoinColumn({name: "sender_id"})   
+//     sender: User
 
-    @ManyToOne(() =>Channel, (channel) => channel.messages)
-	@JoinColumn({name: "channel_id"})   
-    channel: Channel
+//     @ManyToOne(() =>Channel, (channel) => channel.messages)
+// 	@JoinColumn({name: "channel_id"})   
+//     channel: Channel
 
-}
+// }
