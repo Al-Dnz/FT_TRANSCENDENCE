@@ -35,6 +35,7 @@ export class MessageGateway
     this.logger.log("HERE WEBSOCKET==>")
     this.logger.log(payload);
 
+    let channel_id = payload.channelId;
     this.server.emit(`msgToChannel`, payload);
   }
 
