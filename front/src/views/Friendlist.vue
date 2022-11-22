@@ -1,155 +1,85 @@
 <template>
-	<div className="absolute flex flex-col justify-start items-center w-full h-full overflow-auto">
+	<div v-if="error" className="flex items-center w-full h-full">
+		<errorPage :str="error" />
+	</div>
+	<div v-else-if="loading">
+    	<loadingPage />
+  	</div>
+	<div v-else className="absolute flex flex-col justify-start items-center w-full h-full overflow-auto">
 		<div className="w-3/4 pt-3 h-friendbox">
 			<div className="flex flex-row justify-center w-full rounded-2xl h-full text-slate-500 focus-within:text-green-500 ">
 				<input type="text" v-model="newfriend" @keyup.enter="add()" name="search" placeholder="Add a friend !" autocomplete="off" aria-label="Add a friend !" className="rounded-2xl px-3 placeholder-slate-500 text-slate-500 focus-within:border-green-500 focus-within:outline-0 border-2 border-slate-500 w-1/2"/>
-				<PaperAirplaneIcon @click="add()" />
+			<PaperAirplaneIcon @click="add()" />
 			</div>
 		</div>
 		<div v-for="(item, index) in sortedTab()" v-bind:key="index" className="lg:h-friendbox lg:w-3/4 w-11/12 h-16 pt-3">
 			<friendBox :obj=item :index="index" :delI="delIndex" :mod="modify"/>
 		</div>
 	</div>
+	
   </template>
   
-  <script>
+  <script lang="ts">
 import friendBox from '../components/FriendBox.vue';
-  export default {
+import { defineComponent } from 'vue'
+import { FriendsApi, UserOutput, Configuration, ResponseError, ErrorOutput } from '@/api';
+import { getCredentials } from "@/frontJS/cookies"
+import  errorPage  from "@/components/Error.vue";
+import  loadingPage  from "@/components/Loading.vue"
+
+interface friendsData 
+{
+	tab: Array<UserOutput>;
+	loading: boolean;
+	newfriend: string;
+	error: string;
+}
+
+export default defineComponent({
 	name: 'friendPage',
-	created() {
-		console.log ("hello");
-	},
-	beforeUnmount() {
-		console.log ("bye");
-	},
-	data() {
-		return(
-		{
+	data() : friendsData{
+		return {
+			tab: [],
+			loading : true,
 			newfriend: '',
-			tab : [
-				{
-					username: 'Jean Neymar',
-					friend: true,
-					status: 1
-				},
-				{
-					username: 'Jean Bombeur',
-					friend: true,
-					status: 0
-				},
-				{
-					username: 'Jean Peuxplus',
-					friend: true,
-					status: 2
-				},
-				{
-					username: 'Jean claude',
-					friend: false,
-					status: 1
-				},
-				{
-					username: 'Jean Alban',
-					friend: false,
-					status: 1
-				},
-				{
-					username: 'Jean Neymar',
-					friend: true,
-					status: 1
-				},
-				{
-					username: 'Jean Bombeur',
-					friend: true,
-					status: 0
-				},
-				{
-					username: 'Jean Peuxplus',
-					friend: true,
-					status: 2
-				},
-				{
-					username: 'Jean claude',
-					friend: false,
-					status: 1
-				},
-				{
-					username: 'Jean Alban',
-					friend: false,
-					status: 1
-				},
-				{
-					username: 'Jean Neymar',
-					friend: true,
-					status: 1
-				},
-				{
-					username: 'Jean Bombeur',
-					friend: true,
-					status: 0
-				},
-				{
-					username: 'Jean Peuxplus',
-					friend: true,
-					status: 2
-				},
-				{
-					username: 'Jean claude',
-					friend: false,
-					status: 1
-				},
-				{
-					username: 'Jean Alban',
-					friend: false,
-					status: 1
-				},
-				{
-					username: 'Jean Neymar',
-					friend: true,
-					status: 1
-				},
-				{
-					username: 'Jean Bombeur',
-					friend: true,
-					status: 0
-				},
-				{
-					username: 'Jean Peuxplus',
-					friend: true,
-					status: 2
-				},
-				{
-					username: 'Jean claude',
-					friend: false,
-					status: 1
-				},
-				{
-					username: 'Jean Alban',
-					friend: false,
-					status: 1
-				}
-			]
-		})
+			error: ''
+		}
 	},
+	async mounted() {
+	  await this.fetchData()
+  	},
 	components : {
-	friendBox
+	friendBox,
+	errorPage,
+	loadingPage
 	},
 	methods : {
-		delIndex(index) {
+		delIndex(index : number) {
 			this.tab.splice(index, 1);
 		},
-		sortedTab() {
-		return this.tab.sort((a, b) => Number(a.friend) - Number(b.friend) || a.username.localeCompare(b.username))
+		sortedTab() : Array<UserOutput>{
+		return this.tab.sort((a : UserOutput, b : UserOutput) =>  a.login.localeCompare(b.login)) // Number(a.friend) - Number(b.friend) ||
 		},
-		modify(index, obj)
+		modify(index : number, obj : UserOutput)
 		{
 			this.tab[index] = obj;
 		},
 		add() {
-			alert(this.newfriend);
-			this.newfriend = '';
+			console.log("hi")
+		},
+		async fetchData()
+		{   
+			getCredentials().then((accessToken: string ) => {
+				const Fapi = new FriendsApi(new Configuration({accessToken: accessToken}))
+				Fapi.listUsersFriends().then((user: Array<UserOutput> ) => {
+					this.tab = user
+				})
+				.catch((msg : ResponseError) => { msg.response.json().then((str : ErrorOutput) => {this.error = str.message;});}
+				)})
+			this.loading = false;
 		}
 	}
-  }
+  })
   </script>
   
   <style src="../assets/tailwind.css" />

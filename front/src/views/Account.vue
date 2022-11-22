@@ -30,8 +30,8 @@
   </div>
 </template>
   
-  <script lang="ts">
-  import { UsersApi, Configuration, UserOutput } from '@/api';
+<script lang="ts">
+import { UsersApi, Configuration, UserOutput } from '@/api';
 import { getCredentials } from "@/frontJS/cookies"
 
 interface UserData {

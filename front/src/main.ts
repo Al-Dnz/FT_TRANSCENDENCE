@@ -12,7 +12,6 @@ app.use(router);
 app.use(DKToast);
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)
-    console.log(key);
 }
 
 app.mount('#app');
