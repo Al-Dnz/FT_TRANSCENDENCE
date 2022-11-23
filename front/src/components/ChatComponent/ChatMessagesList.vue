@@ -57,13 +57,6 @@
 
 <script >
 
-import ChatMessageInput from "../ChatComponent/ChatMessageInput.vue"
-import io from 'socket.io-client';
-
-// import VueChatScroll from 'vue-chat-scroll'
-
-
-
 export default {
   name: "ChatMessagesList",
   methods: {
@@ -79,16 +72,15 @@ export default {
       }
       let response = await fetch(`http://localhost:3004/channel/${this.current_chan.id}/messages`, bearer)
       let data = await response.json();
-      data =  data.reverse();
       this.messages = [...data];
 
     },
     receivedMessage(message) 
     {
-        if (message.channelId === this.current_chan.id)
+        if (message.channel.id === this.current_chan.id)
         {
-            console.log("WS new messages =>");
-            console.log(message);
+            // console.log("WS new messages =>");
+            // console.log(message);
             this.messages.push(message);
             // var objDiv = document.getElementById("messages");
             // objDiv.scrollTop = objDiv.scrollHeight;
