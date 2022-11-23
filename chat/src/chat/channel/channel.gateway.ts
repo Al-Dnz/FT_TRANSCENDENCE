@@ -23,7 +23,7 @@ export class ChannelGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
 
-  constructor(private messageService: ChannelService) {}
+  constructor(private channelService: ChannelService) {}
 
   @WebSocketServer() server: Server;
 
@@ -32,9 +32,11 @@ export class ChannelGateway
 
   @SubscribeMessage('chanToServer')
   async handleMessage(client: any, payload: CreateChannelDto): Promise<void> {
-    await this.messageService.create(payload);
+    const new_chan = await this.channelService.create(payload);
     
-    this.server.emit('chanToClient', payload);
+    this.logger.log("HERE CHANNEL WEBSOCKET==>")
+    this.logger.log(new_chan);
+    this.server.emit('chanToClient', new_chan);
   }
 
   afterInit(server: Server) {
