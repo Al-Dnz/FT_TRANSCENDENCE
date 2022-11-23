@@ -85,12 +85,14 @@ export default {
     },
     receivedMessage(message) 
     {
-        // if (message.channelId === this.current_chan_id)
-        // {
+        if (message.channelId === this.current_chan.id)
+        {
+            console.log("WS new messages =>");
+            console.log(message);
             this.messages.push(message);
             // var objDiv = document.getElementById("messages");
             // objDiv.scrollTop = objDiv.scrollHeight;
-        // }
+        }
         
     },
   },
