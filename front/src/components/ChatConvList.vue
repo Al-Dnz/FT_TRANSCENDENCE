@@ -4,14 +4,14 @@
       <div>
         <ul class="list-none">
           <li
-            v-for="conv in convList"
+            v-for="conv in privConvList"
             v-bind:key="conv.id"
           >
             <div class="pb-2 font-semibold">
-              <button @click="goConv(conv.name), $emit('changeConv', conv)">
+              <button @click="goConv(conv.name)">
                 <div class="flex flex-row">
                   <img :src="getImgUrl(conv.pic)" class="w-8 h-8 rounded-full" />
-                  <div class="pl-2">{{ conv.name }}</div>
+                  <div class="pl-2">@{{ conv.name }}</div>
                 </div>
               </button>
             </div>
@@ -33,12 +33,12 @@
       <div class="mt-5 mb-3">
         <ul class="list-none">
           <li
-            v-for="conv in convList"
+            v-for="conv in chanConvList"
             v-bind:key="conv.id"
           >
             <div class="mb-4 font-semibold">
-              <button @click="goConv(conv.name), $emit('changeConv', conv)">
-                {{ conv.name }}
+              <button @click="goConv(conv.name)">
+                #{{ conv.name }}
               </button>
             </div>
           </li>
@@ -60,48 +60,46 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-/*interface UserI {
-  name: string;
-  pic: string;
-}
-
-interface MsgI {
-  from: UserI;
-  text: string;
-}
 
 interface ConvI {
+  id: number;
   name: string;
   pic: string;
-  userList?: UserI[];
-  msgList?: MsgI[];
-}*/
+}
+interface DataI {
+  privConvList: ConvI[];
+  chanConvList: ConvI[];
+}
+
+//tmp var
+let privConv1: ConvI = { id: 1, name: '/chat/Bob', pic: 'pp.jpeg'};
+let privConv2: ConvI = { id: 2, name: '/chat/Jeff', pic: 'Accountpp.jpeg'};
+let privConv3: ConvI = { id: 3, name: '/chat/Sam', pic: 'madgeleft.jpeg'};
+let chanConv1: ConvI = { id: 1, name: '/chan/Work Group', pic: 'MultipleUsers.png'};
+let chanConv2: ConvI = { id: 1, name: '/chan/The Boys', pic: 'MultipleUsers.png'};
+
 export default defineComponent({
-  name: "chatConvList",
+  name: "ChatConvList",
+  data(): DataI {
+    return {
+      privConvList: [ privConv1, privConv2, privConv3 ],
+      chanConvList: [ chanConv1, chanConv2 ],
+    }
+  },
   methods: {
     getImgUrl: function (img: string) {
 			return require('@/assets/' + img);
 		},
-    goConv(convName: string)
-    {
-      if (convName[0] === '@')
-        this.$router.push('/chat/' + convName);
-      else
-        this.$router.push('/chat/' + convName);
-
+    goConv(convName: string) {
+//    this.$router.push('/chat/' + convName);
+      this.$emit('swapConvType', convName);
     },
-    newPrivConv()
-		{
+    newPrivConv() {
 			alert("we create a new private conversation")
 		},
-    newChan()
-		{
+    newChan() {
 			alert("we create a new channel")
 		},
-  },
-  components: {},
-  props: {
-    convList: Object
   },
 });
 </script>

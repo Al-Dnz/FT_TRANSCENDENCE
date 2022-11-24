@@ -64,7 +64,7 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "chatConv",
+  name: "ChatConv",
   data ()
   {
     return {
