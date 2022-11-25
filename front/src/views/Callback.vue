@@ -1,17 +1,19 @@
 <template>
-  <p>Loading ...</p>
+  <div className="h-full w-full flex flex-col justify-center items-center pb-5 pt-5">
+    <img src="@/assets/cookies.gif" className="object-scale-down h-44 w-44 rounded-xl">
+    <p>Loading cookies...</p>
+  </div>
 </template>
 
 <script lang="ts">
-import { AuthenticationApi, UsersApi, Configuration } from "@/api";
-import { OauthToken } from "@/api/models";
+import { AuthenticationApi, UsersApi, Configuration, ResponseError } from "@/api";
+import { ErrorOutput, OauthToken } from "@/api/models";
 import { defineComponent } from "vue";
 import { setRefreshCookie, setAccessCookie } from "@/frontJS/cookies";
 
 export default defineComponent({
   name: "callBack",
   mounted() {
-    console.log(this.$route.query.code);
     if (!this.$route.query.code) {
       this.$router.push("/");
       this.$toast("Error log", {
@@ -29,10 +31,15 @@ export default defineComponent({
         setAccessCookie(value.accessToken)
         setRefreshCookie(value.refreshToken)
         await new UsersApi(new Configuration({accessToken: value.accessToken}))
-        .createUser().catch((error: Error) => {
-            throw new Error(error.message)
-        })
-        this.$router.push("/param");
+        .createUser()
+        .then(() => {this.$router.push("/param");})
+        .catch((errorMsg: ResponseError) => { errorMsg.response.json().then((str : ErrorOutput) =>
+          {
+            this.$router.push("/");
+            this.$toast(str.message, {
+              styles: { backgroundColor: "#FF0000", color: "#FFFFFF" },
+            });
+          });})
       });
   },
 });
