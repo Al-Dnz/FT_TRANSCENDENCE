@@ -7,14 +7,21 @@
         @changeConv="changeConv" />
     </div>
     <div class="h-full w-4/5 bg-gray-50">
-      <ChatConv :messages="currentConv" />
+      <!-- <ChatConv :messages="currentConv" /> -->
+      <ChatMessagesList :socket="socket"/>
+      <ChatMessageInput :socket="socket"/>
     </div>
   </div>
 </template>
 
 <script>
 import ChatConvList from "../components/ChatConvList.vue";
-import ChatConv from "../components/ChatConv.vue";
+// import ChatConv from "../components/ChatConv.vue";
+
+
+import io from 'socket.io-client';
+import ChatMessagesList from "../components/ChatComponent/ChatMessagesList.vue";
+import ChatMessageInput from "../components/ChatComponent/ChatMessageInput.vue";
 
 export default {
   name: "ChatPage",
@@ -53,12 +60,21 @@ export default {
       ],
       convList: [ defMsg1, defMsg2, defMsg3 ],
       currentConv: defMsg1,
+      socket: null,
     };
   },
   components: {
     ChatConvList,
-    ChatConv,
+    // ChatConv,
+    ChatMessagesList,
+    ChatMessageInput,
   },
+  created()
+  {
+    this.socket = io(`http://127.0.0.1:3004`);
+    console.log("SOCKETT here=>");
+    console.log(this.socket);
+  }
 };
 </script>
 
