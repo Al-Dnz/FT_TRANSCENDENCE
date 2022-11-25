@@ -30,12 +30,12 @@ export class MessageGateway
   @SubscribeMessage('msgToServer')
   async handleMessage(client: Socket, payload: CreateMessageDto): Promise<void> 
   {
-    await this.messageService.create(payload);
+    const new_message = await this.messageService.create(payload);
 
-    this.logger.log("HERE WEBSOCKET==>")
-    this.logger.log(payload);
+    this.logger.log("HERE MESSAGE WEBSOCKET==>")
+    this.logger.log(new_message);
 
-    this.server.emit(`msgToChannel`, payload);
+    this.server.emit(`msgToChannel`, new_message);
   }
 
   afterInit(server: Server) {

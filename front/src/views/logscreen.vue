@@ -80,7 +80,7 @@ export default defineComponent({
   },
   methods: {
     log() {
-      location.href = process.env.VUE_APP_CALLBACK;     
+      location.href = process.env.VUE_APP_CALLBACK;
     },
   },
 });
