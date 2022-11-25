@@ -11,7 +11,7 @@ export function getCookie(name: string): string {
 }
 
 export function setCookie(name: string, value: string, expiration: Date) {
-    document.cookie = `${name}=${value}; expires=${expiration.toUTCString()}; path=/`;
+    document.cookie = `${name}=${value}; expires=${expiration.toUTCString()}; path=/; SameSite=none; Secure`;
 }
 
 export async function getCredentials(): Promise<string> {

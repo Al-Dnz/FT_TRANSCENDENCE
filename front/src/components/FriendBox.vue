@@ -5,11 +5,11 @@
 		</div>
 		<div className="w-1/3 flex flex-row justify-between h-full">
 			<div className="flex flex-col justify-center w-1/2">
-				<span> {{obj.username}} </span>
+				<span> {{obj.login}} </span>
 			</div>
 			<div className="flex flex-col justify-center w-1/2">
-				<span v-if="obj.status===1" className="text-green-500">En ligne</span>
-				<span v-else-if="obj.status===2" className="text-red-400">En game</span>
+				<span v-if="obj.status==='online'" className="text-green-500">En ligne</span>
+				<span v-else-if="obj.status==='ingame'" className="text-red-400">En game</span>
 				<span v-else className="text-slate-500">Disconnected</span>
 			</div>
 		</div>
@@ -24,7 +24,7 @@
 			<img src="../assets/pp.jpeg" className ="h-5/6 rounded-xl"/>
 		</div>
 		<div className="flex flex-col justify-center w-1/3">
-			<span> {{obj.username}} </span>
+			<span> {{obj.login}} </span>
 		</div>
 		<div className="flex flex-row justify-end w-1/3">
 			<CheckIcon @click="accept()" class="text-green-400"/>
@@ -54,13 +54,13 @@
 			this.mod(this.index, temp)
 		},
 		msg() {
-			alert("Start une conv avec: " + this.obj.username);
+			alert("Start une conv avec: " + this.obj.login);
 		},
 		watch() {
 			if (this.obj.status == 2)
-				alert("On va spectate :" + this.obj.username);
+				alert("On va spectate :" + this.obj.login);
 			else
-				alert("Can't spectate :" + this.obj.username + " because he is not in game");
+				alert("Can't spectate :" + this.obj.login + " because he is not in game");
 		}
 	},
   }
