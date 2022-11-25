@@ -3,12 +3,9 @@
     <div class="mt-3 mb-5">
       <div>
         <ul class="list-none">
-          <li
-            v-for="conv in privConvList"
-            v-bind:key="conv.id"
-          >
+          <li v-for="conv in privConvList" v-bind:key="conv.id">
             <div class="pb-2 font-semibold">
-              <button @click="goConv(conv.name)">
+              <button @click="$emit('changeConv', conv, 'privConv')">
                 <div class="flex flex-row">
                   <img :src="getImgUrl(conv.pic)" class="w-8 h-8 rounded-full" />
                   <div class="pl-2">@{{ conv.name }}</div>
@@ -25,19 +22,16 @@
           hover:rounded-xl rounded-3xl
           transition-all duration-300 ease-linear
           cursor-pointer shadow-lg">
-            <PlusIcon @click="newPrivConv"/>
-        </div>  
+          <PlusIcon @click="newPrivConv" />
+        </div>
       </div>
     </div>
     <div>
       <div class="mt-5 mb-3">
         <ul class="list-none">
-          <li
-            v-for="conv in chanConvList"
-            v-bind:key="conv.id"
-          >
+          <li v-for="conv in chanConvList" v-bind:key="conv.id">
             <div class="mb-4 font-semibold">
-              <button @click="goConv(conv.name)">
+              <button @click="$emit('changeConv', conv, 'chanConv')">
                 #{{ conv.name }}
               </button>
             </div>
@@ -51,8 +45,8 @@
           hover:rounded-xl rounded-3xl
           transition-all duration-300 ease-linear
           cursor-pointer shadow-lg">
-            <PlusIcon @click="newChan"/>
-        </div>  
+          <PlusIcon @click="newChan" />
+        </div>
       </div>
     </div>
   </div>
@@ -61,39 +55,16 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 
-interface ConvI {
-  id: number;
-  name: string;
-  pic: string;
-}
-interface DataI {
-  privConvList: ConvI[];
-  chanConvList: ConvI[];
-}
-
-//tmp var
-let privConv1: ConvI = { id: 1, name: '/chat/Bob', pic: 'pp.jpeg'};
-let privConv2: ConvI = { id: 2, name: '/chat/Jeff', pic: 'Accountpp.jpeg'};
-let privConv3: ConvI = { id: 3, name: '/chat/Sam', pic: 'madgeleft.jpeg'};
-let chanConv1: ConvI = { id: 1, name: '/chan/Work Group', pic: 'MultipleUsers.png'};
-let chanConv2: ConvI = { id: 1, name: '/chan/The Boys', pic: 'MultipleUsers.png'};
-
 export default defineComponent({
   name: "ChatConvList",
-  data(): DataI {
-    return {
-      privConvList: [ privConv1, privConv2, privConv3 ],
-      chanConvList: [ chanConv1, chanConv2 ],
-    }
+  props: {
+    privConvList: Object,
+    chanConvList: Object,
   },
   methods: {
     getImgUrl: function (img: string) {
 			return require('@/assets/' + img);
 		},
-    goConv(convName: string) {
-//    this.$router.push('/chat/' + convName);
-      this.$emit('swapConvType', convName);
-    },
     newPrivConv() {
 			alert("we create a new private conversation")
 		},

@@ -1,17 +1,18 @@
 <template>
   <div class="h-full w-full flex flex-row">
     <div class="h-full w-1/5 text-slate-600 bg-gray-100">
-      <ChatConvList @swapConvType="changeConv" />
+      <ChatConvList
+      :privConvList="privConvList" :chanConvList="chanConvList"
+      @changeConv="changeConv" />
     </div>
     <div class="h-full w-4/5 bg-gray-50">
-      <component :is="activeConvType "/>
+      <component :is="activeConvType " :conv="currConv" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import ChatConvList from "../components/ChatConvList.vue";
-import ChatConv from "../components/ChatConv.vue";
 import PrivConv from "../components/PrivConv.vue";
 import ChanConv from "../components/ChanConv.vue";
 import { defineComponent } from "vue";
@@ -36,7 +37,8 @@ interface ConvI {
 }
 
 interface DataI {
-  convList?: ConvI[];
+  privConvList?: ConvI[];
+  chanConvList?: ConvI[];
   currConv?: ConvI;
   activeConvType: string;
 }
@@ -48,7 +50,7 @@ let user2: UserI = { name: 'Jeff', pic: 'Accountpp.jpeg' };
 let user3: UserI = { name: 'Sam', pic: 'madgeleft.jpeg' };
 let conv1: ConvI = {
   id: 1,
-  name: '@' + user1.name,
+  name: user1.name,
   pic: user1.pic,
   userList: [ user0, user1 ],
   msgList: [
@@ -60,7 +62,7 @@ let conv1: ConvI = {
 };
 let conv2: ConvI = {
   id: 2,
-  name: '@' + user2.name,
+  name: user2.name,
   pic: user2.pic,
   userList: [ user0, user2 ],
   msgList: [
@@ -70,7 +72,7 @@ let conv2: ConvI = {
 };
 let conv3: ConvI = {
   id: 3,
-  name: '@' + user3.name,
+  name: user3.name,
   pic: user3.pic,
   userList: [ user0, user3 ],
   msgList: [
@@ -82,7 +84,7 @@ let conv3: ConvI = {
 };
 let conv4: ConvI = {
   id: 4,
-  name: '#' + 'Work Group',
+  name: 'Work Group',
   pic: 'MultipleUsers.png',
   userList: [ user0, user1, user2, user3 ],
   msgList: [
@@ -95,7 +97,7 @@ let conv4: ConvI = {
 };
 let conv5: ConvI = {
   id: 5,
-  name: '#' + 'The Boys',
+  name: 'The Boys',
   pic: 'MultipleUsers.png',
   userList: [ user0, user1, user2 ],
   msgList: [
@@ -108,27 +110,39 @@ export default defineComponent({
   name: "ChatPage",
   components: {
     ChatConvList,
-    ChatConv,
     PrivConv,
     ChanConv,
   },
   data(): DataI {
     return {
-      convList: [ conv1, conv2, conv3, conv4, conv5 ],
+      privConvList: [ conv1, conv2, conv3 ],
+      chanConvList: [ conv4, conv5 ],
       currConv: conv1,
       activeConvType: 'PrivConv',
     }
   },
   methods: {
-    changeConv: function(convName: string) {
-      this.$router.push(convName);
+    changeConv: function(conv: ConvI, convType: string) {
+      if (convType === 'privConv')
+        this.$router.push('/chat/' + conv.name);
+      else
+        this.$router.push('/chan/' + conv.name);
+      this.currConv = conv;
     }
   },
   mounted() {
-    if (this.$route.name === 'chat')
-      this.activeConvType = 'PrivConv'
-    else
+    if (this.$route.name === 'chat') {
+      this.activeConvType = 'PrivConv';
+      const found = this.privConvList?.find(element => element.name === this.$route.params.id);
+      if (found)
+        this.currConv = found;
+    }
+    else {
       this.activeConvType = 'ChanConv'
+      const found = this.chanConvList?.find(element => element.name === this.$route.params.id);
+      if (found)
+        this.currConv = found;
+    }
   }
 })
 </script>
