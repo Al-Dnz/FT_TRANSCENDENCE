@@ -1,4 +1,5 @@
 <template>
+  YO
   <div class="pt-3 pl-2">
     <ul class="list-none">
       <li
@@ -31,6 +32,7 @@
 </template>
 
 <script>
+//do it all again
 export default {
   name: "ChatConvList",
   methods: {
