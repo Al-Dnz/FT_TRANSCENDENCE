@@ -11,7 +11,7 @@ export class ChannelController {
   constructor(private readonly channelService: ChannelService) {}
 
   @Post()
-  create(@Body(ValidationPipe) createChannelDto: CreateChannelDto) {
+  create(@Body() createChannelDto: CreateChannelDto) {
     return this.channelService.create(createChannelDto);
   }
 

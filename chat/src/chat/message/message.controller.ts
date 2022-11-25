@@ -14,7 +14,7 @@ export class MessageController {
   private logger: Logger = new Logger('MessageController');
 
   @Post()
-  create(@Body(ValidationPipe) createMessageDto: CreateMessageDto)
+  create(@Body() createMessageDto: CreateMessageDto)
   {
     return this.messageService.create(createMessageDto);
   }
