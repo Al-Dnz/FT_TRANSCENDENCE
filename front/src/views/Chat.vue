@@ -1,12 +1,16 @@
 <template>
   <div class="h-full w-full flex flex-row">
-    <div class="h-full w-1/5 text-slate-600 bg-gray-100">    
-      <ChatChannelInput :socket="socket" :current_chan="current_chan"/>
+    <div class="h-full w-1/5 text-slate-600 bg-gray-100">
+      <ChatChannelInput :socket="socket" :current_chan="current_chan" />
       <ChatChannelsList :socket="socket" @selectedChannel="getCurrentChannel" />
     </div>
-    <div class="h-full w-4/5 bg-gray-50"> 
-      <ChatMessagesList :socket="socket" :current_chan="current_chan"/>
-      <ChatMessageInput :socket="socket" :current_chan="current_chan"/>
+    <div class="h-full w-4/5 bg-gray-50">
+      <div class="h-5/6 w-full">
+        <ChatMessagesList :socket="socket" :current_chan="current_chan" />
+      </div>
+      <div>
+      <ChatMessageInput :socket="socket" :current_chan="current_chan" />
+      </div>
     </div>
   </div>
 </template>
@@ -52,15 +56,12 @@ export default defineComponent({
       this.current_chan = channel;
     },
   },
-  computed:
-  {
-    loadMainChan(): ChannelI
-    {
+  computed: {
+    loadMainChan(): ChannelI {
       return (this.current_chan);
     }
   },
-  created()
-  {
+  created() {
     this.socket = io(`http://127.0.0.1:3004`);
   }
 });
