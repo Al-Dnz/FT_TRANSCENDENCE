@@ -534,10 +534,10 @@ components:
       required:
         - login
         - username
-        - two_fa
         - status
         - actual_avatar
         - stats
+        - settings
       properties:
         login:
           type: string
@@ -547,9 +547,6 @@ components:
         username:
           type: string
           example: dboyer
-        two_fa:
-          type: boolean
-          example: true
         status:
           type: string
           enum:
@@ -560,6 +557,32 @@ components:
             - afk
         stats:
           $ref: "#/components/schemas/UserStatsOutput"
+        settings:
+          $ref: "#/components/schemas/UserSettings"
+    UserSettings:
+      type: object
+      required:
+        - two_fa
+        - paddle_id
+        - map_id
+      properties:
+        two_fa:
+          type: boolean
+          example: false
+        paddle_id:
+          type: integer
+          enum:
+            - 1
+            - 2
+            - 3
+            - 4
+        map_id:
+          type: integer
+          enum:
+            - 1
+            - 2
+            - 3
+            - 4
   requestBodies:
     OauthCode:
       content:
@@ -594,9 +617,8 @@ components:
               username:
                 type: string
                 example: dboyer
-              two_fa:
-                type: boolean
-                example: false
+              settings:
+                $ref: "#/components/schemas/UserSettings"
   securitySchemes:
     42oauth2:
       type: oauth2
