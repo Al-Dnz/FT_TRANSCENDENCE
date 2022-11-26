@@ -1,4 +1,6 @@
 import {
+  WsException,
+  WsResponse,
   SubscribeMessage,
   WebSocketGateway,
   OnGatewayInit,
@@ -13,6 +15,11 @@ import { Socket, Server } from 'socket.io';
 import { MessageService } from './message.service';
 import { CreateMessageDto } from './dto/create-message.dto';
 
+import { UsePipes, ValidationPipe } from '@nestjs/common';
+
+import { WSPipe } from 'src/exception/websockets/ws-exception-filter'
+
+@UsePipes(WSPipe)
 @WebSocketGateway({
   cors: {
     origin: '*',
@@ -27,12 +34,13 @@ export class MessageGateway
   @WebSocketServer() server: Server;
   private logger: Logger = new Logger('MessageGateway');
 
+
   @SubscribeMessage('msgToServer')
-  async handleMessage(client: Socket, payload: CreateMessageDto): Promise<void> 
+  async handleMessage(client: Socket, payload: CreateMessageDto):  Promise<void>
   {
     const new_message = await this.messageService.create(payload);
 
-    this.logger.log("HERE MESSAGE WEBSOCKET==>")
+    this.logger.log("HERE MESSAGE WEBSOCKET V4==>")
     this.logger.log(new_message);
 
     this.server.emit(`msgToChannel`, new_message);

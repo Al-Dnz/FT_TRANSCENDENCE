@@ -13,6 +13,10 @@ import { Socket, Server } from 'socket.io';
 import { ChannelService } from './channel.service';
 import { CreateChannelDto } from './dto/create-channel.dto';
 
+import { UsePipes } from '@nestjs/common';
+import { WSPipe } from 'src/exception/websockets/ws-exception-filter'
+
+@UsePipes(WSPipe)
 @WebSocketGateway({
   cors: {
     origin: '*',
@@ -34,7 +38,7 @@ export class ChannelGateway
   async handleMessage(client: any, payload: CreateChannelDto): Promise<void> {
     const new_chan = await this.channelService.create(payload);
     
-    this.logger.log("HERE CHANNEL WEBSOCKET==>")
+    this.logger.log("HERE CHANNEL WEBSOCKET v5==>")
     this.logger.log(new_chan);
     this.server.emit('chanToClient', new_chan);
   }

@@ -1,6 +1,10 @@
 DOCKER_COMPOSE_FILE = docker-compose.yml
+FRONT_FOLDER= ./front
 
-all: up
+all: init up
+
+init:
+	cp .env ${FRONT_FOLDER}/.env
 
 up:
 	@-docker-compose -f ${DOCKER_COMPOSE_FILE} up -d
@@ -21,4 +25,4 @@ nuke:
 	@-docker volume prune --force
 	@-docker network prune --force
 
-.PHONY: all up down stop restart nuke
+.PHONY: all init up down stop restart nuke
