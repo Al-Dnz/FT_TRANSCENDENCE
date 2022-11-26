@@ -20,8 +20,11 @@ import ChatChannelInput from "../components/ChatComponent/ChatChannelInput.vue";
 import { defineComponent } from "vue";
 
 interface ChannelI {
+  unremovable: boolean;
   id: number;
+  createdAt: string;
   name: string;
+  type: string;
 }
 
 export default defineComponent({
@@ -36,8 +39,11 @@ export default defineComponent({
     return {
       socket: null as any,
       current_chan: {
+        unremovable: true,
         id: 1,
-        name: "main_chan"
+        createdAt: '',
+        name: 'main_chan',
+        type: 'public'
       },
     };
   },

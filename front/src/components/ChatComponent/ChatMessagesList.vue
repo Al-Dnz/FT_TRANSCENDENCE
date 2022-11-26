@@ -42,8 +42,25 @@
   </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from "vue";
+
+interface ChannelI {
+  unremovable: boolean;
+  id: number;
+  createdAt: string;
+  name: string;
+  type: string;
+}
+interface MessageI {
+  id: number;
+  createdAt: string;
+  updatedAt: string;
+  text: string;
+  channel: ChannelI;
+}
+
+export default defineComponent({
   name: "ChatMessagesList",
   props: {
     socket: Object,
@@ -51,11 +68,11 @@ export default {
   },
   data() {
     return {
-      messages: null,
+      messages: null as any,
     };
   },
   methods: {
-    getImgUrl: function (img) {
+    getImgUrl: function (img: string) {
       return require('@/assets/' + img);
     },
     async fetchData() {
@@ -63,13 +80,13 @@ export default {
         method: 'GET',
         headers: {}
       }
-      let response = await fetch(`http://localhost:3004/channel/${this.current_chan.id}/messages`, bearer)
-      let data = await response.json();
+      let response = await fetch(`http://localhost:3004/channel/${this.current_chan?.id}/messages`, bearer)
+      let data: Response["type"] = await response.json();
       this.messages = [...data];
 
     },
-    receivedMessage(message) {
-      if (message.channel.id === this.current_chan.id) {
+    receivedMessage(message: MessageI) {
+      if (message.channel.id === this.current_chan?.id) {
         // console.log("WS new messages =>");
         // console.log(message);
         this.messages.push(message);
@@ -87,7 +104,7 @@ export default {
   async created() {
     if (this.current_chan) {
       this.fetchData();
-      this.socket.on(`msgToChannel`, (message) => {
+      this.socket?.on(`msgToChannel`, (message: MessageI) => {
         this.receivedMessage(message);
       })
     }
@@ -98,7 +115,7 @@ export default {
       this.fetchData();
     }
   }
-};
+});
 </script>
 
 

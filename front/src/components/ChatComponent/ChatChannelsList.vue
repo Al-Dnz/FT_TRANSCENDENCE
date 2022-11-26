@@ -15,8 +15,11 @@
 import { defineComponent } from "vue";
 
 interface ChannelI {
+  unremovable: boolean;
   id: number;
+  createdAt: string;
   name: string;
+  type: string;
 }
 
 export default defineComponent({
