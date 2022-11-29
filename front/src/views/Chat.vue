@@ -1,16 +1,26 @@
 <template>
   <div class="h-full w-full flex flex-row">
     <div class="h-full w-1/5 text-slate-600 bg-gray-100">
-      <ChatChannelInput :socket="socket" :current_chan="current_chan" />
-      <ChatChannelsList :socket="socket" @selectedChannel="getCurrentChannel" />
+      <ChatChannelsList :socket="socket" :creatingChan="creatingChan"
+      @selectedChannel="getCurrentChannel" @showForm="showCreationForm" />
     </div>
-    <div class="h-full w-4/5 bg-gray-50">
-      <div class="h-5/6 w-full">
-        <ChatMessagesList :socket="socket" :current_chan="current_chan" />
+    <div v-if="!creatingChan" class="h-full w-4/5 bg-gray-50">
+      <div class="h-full w-full flex flex-col divide-y-2">
+        <div class="h-1/6 w-full">
+          <ChatDirectMessageHeader :socket="socket" :current_chan="current_chan" />
+        </div>
+        <div class="h-5/6 w-full">
+          <div class="h-5/6 w-full">
+            <ChatMessagesList :socket="socket" :current_chan="current_chan" />
+          </div>
+          <div class="h-1/6 w-full">
+            <ChatMessageInput :socket="socket" :current_chan="current_chan" />
+          </div>
+        </div>
       </div>
-      <div>
-      <ChatMessageInput :socket="socket" :current_chan="current_chan" />
-      </div>
+    </div>
+    <div v-else class="h-full w-4/5">
+      <ChatNewChannelForm :socket="socket" @cancelForm="showCreationForm" />
     </div>
   </div>
 </template>
@@ -20,7 +30,9 @@ import io from 'socket.io-client';
 import ChatMessagesList from "../components/ChatComponent/ChatMessagesList.vue";
 import ChatMessageInput from "../components/ChatComponent/ChatMessageInput.vue";
 import ChatChannelsList from "../components/ChatComponent/ChatChannelsList.vue";
-import ChatChannelInput from "../components/ChatComponent/ChatChannelInput.vue";
+import ChatNewChannelForm from "../components/ChatComponent/ChatNewChannelForm.vue";
+import ChatDirectMessageHeader from "../components/ChatComponent/ChatDirectMessageHeader.vue";
+// import ChatChannelHeader from "../components/ChatComponent/ChatChannelHeader.vue";
 import { defineComponent } from "vue";
 
 interface ChannelI {
@@ -34,10 +46,12 @@ interface ChannelI {
 export default defineComponent({
   name: "ChatPage",
   components: {
-    ChatChannelInput,
+    ChatNewChannelForm,
     ChatChannelsList,
     ChatMessagesList,
     ChatMessageInput,
+    ChatDirectMessageHeader,
+    // ChatChannelHeader,
   },
   data() {
     return {
@@ -49,12 +63,16 @@ export default defineComponent({
         name: 'main_chan',
         type: 'public'
       },
+      creatingChan: false,
     };
   },
   methods: {
     getCurrentChannel(channel: ChannelI) {
       this.current_chan = channel;
     },
+    showCreationForm() {
+      this.creatingChan = !this.creatingChan;
+    }
   },
   computed: {
     loadMainChan(): ChannelI {

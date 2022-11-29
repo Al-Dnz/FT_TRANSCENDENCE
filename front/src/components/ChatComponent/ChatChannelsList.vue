@@ -1,14 +1,34 @@
 <template>
-  <div class="pt-1 pl-2">
-    <ul class="list-none">
-      <li v-for="channel in channels" :key="channel.id">
-        <div class="pb-2 font-semibold">
-          <button @click="backUpChan(channel)"># {{ channel.name }} </button>
-        </div>
-      </li>
-    </ul>
+  <div class="h-14 w-full pt-4 pl-2">
+    <div v-if="!creatingChan" class="w-10 h-10
+    bg-slate-50 border-4 hover:bg-green-600
+    text-gray-500 hover:text-white
+    hover:rounded-xl rounded-3xl
+    transition-all duration-300 ease-linear
+    cursor-pointer shadow-lg">
+      <PlusIcon @click="showForm()"/>
+    </div>
   </div>
-
+  <div class="divide-y-2">
+    <div class="pt-2 pl-2">
+      <ul class="list-none">
+        <li v-for="channel in channels" :key="channel.id">
+          <div v-if="channel.type === 'direct_message'" class="pb-2 font-semibold">
+            <button @click="backUpChan(channel)"># {{ channel.name }} </button>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="pt-2 pl-2">
+      <ul class="list-none">
+        <li v-for="channel in channels" :key="channel.id">
+          <div v-if="channel.type !== 'direct_message'" class="pb-2 font-semibold">
+            <button @click="backUpChan(channel)"># {{ channel.name }} </button>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -24,10 +44,9 @@ interface ChannelI {
 
 export default defineComponent({
   name: "ChatChannelsList",
-  components: {},
   props: {
     socket: Object,
-    current_chan: Object
+    creatingChan: Boolean,
   },
   data() {
     return {
@@ -49,9 +68,9 @@ export default defineComponent({
     },
     backUpChan(channel: ChannelI) {
       this.$emit('selectedChannel', channel);
-      console.log("all chan =>");
-      console.log(this.channels);
-
+    },
+    showForm() {
+      this.$emit('showForm');
     },
   },
   computed: {
@@ -67,7 +86,6 @@ export default defineComponent({
       this.receivedChannel(channel);
     })
   },
-  emits: ['selectedChannel']
 });
 </script>
 
