@@ -7,7 +7,7 @@ init:
 	cp .env ${FRONT_FOLDER}/.env
 
 up:
-	@-docker-compose -f ${DOCKER_COMPOSE_FILE} up -d
+	@-docker compose -f ${DOCKER_COMPOSE_FILE} up -d
 
 down:
 	@-docker-compose -f ${DOCKER_COMPOSE_FILE} down
