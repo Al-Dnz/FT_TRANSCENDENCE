@@ -4,7 +4,7 @@
       <div class="flex flex-col">
         <!-- <img :src="getImgUrl('MultipleUsers')" class="w-20 h-20 rounded-full" /> -->
         <h1 class="text-3xl font-bold">{{ current_chan?.name }}</h1>
-        <p>This is the beginning of your direct message history with {{ current_chan?.name }}</p>
+        <p class="mt-4">This is the beginning of your direct message history with {{ current_chan?.name }}.</p>
       </div>
       <div class="pt-8 pl-16">
         <div class="relative flex items-center justify-center 

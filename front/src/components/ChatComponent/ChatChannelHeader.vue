@@ -1,32 +1,12 @@
 <template>
-  <div class="flex flex-col pt-3 pl-4 pr-4 divide-y-2">
-    <div class="flex flex-row pb-8">
-      <div class="flex flex-col">
-        <!-- <img :src="getImgUrl('MultipleUsers')" class="w-20 h-20 rounded-full" /> -->
-        <h1 class="text-3xl font-bold">{{ current_chan?.name }}</h1>
-        <p>This is the beginning of your direct message history with {{ current_chan?.name }}</p>
-      </div>
-      <div class="pt-8 pl-16">
-        <div class="relative flex items-center justify-center 
-        w-16 h-16 mt-2 mb-2 mx-auto  
-        bg-slate-50 border-4 hover:bg-green-600
-        text-green-500 hover:text-white
-        hover:rounded-xl rounded-3xl
-        transition-all duration-300 ease-linear
-        cursor-pointer shadow-lg">
-          <UserIcon @click="goProfile('User')"/>
-        </div>  
-      </div>
-      <div class="pt-8 pl-10">
-        <div class="relative flex items-center justify-center 
-        w-16 h-16 mt-2 mb-2 mx-auto  
-        bg-slate-50 border-4 hover:bg-green-600
-        text-green-500 hover:text-white
-        hover:rounded-xl rounded-3xl
-        transition-all duration-300 ease-linear
-        cursor-pointer shadow-lg">
-          <PlayIcon @click="gameInvite('User')"/>
-        </div>  
+  <div class="h-full w-full flex flex-col pt-3 pl-4 pr-4 divide-y-2">
+    <div class="h-full w-full flex flex-col">
+      <!-- <img :src="getImgUrl('MultipleUsers')" class="w-20 h-20 rounded-full" /> -->
+      <h1 class="text-3xl font-bold">{{ current_chan?.name }}</h1>
+      <p class="mt-4">This is the start of the #{{ current_chan?.name }} channel.</p>
+      <div class="w-full flex justify-end mt-2">
+        <button class="rounded-lg border-2 border-slate-600
+      hover:text-red-500 hover:border-red-500">Quit channel</button>
       </div>
     </div>
   </div>

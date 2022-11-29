@@ -4,19 +4,24 @@
       <ChatChannelsList :socket="socket" :creatingChan="creatingChan"
       @selectedChannel="getCurrentChannel" @showForm="showCreationForm" />
     </div>
-    <div v-if="!creatingChan" class="h-full w-4/5 bg-gray-50">
-      <div class="h-full w-full flex flex-col divide-y-2">
-        <div class="h-1/6 w-full">
-          <ChatDirectMessageHeader :socket="socket" :current_chan="current_chan" />
-        </div>
-        <div class="h-5/6 w-full">
-          <div class="h-5/6 w-full">
-            <ChatMessagesList :socket="socket" :current_chan="current_chan" />
-          </div>
+    <div v-if="!creatingChan" class="h-full w-4/5 flex flex-row bg-gray-50">
+      <div class="h-full w-4/5">
+        <div class="h-full w-full flex flex-col divide-y-2">
           <div class="h-1/6 w-full">
-            <ChatMessageInput :socket="socket" :current_chan="current_chan" />
+            <ChatChannelHeader :socket="socket" :current_chan="current_chan" />
+          </div>
+          <div class="h-5/6 w-full">
+            <div class="h-5/6 w-full">
+              <ChatMessagesList :socket="socket" :current_chan="current_chan" />
+            </div>
+            <div class="h-1/6 w-full">
+              <ChatMessageInput :socket="socket" :current_chan="current_chan" />
+            </div>
           </div>
         </div>
+      </div>
+      <div class="h-full w-1/5 bg-gray-100">
+        <ChatChannelUsersList :current_chan="current_chan" />
       </div>
     </div>
     <div v-else class="h-full w-4/5">
@@ -31,8 +36,9 @@ import ChatMessagesList from "../components/ChatComponent/ChatMessagesList.vue";
 import ChatMessageInput from "../components/ChatComponent/ChatMessageInput.vue";
 import ChatChannelsList from "../components/ChatComponent/ChatChannelsList.vue";
 import ChatNewChannelForm from "../components/ChatComponent/ChatNewChannelForm.vue";
-import ChatDirectMessageHeader from "../components/ChatComponent/ChatDirectMessageHeader.vue";
-// import ChatChannelHeader from "../components/ChatComponent/ChatChannelHeader.vue";
+//import ChatDirectMessageHeader from "../components/ChatComponent/ChatDirectMessageHeader.vue";
+import ChatChannelHeader from "../components/ChatComponent/ChatChannelHeader.vue";
+import ChatChannelUsersList from "../components/ChatComponent/ChatChannelUsersList.vue";
 import { defineComponent } from "vue";
 
 interface ChannelI {
@@ -50,8 +56,9 @@ export default defineComponent({
     ChatChannelsList,
     ChatMessagesList,
     ChatMessageInput,
-    ChatDirectMessageHeader,
-    // ChatChannelHeader,
+    //ChatDirectMessageHeader,
+    ChatChannelHeader,
+    ChatChannelUsersList,
   },
   data() {
     return {

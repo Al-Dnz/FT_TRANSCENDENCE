@@ -8,6 +8,8 @@
     placeholder="Name"></textarea>
     <textarea v-model="newType" id="textarea" class="form-control w-52 mt-4 border-2"
     placeholder="Type"></textarea>
+    <textarea v-if="newType === 'protected'" v-model="newPassword" id="textarea"
+    class="form-control w-52 mt-4 border-2" placeholder="Password"></textarea>
     <div class="mt-4">
       <button class="rounded-lg border-2 border-slate-600
       hover:text-green-500 hover:border-green-500"
@@ -30,6 +32,7 @@ export default defineComponent({
             sender: '',
             newName: '',
             newType: '',
+            newPassword: '',
         };
     },
     methods: {
@@ -39,16 +42,19 @@ export default defineComponent({
                     // sender: this.sender,
                     name: this.newName,
                     type: this.newType,
+                    password: this.newPassword,
                 };
                 this.socket?.emit("chanToServer", channel);
                 this.cancelForm();
             }
         },
         validateInput() {
-            return (this.newName.length > 0 && this.newType.length > 0);
+            return (this.newName.length > 0 && this.newType.length > 0
+            && !(this.newType === 'protected' && !this.newPassword.length));
         },
         cancelForm() {
           this.newName = '';
+          this.newType = '';
           this.newType = '';
           this.$emit("cancelForm");
         }
