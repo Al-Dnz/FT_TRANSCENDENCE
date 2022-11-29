@@ -3,7 +3,7 @@ DOCKER_COMPOSE_FILE = docker-compose.yml
 all: up
 
 up:
-	@-docker-compose -f ${DOCKER_COMPOSE_FILE} up -d
+	@-docker compose -f ${DOCKER_COMPOSE_FILE} up -d
 
 down:
 	@-docker-compose -f ${DOCKER_COMPOSE_FILE} down
