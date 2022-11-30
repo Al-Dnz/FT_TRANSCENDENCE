@@ -1,4 +1,6 @@
 <template>
+  <TestMenu />
+  YOYOYOYO
   <div class="flex flex-col pt-3 pl-4 pr-4 divide-y-2">
     <div v-if="current_chan">
       <div id="messages" class="card-block">
@@ -25,6 +27,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import TestMenu from "./TestMenu.vue";
 
 interface ChannelI {
   unremovable: boolean;
@@ -46,6 +49,9 @@ export default defineComponent({
   props: {
     socket: Object,
     current_chan: Object
+  },
+  components: {
+    TestMenu,
   },
   data() {
     return {
