@@ -35,6 +35,8 @@ export default defineComponent({
         .then(() => {this.$router.push("/param");})
         .catch((errorMsg: ResponseError) => { errorMsg.response.json().then((str : ErrorOutput) =>
           {
+            this.$cookies.remove("trans_access")
+		        this.$cookies.remove("trans_refresh")
             this.$router.push("/");
             this.$toast(str.message, {
               styles: { backgroundColor: "#FF0000", color: "#FFFFFF" },
