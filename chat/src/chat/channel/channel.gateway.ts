@@ -54,7 +54,13 @@ export class ChannelGateway
   @SubscribeMessage('requestAllMessagesFromChan')
   async sendChanMessages(client: Socket, payload: JoinChannelDto)
   {
-    const chanMessages = await this.channelService.findMessagesWithPassword(payload)
+    this.logger.log("PAYLOAD USER TOKEN =>");
+    this.logger.log(payload.token);
+
+    
+    // const chanMessages = await this.channelService.findMessagesWithPassword(payload)
+    const chanMessages = await this.channelService.findMessages(payload.id)
+
     this.server.emit('allChanMessagesToClient', chanMessages);
   }
 
