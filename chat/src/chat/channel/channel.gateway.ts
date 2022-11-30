@@ -16,6 +16,9 @@ import { CreateChannelDto } from './dto/create-channel.dto';
 import { UsePipes } from '@nestjs/common';
 import { WSPipe } from 'src/exception/websockets/ws-exception-filter'
 
+import { Channel } from 'db-interface/Core';
+import { JoinChannelDto } from './dto/join-channel.dto';
+
 @UsePipes(WSPipe)
 @WebSocketGateway({
   cors: {
@@ -35,12 +38,24 @@ export class ChannelGateway
 
 
   @SubscribeMessage('chanToServer')
-  async handleMessage(client: any, payload: CreateChannelDto): Promise<void> {
+  async createNewChan(client: any, payload: CreateChannelDto): Promise<void> 
+  {
     const new_chan = await this.channelService.create(payload);
-    
-    this.logger.log("HERE CHANNEL WEBSOCKET v5==>")
-    this.logger.log(new_chan);
     this.server.emit('chanToClient', new_chan);
+  }
+
+  @SubscribeMessage('requestAllChannels')
+  async sendAllChan(client: Socket)
+  {
+    const all_chan = await this.channelService.findAll();
+    this.server.emit('allChansToClient', all_chan);
+  }
+
+  @SubscribeMessage('requestAllMessagesFromChan')
+  async sendChanMessages(client: Socket, payload: JoinChannelDto)
+  {
+    const chanMessages = await this.channelService.findMessagesWithPassword(payload)
+    this.server.emit('allChanMessagesToClient', chanMessages);
   }
 
   afterInit(server: Server) {
