@@ -1,4 +1,4 @@
-# ty
+# ft_transcendence
 
 ## Project setup
 ```
