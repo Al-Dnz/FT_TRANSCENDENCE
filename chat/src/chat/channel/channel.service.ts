@@ -56,7 +56,12 @@ export class ChannelService {
   }
 
   async findAll() {
-    return this.channelsRepository.find();
+    return await this.channelsRepository.find();
+  }
+
+  getAllChannels()
+  {
+    
   }
 
   async findOne(id: number) {

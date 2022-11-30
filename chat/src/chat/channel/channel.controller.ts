@@ -17,10 +17,17 @@ export class ChannelController {
     return this.channelService.create(createChannelDto);
   }
 
+  // @Get()
+  // async getMessageWithBody(@Body() body: JoinChannelDto) 
+  // {
+  //   return this.channelService.findMessagesWithPassword(body);
+  // }
+
   @Get()
-  async getMessageWithBody(@Body() body: JoinChannelDto) 
+  async getAllChannels() 
   {
-    return this.channelService.findMessagesWithPassword(body); 
+    // return this.channelService.findMessagesWithPassword(body);
+    return this.channelService.findAll(); 
   }
 
   @Get(':id')
