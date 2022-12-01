@@ -9,10 +9,7 @@ import { Body } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
 
-import {
-    Channel,
-	Message
-} from 'db-interface/Core';
+import { Channel, Message } from 'db-interface/Core';
 
 import { Logger } from '@nestjs/common';
 
