@@ -1,5 +1,5 @@
 <template>
-  <TestMenu />
+  <UserOptionsMenu />
   YOYOYOYO
   <div class="flex flex-col pt-3 pl-4 pr-4 divide-y-2">
     <div v-if="current_chan">
@@ -27,7 +27,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import TestMenu from "./TestMenu.vue";
+import UserOptionsMenu from "./UserOptionsMenu.vue";
 
 interface ChannelI {
   unremovable: boolean;
@@ -51,7 +51,7 @@ export default defineComponent({
     current_chan: Object
   },
   components: {
-    TestMenu,
+    UserOptionsMenu,
   },
   data() {
     return {
