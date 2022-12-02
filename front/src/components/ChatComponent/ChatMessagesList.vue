@@ -1,8 +1,9 @@
 <template>
   <UserOptionsMenu />
   YOYOYOYO
+  <ChatMessageBox :currentChan="currentChan" />
   <div class="flex flex-col pt-3 pl-4 pr-4 divide-y-2">
-    <div v-if="current_chan">
+    <div v-if="currentChan">
       <div id="messages" class="card-block">
         <ul>
           <li v-for="message in messages" :key="message.id">
@@ -27,7 +28,8 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import UserOptionsMenu from "./UserOptionsMenu.vue";
+import UserOptionsMenu from "../UserOptionsMenu.vue";
+import ChatMessageBox from "./ChatMessageBox.vue";
 
 interface ChannelI {
   unremovable: boolean;
@@ -48,10 +50,11 @@ export default defineComponent({
   name: "ChatMessagesList",
   props: {
     socket: Object,
-    current_chan: Object
+    currentChan: Object
   },
   components: {
     UserOptionsMenu,
+    ChatMessageBox,
   },
   data() {
     return {
@@ -67,7 +70,7 @@ export default defineComponent({
         method: 'GET',
         headers: {}
       }
-      let response = await fetch(`http://localhost:3004/channel/${this.current_chan?.id}/messages`, bearer)
+      let response = await fetch(`http://localhost:3004/channel/${this.currentChan?.id}/messages`, bearer)
       let data: Response["type"] = await response.json();
       this.messages = [...data];
 
@@ -80,7 +83,7 @@ export default defineComponent({
       alert("a game invitation has been sent to " + userName);
     },
     receivedMessage(message: MessageI) {
-      if (message.channel.id === this.current_chan?.id) {
+      if (message.channel.id === this.currentChan?.id) {
         // console.log("WS new messages =>");
         // console.log(message);
         this.messages.push(message);
@@ -96,7 +99,7 @@ export default defineComponent({
     }
   },
   async created() {
-    if (this.current_chan) {
+    if (this.currentChan) {
       this.fetchData();
       this.socket?.on(`msgToChannel`, (message: MessageI) => {
         this.receivedMessage(message);
