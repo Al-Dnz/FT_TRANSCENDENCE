@@ -76,7 +76,8 @@ export default {
         id: 1,
         name: "main_chan"
       },
-      token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NzQ3MDgsImVtYWlsIjoiYWRlbmhlekBzdHVkZW50LjQyLmZyIiwibG9naW4iOiJhZGVuaGV6IiwiaW1hZ2VfdXJsIjoiaHR0cHM6Ly9jZG4uaW50cmEuNDIuZnIvdXNlcnMvZjM4NjM3ZGJiM2ZmODc1MGU1N2U5ZGY0NWMzODMwNTEvYWRlbmhlei5qcGciLCJpYXQiOjE2Njk4MTkxMTIsImV4cCI6MTY2OTgyMDAxMn0.2-5oJBp-H-Ypu9_YtTh2Ghjhot7_dK7ohQibSdY_brg"
+      token: this.$cookies.get("trans_access"),
+      // token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NzQ3MDgsImVtYWlsIjoiYWRlbmhlekBzdHVkZW50LjQyLmZyIiwibG9naW4iOiJhZGVuaGV6IiwiaW1hZ2VfdXJsIjoiaHR0cHM6Ly9jZG4uaW50cmEuNDIuZnIvdXNlcnMvZjM4NjM3ZGJiM2ZmODc1MGU1N2U5ZGY0NWMzODMwNTEvYWRlbmhlei5qcGciLCJpYXQiOjE2Njk4MTkxMTIsImV4cCI6MTY2OTgyMDAxMn0.2-5oJBp-H-Ypu9_YtTh2Ghjhot7_dK7ohQibSdY_brg"
     };
   },
   computed:
