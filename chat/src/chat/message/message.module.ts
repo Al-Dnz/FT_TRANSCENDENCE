@@ -5,14 +5,12 @@ import { MessageController } from './message.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MessageGateway } from './message.gateway';
 
-import {
-    Channel,
-	Message,
-	User,
-} from 'db-interface/Core';
+import {Channel,Message,User} from 'db-interface/Core';
+
+import { UserModule } from '../user/user.module'; 
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Message, Channel, User])],
+  imports: [UserModule, TypeOrmModule.forFeature([Message, Channel, User])],
   controllers: [MessageController],
   providers: [MessageService, MessageGateway]
 })

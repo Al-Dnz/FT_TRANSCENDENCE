@@ -9,10 +9,7 @@ import { Body } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
 
-import {
-    Channel,
-	Message
-} from 'db-interface/Core';
+import { Channel, Message } from 'db-interface/Core';
 
 import { Logger } from '@nestjs/common';
 
@@ -80,6 +77,7 @@ export class ChannelService {
     return await this.messagesRepository.find({
       relations: {
         channel: true,
+        sender: true,
       },
       where: {
         channel: {
@@ -119,6 +117,7 @@ export class ChannelService {
     return await this.messagesRepository.find({
       relations: {
         channel: true,
+        sender: true,
       },
       where: {
         channel: {

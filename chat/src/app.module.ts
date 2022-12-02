@@ -17,10 +17,11 @@ import {
     Avatar,
     UserSettings,
 } from 'db-interface/Core';
+import { UserModule } from './chat/user/user.module';
 
 @Module({
   imports: [
-	TypeOrmModule.forFeature([Channel]),
+	TypeOrmModule.forFeature([Channel, User]),
 	ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',

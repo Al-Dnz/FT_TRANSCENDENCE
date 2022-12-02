@@ -2,7 +2,7 @@ import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Channel } from 'db-interface/Core';
+import { Channel, User } from 'db-interface/Core';
 
 import { Logger } from '@nestjs/common';
 
@@ -12,6 +12,8 @@ export class AppService implements OnApplicationBootstrap
 	constructor(
 		@InjectRepository(Channel)
 		private readonly channelsRepository: Repository<Channel>,
+		@InjectRepository(User)
+		private readonly usersRepository: Repository<User>,
 	  ) {}
 
 	private logger: Logger = new Logger('onApplicationBootstrap');
@@ -28,6 +30,17 @@ export class AppService implements OnApplicationBootstrap
 			channel.unremovable = true;
 			this.channelsRepository.save(channel);
 		}
+
+
+		// // TO REMOVE
+		// let user = await this.usersRepository.findOne({ where: {login: "adenhez"} })
+		// if (!user)
+		// {
+		// 	const user = new User("adenhez");
+		// 	user.id = 1;
+		// 	user.userName= "adenhez";
+		// 	this.usersRepository.save(user);
+		// }
 	}
 
   getHello(): string {

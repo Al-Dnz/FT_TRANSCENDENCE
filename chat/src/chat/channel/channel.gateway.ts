@@ -19,6 +19,8 @@ import { WSPipe } from 'src/exception/websockets/ws-exception-filter'
 import { Channel } from 'db-interface/Core';
 import { JoinChannelDto } from './dto/join-channel.dto';
 
+import { UserService } from '../user/user.service';
+
 @UsePipes(WSPipe)
 @WebSocketGateway({
   cors: {
@@ -30,7 +32,10 @@ export class ChannelGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
 
-  constructor(private channelService: ChannelService) {}
+  constructor(private channelService: ChannelService,
+              private userService: UserService,
+              
+  ) {}
 
   @WebSocketServer() server: Server;
 
@@ -54,8 +59,24 @@ export class ChannelGateway
   @SubscribeMessage('requestAllMessagesFromChan')
   async sendChanMessages(client: Socket, payload: JoinChannelDto)
   {
-    const chanMessages = await this.channelService.findMessagesWithPassword(payload)
-    this.server.emit('allChanMessagesToClient', chanMessages);
+    try {
+      // this.userService.checkToken(payload.token);
+
+      const user = await this.userService.getUserByToken(payload.token);
+      this.logger.log("GET USER BY TOKEN =>");
+      this.logger.log(user);
+
+      // const chanMessages = await this.channelService.findMessagesWithPassword(payload)
+      const chanMessages = await this.channelService.findMessages(payload.id)
+      
+      this.server.emit('allChanMessagesToClient', chanMessages);
+      
+    } catch (error) {
+      this.logger.log("WS ERROR =>");
+      this.logger.log(error);
+      this.server.to(client.id).emit('chatError', error.message);
+    }
+
   }
 
   afterInit(server: Server) {
