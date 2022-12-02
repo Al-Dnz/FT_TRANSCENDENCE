@@ -74,7 +74,7 @@ export class ChannelGateway
     } catch (error) {
       this.logger.log("WS ERROR =>");
       this.logger.log(error);
-      this.server.to(client.id).emit('chatError', error);
+      this.server.to(client.id).emit('chatError', error.message);
     }
 
   }

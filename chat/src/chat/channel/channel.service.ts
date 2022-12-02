@@ -77,6 +77,7 @@ export class ChannelService {
     return await this.messagesRepository.find({
       relations: {
         channel: true,
+        sender: true,
       },
       where: {
         channel: {
@@ -116,6 +117,7 @@ export class ChannelService {
     return await this.messagesRepository.find({
       relations: {
         channel: true,
+        sender: true,
       },
       where: {
         channel: {

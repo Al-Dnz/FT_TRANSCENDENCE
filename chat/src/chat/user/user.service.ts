@@ -34,8 +34,8 @@ export class UserService {
 	{ 
 		const decoded = this.jwtService.decode(token) as IToken;
 
-		// this.logger.log("DECODED JWT TOKEN =>");
-		// this.logger.log(decoded.login);
+		this.logger.log("DECODED JWT TOKEN =>");
+		this.logger.log(decoded.login);
 		const user = await this.usersRepository.findOneBy({ login: decoded.login });
 		if (!user)
 			throw new HttpException(`User ${decoded.login} not found`, HttpStatus.NOT_FOUND);
