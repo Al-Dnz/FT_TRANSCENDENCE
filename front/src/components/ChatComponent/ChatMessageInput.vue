@@ -20,7 +20,7 @@
           {
               const message = 
               {
-                  // sender: this.sender,
+                  token: this.token,
                   text: this.text,
                   channelId: this.current_chan.id
               }
@@ -42,7 +42,8 @@
     },
     props: {
       socket: Object,
-      current_chan: Object
+      current_chan: Object,
+      token: String,
     },
   };
   </script>

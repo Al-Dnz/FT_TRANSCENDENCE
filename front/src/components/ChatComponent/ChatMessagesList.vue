@@ -25,17 +25,20 @@
       <div id="messages" class="card-block">
         <ul>
           <li v-for="message in messages" :key="message.id">
-            <!-- <div class="flex flex-row pt-8">
-              <img :src="getImgUrl(message.pic)" class="w-10 h-10 rounded-full" />
+            <div class="flex flex-row pt-8">
+              <img v-if="message.sender" v-bind:src="`${message.sender.avatar.path}`" class="w-10 h-10 rounded-full" />
               <div class="pl-2">
-                <div class="font-bold">
-                  {{ message.from }}
-                </div> -->
+                <div v-if="message.sender" class="font-bold">
+                  
+                
+                  {{ message.sender.login }}
+                
+                </div> 
                 <div class="messageText">
                   {{ message.text }}
                 </div>
-              <!-- </div> -->
-            <!-- </div> -->
+              </div>
+            </div>
           </li>
         </ul>
       </div>
@@ -96,7 +99,8 @@ export default {
   props: 
 	{
 		socket: Object,
-    current_chan: Object
+    current_chan: Object,
+    token: String,
 	},
   computed:
   {
@@ -110,17 +114,35 @@ export default {
     current_chan: function(newVal, oldVal) 
     {
       this.messages = [];
-      this.fetchData();
+      const payload =
+      {
+        id: this.current_chan.id,
+        token: this.token,
+        password:  null
+      }      
+      this.socket.emit('requestAllMessagesFromChan', payload);
     }
   },
   async created()
   {
     if (this.current_chan)
     {
-      this.fetchData();
+      const payload =
+      {
+        id: this.current_chan.id,
+        token: this.token,
+        passowrd: null
+      }
+      this.socket.emit('requestAllMessagesFromChan', payload);
+      this.socket.on(`allChanMessagesToClient`, (messages) => 
+      {
+          this.messages = [];
+          this.messages = messages;
+      })
       this.socket.on(`msgToChannel`, (message) => 
       {
           this.receivedMessage(message);
+         
       })
     }
   }

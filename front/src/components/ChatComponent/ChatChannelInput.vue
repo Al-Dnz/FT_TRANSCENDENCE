@@ -35,7 +35,8 @@
     props: 
     {
       socket: Object,
-      current_chan: Object
+      current_chan: Object,
+      token: String,
     },
   };
 

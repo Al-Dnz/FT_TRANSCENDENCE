@@ -37,10 +37,7 @@ export default {
 	},
 	backUpChan(channel)
 	{
-		this.$emit('selectedChannel', channel);
-		console.log("all chan =>");
-		console.log(this.channels);
-		
+		this.$emit('selectedChannel', channel);		
 	},
 
   },
@@ -49,6 +46,7 @@ export default {
   data() {
     return {
       channels: null,
+      // token: this.$cookies.get("trans_access")
     };
   },
   computed:
@@ -60,17 +58,30 @@ export default {
   },
   props: 
   {
-	socket: Object,
-	current_chan: Object
+    socket: Object,
+    current_chan: Object,
+    token: String,
   },
   async created()
   {
-    this.fetchData();
-	
+    // this.fetchData();
+    // console.log("COOKIE FOM CHAN");
+    // console.log(this.token);
+
+    const payload =
+    {
+      token: this.token,
+      id: 1,//this.current_chan.id,
+      password: null,
+
+    }
+    this.socket.emit('requestAllChannels');
+    this.socket.on(`allChansToClient`, (channels) => 
+    {
+      this.channels = channels;
+    });
     this.socket.on(`chanToClient`, (channel) => 
     {
-		console.log("ws new_channel =>");
-		console.log(channel);
         this.receivedChannel(channel);
     })
 	
