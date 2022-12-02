@@ -6,14 +6,14 @@
         :channels="channels"
         @changeConv="changeConv" /> -->
       
-      <ChatChannelInput :socket="socket" :current_chan="current_chan"/>
-      <ChatChannelsList :socket="socket" @selectedChannel="getCurrentChannel" />
+      <ChatChannelInput :token="token" :socket="socket" :current_chan="current_chan"/>
+      <ChatChannelsList :token="token" :socket="socket" @selectedChannel="getCurrentChannel" />
     </div>
     <div class="h-full w-4/5 bg-gray-50">
       <!-- <ChatConv :messages="currentConv" /> -->
       
-      <ChatMessagesList :socket="socket" :current_chan="current_chan"/>
-      <ChatMessageInput :socket="socket" :current_chan="current_chan"/>
+      <ChatMessagesList :token="token" :socket="socket" :current_chan="current_chan"/>
+      <ChatMessageInput :token="token" :socket="socket" :current_chan="current_chan"/>
     </div>
   </div>
 </template>
@@ -76,6 +76,7 @@ export default {
         id: 1,
         name: "main_chan"
       },
+      token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NzQ3MDgsImVtYWlsIjoiYWRlbmhlekBzdHVkZW50LjQyLmZyIiwibG9naW4iOiJhZGVuaGV6IiwiaW1hZ2VfdXJsIjoiaHR0cHM6Ly9jZG4uaW50cmEuNDIuZnIvdXNlcnMvZjM4NjM3ZGJiM2ZmODc1MGU1N2U5ZGY0NWMzODMwNTEvYWRlbmhlei5qcGciLCJpYXQiOjE2Njk4MTkxMTIsImV4cCI6MTY2OTgyMDAxMn0.2-5oJBp-H-Ypu9_YtTh2Ghjhot7_dK7ohQibSdY_brg"
     };
   },
   computed:
@@ -95,7 +96,12 @@ export default {
   },
   created()
   {
-    this.socket = io(`http://127.0.0.1:3004`);
+    this.socket = io(`http://0.0.0.0:3004`);
+    this.socket.on(`chatError`, (error) => 
+    {
+      this.$toast(error, {styles: {backgroundColor: "#FF0000", color: "#FFFFFF"}});
+    })
+    
   }
 };
 </script>
