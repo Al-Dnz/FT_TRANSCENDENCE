@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-row">
+  <div class="flex flex-row cursor-pointer">
     <Bars3Icon  class="h-6 w-6 rounded-full bg-gray-200" @click="toggleMenu" />
     <div><ul v-if="showOptions" class="form-select form-select-sm appearance-none block w-20 absolute
         px-2 py-1 text-sm font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat
@@ -29,23 +29,6 @@
 import { Bars3Icon } from "@heroicons/vue/24/outline";
 import { defineComponent } from "vue";
 
-// interface UserI {
-//   id: number;
-//   name: string;
-//   pic: string;
-//   blockList: UserI[];
-// }
-// interface ChannelI {
-//   unremovable: boolean;
-//   id: number;
-//   createdAt: string;
-//   name: string;
-//   type: string;
-//   owner: UserI;
-//   adminList: UserI[];
-//   banList: UserI[];
-//   muteList: UserI[];
-// }
 interface DataI {
   showOptions: boolean;
   canBlock: boolean;
@@ -55,9 +38,6 @@ interface DataI {
   canMute: boolean;
   canUnmute: boolean;
   canPromote: boolean;
-  // currentUser_tmp: UserI;
-  // targetUser_tmp: UserI;
-  // currentChan_tmp: ChannelI;
 }
 
 export default defineComponent({
@@ -78,34 +58,12 @@ export default defineComponent({
         canMute: false,
         canUnmute: false,
         canPromote: false,
-        // currentUser_tmp: {
-        //   id: this.currentUser?.id,
-        //   name: this.currentUser?.name,
-        //   pic: this.currentUser?.pic,
-        //   blockList: this.currentUser?.blockList
-        // },
-        // targetUser_tmp: {
-        //   id: this.targetUser?.id,
-        //   name: this.targetUser?.name,
-        //   pic: this.targetUser?.pic,
-        //   blockList: this.targetUser?.blockList
-        // },
-        // currentChan_tmp: {
-        //   unremovable: this.currentChan?.unremovable,
-        //   id: this.currentChan?.id,
-        //   createdAt: this.currentChan?.createdAt,
-        //   name: this.currentChan?.name,
-        //   type: this.currentChan?.type,
-        //   owner: this.currentChan?.owner,
-        //   adminList: this.currentChan?.adminList,
-        //   banList: this.currentChan?.banList,
-        //   muteList: this.currentChan?.muteList
-        // },
       };
     },
     methods: {
       toggleMenu() {
         this.showOptions = !this.showOptions;
+        this.$emit('toggleOptMenu');
       },
       goProfile() {
         alert("going to " + this.targetUser?.name + "'s profile"); // placeholder
