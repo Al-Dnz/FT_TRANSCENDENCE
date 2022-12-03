@@ -14,8 +14,9 @@
             <div class="h-5/6 w-full">
               <ChatMessagesList :socket="socket" :current_chan="current_chan" />
             </div>
-            <div class="h-1/6 w-full">
-              <ChatMessageInput :socket="socket" :current_chan="current_chan" />
+            <div class="relative h-1/6 w-full bg-green-500">
+              <ChatMessageInput :socket="socket" :current_chan="current_chan"
+              class="absolute inset-x-0 bottom-8 bg-red-500" />
             </div>
           </div>
         </div>
@@ -62,6 +63,7 @@ export default defineComponent({
   },
   data() {
     return {
+      height: 40,
       socket: null as any,
       current_chan: {
         unremovable: true,

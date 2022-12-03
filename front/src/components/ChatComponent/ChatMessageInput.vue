@@ -1,11 +1,10 @@
 <template>
-  <div v-if="current_chan" className="flex flex-row ml-4 mr-10">
-    <!-- <textarea v-model="text" id="textarea" class="form-control" @keyup.enter="sendMessage"
-      placeholder="Enter message..."></textarea> -->
-        <input type="text" v-model="text" @keyup.enter="sendMessage()" name="sendMessage" placeholder="New message"
-        autocomplete="off" aria-label="New message" className="rounded-2xl px-3 placeholder-slate-500
-        text-slate-500 focus-within:border-green-500 focus-within:outline-0 border-2 border-slate-500 w-11/12" />
-    <div className="w-1/12 bg-gray-50 text-slate-500 hover:text-green-500 cursor-pointer">
+  <div class="flex flex-row">
+    <input type="text" v-model="text" @keyup.enter="sendMessage()" name="sendMessage"
+    placeholder="New message" autocomplete="off" aria-label="New message"
+    class="w-full rounded-2xl px-3 placeholder-slate-500 text-slate-500
+    focus-within:border-green-500 focus-within:outline-0 border-2 border-slate-500" />
+    <div class="w-12 flex justify-center text-slate-500 hover:text-green-500 cursor-pointer">
       <ArrowRightCircleIcon class="h-10 w-10" @click.prevent="sendMessage" />
     </div>
   </div>
@@ -22,26 +21,27 @@ export default defineComponent({
   },
   data() {
     return {
-      sender: '',
+      // sender: '',
       text: '',
-      channelId: null,
+      // channelId: null,
     };
   },
   methods: {
+    checkInputValidity() {
+      return (this.text.length > 0);
+    },
     sendMessage() {
-      if (this.validateInput() && this.current_chan) {
-        const message =
-        {
-          // sender: this.sender,
-          text: this.text,
-          channelId: this.current_chan.id
-        }
-        this.socket?.emit('msgToServer', message)
+      if (this.checkInputValidity() && this.current_chan) {
+        alert('message sent');
+        // const message =
+        // {
+        //   // sender: this.sender,
+        //   text: this.text,
+        //   channelId: this.current_chan.id
+        // }
+        // this.socket?.emit('msgToServer', message)
         this.text = '';
       }
-    },
-    validateInput() {
-      return this.text.length > 0
     },
   },
 });

@@ -1,18 +1,19 @@
 <template>
   <div @mouseover="showOptMenuButton" @mouseleave="hideOptMenuButton"
-  class="flex flex-row w-full pt-2 pl-2">
-    <img :src="getImgUrl(message_tmp.author.pic)" @click="goProfile"
+  class="flex flex-row w-full mt-2 pt-2 pb-2 pl-6 pr-4 bg-gray-50 hover:bg-gray-200">
+    <img :src="getImgUrl(message?.author.pic)" @click="goProfile"
     class="w-12 h-12 rounded-full cursor-pointer" />
     <div class="flex flex-col ml-2">
       <div class="flex flex-row">
         <h1 @click="goProfile" class="font-semibold cursor-pointer break-all">
-        {{ message_tmp.author.name }}</h1>
-        <div  v-show="isOptMenuButtonVisible"  class="ml-1">
-          <UserOptionsMenu :socket="socket" :currentChan="getChannelTmp" :currentUser="getUser1"
-          :targetUser="getUser2" @toggle-opt-menu="switchOptMenuState" />
+        {{ message?.author.name }}</h1>
+        <div v-if="!isCurrentUser(message?.author)" v-show="isOptMenuButtonVisible"
+        class="ml-1 rounded-full bg-gray-300">
+          <UserOptionsMenu :socket="socket" :currentChan="getChannel" :currentUser="getCurrentUser"
+          :targetUser="getMessageAuthor" @toggle-opt-menu="switchOptMenuState" />
         </div>
       </div>
-      <p class="break-all">{{ message_tmp.text }}</p>
+      <p class="break-all">{{ message?.text }}</p>
     </div>
   </div>
 </template>
@@ -21,66 +22,9 @@
 import { defineComponent } from "vue";
 import UserOptionsMenu from "../UserOptionsMenu.vue";
 
-//tmp def and var
-interface UserTmpI {
-  id: number;
-  name: string;
-  pic: string;
-  blockList: UserTmpI[];
-}
-interface ChannelTmpI {
-  unremovable: boolean;
-  id: number;
-  createdAt: string;
-  name: string;
-  type: string;
-  owner: UserTmpI;
-  adminList: UserTmpI[];
-  banList: UserTmpI[];
-  muteList: UserTmpI[];
-}
-interface MessageTmpI {
-  id: number;
-  createdAt: string;
-  updatedAt: string;
-  author: UserTmpI;
-  text: string;
-  channel: ChannelTmpI;
-}
 interface DataTmpI {
-  message_tmp: MessageTmpI,
   isOptMenuButtonVisible: boolean,
   isOptMenuVisible: boolean,
-}
-let User1: UserTmpI = {
-  id: 1,
-  name: 'current_user',
-  pic: 'Bannedpp.png',
-  blockList: [],
-}
-let User2: UserTmpI = {
-  id: 2,
-  name: 'message_author',
-  pic: 'Accountpp.jpeg',
-  blockList: [],
-}
-let Msg1: MessageTmpI = {
-  id: 1,
-  createdAt: '',
-  updatedAt: '',
-  author: User2,
-  text: 'This is a random message',
-  channel: {
-    unremovable: true,
-    id: 1,
-    createdAt: '',
-    name: 'main_chan',
-    type: 'public',
-    owner: User1,
-    adminList: [ User1 ],
-    banList: [],
-    muteList: []
-  }
 }
 
 export default defineComponent({
@@ -88,19 +32,37 @@ export default defineComponent({
   props: {
     socket: Object,
     currentChan: Object,
-    // message: Object,
+    currentUser: Object,
+    message: Object,
   },
   components: {
     UserOptionsMenu,
   },
   data(): DataTmpI {
     return {
-      message_tmp: Msg1, // this should be a property inherited from MessagesList and originated from the back
       isOptMenuButtonVisible: false,
       isOptMenuVisible: false,
     };
   },
   methods: {
+    compareArrays(arr1: any[], arr2: any[]): boolean {
+      let i = arr1?.length;
+      if (i !== arr2?.length)
+        return (false);
+      while (i) {
+        if (arr1[i] !== arr2[i])
+          return (false);
+        --i;
+      }
+      return (true);
+    },
+    compareUsers(user1: any, user2: any): boolean {
+      if (user1?.length !== user2?.length || user1?.id !== user2?.id
+          || user1?.name !== user2?.name || user1?.pic !== user2?.pic
+          || !this.compareArrays(user1?.blockList, user2?.blockList))
+        return (false);
+      return (true);
+    },
     getImgUrl: function (img: string) {
       return require('@/assets/' + img);
     },
@@ -115,19 +77,22 @@ export default defineComponent({
       this.isOptMenuVisible = !this.isOptMenuVisible;
     },
     goProfile() {
-        alert("going to " + User2.name + "'s profile"); // placeholder
+        alert("going to " + this.message?.author.name + "'s profile"); // placeholder
+    },
+    isCurrentUser(user: any) {
+      return(this.compareUsers(this.currentUser, user));
     },
   },
   computed: {
-    getUser1() {
-      return (User1);
+    getCurrentUser() {
+      return (this.currentUser);
     },
-    getUser2() {
-      return (User2);
+    getMessageAuthor() {
+      return (this.message?.author);
     },
-    getChannelTmp() {
-      return (this.message_tmp.channel);
-    }
+    getChannel() {
+      return (this.currentChan);
+    },
   }
 });
 </script>

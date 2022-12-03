@@ -1,23 +1,11 @@
 <template>
-  <UserOptionsMenu />
-  YOYOYOYO
-  <ChatMessageBox :currentChan="currentChan" />
-  <div class="flex flex-col pt-3 pl-4 pr-4 divide-y-2">
-    <div v-if="currentChan">
-      <div id="messages" class="card-block">
-        <ul>
+  <div class="h-full w-full overflow-auto pt-3">
+    <div v-if="currentChan_tmp">
+      <div class="">
+        <ul >
           <li v-for="message in messages" :key="message.id">
-            <div class="flex flex-row pt-8">
-              <img :src="getImgUrl('Account.png')" class="w-10 h-10 rounded-full" />
-              <div>
-                <div class="font-bold">
-                  <h2>'Username'</h2>
-                </div>
-                <div class="messageText">
-                  {{ message.text }}
-                </div>
-              </div>
-            </div>
+            <ChatMessageBox :socket="socket" :currentChan="currentChan_tmp"
+            :currentUser="currentUser" :message="message" />
           </li>
         </ul>
       </div>
@@ -28,90 +16,92 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import UserOptionsMenu from "../UserOptionsMenu.vue";
 import ChatMessageBox from "./ChatMessageBox.vue";
 
-interface ChannelI {
+interface UserTmpI {
+  id: number;
+  name: string;
+  pic: string;
+  blockList: UserTmpI[];
+}
+interface ChannelTmpI {
   unremovable: boolean;
   id: number;
   createdAt: string;
   name: string;
   type: string;
+  owner: UserTmpI;
+  adminList: UserTmpI[];
+  banList: UserTmpI[];
+  muteList: UserTmpI[];
 }
-interface MessageI {
+interface MessageTmpI {
   id: number;
   createdAt: string;
   updatedAt: string;
+  author: UserTmpI;
   text: string;
-  channel: ChannelI;
+  channel: ChannelTmpI;
+}
+let user1: UserTmpI = {
+  id: 1,
+  name: 'current_user',
+  pic: 'Bannedpp.png',
+  blockList: [],
+}
+let user2: UserTmpI = {
+  id: 2,
+  name: 'message_author',
+  pic: 'Accountpp.jpeg',
+  blockList: [],
+}
+let chan1: ChannelTmpI = {
+  unremovable: true,
+  id: 1,
+  createdAt: '',
+  name: 'chan_test',
+  type: 'public',
+  owner: user1,
+  adminList: [ user1, ],
+  banList: [],
+  muteList: [],
+}
+let msg1: MessageTmpI = {
+  id: 1,
+  createdAt: '',
+  updatedAt: '',
+  author: user2,
+  text: 'This is a random message from "message_author"',
+  channel: chan1,
+}
+let msg2: MessageTmpI = {
+  id: 1,
+  createdAt: '',
+  updatedAt: '',
+  author: user1,
+  text: 'This is the response from you, "current_user"',
+  channel: chan1,
 }
 
 export default defineComponent({
   name: "ChatMessagesList",
   props: {
     socket: Object,
-    currentChan: Object
+    currentChan: Object,
   },
   components: {
-    UserOptionsMenu,
     ChatMessageBox,
   },
   data() {
     return {
-      messages: null as any,
+      currentChan_tmp: chan1, // this is temporary
+      currentUser: user1,
+      messages: [ msg1, msg2, msg1, msg1, msg1, msg1, msg1, msg2, msg1, msg1, msg1, ],
     };
   },
   methods: {
-    getImgUrl: function (img: string) {
-      return require('@/assets/' + img);
-    },
-    async fetchData() {
-      const bearer = {
-        method: 'GET',
-        headers: {}
-      }
-      let response = await fetch(`http://localhost:3004/channel/${this.currentChan?.id}/messages`, bearer)
-      let data: Response["type"] = await response.json();
-      this.messages = [...data];
 
-    },
-    goProfile(userName: string) {
-      this.$router.push('/user/' + userName);
-      alert("going to " + userName + "'s user account");
-    },
-    gameInvite(userName: string) {
-      alert("a game invitation has been sent to " + userName);
-    },
-    receivedMessage(message: MessageI) {
-      if (message.channel.id === this.currentChan?.id) {
-        // console.log("WS new messages =>");
-        // console.log(message);
-        this.messages.push(message);
-        // var objDiv = document.getElementById("messages");
-        // objDiv.scrollTop = objDiv.scrollHeight;
-      }
-
-    },
   },
-  computed: {
-    loadMessage() {
-      return (this.messages);
-    }
-  },
-  async created() {
-    if (this.currentChan) {
-      this.fetchData();
-      this.socket?.on(`msgToChannel`, (message: MessageI) => {
-        this.receivedMessage(message);
-      })
-    }
-  },
-  watch: {
-    current_chan: function (newVal, oldVal) {
-      this.messages = [];
-      this.fetchData();
-    }
-  }
 });
 </script>
 

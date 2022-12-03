@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-row cursor-pointer">
-    <Bars3Icon  class="h-6 w-6 rounded-full bg-gray-200" @click="toggleMenu" />
+    <Bars3Icon  class="h-6 w-6 rounded-full" @click="toggleMenu" />
     <div><ul v-if="showOptions" class="form-select form-select-sm appearance-none block w-20 absolute
         px-2 py-1 text-sm font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat
         border border-solid border-gray-300 rounded transition ease-in-out m-0
@@ -217,6 +217,9 @@ export default defineComponent({
       },
     },
     mounted() {
+      console.log('currentChan: ' + this.currentChan?.name);
+      console.log('currentUser: ' + this.currentUser?.name);
+      console.log('targetUser: ' + this.targetUser?.name);
       this.setAll();
     },
     updated() {
