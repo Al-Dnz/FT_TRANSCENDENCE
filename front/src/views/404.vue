@@ -3,7 +3,7 @@
 	<p>404 Not found</p>
 	</div>
 </template>
-<script>
+<script lang="ts">
 import { defineComponent } from 'vue'
 export default defineComponent({
   name: 'Error_404'

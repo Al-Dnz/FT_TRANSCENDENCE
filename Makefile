@@ -7,16 +7,16 @@ init:
 	cp .env ${FRONT_FOLDER}/.env
 
 up:
-	@-docker compose -f ${DOCKER_COMPOSE_FILE} up -d
+	@-docker compose -f ${DOCKER_COMPOSE_FILE} up -d --build
 
 down:
-	@-docker-compose -f ${DOCKER_COMPOSE_FILE} down
+	@-docker compose -f ${DOCKER_COMPOSE_FILE} down
 
 stop:
-	@-docker-compose -f ${DOCKER_COMPOSE_FILE} stop
+	@-docker compose -f ${DOCKER_COMPOSE_FILE} stop
 
 restart:
-	@-docker-compose -f ${DOCKER_COMPOSE_FILE} restart
+	@-docker compose -f ${DOCKER_COMPOSE_FILE} restart
 
 nuke:
 	@-docker stop $(docker ps -qa)

@@ -11,24 +11,26 @@
   </div>
 </template>
   
-  <script>
-  export default {
-	name: 'spectateBox',
+<script lang="ts">
+import { defineComponent } from 'vue'
+import { PropType } from 'vue';
+export default defineComponent({
+	name: 'imageBox',
 	props : {
-		obj: Object,
+		obj: {type: Object as PropType<Array<string>>},
     current_obj : Number,
-    set_object: { type: Function },
+    set_object: { type: Function , required: true},
     declare_text: String
 	},
 	methods: {
-		set_obj: function(num) {
-            this.set_object(num);
+		set_obj: function(num : number) {
+      this.set_object(num);
         },
-		getImgUrl: function (img) {
+		getImgUrl: function (img : string) : any {
 			return require('@/assets/' + img);
 		}
 	},
-  }
-  </script>
-  
-  <style src="../assets/tailwind.css" />
+})
+</script>
+
+<style src="../assets/tailwind.css" />
