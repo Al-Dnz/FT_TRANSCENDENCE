@@ -86,11 +86,11 @@ export class Match extends Base {
 
 @Entity()
 export class UserChannel extends Base {
-    @Column()
+    @Column({ default: "member" })
     role: UserChannelRole;
 
-    @Column()
-    status: UserChannelStatus;
+    // @Column()
+    // status: UserChannelStatus;
 
     @ManyToOne(() => Channel, (channel: Channel) => channel.members, {
         onDelete: "CASCADE",
@@ -102,8 +102,8 @@ export class UserChannel extends Base {
     })
     user: Relation<User>;
 
-    @OneToOne(() => UserChannel)
-    mutedBy: UserChannel;
+    // @OneToOne(() => UserChannel)
+    // mutedBy: UserChannel;
 }
 
 // @Entity()

@@ -2,7 +2,7 @@ import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Channel, User } from 'db-interface/Core';
+import { Channel, User, Avatar } from 'db-interface/Core';
 
 import { Logger } from '@nestjs/common';
 
@@ -32,15 +32,14 @@ export class AppService implements OnApplicationBootstrap
 		}
 
 
-		// // TO REMOVE
-		// let user = await this.usersRepository.findOne({ where: {login: "adenhez"} })
-		// if (!user)
-		// {
-		// 	const user = new User("adenhez");
-		// 	user.id = 1;
-		// 	user.userName= "adenhez";
-		// 	this.usersRepository.save(user);
-		// }
+		this.logger.log(`Creation of user adenhez`);
+		let user = await this.usersRepository.findOne({ where: {login: "adenhez"} })
+		if (!user)
+		{
+		  let user = new User("adenhez");
+		  user.avatar = new Avatar("https://pickaface.net/gallery/avatar/unr_random_180410_1905_z1exb.png");
+		  this.usersRepository.save(user);			
+		}
 	}
 
   getHello(): string {

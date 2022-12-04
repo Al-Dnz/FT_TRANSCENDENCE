@@ -10,9 +10,10 @@ import { UserModule } from '../user/user.module';
 
 
 import {Channel, Message, User } from 'db-interface/Core';
+import { UserChannelModule } from '../user-channel/user-channel.module';
 
 @Module({
-  imports: [ UserModule, TypeOrmModule.forFeature([Channel, Message, User])],
+  imports: [ UserModule, UserChannelModule, TypeOrmModule.forFeature([Channel, Message, User])],
   controllers: [ChannelController],
   providers: [ChannelService, ChannelGateway]
 })
