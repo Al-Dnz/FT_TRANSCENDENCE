@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User, Avatar } from 'db-interface/Core';
 import { DeleteResult, Like, Repository, UpdateResult } from 'typeorm';
 import { QueryFilterDto } from 'validation/query.dto';
+import { Logger } from '@nestjs/common';
 
 @Injectable()
 export class UserService {
@@ -11,6 +12,9 @@ export class UserService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
   ) {}
+
+  private logger: Logger = new Logger('UserService');
+
 
   create(login: string, avatarPath: string): Promise<User> {
     let user = new User(login);
@@ -78,18 +82,22 @@ export class UserService {
   }
 
   async addFriends(userLogin: string, friendLogin: string): Promise<void> {
+    const userOne = await this.findOne(userLogin);
+    const userTwo = await this.findOne(friendLogin);
     await this.userRepository
       .createQueryBuilder()
       .relation(User, 'friends')
-      .of({ login: userLogin })
-      .add({ login: friendLogin });
+      .of(userOne)
+      .add(userTwo);
   }
 
   async removeFriends(userLogin: string, friendLogin: string): Promise<void> {
+    const userOne = await this.findOne(userLogin);
+    const userTwo = await this.findOne(friendLogin);
     await this.userRepository
       .createQueryBuilder()
       .relation(User, 'friends')
-      .of({ login: userLogin })
-      .remove({ login: friendLogin });
+      .of(userOne)
+      .remove(userTwo);
   }
 }
