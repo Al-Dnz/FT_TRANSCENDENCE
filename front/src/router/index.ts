@@ -132,7 +132,7 @@ const routes: Array<RouteRecordRaw> = [
         type: String,
       },
     },
-  },/*
+  },
   {
     path: "/param",
     name: "paramPage",
@@ -147,7 +147,7 @@ const routes: Array<RouteRecordRaw> = [
         type: String,
       },
     },
-  },*/
+  },
   {
     path: "/callback",
     name: "callbackPage",

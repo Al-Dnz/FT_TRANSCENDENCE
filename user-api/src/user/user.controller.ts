@@ -118,6 +118,11 @@ export class UserController {
         @Identity() user: Identity,
         @Param('login') login: string,
     ): Promise<void> {
+        //g rajouter
+        if (user.login == login) {
+            throw new NotFoundException(`Same user`);
+        }
+
         const userOne: User | undefined = await this.userService.findOne(
             user.login,
         );
@@ -141,6 +146,11 @@ export class UserController {
         @Identity() user: Identity,
         @Param('login') login: string,
     ): Promise<void> {
+        //g rajouter
+        if (user.login == login) {
+            throw new NotFoundException(`Same user`);
+        }
+        
         const userOne: User | undefined = await this.userService.findOne(
             user.login,
         );
