@@ -21,6 +21,9 @@ import { JoinChannelDto } from './dto/join-channel.dto';
 
 import { UserService } from '../user/user.service';
 
+import { UserChannelService } from '../user-channel/user-channel.service';
+import { CreateUserChannelDto } from '../user-channel/dto/create-user-channel.dto';
+
 @UsePipes(WSPipe)
 @WebSocketGateway({
   cors: {
@@ -34,6 +37,7 @@ export class ChannelGateway
 
   constructor(private channelService: ChannelService,
               private userService: UserService,
+              private userChannelService: UserChannelService,
               
   ) {}
 
@@ -61,10 +65,20 @@ export class ChannelGateway
   {
     try {
       // this.userService.checkToken(payload.token);
-
       const user = await this.userService.getUserByToken(payload.token);
       this.logger.log("GET USER BY TOKEN =>");
       this.logger.log(user);
+
+      //joining channel
+      const userChannelData: CreateUserChannelDto =
+      {
+        userId: user.id,
+        channelId: payload.id
+      }
+      this.userChannelService.create(userChannelData)
+
+
+
 
       // const chanMessages = await this.channelService.findMessagesWithPassword(payload)
       const chanMessages = await this.channelService.findMessages(payload.id)
@@ -72,8 +86,6 @@ export class ChannelGateway
       this.server.emit('allChanMessagesToClient', chanMessages);
       
     } catch (error) {
-      this.logger.log("WS ERROR =>");
-      this.logger.log(error);
       this.server.to(client.id).emit('chatError', error.message);
     }
 

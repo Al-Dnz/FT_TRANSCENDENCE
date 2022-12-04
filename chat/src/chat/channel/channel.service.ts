@@ -71,19 +71,20 @@ export class ChannelService {
 
   async findMessages(id: number)
   {
-	const channel = await this.channelsRepository.findOneBy({ id: id });
-	if (!channel)
-		throw new HttpException('Channel not found', HttpStatus.NOT_FOUND);
-    return await this.messagesRepository.find({
-      relations: {
-        channel: true,
-        sender: true,
-      },
-      where: {
-        channel: {
-          id: id,
+    const channel = await this.channelsRepository.findOneBy({ id: id });
+    if (!channel)
+      throw new HttpException('Channel not found', HttpStatus.NOT_FOUND);
+    return await this.messagesRepository.find(
+    {
+        relations: {
+          channel: true,
+          sender: true,
         },
-      },
+        where: {
+          channel: {
+            id: id,
+          },
+        },
     })
   }
 
@@ -131,16 +132,17 @@ export class ChannelService {
   //   return `This action updates a #${id} channel`;
   // }
 
-  async remove(id: number) {
-	const channel = await this.channelsRepository.findOneBy({ id: id })
-	if (!channel)
-		throw new HttpException('Channel not found', HttpStatus.NOT_FOUND);
-	else if (channel.unremovable == false)
-	{
-		await this.channelsRepository.delete(id);
-		throw new HttpException(`Channel #${id} was deleted succesfully`, HttpStatus.OK);
-	}
-	else
-		throw new HttpException('Forbidden: unremovable channel', HttpStatus.FORBIDDEN);
+  async remove(id: number) 
+  {
+    const channel = await this.channelsRepository.findOneBy({ id: id })
+    if (!channel)
+      throw new HttpException('Channel not found', HttpStatus.NOT_FOUND);
+    else if (channel.unremovable == false)
+    {
+      await this.channelsRepository.delete(id);
+      throw new HttpException(`Channel #${id} was deleted succesfully`, HttpStatus.OK);
+    }
+    else
+      throw new HttpException('Forbidden: unremovable channel', HttpStatus.FORBIDDEN);
   }
 }
