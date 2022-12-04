@@ -21,7 +21,7 @@ import { UserModule } from './chat/user/user.module';
 
 @Module({
   imports: [
-	TypeOrmModule.forFeature([Channel, User]),
+	TypeOrmModule.forFeature([Channel, User, Avatar]),
 	ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
