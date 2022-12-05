@@ -30,7 +30,7 @@ export default defineComponent({
     },
     sendMessage() {
       if (this.checkInputValidity() && this.currentChan) {
-        alert('message sent');
+        alert('message sent'); // create new message with back
         this.text = '';
       }
     },

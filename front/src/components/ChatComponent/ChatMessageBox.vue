@@ -8,9 +8,10 @@
         <h1 @click="goProfile" class="font-semibold cursor-pointer break-all">
         {{ message?.author.name }}</h1>
         <div v-if="!isCurrentUser(message?.author)" v-show="isOptMenuButtonVisible"
-        class="ml-1 rounded-full bg-gray-300">
+        class="ml-1">
           <UserOptionsMenu :socket="socket" :currentChan="getCurrentChan" :currentUser="getCurrentUser"
-          :targetUser="getMessageAuthor" @toggle-opt-menu="switchOptMenuState" />
+          :targetUser="getMessageAuthor" @toggle-opt-menu="switchOptMenuState"
+          class="rounded-full bg-gray-300" />
         </div>
       </div>
       <p class="break-all">{{ message?.text }}</p>

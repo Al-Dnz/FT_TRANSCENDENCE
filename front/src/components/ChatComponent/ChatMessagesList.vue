@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full w-full overflow-auto pt-3">
+  <div class="h-full w-full overflow-y-auto pt-3">
     <div v-if="currentChan">
       <div class="">
         <ul>

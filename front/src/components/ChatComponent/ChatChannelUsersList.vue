@@ -3,8 +3,10 @@
     <div>
       <ul>
         <li v-for="user in users" :key="user.id">
-          <ChatChannelUserBox :socket="socket" :currentUser="currentUser"
-          :currentChan="currentChan" :channelUser="user" />
+          <div v-if="!compareUsers(user, currentUser)">
+            <ChatChannelUserBox :socket="socket" :currentUser="currentUser"
+            :currentChan="currentChan" :channelUser="user" />
+          </div>
         </li>
       </ul>
     </div>
@@ -30,7 +32,26 @@ export default defineComponent({
       users: this.currentChan?.userList,
     };
   },
-  methods: {},
+  methods: {
+    compareArrays(arr1: any[], arr2: any[]): boolean {
+      let i = arr1?.length;
+      if (i !== arr2?.length)
+        return (false);
+      while (i) {
+        if (arr1[i] !== arr2[i])
+          return (false);
+        --i;
+      }
+      return (true);
+    },
+    compareUsers(user1: any, user2: any): boolean {
+      if (user1?.length !== user2?.length || user1?.id !== user2?.id
+          || user1?.name !== user2?.name || user1?.pic !== user2?.pic
+          || !this.compareArrays(user1?.blockList, user2?.blockList))
+        return (false);
+      return (true);
+    },
+  },
 });
 </script>
 

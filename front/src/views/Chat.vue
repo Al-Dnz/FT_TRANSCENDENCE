@@ -1,20 +1,21 @@
 <template>
   <div class="h-full w-full flex flex-row">
-    <div class="h-full w-1/5 text-slate-600 bg-gray-100">
-      <ChatChannelsList :socket="socket" :creatingChan="creatingChan"
+    <div class="h-full w-1/6 text-slate-600 bg-gray-100">
+      <ChatChannelsList :socket="socket" :currentUser="currentUser"
+      :currentChan="currentChan" :channels="channelList" :creatingChan="creatingChan"
       @selectedChannel="getCurrentChannel" @showForm="showCreationForm" />
     </div>
-    <div v-if="!creatingChan" class="h-full w-4/5 flex flex-row bg-gray-50">
+    <div v-if="!creatingChan" class="h-full w-5/6 flex flex-row bg-gray-50">
       <div class="h-full w-4/5">
         <div class="h-full w-full flex flex-col divide-y-2">
-          <div class="">
+          <div class="h-[22%]">
             <ChatChannelHeader :socket="socket" :currentChan="currentChan" />
           </div>
-          <div class="flex flex-col grow ml-2 mr-2">
-            <div class="grow">
+          <div class="flex flex-col h-[78%] ml-2 mr-2">
+            <div class="h-[90%]">
               <ChatMessagesList :socket="socket" :currentUser="currentUser" :currentChan="currentChan" />
             </div>
-            <div class="mb-8">
+            <div class="h-[10%] mb-8">
               <ChatMessageInput :socket="socket" :currentChan="currentChan" />
             </div>
           </div>
@@ -89,7 +90,7 @@ let user3: UserTmpI = {
 }
 let user4: UserTmpI = {
   id: 4,
-  name: 'useeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeer',
+  name: 'useeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeer',
   pic: 'pepethekid.png',
   blockList: [],
 }
@@ -122,7 +123,7 @@ let msg4: MessageTmpI = {
   createdAt: '',
   updatedAt: '',
   author: user1,
-  text: 'This is a loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong message',
+  text: 'This is a loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong message',
   channel: null as any,
 }
 let msg5: MessageTmpI = {
@@ -140,7 +141,7 @@ let main_chan: ChannelTmpI = {
   name: 'main_chan',
   type: 'public',
   owner: null as any,
-  userList: [ user1, user2, user3 ],
+  userList: [ user1, ],
   adminList: [],
   banList: [],
   muteList: [],
@@ -153,7 +154,7 @@ let chan1: ChannelTmpI = {
   name: 'chan_test_1',
   type: 'public',
   owner: user1,
-  userList: [ user1, user2 ],
+  userList: [ user1, user2, user3 ],
   adminList: [ user1, ],
   banList: [],
   muteList: [],
@@ -166,11 +167,24 @@ let chan2: ChannelTmpI = {
   name: 'chan_test_2',
   type: 'public',
   owner: user2,
-  userList: [ user2, user1, ],
+  userList: [ user2, user1, user3, ],
   adminList: [ user2, user1, ],
   banList: [],
   muteList: [],
   msgList: [ msg1, msg2, msg3, msg4, msg5, msg1, msg2, msg3, msg1, msg2, msg3, msg1, msg2, msg3, ],
+}
+let chan3: ChannelTmpI = {
+  unremovable: false,
+  id: 4,
+  createdAt: '',
+  name: 'other_user_1',
+  type: 'direct_message',
+  owner: null as any,
+  userList: [ user1, user2,],
+  adminList: [],
+  banList: [],
+  muteList: [],
+  msgList: [ msg1, msg2, msg1, ],
 }
 export default defineComponent({
   name: "ChatPage",
@@ -188,8 +202,8 @@ export default defineComponent({
       height: 40,
       socket: null as any,
       currentUser: user1,
-      currentChan: main_chan,
-      channelList: [ main_chan, chan1, chan2, ],
+      currentChan: chan2,
+      channelList: [ main_chan, chan1, chan2, chan3, ],
       creatingChan: false,
     };
   },

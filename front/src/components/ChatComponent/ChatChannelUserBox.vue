@@ -1,15 +1,16 @@
 <template>
   <div @mouseover="showOptMenuButton" @mouseleave="hideOptMenuButton"
-  class="flex flex-row w-full mt-2 pt-2 pb-2 pl-6 pr-4 bg-gray-50 hover:bg-gray-200">
+  class="flex flex-row w-full mt-2 pt-2 pb-2 pl-6 pr-4 bg-inherit hover:bg-gray-300">
     <img :src="getImgUrl(channelUser?.pic)" @click="goProfile"
     class="w-12 h-12 rounded-full cursor-pointer" />
     <div class="flex flex-row ml-2">
       <h1 @click="goProfile" class="font-semibold cursor-pointer break-all">
       {{ channelUser?.name }}</h1>
       <div v-if="!isCurrentUser(channelUser)" v-show="isOptMenuButtonVisible"
-      class="ml-1 rounded-full bg-gray-300">
+      class="ml-1">
         <UserOptionsMenu :socket="socket" :currentChan="getCurrentChan" :currentUser="getCurrentUser"
-        :targetUser="getChannelUser" @toggle-opt-menu="switchOptMenuState" />
+        :targetUser="getChannelUser" @toggle-opt-menu="switchOptMenuState"
+        class="rounded-full bg-gray-400" />
       </div>
     </div>
   </div>
