@@ -1,6 +1,6 @@
 <template>
   <div @mouseover="showOptMenuButton" @mouseleave="hideOptMenuButton"
-  class="flex flex-row w-full mt-2 pt-2 pb-2 pl-6 pr-4 bg-gray-50 hover:bg-gray-200">
+  class="flex flex-row w-full mt-2 pt-2 pb-2 pl-4 pr-4 bg-gray-50 hover:bg-gray-200">
     <img :src="getImgUrl(message?.author.pic)" @click="goProfile"
     class="w-12 h-12 rounded-full cursor-pointer" />
     <div class="flex flex-col ml-2">

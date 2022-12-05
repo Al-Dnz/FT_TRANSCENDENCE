@@ -13,6 +13,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import ChatChannelUserBox from "./ChatChannelUserBox.vue";
 
 export default defineComponent({
   name: "ChatChannelUsersList",
@@ -20,6 +21,9 @@ export default defineComponent({
     socket: Object,
     currentUser: Object,
     currentChan: Object,
+  },
+  components: {
+    ChatChannelUserBox,
   },
   data() {
     return {

@@ -8,20 +8,20 @@
       <div class="h-full w-4/5">
         <div class="h-full w-full flex flex-col divide-y-2">
           <div class="">
-            <ChatChannelHeader :socket="socket" :current_chan="current_chan" />
-          </div> 
-          <div class="">
-            <div class="h-5/6">
-              <ChatMessagesList :socket="socket" :current_chan="current_chan" />
+            <ChatChannelHeader :socket="socket" :currentChan="currentChan" />
+          </div>
+          <div class="flex flex-col grow ml-2 mr-2">
+            <div class="grow">
+              <ChatMessagesList :socket="socket" :currentUser="currentUser" :currentChan="currentChan" />
             </div>
-            <div class="h-1/6 pl-2">
-              <ChatMessageInput :socket="socket" :current_chan="current_chan" />
+            <div class="mb-8">
+              <ChatMessageInput :socket="socket" :currentChan="currentChan" />
             </div>
           </div>
         </div>
       </div>
       <div class="h-full w-1/5 bg-gray-100">
-        <ChatChannelUsersList :current_chan="current_chan" />
+        <ChatChannelUsersList :socket="socket" :currentUser="currentUser" :currentChan="currentChan" />
       </div>
     </div>
     <div v-else class="h-full w-4/5">
@@ -41,14 +41,137 @@ import ChatChannelHeader from "../components/ChatComponent/ChatChannelHeader.vue
 import ChatChannelUsersList from "../components/ChatComponent/ChatChannelUsersList.vue";
 import { defineComponent } from "vue";
 
-interface ChannelI {
+// tmp var
+interface UserTmpI {
+  id: number;
+  name: string;
+  pic: string;
+  blockList: UserTmpI[];
+}
+interface ChannelTmpI {
   unremovable: boolean;
   id: number;
   createdAt: string;
   name: string;
   type: string;
+  owner: UserTmpI;
+  userList: UserTmpI[]
+  adminList: UserTmpI[];
+  banList: UserTmpI[];
+  muteList: UserTmpI[];
+  msgList: MessageTmpI[];
 }
-
+interface MessageTmpI {
+  id: number;
+  createdAt: string;
+  updatedAt: string;
+  author: UserTmpI;
+  text: string;
+  channel: ChannelTmpI;
+}
+let user1: UserTmpI = {
+  id: 1,
+  name: 'current_user',
+  pic: 'Bannedpp.png',
+  blockList: [],
+}
+let user2: UserTmpI = {
+  id: 2,
+  name: 'other_user_1',
+  pic: 'Accountpp.jpeg',
+  blockList: [],
+}
+let user3: UserTmpI = {
+  id: 3,
+  name: 'other_user_2',
+  pic: 'madgeleft.jpeg',
+  blockList: [],
+}
+let user4: UserTmpI = {
+  id: 4,
+  name: 'useeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeer',
+  pic: 'pepethekid.png',
+  blockList: [],
+}
+let msg1: MessageTmpI = {
+  id: 1,
+  createdAt: '',
+  updatedAt: '',
+  author: user1,
+  text: 'This was written by you, "current_user"',
+  channel: null as any,
+}
+let msg2: MessageTmpI = {
+  id: 2,
+  createdAt: '',
+  updatedAt: '',
+  author: user2,
+  text: 'This is a random message from "other_user_1"',
+  channel: null as any,
+}
+let msg3: MessageTmpI = {
+  id: 3,
+  createdAt: '',
+  updatedAt: '',
+  author: user3,
+  text: 'This is a random message from "other_user_2"',
+  channel: null as any,
+}
+let msg4: MessageTmpI = {
+  id: 4,
+  createdAt: '',
+  updatedAt: '',
+  author: user1,
+  text: 'This is a loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong message',
+  channel: null as any,
+}
+let msg5: MessageTmpI = {
+  id: 5,
+  createdAt: '',
+  updatedAt: '',
+  author: user4,
+  text: 'This user has a long name',
+  channel: null as any,
+}
+let main_chan: ChannelTmpI = {
+  unremovable: true,
+  id: 1,
+  createdAt: '',
+  name: 'main_chan',
+  type: 'public',
+  owner: null as any,
+  userList: [ user1, user2, user3 ],
+  adminList: [],
+  banList: [],
+  muteList: [],
+  msgList: [ msg1 ],
+}
+let chan1: ChannelTmpI = {
+  unremovable: false,
+  id: 2,
+  createdAt: '',
+  name: 'chan_test_1',
+  type: 'public',
+  owner: user1,
+  userList: [ user1, user2 ],
+  adminList: [ user1, ],
+  banList: [],
+  muteList: [],
+  msgList: [ msg1, msg2, msg3, ],
+}
+let chan2: ChannelTmpI = {
+  unremovable: false,
+  id: 3,
+  createdAt: '',
+  name: 'chan_test_2',
+  type: 'public',
+  owner: user2,
+  userList: [ user2, user1, ],
+  adminList: [ user2, user1, ],
+  banList: [],
+  muteList: [],
+  msgList: [ msg1, msg2, msg3, msg4, msg5, msg1, msg2, msg3, msg1, msg2, msg3, msg1, msg2, msg3, ],
+}
 export default defineComponent({
   name: "ChatPage",
   components: {
@@ -64,27 +187,23 @@ export default defineComponent({
     return {
       height: 40,
       socket: null as any,
-      current_chan: {
-        unremovable: true,
-        id: 1,
-        createdAt: '',
-        name: 'main_chan',
-        type: 'public'
-      },
+      currentUser: user1,
+      currentChan: main_chan,
+      channelList: [ main_chan, chan1, chan2, ],
       creatingChan: false,
     };
   },
   methods: {
-    getCurrentChannel(channel: ChannelI) {
-      this.current_chan = channel;
+    getCurrentChannel(channel: ChannelTmpI) {
+      this.currentChan = channel;
     },
     showCreationForm() {
       this.creatingChan = !this.creatingChan;
     }
   },
   computed: {
-    loadMainChan(): ChannelI {
-      return (this.current_chan);
+    loadMainChan(): ChannelTmpI {
+      return (this.currentChan);
     }
   },
   created() {
@@ -92,5 +211,7 @@ export default defineComponent({
   }
 });
 </script>
+
+
 
 <style src="../assets/tailwind.css" />

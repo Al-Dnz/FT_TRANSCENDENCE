@@ -17,7 +17,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import UserOptionsMenuVue from "../UserOptionsMenu.vue";
+import UserOptionsMenu from "../UserOptionsMenu.vue";
 
 export default defineComponent({
   name: "ChatChannelUserBox",
@@ -28,7 +28,7 @@ export default defineComponent({
     channelUser: Object,
   },
   components: {
-    UserOptionsMenuVue,
+    UserOptionsMenu,
   },
   data() {
     return {

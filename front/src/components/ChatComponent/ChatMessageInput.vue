@@ -17,7 +17,7 @@ export default defineComponent({
   name: "ChatMessageInput",
   props: {
     socket: Object,
-    current_chan: Object
+    currentChan: Object
   },
   data() {
     return {
@@ -29,7 +29,7 @@ export default defineComponent({
       return (this.text.length > 0);
     },
     sendMessage() {
-      if (this.checkInputValidity() && this.current_chan) {
+      if (this.checkInputValidity() && this.currentChan) {
         alert('message sent');
         this.text = '';
       }
@@ -41,4 +41,3 @@ export default defineComponent({
   
 
 <style src="../../assets/tailwind.css" />
-  
