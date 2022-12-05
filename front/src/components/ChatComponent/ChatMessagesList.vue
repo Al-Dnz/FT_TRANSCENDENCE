@@ -3,7 +3,7 @@
     <div v-if="currentChan">
       <div class="">
         <ul>
-          <li v-for="message in messages" :key="message.id">
+          <li v-for="message in currentChan?.msgList" :key="message.id">
             <ChatMessageBox :socket="socket" :currentChan="currentChan"
             :currentUser="currentUser" :message="message" />
           </li>
@@ -30,7 +30,7 @@ export default defineComponent({
   },
   data() {
     return {
-      messages: this.currentChan?.msgList,
+      
     };
   },
   methods: {},

@@ -217,9 +217,6 @@ export default defineComponent({
       },
     },
     mounted() {
-      console.log('currentChan: ' + this.currentChan?.name);
-      console.log('currentUser: ' + this.currentUser?.name);
-      console.log('targetUser: ' + this.targetUser?.name);
       this.setAll();
     },
     updated() {

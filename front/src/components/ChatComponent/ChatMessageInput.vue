@@ -17,6 +17,7 @@ export default defineComponent({
   name: "ChatMessageInput",
   props: {
     socket: Object,
+    currentUser: Object,
     currentChan: Object
   },
   data() {
@@ -30,7 +31,15 @@ export default defineComponent({
     },
     sendMessage() {
       if (this.checkInputValidity() && this.currentChan) {
-        alert('message sent'); // create new message with back
+        let newMsg = {
+          id: undefined,
+          createdAt: '',
+          updatedAt: '',
+          author: this.currentUser,
+          text: this.text,
+          channel: this.currentChan,
+        };
+        this.$emit('receiveNewMsg', newMsg);
         this.text = '';
       }
     },

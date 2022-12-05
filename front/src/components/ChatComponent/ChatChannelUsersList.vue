@@ -2,7 +2,7 @@
   <div class="h-full w-full overflow-auto pt-3">
     <div>
       <ul>
-        <li v-for="user in users" :key="user.id">
+        <li v-for="user in currentChan?.userList" :key="user.id">
           <div v-if="!compareUsers(user, currentUser)">
             <ChatChannelUserBox :socket="socket" :currentUser="currentUser"
             :currentChan="currentChan" :channelUser="user" />

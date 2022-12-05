@@ -16,7 +16,8 @@
               <ChatMessagesList :socket="socket" :currentUser="currentUser" :currentChan="currentChan" />
             </div>
             <div class="h-[10%] mb-8">
-              <ChatMessageInput :socket="socket" :currentChan="currentChan" />
+              <ChatMessageInput :socket="socket" :currentUser="currentUser" :currentChan="currentChan"
+              @receiveNewMsg="addMessage" />
             </div>
           </div>
         </div>
@@ -199,7 +200,7 @@ export default defineComponent({
   },
   data() {
     return {
-      height: 40,
+      // height: 40,
       socket: null as any,
       currentUser: user1,
       currentChan: chan2,
@@ -213,7 +214,10 @@ export default defineComponent({
     },
     showCreationForm() {
       this.creatingChan = !this.creatingChan;
-    }
+    },
+    addMessage(message: MessageTmpI) {
+      this.currentChan.msgList.push(message);
+    },
   },
   computed: {
     loadMainChan(): ChannelTmpI {

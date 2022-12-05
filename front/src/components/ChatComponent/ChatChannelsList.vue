@@ -15,7 +15,7 @@
         <ul class="list-none">
           <li v-for="channel in channels" :key="channel.id">
             <div v-if="channel.type === 'direct_message'" class="pb-2 font-semibold">
-              <button @click="changeChannel()"># {{ channel.name }} </button>
+              <button @click="changeChannel(channel)"># {{ channel.name }} </button>
             </div>
           </li>
         </ul>
@@ -34,7 +34,7 @@
         <ul class="list-none">
           <li v-for="channel in channels" :key="channel.id">
             <div v-if="channel.type !== 'direct_message'" class="pb-2 font-semibold">
-              <button @click="changeChannel()"># {{ channel.name }} </button>
+              <button @click="changeChannel(channel)"># {{ channel.name }} </button>
             </div>
           </li>
         </ul>
@@ -84,8 +84,9 @@ export default defineComponent({
     // backUpChan(channel: ChannelI) {
     //   this.$emit('selectedChannel', channel);
     // },
-    changeChannel() {
-      alert('a channel has been selected')
+    changeChannel(channel: any) {
+      // alert('a channel has been selected');
+      this.$emit('selectedChannel', channel);
     },
     showForm() {
       this.$emit('showForm');
