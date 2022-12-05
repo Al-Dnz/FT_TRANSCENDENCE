@@ -13,6 +13,7 @@ import {
     UseGuards,
     UseInterceptors,
     InternalServerErrorException,
+    ForbiddenException
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UpdateUserDto } from 'user-api/dto/update-user.dto';
@@ -120,7 +121,7 @@ export class UserController {
     ): Promise<void> {
         //g rajouter
         if (user.login == login) {
-            throw new NotFoundException(`Same user`);
+            throw new ForbiddenException(`User can't be friend with himself`);
         }
 
         const userOne: User | undefined = await this.userService.findOne(
@@ -134,6 +135,11 @@ export class UserController {
         if (!userTwo) {
             throw new NotFoundException(`user ${login} not found`);
         }
+
+        const friends = await this.userService.findFriends(user.login, {search: login});
+        if (friends.length)
+            throw new ForbiddenException(`${login} and ${user.login} are still friends`);
+
 
         this.userService.addFriends(user.login, login).catch((error: Error) => {
             throw new InternalServerErrorException(error.message);
@@ -148,7 +154,7 @@ export class UserController {
     ): Promise<void> {
         //g rajouter
         if (user.login == login) {
-            throw new NotFoundException(`Same user`);
+            throw new ForbiddenException(`User can't be friend with himself`);
         }
         
         const userOne: User | undefined = await this.userService.findOne(
@@ -162,6 +168,11 @@ export class UserController {
         if (!userTwo) {
             throw new NotFoundException(`user ${login} not found`);
         }
+
+        const friends = await this.userService.findFriends(user.login, {search: login});
+        if (!friends.length)
+            throw new ForbiddenException(`${login} and ${user.login} are not friends`);
+
         this.userService.removeFriends(user.login, login).catch((error: Error) => {
             throw new InternalServerErrorException(error.message);
         });
