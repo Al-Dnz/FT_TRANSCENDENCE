@@ -63,7 +63,7 @@ export default defineComponent({
 			getCredentials().then((accessToken: string) => {
 				const Fapi = new FriendsApi(new Configuration({accessToken: accessToken}))
 				Fapi.createFriendship({login:this.newfriend})
-					.then(() => this.newfriend = '')
+					.then(() => {this.newfriend = ''; window.location.reload();})
 					.catch((msg:ResponseError) => { msg.response.json().then((str: ErrorOutput) =>
 						this.$toast(str.message, {
               			styles: { backgroundColor: "#FF0000", color: "#FFFFFF" },
