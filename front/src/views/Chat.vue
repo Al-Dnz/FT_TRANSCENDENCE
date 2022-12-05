@@ -7,16 +7,15 @@
     <div v-if="!creatingChan" class="h-full w-4/5 flex flex-row bg-gray-50">
       <div class="h-full w-4/5">
         <div class="h-full w-full flex flex-col divide-y-2">
-          <div class="h-1/6 w-full">
+          <div class="">
             <ChatChannelHeader :socket="socket" :current_chan="current_chan" />
-          </div>
-          <div class="h-5/6 w-full">
-            <div class="h-5/6 w-full">
+          </div> 
+          <div class="">
+            <div class="h-5/6">
               <ChatMessagesList :socket="socket" :current_chan="current_chan" />
             </div>
-            <div class="relative h-1/6 w-full bg-green-500">
-              <ChatMessageInput :socket="socket" :current_chan="current_chan"
-              class="absolute inset-x-0 bottom-8 bg-red-500" />
+            <div class="h-1/6 pl-2">
+              <ChatMessageInput :socket="socket" :current_chan="current_chan" />
             </div>
           </div>
         </div>

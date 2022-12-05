@@ -2,7 +2,7 @@
   <div class="h-full w-full overflow-auto pt-3">
     <div v-if="currentChan_tmp">
       <div class="">
-        <ul >
+        <ul>
           <li v-for="message in messages" :key="message.id">
             <ChatMessageBox :socket="socket" :currentChan="currentChan_tmp"
             :currentUser="currentUser" :message="message" />
@@ -31,6 +31,7 @@ interface ChannelTmpI {
   name: string;
   type: string;
   owner: UserTmpI;
+  userList: UserTmpI[]
   adminList: UserTmpI[];
   banList: UserTmpI[];
   muteList: UserTmpI[];
@@ -62,6 +63,7 @@ let chan1: ChannelTmpI = {
   name: 'chan_test',
   type: 'public',
   owner: user1,
+  userList: [ user1, user2 ],
   adminList: [ user1, ],
   banList: [],
   muteList: [],

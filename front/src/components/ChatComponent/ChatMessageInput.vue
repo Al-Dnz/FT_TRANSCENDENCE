@@ -21,9 +21,7 @@ export default defineComponent({
   },
   data() {
     return {
-      // sender: '',
       text: '',
-      // channelId: null,
     };
   },
   methods: {
@@ -33,13 +31,6 @@ export default defineComponent({
     sendMessage() {
       if (this.checkInputValidity() && this.current_chan) {
         alert('message sent');
-        // const message =
-        // {
-        //   // sender: this.sender,
-        //   text: this.text,
-        //   channelId: this.current_chan.id
-        // }
-        // this.socket?.emit('msgToServer', message)
         this.text = '';
       }
     },
