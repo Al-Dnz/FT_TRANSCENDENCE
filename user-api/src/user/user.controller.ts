@@ -119,7 +119,7 @@ export class UserController {
         @Identity() user: Identity,
         @Param('login') login: string,
     ): Promise<void> {
-        //g rajouter
+
         if (user.login == login) {
             throw new ForbiddenException(`User can't be friend with himself`);
         }
@@ -138,7 +138,7 @@ export class UserController {
 
         const friends = await this.userService.findFriends(user.login, {search: login});
         if (friends.length)
-            throw new ForbiddenException(`${login} and ${user.login} are still friends`);
+            throw new ForbiddenException(`${login} and ${user.login} are already friends`);
 
 
         this.userService.addFriends(user.login, login).catch((error: Error) => {
@@ -152,7 +152,7 @@ export class UserController {
         @Identity() user: Identity,
         @Param('login') login: string,
     ): Promise<void> {
-        //g rajouter
+
         if (user.login == login) {
             throw new ForbiddenException(`User can't be friend with himself`);
         }
