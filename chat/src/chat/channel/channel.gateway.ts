@@ -32,7 +32,6 @@ import { CreateUserChannelDto } from '../user-channel/dto/create-user-channel.dt
 })
 
 export class ChannelGateway
-  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
 
   constructor(private channelService: ChannelService,
@@ -89,15 +88,5 @@ export class ChannelGateway
       this.server.to(client.id).emit('chatError', error.message);
     }
 
-  }
-
-  afterInit(server: Server) {
-    this.logger.log('Initialisation of Chan websocket');
-  }
-  handleDisconnect(client: Socket) {
-    this.logger.log(`Client disconnected: ${client.id}`);
-  }
-  handleConnection(client: Socket, ...args: any[]) {
-    this.logger.log(`Client connected: ${client.id}`);
   }
 }

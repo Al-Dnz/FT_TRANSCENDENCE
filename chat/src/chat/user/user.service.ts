@@ -33,19 +33,25 @@ export class UserService {
 	async getUserByToken(token: string)
 	{ 
 		const decoded = this.jwtService.decode(token) as IToken;
-
-		this.logger.log("DECODED JWT TOKEN =>");
-		this.logger.log(decoded.login);
 		const user = await this.usersRepository.findOneBy({ login: decoded.login });
 		if (!user)
 			throw new HttpException(`User ${decoded.login} not found`, HttpStatus.NOT_FOUND);
 		return user
 	}
 
-	async getUserByChatSocket(socketId: string)
+	async updateUserSocket(user: User, socketId: string)
 	{
-
+		user.socketId = socketId;
+		this.usersRepository.save(user);
 	}
+
+	// async getUserByChatSocket(socketId: string): Promise<User>
+	// {
+	// 	const user = await this.usersRepository.find({select: {socketId: socketId}});
+	// 	if (!user)
+	// 		throw new HttpException(`User with socket_id: ${socketId} not found`, HttpStatus.NOT_FOUND);
+	// 	return user[0];
+	// }
 
 
 
