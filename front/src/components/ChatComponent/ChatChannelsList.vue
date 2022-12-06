@@ -1,7 +1,7 @@
 <template>
   <div v-if="!creatingChan" class="h-full w-full pl-2 pr-2 divide-y-2">
     <div>
-      <h1 class="mt-3 font-bold">DIRECT MESSAGES</h1>
+      <h1 class="mt-3 font-semibold">DIRECT MESSAGES</h1>
       <div class="h-12 w-full mt-3">
         <div class="w-10 h-10
         bg-slate-50 border-4 hover:bg-green-600
@@ -23,7 +23,7 @@
       </div>
     </div>
     <div>
-      <h1 class="mt-3 font-bold">CHANNELS</h1>
+      <h1 class="mt-3 font-semibold">CHANNELS</h1>
       <div class="h-12 w-full mt-3">
         <div class="w-10 h-10
         bg-slate-50 border-4 hover:bg-green-600

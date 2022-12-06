@@ -2,29 +2,12 @@
   <div class="h-full w-full flex flex-row">
     <div class="h-full w-1/6 text-slate-600 bg-gray-100">
       <ChatChannelsList :socket="socket" :currentUser="currentUser"
-      :currentChan="currentChan" :channelsList="channelList" :creatingChan="creatingChan"
-      @selectedChannel="getCurrentChannel" @showForm="showCreationForm" />
+      :currentChan="currentChan" :channelsList="channelsList" :creatingChan="creatingChan"
+      @selectedChannel="changeCurrentChannel" @showForm="showCreationForm" />
     </div>
     <div v-if="!creatingChan" class="h-full w-5/6 flex flex-row bg-gray-50">
-      <div class="h-full w-4/5">
-        <div class="h-full w-full flex flex-col divide-y-2">
-          <div class="h-[22%]">
-            <ChatChannelHeader :socket="socket" :currentChan="currentChan" />
-          </div>
-          <div class="flex flex-col h-[78%] ml-2 mr-2">
-            <div class="h-[90%]">
-              <ChatMessagesList :socket="socket" :currentUser="currentUser" :currentChan="currentChan" />
-            </div>
-            <div class="h-[10%] mb-8">
-              <ChatMessageInput :socket="socket" :currentUser="currentUser" :currentChan="currentChan"
-              @receiveNewMsg="addMessage" />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="h-full w-1/5 text-slate-600 bg-gray-100">
-        <ChatChannelUsersList :socket="socket" :currentUser="currentUser" :currentChan="currentChan" />
-      </div>
+      <ChatChannelBox :socket="socket" :currentUser="currentUser"
+      :currentChan="currentChan" @receiveNewMsg="addMessage"/>
     </div>
     <div v-else class="h-full w-4/5">
       <ChatNewChannelForm :socket="socket" @cancelForm="showCreationForm" />
@@ -34,13 +17,10 @@
 
 <script lang="ts">
 import io from 'socket.io-client';
-import ChatMessagesList from "../components/ChatComponent/ChatMessagesList.vue";
-import ChatMessageInput from "../components/ChatComponent/ChatMessageInput.vue";
 import ChatChannelsList from "../components/ChatComponent/ChatChannelsList.vue";
+import ChatChannelBox from "../components/ChatComponent/ChatChannelBox.vue";
+// import ChatDirectMessageBox from "../components/ChatComponent/ChatDirectMessagebox.vue";
 import ChatNewChannelForm from "../components/ChatComponent/ChatNewChannelForm.vue";
-//import ChatDirectMessageHeader from "../components/ChatComponent/ChatDirectMessageHeader.vue";
-import ChatChannelHeader from "../components/ChatComponent/ChatChannelHeader.vue";
-import ChatChannelUsersList from "../components/ChatComponent/ChatChannelUsersList.vue";
 import { defineComponent } from "vue";
 
 // tmp var
@@ -70,6 +50,13 @@ interface MessageTmpI {
   author: UserTmpI;
   text: string;
   channel: ChannelTmpI;
+}
+interface DataI {
+  creatingChan: boolean,
+  socket: any,
+  currentUser: UserTmpI,
+  currentChan: ChannelTmpI,
+  channelsList: ChannelTmpI[],
 }
 let user1: UserTmpI = {
   id: 1,
@@ -185,47 +172,52 @@ let chan3: ChannelTmpI = {
   adminList: [],
   banList: [],
   muteList: [],
-  msgList: [ msg1, msg2, msg1, ],
+  msgList: [ msg1, msg2, ],
+}
+let chan4: ChannelTmpI = {
+  unremovable: true,
+  id: 5,
+  createdAt: '',
+  name: 'other_user_2',
+  type: 'direct_message',
+  owner: null as any,
+  userList: [ user1, user3,],
+  adminList: [],
+  banList: [],
+  muteList: [],
+  msgList: [ msg3, msg1, ],
 }
 export default defineComponent({
   name: "ChatPage",
   components: {
-    ChatNewChannelForm,
     ChatChannelsList,
-    ChatMessagesList,
-    ChatMessageInput,
-    //ChatDirectMessageHeader,
-    ChatChannelHeader,
-    ChatChannelUsersList,
+    ChatChannelBox,
+    // ChatDirectMessageBox,
+    ChatNewChannelForm,
   },
-  data() {
+  data(): DataI {
     return {
-      socket: null as any,
-      currentUser: user1,
-      currentChan: chan2,
-      channelList: [ main_chan, chan1, chan2, chan3, ],
       creatingChan: false,
+      socket: null as any, // not of any use right now, but kept it around, it is still given as a property to children
+      currentUser: user1, // this should al
+      currentChan: main_chan,
+      channelsList: [ main_chan, chan1, chan2, chan3, chan4, ],
     };
   },
   methods: {
-    getCurrentChannel(channel: ChannelTmpI) {
+    changeCurrentChannel(channel: ChannelTmpI) {
       this.currentChan = channel;
     },
     showCreationForm() {
       this.creatingChan = !this.creatingChan;
     },
     addMessage(message: MessageTmpI) {
-      this.currentChan.msgList.push(message);
+      this.currentChan.msgList.push(message); // this is temporary, this should be dealt with in ChatMessageInput
     },
   },
-  computed: {
-    loadMainChan(): ChannelTmpI {
-      return (this.currentChan);
-    }
-  },
-  created() {
-    this.socket = io(`http://127.0.0.1:3004`);
-  }
+  // created() {
+  //   this.socket = io(`http://127.0.0.1:3004`); // not of any use right now, but kept it around
+  // }
 });
 </script>
 
