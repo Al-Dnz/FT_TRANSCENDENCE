@@ -64,7 +64,7 @@ export default defineComponent({
         return (false);
       return (true);
     },
-    getImgUrl: function (img: string) {
+    getImgUrl(img: string) {
       return require('@/assets/' + img);
     },
     showOptMenuButton() {

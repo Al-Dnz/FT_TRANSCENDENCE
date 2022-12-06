@@ -39,7 +39,7 @@ export default defineComponent({
           text: this.text,
           channel: this.currentChan,
         };
-        this.$emit('receiveNewMsg', newMsg);
+        this.$emit('receiveNewMsg', newMsg); // here we need to create a new message and at it to currentChan's messagesList
         this.text = '';
       }
     },

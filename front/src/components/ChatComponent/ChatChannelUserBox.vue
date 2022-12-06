@@ -1,6 +1,6 @@
 <template>
   <div @mouseover="showOptMenuButton" @mouseleave="hideOptMenuButton"
-  class="flex flex-row w-full mt-2 pt-2 pb-2 pl-6 pr-4 bg-inherit hover:bg-gray-300">
+  class="flex flex-row w-full mt-2 pt-2 pb-2 bg-inherit hover:bg-gray-300">
     <img :src="getImgUrl(channelUser?.pic)" @click="goProfile"
     class="w-12 h-12 rounded-full cursor-pointer" />
     <div class="flex flex-row ml-2">
@@ -56,7 +56,7 @@ export default defineComponent({
         return (false);
       return (true);
     },
-    getImgUrl: function (img: string) {
+    getImgUrl(img: string) {
       return require('@/assets/' + img);
     },
     showOptMenuButton() {

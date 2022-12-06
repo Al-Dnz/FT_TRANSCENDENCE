@@ -1,39 +1,43 @@
 <template>
-  <div class="h-full w-full">
-    <div class="h-14 w-full pt-4 pl-2">
-      <div v-if="!creatingChan" class="w-10 h-10
-      bg-slate-50 border-4 hover:bg-green-600
-      text-gray-500 hover:text-white
-      hover:rounded-xl rounded-3xl
-      transition-all duration-300 ease-linear
-      cursor-pointer shadow-lg">
-        <PlusIcon @click="showForm()"/>
+  <div v-if="!creatingChan" class="h-full w-full pl-2 pr-2 divide-y-2">
+    <div>
+      <h1 class="mt-3 font-bold">DIRECT MESSAGES</h1>
+      <div class="h-12 w-full mt-3">
+        <div class="w-10 h-10
+        bg-slate-50 border-4 hover:bg-green-600
+        text-gray-500 hover:text-white
+        hover:rounded-xl rounded-3xl
+        transition-all duration-300 ease-linear
+        cursor-pointer shadow-lg">
+          <PlusIcon @click="showForm()"/>
+        </div>
       </div>
-    </div>
-    <div class="">
-      <div class="pt-2 pl-2">
+      <div class="mt-1 mb-1">
         <ul class="list-none">
-          <li v-for="channel in channels" :key="channel.id">
-            <div v-if="channel.type === 'direct_message'" class="pb-2 font-semibold">
-              <button @click="changeChannel(channel)"># {{ channel.name }} </button>
+          <li v-for="dm in dmChannels" :key="dm.id">
+            <div class="pb-2 font-semibold hover:text-black">
+              <button @click="changeChannel(dm)">{{ dm.name }} </button>
             </div>
           </li>
         </ul>
       </div>
-      <div class="h-12 w-full mt-1 ml-2">
-      <div v-if="!creatingChan" class="w-10 h-10
-      bg-slate-50 border-4 hover:bg-green-600
-      text-gray-500 hover:text-white
-      hover:rounded-xl rounded-3xl
-      transition-all duration-300 ease-linear
-      cursor-pointer shadow-lg">
-        <PlusIcon @click="showForm()"/>
+    </div>
+    <div>
+      <h1 class="mt-3 font-bold">CHANNELS</h1>
+      <div class="h-12 w-full mt-3">
+        <div class="w-10 h-10
+        bg-slate-50 border-4 hover:bg-green-600
+        text-gray-500 hover:text-white
+        hover:rounded-xl rounded-3xl
+        transition-all duration-300 ease-linear
+        cursor-pointer shadow-lg">
+          <PlusIcon @click="showForm()"/>
+        </div>
       </div>
-      </div>
-      <div class="mt-1 ml-2">
+      <div class="mt-1">
         <ul class="list-none">
-          <li v-for="channel in channels" :key="channel.id">
-            <div v-if="channel.type !== 'direct_message'" class="pb-2 font-semibold">
+          <li v-for="channel in regularChannels" :key="channel.id">
+            <div class="pb-2 font-semibold hover:text-black">
               <button @click="changeChannel(channel)"># {{ channel.name }} </button>
             </div>
           </li>
@@ -46,13 +50,10 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 
-// interface ChannelI {
-//   unremovable: boolean;
-//   id: number;
-//   createdAt: string;
-//   name: string;
-//   type: string;
-// }
+interface DataI {
+  dmChannels: any[],
+  regularChannels: any[],
+}
 
 export default defineComponent({
   name: "ChatChannelsList",
@@ -60,51 +61,36 @@ export default defineComponent({
     socket: Object,
     currentUser: Object,
     currentChan: Object,
-    channels: Object,
+    channelsList: Object,
     creatingChan: Boolean,
   },
-  data() {
+  data(): DataI {
     return {
-      // channels: null as any,
+      dmChannels: [],
+      regularChannels: [],
     };
   },
   methods: {
-    // async fetchData() {
-    //   const bearer = {
-    //     method: 'GET',
-    //     headers: {}
-    //   }
-    //   let response = await fetch('http://localhost:3004/channel', bearer)
-    //   let data: Response["type"] = await response.json();
-    //   this.channels = [...data];
-    // },
-    // receivedChannel(channel: ChannelI) {
-    //   this.channels.push(channel);
-    // },
-    // backUpChan(channel: ChannelI) {
-    //   this.$emit('selectedChannel', channel);
-    // },
+    splitChannels() {
+      let i = -1;
+      while (++i < this.channelsList?.length) {
+        if (this.channelsList?.at(i).type === 'direct_message')
+          this.dmChannels.push(this.channelsList?.at(i));
+        else {
+          this.regularChannels.push(this.channelsList?.at(i));
+        }
+      }
+    },
     changeChannel(channel: any) {
-      // alert('a channel has been selected');
-      this.$emit('selectedChannel', channel);
+      this.$emit('selectedChannel', channel); // here we need to modify currentChan
     },
     showForm() {
       this.$emit('showForm');
     },
   },
-  // computed: {
-  //   loadChannel() {
-  //     return (this.channels);
-  //   }
-  // },
-  // async created() {
-  //   this.fetchData();
-  //   this.socket?.on(`chanToClient`, (channel: ChannelI) => {
-  //     console.log("ws new_channel =>");
-  //     console.log(channel);
-  //     this.receivedChannel(channel);
-  //   })
-  // },
+  mounted() {
+    this.splitChannels();
+  }
 });
 </script>
 

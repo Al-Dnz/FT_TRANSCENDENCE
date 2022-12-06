@@ -73,7 +73,7 @@ export default defineComponent({
     };
   },
   methods: {
-    getImgUrl: function (img: string) {
+    getImgUrl(img: string) {
       return require('@/assets/' + img);
     },
     async fetchData() {

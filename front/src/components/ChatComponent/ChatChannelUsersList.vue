@@ -1,9 +1,11 @@
 <template>
-  <div class="h-full w-full overflow-auto pt-3">
-    <div>
+  <div class="h-full w-full pl-2 pr-2">
+    <h1 class="mt-3 font-bold">CHANNEL MEMBERS</h1>
+    <div class="overflow-auto">
       <ul>
         <li v-for="user in currentChan?.userList" :key="user.id">
-          <div v-if="!compareUsers(user, currentUser)">
+          <div v-if="!compareUsers(user, currentUser)"
+          class="hover:text-black">
             <ChatChannelUserBox :socket="socket" :currentUser="currentUser"
             :currentChan="currentChan" :channelUser="user" />
           </div>

@@ -2,7 +2,7 @@
   <div class="h-full w-full flex flex-row">
     <div class="h-full w-1/6 text-slate-600 bg-gray-100">
       <ChatChannelsList :socket="socket" :currentUser="currentUser"
-      :currentChan="currentChan" :channels="channelList" :creatingChan="creatingChan"
+      :currentChan="currentChan" :channelsList="channelList" :creatingChan="creatingChan"
       @selectedChannel="getCurrentChannel" @showForm="showCreationForm" />
     </div>
     <div v-if="!creatingChan" class="h-full w-5/6 flex flex-row bg-gray-50">
@@ -22,7 +22,7 @@
           </div>
         </div>
       </div>
-      <div class="h-full w-1/5 bg-gray-100">
+      <div class="h-full w-1/5 text-slate-600 bg-gray-100">
         <ChatChannelUsersList :socket="socket" :currentUser="currentUser" :currentChan="currentChan" />
       </div>
     </div>
@@ -175,7 +175,7 @@ let chan2: ChannelTmpI = {
   msgList: [ msg1, msg2, msg3, msg4, msg5, msg1, msg2, msg3, msg1, msg2, msg3, msg1, msg2, msg3, ],
 }
 let chan3: ChannelTmpI = {
-  unremovable: false,
+  unremovable: true,
   id: 4,
   createdAt: '',
   name: 'other_user_1',
@@ -200,7 +200,6 @@ export default defineComponent({
   },
   data() {
     return {
-      // height: 40,
       socket: null as any,
       currentUser: user1,
       currentChan: chan2,
