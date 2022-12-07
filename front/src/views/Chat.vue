@@ -192,14 +192,14 @@ export default defineComponent({
   components: {
     ChatChannelsList,
     ChatChannelBox,
-    // ChatDirectMessageBox,
+    // ChatDirectMessageBox, // WIP
     ChatNewChannelForm,
   },
   data(): DataI {
     return {
       creatingChan: false,
       socket: null as any, // not of any use right now, but kept it around, it is still given as a property to children
-      currentUser: user1, // this should al
+      currentUser: user1,
       currentChan: main_chan,
       channelsList: [ main_chan, chan1, chan2, chan3, chan4, ],
     };

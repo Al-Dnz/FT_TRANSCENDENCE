@@ -169,50 +169,43 @@ export default defineComponent({
       },
       blockUser() {
         if (!this.isUserBlocked())
-          // this.currentUser_tmp.blockList.push(this.targetUser_tmp); // this should update the back
-          console.log('success');  
+          alert('user has been blocked'); // here, targetUser should be added to currentUser's blockList
         this.setCanBlock();
         this.setCanUnblock();
       },
       unblockUser() {
         if (this.isUserBlocked())
-          // this.currentUser_tmp.blockList.splice(this.currentUser_tmp.blockList.indexOf(this.targetUser_tmp), 1); // this should update the back
-          console.log('success');
+          alert('user has been unblocked'); // here, targetUser should be removed from currentUser's blockList
         this.setCanUnblock();
         this.setCanBlock();
       },
       banUser() {
         if (!this.isUserBanned() && this.haveAuthorityOver())
-          // this.currentChan_tmp.banList.push(this.targetUser_tmp); // this should update the back
-          console.log('success');  
+          alert('user has been banned');  // here, targetUser should be added to currentChan's banList
         this.setCanBan();
         this.setCanUnban();
       },
       unbanUser() {
         if (this.isUserBanned() && this.haveAuthorityOver())
-          // this.currentChan_tmp.banList.splice(this.currentChan_tmp.banList.indexOf(this.targetUser_tmp), 1); // this should update the back
-          console.log('success');  
+          alert('user has been unbanned');  // here, targetUser should be removed from currentChan's banList
         this.setCanUnban();
         this.setCanBan();
       },
       muteUser() {
         if (!this.isUserMuted() && this.haveAuthorityOver())
-          // this.currentChan_tmp.muteList.push(this.targetUser_tmp); // this should update the back
-          console.log('success'); 
+          alert('user has been muted'); // here, targetUser should be added to currentChan's muteList
         this.setCanMute();
         this.setCanUnmute();
       },
       unmuteUser() {
         if (this.isUserMuted() && this.haveAuthorityOver())
-          // this.currentChan_tmp.muteList.splice(this.currentChan_tmp.muteList.indexOf(this.targetUser_tmp), 1); // this should update the back
-          console.log('success');
+          alert('user has been unmuted'); // here, targetUser should be removed from currentChan's muteList
         this.setCanUnmute();
         this.setCanMute();  
       },
       promoteUser() {
         if (!this.isTargetOwner() && !this.isTargetAdmin() && this.haveAuthorityOver())
-          // this.currentChan_tmp.adminList.push(this.targetUser_); // this should update the back
-          console.log('success');
+          alert('user has been promoted');  // here, targetUser should be added to currentChan's adminList
         this.setCanPromote();  
       },
     },
