@@ -205,6 +205,8 @@ export class User extends Base {
     @Column("boolean", { default: false })
     twoFa: boolean;
 
+    @Column({ nullable: true, default: true })
+    globalSocketId: string;
 
     @Column({ nullable: true, default: true })
     socketId: string;
