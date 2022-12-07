@@ -4,9 +4,10 @@ import { UserService } from 'user-api/user.service';
 import { AvatarController } from './avatar.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Avatar, User, UserStats } from 'db-interface/Core';
+import {JwtModule } from '@nestjs/jwt';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([User, UserStats, Avatar])],
+    imports: [JwtModule.register({ secret: process.env.ACCESS_TOKEN_SECRET }), TypeOrmModule.forFeature([User, UserStats, Avatar])],
     controllers: [AvatarController],
     providers: [AvatarService, UserService],
 })

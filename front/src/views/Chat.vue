@@ -97,7 +97,7 @@ export default {
   },
   created()
   {
-    this.socket = io(`http://0.0.0.0:3004`);
+    this.socket = io(`http://0.0.0.0:3004`, { auth: {token: this.token} });
     this.socket.on(`chatError`, (error) => 
     {
       this.$toast(error, {styles: {backgroundColor: "#FF0000", color: "#FFFFFF"}});

@@ -30,7 +30,7 @@ import { IMessage } from '../interface/message.interface';
 })
 
 export class MessageGateway
-  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect 
+  // implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect 
 {
   constructor(private messageService: MessageService,
               private userService: UserService,   
@@ -69,13 +69,13 @@ export class MessageGateway
   
   }
 
-  afterInit(server: Server) {
-    this.logger.log('Initialisation of Message websocket');
-  }
-  handleDisconnect(client: Socket) {
-    this.logger.log(`Client disconnected: ${client.id}`);
-  }
-  handleConnection(client: Socket, ...args: any[]) {
-    this.logger.log(`Client connected: ${client.id}`);
-  }
+  // afterInit(server: Server) {
+  //   this.logger.log('Initialisation of Message websocket');
+  // }
+  // handleDisconnect(client: Socket) {
+  //   this.logger.log(`Client disconnected: ${client.id}`);
+  // }
+  // handleConnection(client: Socket, ...args: any[]) {
+  //   this.logger.log(`Client connected: ${client.id}`);
+  // }
 }
