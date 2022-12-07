@@ -18,6 +18,7 @@ import {
     UserSettings,
 } from 'db-interface/Core';
 import { UserModule } from './chat/user/user.module';
+import { ChatGateway } from './chat/chat.gateway';
 
 @Module({
   imports: [

@@ -1,20 +1,24 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable,  UnauthorizedException, } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User, Avatar } from 'db-interface/Core';
+import { User, Avatar, UserStatus } from 'db-interface/Core';
 import { DeleteResult, Like, Repository, UpdateResult } from 'typeorm';
 import { QueryFilterDto } from 'validation/query.dto';
+
 import { Logger } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { IToken } from './interface/token.interface';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    private readonly jwtService: JwtService
   ) {}
 
   private logger: Logger = new Logger('UserService');
-
 
   create(login: string, avatarPath: string): Promise<User> {
     let user = new User(login);
@@ -99,5 +103,34 @@ export class UserService {
       .relation(User, 'friends')
       .of(userOne)
       .remove(userTwo);
+  }
+
+  async getUserByToken(token: string)
+	{ 
+		const decoded = this.jwtService.decode(token) as IToken;
+		const user = await this.userRepository.findOneBy({ login: decoded.login });
+		if (!user)
+			throw new HttpException(`User ${decoded.login} not found`, HttpStatus.NOT_FOUND);
+		return user
+	}
+
+  async updateUserStatus(user: User, status: UserStatus, socketId?: string)
+  {
+    user.globalSocketId = socketId || user.globalSocketId;
+    user.status = status;
+    this.userRepository.save(user);
+  }
+
+  async getUserBySocketId(socket: string)
+  {
+    const user = await this.userRepository
+      .createQueryBuilder()
+      .select("user") 
+      .from(User, "user") 
+      .where("user.globalSocketId = :socketId", { socketId: socket })
+      .getOne();
+    if (!user)
+      throw new HttpException(`User with global socket #${socket} not found`, HttpStatus.NOT_FOUND);
+    return user;
   }
 }
