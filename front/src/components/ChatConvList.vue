@@ -1,4 +1,5 @@
 <template>
+  YO
   <div class="pt-3 pl-2">
     <ul class="list-none">
       <li
@@ -6,7 +7,7 @@
         :key="friend.id"
       >
         <div class="pb-2 font-semibold">
-          <button @click="goPrivateRoom(friend.name), $emit('changeConv', friend.id - 1)">
+          <button @clickb="goPrivateRoom(friend.name), $emit('changeConv', friend.id - 1)">
             <div class="flex flex-row">
               <img :src="getImgUrl(friend.pic)" class="w-8 h-8 rounded-full" />
               <div class="pl-2">{{ friend.name }}</div>
@@ -31,6 +32,7 @@
 </template>
 
 <script>
+//do it all again
 export default {
   name: "ChatConvList",
   methods: {
