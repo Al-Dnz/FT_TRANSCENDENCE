@@ -7,8 +7,8 @@
     <p class="mt-3">This is the start of the #{{ currentChan?.name }} channel.</p>
     <div v-if="!currentChan?.unremovable" class="w-full flex mt-2 mb-2">
       <button @click="quitChannel()"
-      class="pl-1 pr-1 rounded-lg border-2 border-slate-600
-    hover:text-red-500 hover:border-red-500">Quit channel</button>
+      class="pl-1 pr-1 rounded-lg border-2 border-slate-600 hover:text-red-500
+      hover:border-red-500">Quit channel</button>
     </div>
   </div>
 </template>

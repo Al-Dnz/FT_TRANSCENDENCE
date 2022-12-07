@@ -3,14 +3,14 @@
   class="flex flex-row w-full mt-2 pt-2 pb-2 pl-4 pr-4 bg-gray-50 hover:bg-gray-200">
     <img :src="getImgUrl(message?.author.pic)" @click="goProfile"
     class="w-12 h-12 rounded-full cursor-pointer" />
-    <div class="flex flex-col ml-2">
-      <div class="flex flex-row">
-        <h1 @click="goProfile" class="font-semibold cursor-pointer break-all">
+    <div class="flex flex-col w-fit ml-2">
+      <div class="flex flex-row w-full">
+        <h1 @click="goProfile" class="max-w-[95%] font-semibold cursor-pointer break-all">
         {{ message?.author.name }}</h1>
         <div v-if="!isCurrentUser(message?.author)" v-show="isOptMenuButtonVisible"
         class="ml-1">
           <UserOptionsMenu :socket="socket" :currentChan="getCurrentChan" :currentUser="getCurrentUser"
-          :targetUser="getMessageAuthor" @toggle-opt-menu="switchOptMenuState"
+          :targetUser="getMessageAuthor" @toggle-opt-menu="switchOptMenuState" @hideMenu="hideMenu"
           class="rounded-full bg-gray-300" />
         </div>
       </div>
@@ -76,6 +76,10 @@ export default defineComponent({
     },
     switchOptMenuState() {
       this.isOptMenuVisible = !this.isOptMenuVisible;
+    },
+    hideMenu() {
+      this.isOptMenuButtonVisible = false;
+      this.isOptMenuVisible = false;
     },
     goProfile() {
         alert("going to " + this.message?.author.name + "'s profile"); // placeholder

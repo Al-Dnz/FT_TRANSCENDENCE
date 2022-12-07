@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-row cursor-pointer">
+  <div @mouseleave="hideMenu" class="flex flex-row cursor-pointer">
     <Bars3Icon  class="h-6 w-6 rounded-full" @click="toggleMenu" />
     <div><ul v-if="showOptions" class="form-select form-select-sm appearance-none block w-20 absolute
         px-2 py-1 text-sm font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat
@@ -64,6 +64,10 @@ export default defineComponent({
       toggleMenu() {
         this.showOptions = !this.showOptions;
         this.$emit('toggleOptMenu');
+      },
+      hideMenu() {
+        this.showOptions = false;
+        this.$emit('hideMenu');
       },
       goProfile() {
         alert("going to " + this.targetUser?.name + "'s profile"); // placeholder

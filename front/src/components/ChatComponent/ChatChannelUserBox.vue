@@ -3,14 +3,13 @@
   class="flex flex-row w-full mt-2 pt-2 pb-2 bg-inherit hover:bg-gray-300">
     <img :src="getImgUrl(channelUser?.pic)" @click="goProfile"
     class="w-12 h-12 rounded-full cursor-pointer" />
-    <div class="flex flex-row ml-2">
+    <div class="flex flex-col ml-2">
       <h1 @click="goProfile" class="font-semibold cursor-pointer break-all">
       {{ channelUser?.name }}</h1>
-      <div v-if="!isCurrentUser(channelUser)" v-show="isOptMenuButtonVisible"
-      class="ml-1">
+      <div v-if="!isCurrentUser(channelUser)" v-show="isOptMenuButtonVisible">
         <UserOptionsMenu :socket="socket" :currentChan="getCurrentChan" :currentUser="getCurrentUser"
         :targetUser="getChannelUser" @toggle-opt-menu="switchOptMenuState"
-        class="rounded-full bg-gray-400" />
+        class="h-6 w-6 rounded-full bg-gray-400" />
       </div>
     </div>
   </div>

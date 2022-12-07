@@ -5,12 +5,21 @@
       :currentChan="currentChan" :channelsList="channelsList" :creatingChan="creatingChan"
       @selectedChannel="changeCurrentChannel" @showForm="showCreationForm" />
     </div>
-    <div v-if="!creatingChan" class="h-full w-5/6 flex flex-row bg-gray-50">
-      <ChatChannelBox :socket="socket" :currentUser="currentUser"
+    <div v-if="(!currentChan && !creatingChan)">
+      <p>NO CHANNEL SELECTED</p>
+    </div>
+    <div v-else-if="creatingChan" class="h-full w-5/6">
+      <ChatNewChannelForm :socket="socket" @cancelForm="showCreationForm" />
+    </div>
+    <div v-else-if="currentChan?.type === 'direct_message'"
+    class="h-full w-5/6 bg-gray-50">
+      <ChatDirectMessageBox :socket="socket" :currentUser="currentUser"
       :currentChan="currentChan" @receiveNewMsg="addMessage"/>
     </div>
-    <div v-else class="h-full w-4/5">
-      <ChatNewChannelForm :socket="socket" @cancelForm="showCreationForm" />
+    <div v-else-if="currentChan?.type !== 'direct_message'"
+    class="h-full w-5/6 bg-gray-50">
+      <ChatChannelBox :socket="socket" :currentUser="currentUser"
+      :currentChan="currentChan" @receiveNewMsg="addMessage"/>
     </div>
   </div>
 </template>
@@ -19,7 +28,7 @@
 import io from 'socket.io-client';
 import ChatChannelsList from "../components/ChatComponent/ChatChannelsList.vue";
 import ChatChannelBox from "../components/ChatComponent/ChatChannelBox.vue";
-// import ChatDirectMessageBox from "../components/ChatComponent/ChatDirectMessagebox.vue";
+import ChatDirectMessageBox from "../components/ChatComponent/ChatDirectMessageBox.vue";
 import ChatNewChannelForm from "../components/ChatComponent/ChatNewChannelForm.vue";
 import { defineComponent } from "vue";
 
@@ -192,7 +201,7 @@ export default defineComponent({
   components: {
     ChatChannelsList,
     ChatChannelBox,
-    // ChatDirectMessageBox, // WIP
+    ChatDirectMessageBox,
     ChatNewChannelForm,
   },
   data(): DataI {
@@ -200,7 +209,7 @@ export default defineComponent({
       creatingChan: false,
       socket: null as any, // not of any use right now, but kept it around, it is still given as a property to children
       currentUser: user1,
-      currentChan: main_chan,
+      currentChan: chan2,
       channelsList: [ main_chan, chan1, chan2, chan3, chan4, ],
     };
   },
