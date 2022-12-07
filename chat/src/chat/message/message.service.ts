@@ -8,11 +8,8 @@ import { Repository } from 'typeorm';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { Logger } from '@nestjs/common';
 
-import {
-    Channel,
-	Message,
-	User
-} from 'db-interface/Core';
+import {Channel,Message,User} from 'db-interface/Core';
+import { IMessage } from '../interface/message.interface';
 
 
 @Injectable()
@@ -28,7 +25,34 @@ export class MessageService {
 
   private logger: Logger = new Logger('MessageService');
 
-  async create(data: CreateMessageDto): Promise<Message> 
+  async createRequest(data: CreateMessageDto): Promise<Message> 
+  {
+    const message = new Message();
+	if (data.text && data.text.length > 0)	
+		message.text = data.text;
+	else
+		throw new HttpException("message text is empty", HttpStatus.FAILED_DEPENDENCY);
+
+	if (data.senderId)
+	{
+		const sender = await this.usersRepository.findOneBy({id: data.senderId});
+		if (!sender)
+			throw new HttpException("this user sender doesn't exist", HttpStatus.FAILED_DEPENDENCY);
+		message.sender = sender;
+	}
+
+	if (data.channelId)
+	{
+		const channel = await this.channelsRepository.findOneBy({id: data.channelId}) ;
+		if (!channel)
+			throw new HttpException("this channel doesn't exist", HttpStatus.FAILED_DEPENDENCY);
+		message.channel = channel;
+	}
+    return this.messagesRepository.save(message);
+  }
+
+
+  async create(data:  IMessage): Promise<Message> 
   {
     const message = new Message();
 	if (data.text && data.text.length > 0)	
@@ -39,13 +63,14 @@ export class MessageService {
 	// if (data.private)
 	// 	message.private = data.private;
 
-	if (data.senderId)
-	{
-		const sender = await this.usersRepository.findOneBy({id: data.senderId});
-		if (!sender)
-			throw new HttpException("this user sender doesn't exist", HttpStatus.FAILED_DEPENDENCY);
-		message.sender = sender;
-	}
+	// if (data.senderId)
+	// {
+	// 	const sender = await this.usersRepository.findOneBy({id: data.senderId});
+	// 	if (!sender)
+	// 		throw new HttpException("this user sender doesn't exist", HttpStatus.FAILED_DEPENDENCY);
+	// 	message.sender = sender;
+	// }
+	message.sender = data.sender;
 	if (data.channelId)
 	{
 		const channel = await this.channelsRepository.findOneBy({id: data.channelId}) ;

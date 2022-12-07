@@ -1,5 +1,6 @@
 <template>
   <div class="h-full w-full flex flex-row">
+<<<<<<< HEAD
     <div class="h-full w-1/6 text-slate-600 bg-gray-100">
       <ChatChannelsList :socket="socket" :currentUser="currentUser"
       :currentChan="currentChan" :channelsList="channelsList" :creatingChan="creatingChan"
@@ -11,6 +12,22 @@
     </div>
     <div v-else class="h-full w-4/5">
       <ChatNewChannelForm :socket="socket" @cancelForm="showCreationForm" />
+=======
+    <div class="h-full w-1/5 text-slate-600 bg-gray-100">
+      <!-- <ChatConvList
+        :friends="friends"
+        :channels="channels"
+        @changeConv="changeConv" /> -->
+      
+      <ChatChannelInput :token="token" :socket="socket" :current_chan="current_chan"/>
+      <ChatChannelsList :token="token" :socket="socket" @selectedChannel="getCurrentChannel" />
+    </div>
+    <div class="h-full w-4/5 bg-gray-50">
+      <!-- <ChatConv :messages="currentConv" /> -->
+      
+      <ChatMessagesList :token="token" :socket="socket" :current_chan="current_chan"/>
+      <ChatMessageInput :token="token" :socket="socket" :current_chan="current_chan"/>
+>>>>>>> master
     </div>
   </div>
 </template>
@@ -197,11 +214,34 @@ export default defineComponent({
   },
   data(): DataI {
     return {
+<<<<<<< HEAD
       creatingChan: false,
       socket: null as any, // not of any use right now, but kept it around, it is still given as a property to children
       currentUser: user1,
       currentChan: main_chan,
       channelsList: [ main_chan, chan1, chan2, chan3, chan4, ],
+=======
+      friends: [
+        { id: 1, name: 'Bob', pic: 'pp.jpeg' },
+        { id: 2, name: 'Jeff', pic: 'Accountpp.jpeg' },
+        { id: 3, name: 'Sam', pic: 'madgeleft.jpeg' },
+      ],
+      channels: [
+        { id: 1, name: 'channel1' },
+        { id: 2, name: 'channel2' },
+        { id: 3, name: 'channel3' },
+      ],
+      convList: [ defMsg1, defMsg2, defMsg3 ],
+      currentConv: defMsg1,
+
+      socket: null,
+      current_chan: {
+        id: 1,
+        name: "main_chan"
+      },
+      token: this.$cookies.get("trans_access"),
+      // token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NzQ3MDgsImVtYWlsIjoiYWRlbmhlekBzdHVkZW50LjQyLmZyIiwibG9naW4iOiJhZGVuaGV6IiwiaW1hZ2VfdXJsIjoiaHR0cHM6Ly9jZG4uaW50cmEuNDIuZnIvdXNlcnMvZjM4NjM3ZGJiM2ZmODc1MGU1N2U5ZGY0NWMzODMwNTEvYWRlbmhlei5qcGciLCJpYXQiOjE2Njk4MTkxMTIsImV4cCI6MTY2OTgyMDAxMn0.2-5oJBp-H-Ypu9_YtTh2Ghjhot7_dK7ohQibSdY_brg"
+>>>>>>> master
     };
   },
   methods: {
@@ -215,10 +255,31 @@ export default defineComponent({
       this.currentChan.msgList.push(message); // this is temporary, this should be dealt with in ChatMessageInput
     },
   },
+<<<<<<< HEAD
   // created() {
   //   this.socket = io(`http://127.0.0.1:3004`); // not of any use right now, but kept it around
   // }
 });
+=======
+  components: {
+    // ChatConvList,
+    // ChatConv,
+    ChatChannelInput,
+    ChatChannelsList,
+    ChatMessagesList,
+    ChatMessageInput,
+  },
+  created()
+  {
+    this.socket = io(`http://0.0.0.0:3004`);
+    this.socket.on(`chatError`, (error) => 
+    {
+      this.$toast(error, {styles: {backgroundColor: "#FF0000", color: "#FFFFFF"}});
+    })
+    
+  }
+};
+>>>>>>> master
 </script>
 
 

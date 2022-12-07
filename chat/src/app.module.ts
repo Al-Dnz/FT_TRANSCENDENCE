@@ -15,11 +15,13 @@ import {
     UserStats,
     Message,
     Avatar,
+    UserSettings,
 } from 'db-interface/Core';
+import { UserModule } from './chat/user/user.module';
 
 @Module({
   imports: [
-	TypeOrmModule.forFeature([Channel]),
+	TypeOrmModule.forFeature([Channel, User, Avatar]),
 	ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -29,7 +31,7 @@ import {
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
 	  entities: [
-		Avatar,
+		            Avatar,
                 Match,
                 UserMatch,
                 Channel,
@@ -37,6 +39,7 @@ import {
                 Message,
                 UserStats,
                 User,
+                UserSettings,
 	],
       autoLoadEntities: true,
       synchronize: true,

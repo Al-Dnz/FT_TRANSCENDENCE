@@ -2,7 +2,7 @@ import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Channel } from 'db-interface/Core';
+import { Channel, User, Avatar } from 'db-interface/Core';
 
 import { Logger } from '@nestjs/common';
 
@@ -12,6 +12,8 @@ export class AppService implements OnApplicationBootstrap
 	constructor(
 		@InjectRepository(Channel)
 		private readonly channelsRepository: Repository<Channel>,
+		@InjectRepository(User)
+		private readonly usersRepository: Repository<User>,
 	  ) {}
 
 	private logger: Logger = new Logger('onApplicationBootstrap');
@@ -27,6 +29,16 @@ export class AppService implements OnApplicationBootstrap
 			channel.name = "main_chan";
 			channel.unremovable = true;
 			this.channelsRepository.save(channel);
+		}
+
+
+		this.logger.log(`Creation of user adenhez`);
+		let user = await this.usersRepository.findOne({ where: {login: "adenhez"} })
+		if (!user)
+		{
+		  let user = new User("adenhez");
+		  user.avatar = new Avatar("https://pickaface.net/gallery/avatar/unr_random_180410_1905_z1exb.png");
+		  this.usersRepository.save(user);			
 		}
 	}
 

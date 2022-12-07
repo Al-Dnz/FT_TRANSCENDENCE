@@ -1,4 +1,6 @@
 import {
+  WsException,
+  WsResponse,
   SubscribeMessage,
   WebSocketGateway,
   OnGatewayInit,
@@ -13,6 +15,14 @@ import { Socket, Server } from 'socket.io';
 import { MessageService } from './message.service';
 import { CreateMessageDto } from './dto/create-message.dto';
 
+import { UsePipes, ValidationPipe } from '@nestjs/common';
+
+import { WSPipe } from 'src/exception/websockets/ws-exception-filter'
+
+import { UserService } from '../user/user.service';
+import { IMessage } from '../interface/message.interface';
+
+@UsePipes(WSPipe)
 @WebSocketGateway({
   cors: {
     origin: '*',
@@ -22,20 +32,41 @@ import { CreateMessageDto } from './dto/create-message.dto';
 export class MessageGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect 
 {
+  constructor(private messageService: MessageService,
+              private userService: UserService,   
+    ) {}
 
-  constructor(private messageService: MessageService) {}
   @WebSocketServer() server: Server;
   private logger: Logger = new Logger('MessageGateway');
 
+
   @SubscribeMessage('msgToServer')
-  async handleMessage(client: Socket, payload: CreateMessageDto): Promise<void> 
+  async handleMessage(client: Socket, payload: CreateMessageDto):  Promise<void>
   {
-    const new_message = await this.messageService.create(payload);
+    try 
+    {
+      // this.userService.checkToken(payload.token)
+      this.logger.log("***MSG CREATING 1 ...");
+      const user = await this.userService.getUserByToken(payload.token);
+      this.logger.log("***MSG CREATING 2 ...");
+      const msgData: IMessage =
+      {
+        sender: user,
+        channelId: payload.channelId,
+        text: payload.text
+      }
+      this.logger.log("***MSG CREATING 3 ...");
+      const new_message = await this.messageService.create(msgData);
+      this.logger.log("HERE MESSAGE WEBSOCKET V4==>")
+      this.logger.log(new_message);
+      this.server.emit(`msgToChannel`, new_message);
 
-    this.logger.log("HERE MESSAGE WEBSOCKET==>")
-    this.logger.log(new_message);
-
-    this.server.emit(`msgToChannel`, new_message);
+    } 
+    catch (error)
+    {
+      this.server.to(client.id).emit('chatError', error);
+    }
+  
   }
 
   afterInit(server: Server) {

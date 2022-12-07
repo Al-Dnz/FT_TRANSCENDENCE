@@ -76,7 +76,7 @@ export class OauthService {
             .get("https://api.intra.42.fr/v2/me", {
                 headers: headers,
             })
-            .pipe(map((response) => response.data))
+            .pipe(map((response) => {response.data.image_url = response.data.image.link ; delete response.data.image; return response.data}))
             .pipe(
                 catchError((error: AxiosError<ErrorPayload42>) => {
                     throw new InternalServerErrorException(
