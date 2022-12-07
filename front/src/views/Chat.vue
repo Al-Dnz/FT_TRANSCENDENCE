@@ -192,16 +192,16 @@ export default defineComponent({
   components: {
     ChatChannelsList,
     ChatChannelBox,
-    // ChatDirectMessageBox, // WIP
+    // ChatDirectMessageBox,
     ChatNewChannelForm,
   },
   data(): DataI {
     return {
       creatingChan: false,
       socket: null as any, // not of any use right now, but kept it around, it is still given as a property to children
-      currentUser: user1, // this should be extracted from the back
-      currentChan: main_chan, // this should be extracted from the back
-      channelsList: [ main_chan, chan1, chan2, chan3, chan4, ], // this should be extracted from the back
+      currentUser: user1, // this should al
+      currentChan: main_chan,
+      channelsList: [ main_chan, chan1, chan2, chan3, chan4, ],
     };
   },
   methods: {
