@@ -22,6 +22,10 @@ import { WSPipe } from 'src/exception/websockets/ws-exception-filter'
 import { UserService } from '../user/user.service';
 import { IMessage } from '../interface/message.interface';
 
+import { ChannelService } from '../channel/channel.service';
+
+import {User} from 'db-interface/Core';
+
 @UsePipes(WSPipe)
 @WebSocketGateway({
   cors: {
@@ -33,7 +37,8 @@ export class MessageGateway
   // implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect 
 {
   constructor(private messageService: MessageService,
-              private userService: UserService,   
+              private userService: UserService,
+              private channelService: ChannelService   
     ) {}
 
   @WebSocketServer() server: Server;
@@ -45,22 +50,31 @@ export class MessageGateway
   {
     try 
     {
-      // this.userService.checkToken(payload.token)
-      this.logger.log("***MSG CREATING 1 ...");
-      const user = await this.userService.getUserByToken(payload.token);
-      this.logger.log("***MSG CREATING 2 ...");
+      const token = client.handshake.auth.token;
+      this.userService.checkToken(token);
+      const sender = await this.userService.getUserByToken(token);
       const msgData: IMessage =
       {
-        sender: user,
+        sender: sender,
         channelId: payload.channelId,
         text: payload.text
       }
-      this.logger.log("***MSG CREATING 3 ...");
+      const channel = await this.channelService.findOne(payload.channelId);
       const new_message = await this.messageService.create(msgData);
-      this.logger.log("HERE MESSAGE WEBSOCKET V4==>")
+      
+      this.logger.log("HERE MESSAGE WEBSOCKET==>")
       this.logger.log(new_message);
-      this.server.emit(`msgToChannel`, new_message);
 
+      // const usersOfChannel: User[] = channel.users;
+      // for (let user of usersOfChannel) 
+      // {
+      //    IF USER IS NOT MUTED BY CHANNEL
+      //    IF SENDER IS NOT BLOCKED BY USER
+      // 
+      //   this.server.to(user.socketId).emit(`msgToChannel`, new_message);
+      // }
+
+      this.server.emit(`msgToChannel`, new_message);
     } 
     catch (error)
     {

@@ -8,9 +8,10 @@ import { MessageGateway } from './message.gateway';
 import {Channel,Message,User} from 'db-interface/Core';
 
 import { UserModule } from '../user/user.module'; 
+import { ChannelModule } from '../channel/channel.module';
 
 @Module({
-  imports: [UserModule, TypeOrmModule.forFeature([Message, Channel, User])],
+  imports: [ChannelModule, UserModule, TypeOrmModule.forFeature([Message, Channel, User])],
   controllers: [MessageController],
   providers: [MessageService, MessageGateway]
 })

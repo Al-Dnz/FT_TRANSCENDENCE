@@ -10,9 +10,9 @@ export class CreateMessageDto
 	// @IsOptional()
 	// private: boolean;
 
-	@IsString()
-	@IsNotEmpty()
-	token: string;
+	// @IsString()
+	// @IsNotEmpty()
+	// token: string;
 
 	@IsInt()
   	@Min(1)
@@ -20,8 +20,8 @@ export class CreateMessageDto
 	channelId: number;
 
 	//to remove
-	@IsInt()
-  	@Min(1)
-	@IsOptional()
-	senderId: number;
+	// @IsInt()
+  	// @Min(1)
+	// @IsOptional()
+	// senderId: number;
 }
