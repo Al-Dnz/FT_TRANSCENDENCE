@@ -25,4 +25,7 @@ nuke:
 	@-docker volume prune --force
 	@-docker network prune --force
 
-.PHONY: all init up down stop restart nuke
+db: 
+	@-docker compose exec postgres psql transcendencedb
+
+.PHONY: all init up down stop restart nuke db

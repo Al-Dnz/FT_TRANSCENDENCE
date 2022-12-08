@@ -215,9 +215,9 @@ export default defineComponent({
       this.currentChan.msgList.push(message); // this is temporary, this should be dealt with in ChatMessageInput
     },
   },
-  // created() {
-  //   this.socket = io(`http://127.0.0.1:3004`); // not of any use right now, but kept it around
-  // }
+  created() {
+    this.socket = io(`http://0.0.0.0:3004`, {auth: { token: this.$cookies.get("trans_access")}}); // not of any use right now, but kept it around
+  }
 });
 
 </script>

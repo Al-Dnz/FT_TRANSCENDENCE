@@ -55,8 +55,8 @@ export class ChatGateway
   {
     try
     {
-      this.logger.log("WS AUTH TOKEN");
-      this.logger.log(client.handshake);
+      // this.logger.log("WS AUTH TOKEN");
+      // this.logger.log(client.handshake);
       const token = client.handshake.auth.token;
       // this.userService.checkToken(token);
       const user = await this.userService.getUserByToken(token);
