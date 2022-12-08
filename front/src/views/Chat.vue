@@ -217,6 +217,9 @@ export default defineComponent({
   },
   created() {
     this.socket = io(`http://0.0.0.0:3004`, {auth: { token: this.$cookies.get("trans_access")}}); // not of any use right now, but kept it around
+    this.socket?.on('chatError', (error: any) => {
+      this.$toast(error, {styles: { backgroundColor: "#FF0000", color: "#FFFFFF" }});
+      })
   }
 });
 

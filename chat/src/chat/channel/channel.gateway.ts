@@ -45,21 +45,28 @@ export class ChannelGateway
   private logger: Logger = new Logger('ChannelGateway');
 
 
-  @SubscribeMessage('chanToServer')
+  @SubscribeMessage('createChannel')
   async createNewChan(client: any, payload: CreateChannelDto): Promise<void> 
   {
-    const new_chan = await this.channelService.create(payload);
-    this.server.emit('chanToClient', new_chan);
+    try 
+    {
+      const new_chan = await this.channelService.create(payload);
+      this.server.emit('chanToClient', new_chan);
+    } catch (error) 
+    {
+      this.server.to(client.id).emit('chatError', error.message);
+    }
+  
   }
 
-  @SubscribeMessage('requestAllChannels')
+  @SubscribeMessage('getAllChannels')
   async sendAllChan(client: Socket)
   {
     const all_chan = await this.channelService.findAll();
     this.server.emit('allChansToClient', all_chan);
   }
 
-  @SubscribeMessage('requestAllMessagesFromChan')
+  @SubscribeMessage('getAllMessagesOfChannel')
   async sendChanMessages(client: Socket, payload: JoinChannelDto)
   {
     try {
@@ -76,13 +83,10 @@ export class ChannelGateway
       }
       this.userChannelService.create(userChannelData)
 
-
-
-
       // const chanMessages = await this.channelService.findMessagesWithPassword(payload)
       const chanMessages = await this.channelService.findMessages(payload.id)
       
-      this.server.emit('allChanMessagesToClient', chanMessages);
+      this.server.to(client.id).emit('allChanMessagesToClient', chanMessages);
       
     } catch (error) {
       this.server.to(client.id).emit('chatError', error.message);
