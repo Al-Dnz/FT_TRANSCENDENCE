@@ -37,16 +37,19 @@ export class ChannelService {
 	this.logger.log(createChannelDto);
 
     const channel = new Channel();
-	if (!createChannelDto.name || createChannelDto.name.length < 1)
-		throw new HttpException("chan name is empty", HttpStatus.FAILED_DEPENDENCY);
-	channel.name = createChannelDto.name;
+    if (!createChannelDto.name || createChannelDto.name.length < 1)
+      throw new HttpException("chan name is empty", HttpStatus.FAILED_DEPENDENCY);
+    channel.name = createChannelDto.name;
 
-	const same_named_channel = await this.channelsRepository.findOneBy({ name: channel.name });
-	if (same_named_channel)
-		throw new HttpException("another chan with this name still exists", HttpStatus.FAILED_DEPENDENCY);
+    const same_named_channel = await this.channelsRepository.findOneBy({ name: channel.name });
+    if (same_named_channel)
+      throw new HttpException("another chan with this name still exists", HttpStatus.FAILED_DEPENDENCY);
 
-	if (createChannelDto.password)
-		channel.password = await bcrypt.hash(createChannelDto.password, this.saltOrRounds);
+    if (createChannelDto.password)
+      channel.password = await bcrypt.hash(createChannelDto.password, this.saltOrRounds);
+
+    if (createChannelDto.type)
+      channel.type = createChannelDto.type
 
     // this.logger.log("CHANNEL PASSWORD V1")
     return this.channelsRepository.save(channel);
