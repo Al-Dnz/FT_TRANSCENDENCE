@@ -42,10 +42,6 @@ export class UserChannelService {
             }
           },
       })
-
-      this.logger.log("userchannel to fine =>");
-      this.logger.log(toFind);
-
       if (toFind.length)
         return;
 

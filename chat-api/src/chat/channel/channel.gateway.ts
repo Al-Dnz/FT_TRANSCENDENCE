@@ -91,6 +91,8 @@ export class ChannelGateway
       // const chan = checkChanValidity(payload.id, payload.password);
 
       //joining channel
+
+      // check if user is not banned
       const userChannelData: CreateUserChannelDto =
       {
         userId: user.id,
@@ -99,11 +101,17 @@ export class ChannelGateway
       this.userChannelService.create(userChannelData)
 
       // const chanMessages = await this.channelService.findMessagesWithPassword(payload)
-      const chanMessages = await this.channelService.findMessages(payload.id)
       
-      this.server.to(client.id).emit('allChanMessagesToClient', chanMessages);
+      const chanMessages = await this.channelService.findMessages(payload.id)
+      const sentPayload =
+      {
+        locked: false,
+        messages: chanMessages,
+      }
+      this.server.to(client.id).emit('allChanMessagesToClient', sentPayload);
       
     } catch (error) {
+      this.server.to(client.id).emit('allChanMessagesToClient', {locked: true, messages: {}});
       this.server.to(client.id).emit('chatError', error.message);
     }
 
