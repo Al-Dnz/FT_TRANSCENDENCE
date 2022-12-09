@@ -41,15 +41,15 @@ export class UserService {
 
 	async updateUserSocket(user: User, socketId: string)
 	{
-		user.socketId = socketId;
+		user.chatSocketId = socketId;
 		this.usersRepository.save(user);
 	}
 
 	// async getUserByChatSocket(socketId: string): Promise<User>
 	// {
-	// 	const user = await this.usersRepository.find({select: {socketId: socketId}});
+	// 	const user = await this.usersRepository.find({select: {chatSocketId: socketId}});
 	// 	if (!user)
-	// 		throw new HttpException(`User with socket_id: ${socketId} not found`, HttpStatus.NOT_FOUND);
+	// 		throw new HttpException(`User with chat_socket_id: ${socketId} not found`, HttpStatus.NOT_FOUND);
 	// 	return user[0];
 	// }
 

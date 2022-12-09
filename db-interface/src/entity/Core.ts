@@ -92,7 +92,7 @@ export class UserChannel extends Base {
     // @Column()
     // status: UserChannelStatus;
 
-    @ManyToOne(() => Channel, (channel: Channel) => channel.members, {
+    @ManyToOne(() => Channel, (channel: Channel) => channel.userChannels, {
         onDelete: "CASCADE",
     })
     channel: Relation<Channel>;
@@ -209,7 +209,7 @@ export class User extends Base {
     globalSocketId: string;
 
     @Column({ nullable: true, default: true })
-    socketId: string;
+    chatSocketId: string;
 
     @Column({ type: "enum", enum: UserStatus, default: UserStatus.offline })
     status: UserStatus;
@@ -344,7 +344,7 @@ export class Channel extends Base {
         () => UserChannel,
         (userChannel: UserChannel) => userChannel.channel
     )
-    members: UserChannel[];
+    userChannels: UserChannel[];
 
 	@ManyToOne(() => User, (user: User) => user.channels, { onDelete: "CASCADE" })
 	// @JoinColumn({name: "creator_id"})   

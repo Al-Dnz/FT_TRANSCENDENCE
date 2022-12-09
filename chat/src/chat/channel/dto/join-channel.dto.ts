@@ -12,8 +12,4 @@ export class JoinChannelDto
 	@IsString()
 	@Length(1)
 	password: string
-
-	@IsString()
-	@Length(1)
-	token: string
 }
