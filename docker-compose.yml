@@ -78,10 +78,10 @@ services:
     env_file: .env
 
   chat:
-    container_name: chat
+    container_name: chat-api
     build:
       context: ./
-      dockerfile: ./chat/Dockerfile
+      dockerfile: ./chat-api/Dockerfile
     networks:
       - backend
     ports:
