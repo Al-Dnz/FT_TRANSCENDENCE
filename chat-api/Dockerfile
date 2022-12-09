@@ -6,7 +6,7 @@ ADD db-interface/ /app/db-interface
 WORKDIR /app/db-interface
 RUN npm install
 
-ADD chat/ /app/chat
+ADD chat-api/ /app/chat
 WORKDIR /app/chat
 RUN npm install && npm run build
 
