@@ -71,7 +71,7 @@ export class MessageGateway
       //    IF USER IS NOT MUTED BY CHANNEL
       //    IF SENDER IS NOT BLOCKED BY USER
       // 
-      //   this.server.to(user.socketId).emit(`msgToChannel`, new_message);
+      //   this.server.to(user.chatSocketId).emit(`msgToChannel`, new_message);
       // }
 
       this.server.emit(`msgToChannel`, new_message);

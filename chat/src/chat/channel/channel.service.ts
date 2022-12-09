@@ -9,7 +9,7 @@ import { Body } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
 
-import { Channel, Message } from 'db-interface/Core';
+import { Channel, Message, User } from 'db-interface/Core';
 
 import { Logger } from '@nestjs/common';
 
@@ -30,28 +30,20 @@ export class ChannelService {
 
   private saltOrRounds = 10;
 
-  async create(createChannelDto: CreateChannelDto) 
+  async create(createChannelDto: CreateChannelDto, user?: User) 
   {
-
-	this.logger.log("createChannelDto => ");
-	this.logger.log(createChannelDto);
-
     const channel = new Channel();
-    if (!createChannelDto.name || createChannelDto.name.length < 1)
-      throw new HttpException("chan name is empty", HttpStatus.FAILED_DEPENDENCY);
     channel.name = createChannelDto.name;
-
     const same_named_channel = await this.channelsRepository.findOneBy({ name: channel.name });
     if (same_named_channel)
       throw new HttpException("another chan with this name still exists", HttpStatus.FAILED_DEPENDENCY);
-
     if (createChannelDto.password)
       channel.password = await bcrypt.hash(createChannelDto.password, this.saltOrRounds);
-
     if (createChannelDto.type)
       channel.type = createChannelDto.type
+    if (user)
+      channel.creator = user;
 
-    // this.logger.log("CHANNEL PASSWORD V1")
     return this.channelsRepository.save(channel);
   }
 
@@ -89,6 +81,23 @@ export class ChannelService {
           },
         },
     })
+  }
+
+  async checkChanValidity(payload: JoinChannelDto)
+  {
+    const channel = await this.channelsRepository
+              .createQueryBuilder("channel")
+              .where("channel.id = :id", { id: payload.id })
+              .addSelect("channel.password")
+              .getOne();
+    if (!channel)
+      throw new HttpException('Channel not found', HttpStatus.NOT_FOUND);
+
+    const passwordMatch = bcrypt.compareSync(payload.password, channel.password);
+    if (!passwordMatch)
+      throw new HttpException('Channel password is wrong',  HttpStatus.FORBIDDEN);
+    
+    return channel
   }
 
   async findMessagesWithPassword(body: JoinChannelDto)
@@ -134,6 +143,18 @@ export class ChannelService {
   // update(id: number, updateChannelDto: UpdateChannelDto) {
   //   return `This action updates a #${id} channel`;
   // }
+
+  chanAllowedUsers(channel: Channel, sender?: User): User[]
+  {
+    let arr: User[];
+     for (let user_channel of channel.userChannels)
+     {
+        let user: User = user_channel.user;
+        // if(user IS NOT MUTE BY CHANNEL AND NOT BLOCKED BY SENDER)
+          arr.push(user);
+     }
+     return arr;
+  }
 
   async remove(id: number) 
   {
