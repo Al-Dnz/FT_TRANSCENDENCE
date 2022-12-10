@@ -47,8 +47,6 @@ export default defineComponent({
 	},
 	async mounted() {
 	  await this.fetchData()
-	  this.loading = false;
-
   	},
 	components : {
 	friendBox,
@@ -63,7 +61,7 @@ export default defineComponent({
 			getCredentials().then((accessToken: string) => {
 				const Fapi = new FriendsApi(new Configuration({accessToken: accessToken}))
 				Fapi.createFriendship({login:this.newfriend})
-					.then(() => {this.newfriend = ''; window.location.reload();})
+					.then(() => {this.newfriend = ''; this.fetchData();})
 					.catch((msg:ResponseError) => { msg.response.json().then((str: ErrorOutput) =>
 						this.$toast(str.message, {
               			styles: { backgroundColor: "#FF0000", color: "#FFFFFF" },
@@ -81,6 +79,7 @@ export default defineComponent({
 				})
 				.catch((msg : ResponseError) => { msg.response.json().then((str : ErrorOutput) => {this.error = str.message;});}
 				)})
+			this.loading = false;
 		}
 	}
   })
