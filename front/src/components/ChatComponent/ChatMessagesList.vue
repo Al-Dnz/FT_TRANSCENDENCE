@@ -46,7 +46,8 @@ export default defineComponent({
     handleChanConnection(payload: any)
     {
       this.locked =  payload.locked;
-      this.messages = payload.messages;
+      this.messages = [];
+      this.messages = payload.messages.reverse();
     },
     receiveMessage(message: any)
     {
@@ -65,6 +66,17 @@ export default defineComponent({
     this.socket?.on('msgToChannel', (message: any) => {
         this.receiveMessage(message)
     })
+  },
+  watch: {
+    currentChan: {
+        immediate: true, 
+        deep: true, 
+        handler(newVal, old)
+        {
+          this.messages = [];
+          this.socket?.emit('joinChannel', {id: this.currentChan?.id, password: this.password});
+        },  
+    }
   }
 });
 </script>

@@ -11,6 +11,7 @@ import {
   Message,
   Avatar,
   UserSettings,
+  BannedChan,
 } from 'db-interface/Core';
 import { AvatarModule } from './avatar/avatar.module';
 import { MatchModule } from './match/match.module';
@@ -37,6 +38,7 @@ import { MatchModule } from './match/match.module';
         UserStats,
         User,
         UserSettings,
+        BannedChan,
       ],
       synchronize: true,
     }),
