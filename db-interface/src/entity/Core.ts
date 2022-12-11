@@ -106,45 +106,24 @@ export class UserChannel extends Base {
     // mutedBy: UserChannel;
 }
 
-// @Entity()
-// export class Channel extends Base {
-//     @OneToMany(
-//         () => UserChannel,
-//         (userChannel: UserChannel) => userChannel.channel
-//     )
-//     members: UserChannel[];
+@Entity()
+export class BannedChan extends Base 
+{
+    @Column({ type: 'date' })
+    expirationDate: string;
 
-//     @OneToOne(() => UserChannel)
-//     createdBy: UserChannel;
+    @ManyToOne(() => Channel, (channel: Channel) => channel.bannedChans, {
+        onDelete: "CASCADE",
+    })
+    channel: Relation<Channel>;
 
-//     @OneToMany(() => Message, (message: Message) => message.channel, {
-//         cascade: true,
-//     })
-//     messages: Message[];
+    @ManyToOne(() => User, (user: User) => user.bannedChans, {
+        onDelete: "CASCADE",
+    })
+    user: Relation<User>;
+}
 
-//     @Column()
-//     type: ChannelType;
 
-//     @Column({ nullable: true })
-//     password: string;
-// }
-
-// @Entity()
-// export class Message extends Base {
-//     @UpdateDateColumn()
-//     updatedAt: Date;
-
-//     @Column()
-//     content: string;
-
-//     @OneToOne(() => UserChannel)
-//     sentBy: UserChannel;
-
-//     @ManyToOne(() => Channel, (channel: Channel) => channel.messages, {
-//         onDelete: "CASCADE",
-//     })
-//     channel: Channel;
-// }
 
 @Entity()
 export class Avatar extends Base {
@@ -280,6 +259,15 @@ export class User extends Base {
         cascade: true,
     })
     channels: Relation<Channel>[];
+
+    @OneToMany(
+        () => BannedChan,
+        (bannedChan: BannedChan) => bannedChan.user,
+        {
+            cascade: true,
+        }
+    )
+    bannedChans: BannedChan[];
 }
 
 @Entity()
@@ -324,7 +312,6 @@ export class Message extends Base
 
 }
 
-
 @Entity()
 export class Channel extends Base {
 
@@ -354,5 +341,55 @@ export class Channel extends Base {
         cascade: true,
     })
 	messages: Message[];
+
+    @OneToMany(
+        () => BannedChan,
+        (bannedChan: BannedChan) => bannedChan.channel
+    )
+    bannedChans: BannedChan[];
+
 }
+
+
+
+
+// @Entity()
+// export class Channel extends Base {
+//     @OneToMany(
+//         () => UserChannel,
+//         (userChannel: UserChannel) => userChannel.channel
+//     )
+//     members: UserChannel[];
+
+//     @OneToOne(() => UserChannel)
+//     createdBy: UserChannel;
+
+//     @OneToMany(() => Message, (message: Message) => message.channel, {
+//         cascade: true,
+//     })
+//     messages: Message[];
+
+//     @Column()
+//     type: ChannelType;
+
+//     @Column({ nullable: true })
+//     password: string;
+// }
+
+// @Entity()
+// export class Message extends Base {
+//     @UpdateDateColumn()
+//     updatedAt: Date;
+
+//     @Column()
+//     content: string;
+
+//     @OneToOne(() => UserChannel)
+//     sentBy: UserChannel;
+
+//     @ManyToOne(() => Channel, (channel: Channel) => channel.messages, {
+//         onDelete: "CASCADE",
+//     })
+//     channel: Channel;
+// }
 

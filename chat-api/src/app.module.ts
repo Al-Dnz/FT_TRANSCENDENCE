@@ -16,6 +16,7 @@ import {
     Message,
     Avatar,
     UserSettings,
+    BannedChan,
 } from 'db-interface/Core';
 import { UserModule } from './chat/user/user.module';
 import { ChatGateway } from './chat/chat.gateway';
@@ -41,6 +42,7 @@ import { ChatGateway } from './chat/chat.gateway';
                 UserStats,
                 User,
                 UserSettings,
+                BannedChan,
 	],
       autoLoadEntities: true,
       synchronize: true,

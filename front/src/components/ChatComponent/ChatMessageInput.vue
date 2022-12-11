@@ -40,7 +40,10 @@ export default defineComponent({
           text: this.text,
           channelId: this.currentChan.id,
         };
-        // this.$emit('receiveNewMsg', newMsg); // here we need to create a new message and at it to currentChan's messagesList        
+        // this.$emit('receiveNewMsg', newMsg); // here we need to create a new message and at it to currentChan's messagesList
+        // console.log("newMsg");
+        // console.log(newMsg);
+              
         this.socket?.emit('msgToServer', newMsg);
         this.text = '';
       }
