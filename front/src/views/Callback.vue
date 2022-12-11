@@ -28,11 +28,14 @@ export default defineComponent({
         oauthAuthenticationRequest: { code: this.$route.query.code as string },
       })
       .then(async (value: OauthToken) => {
+        console.log("hello");
+        console.log(value.accessToken);
+        console.log(value.refreshToken);
         setAccessCookie(value.accessToken)
         setRefreshCookie(value.refreshToken)
         await new UsersApi(new Configuration({accessToken: value.accessToken}))
         .createUser()
-        .then(() => {this.$router.push("/param");})
+        .then(() => {console.log("bye");this.$router.push("/param");})
         .catch((errorMsg: ResponseError) => { errorMsg.response.json().then((str : ErrorOutput) =>
           {
             this.$cookies.remove("trans_access")

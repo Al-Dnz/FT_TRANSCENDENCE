@@ -4,14 +4,18 @@ import { AuthenticationApi } from "@/api/index";
 export function getCookie(name: string): string {
     const value = `; ${document.cookie}`;
     // eslint-disable-next-line
-    const parts: any = value.split(`; ${name}=`); // Fuck type script fuck Es lint A voir si on peux fix
+    const parts: any = value.split(`; ${name}=`); // Fuck type script fuck Es lint A voir si on peut fix
     if (parts.length === 2) {
         return parts.pop().split(";").shift();
     } else return "";
 }
 
 export function setCookie(name: string, value: string, expiration: Date) {
-    document.cookie = `${name}=${value}; expires=${expiration.toUTCString()}; path=/; SameSite=none; Secure`;
+    console.log("Kikou");
+    console.log(name + value);
+    document.cookie = `${name}=${value}; expires=${expiration.toUTCString()}; path=/; SameSite=Lax;`; //Secure et SameSite=none si retour a https
+    console.log("Kouki");
+    console.log(document.getElementById('cookies'));
 }
 
 export async function getCredentials(): Promise<string> {
@@ -19,7 +23,7 @@ export async function getCredentials(): Promise<string> {
     const refreshToken: string = getCookie("trans_refresh");
 
     if (!refreshToken) {
-        location.href = "http://localhost";
+        location.href = "http://0.0.0.0";
         return "";
     }
     if (!accessToken) {
@@ -32,7 +36,7 @@ export async function getCredentials(): Promise<string> {
                 setRefreshCookie(value.refreshToken);
             })
             .catch(() => {
-                location.href = "http://localhost";
+                location.href = "http://0.0.0.0";
             });
     }
     return getCookie("trans_access");
@@ -43,7 +47,7 @@ export function addMinutes(date: Date, minutes: number) {
 }
 
 export function setAccessCookie(accessToken: string) {
-    setCookie("trans_access", accessToken, addMinutes(new Date(), 1));
+    setCookie("trans_access", accessToken, addMinutes(new Date(), 15));
 }
 
 export function setRefreshCookie(accessToken: string) {

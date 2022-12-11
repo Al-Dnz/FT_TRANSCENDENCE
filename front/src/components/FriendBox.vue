@@ -61,7 +61,7 @@ import { getCredentials } from "@/frontJS/cookies"
 			getCredentials().then((accessToken: string) => {
 				const Fapi = new FriendsApi(new Configuration({accessToken: accessToken}))
 				Fapi.deleteFriendship({login:this.obj!.login})
-					.then(() => {this.obj!.login = ''; this.$parent!.fetchData();})
+					.then(() => {this.obj!.login = '';})
 					.catch((msg:ResponseError) => { msg.response.json().then((str: ErrorOutput) =>
 						this.$toast(str.message, {
               			styles: { backgroundColor: "#FF0000", color: "#FFFFFF" },

@@ -13,7 +13,7 @@ import {
 
 export const AppDataSource = new DataSource({
   type: "postgres",
-  host: "localhost",
+  host: "10.11.7.1",
   port: 5432,
   username: "admin",
   password: "admin",
