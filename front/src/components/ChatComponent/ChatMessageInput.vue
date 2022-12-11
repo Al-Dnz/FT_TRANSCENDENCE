@@ -52,6 +52,4 @@ export default defineComponent({
 });
 </script>
   
-  
-
 <style src="../../assets/tailwind.css" />
