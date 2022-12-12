@@ -10,6 +10,7 @@ import { Logger } from '@nestjs/common';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
 
+
 @Injectable()
 export class UserChannelService {
 
@@ -71,18 +72,26 @@ export class UserChannelService {
       throw new HttpException('Channel not found', HttpStatus.NOT_FOUND);
   }
 
-//   async findByChan(id: number) 
-//   {
-// 	const userChannel = await this.userChannelsRepository.find({
-// 		where: {
-// 			channelId: id,
-// 		},
-// 	});
-//     if (!userChannel.length)
-//       throw new HttpException('userChannel not found', HttpStatus.NOT_FOUND);
-// 	else
-// 	  return userChannel 
-//   }
+  async findByChanId(chanId: number) 
+  {
+	const channel = await this.channelsRepository.findOneBy({ id: chanId });
+	if (!channel)
+		throw new HttpException('Channel not found', HttpStatus.NOT_FOUND);
+		
+	const userChannels =  await this.userChannelsRepository.find(
+	{
+		relations: {
+			channel: true,
+			user: true,
+		},
+		where: {
+			channel: {
+			id: chanId,
+			},
+		},
+	})
+	return userChannels;
+  }
   
 //   async findByUser(id: number) 
 //   {
