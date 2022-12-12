@@ -85,9 +85,14 @@ export class ChannelGateway
 	try 
 	{
 		const userList = await this.userChannelService.getAllUsersFromChan(payload.id)
+		const sentDatas = 
+		{
+			channelId: payload.id,
+			users: userList
+		}
 		for (let user of userList)
 		{
-			this.server.to(user.chatSocketId).emit('channelUsersToClient', userList);
+			this.server.to(user.chatSocketId).emit('channelUsersToClient', sentDatas);
 		}
 	} 
 	catch (error)
