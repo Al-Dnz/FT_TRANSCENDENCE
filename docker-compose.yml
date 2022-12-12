@@ -51,6 +51,11 @@ services:
       - type: bind
         source: ./nginx/nginx.conf
         target: /etc/nginx/nginx.conf
+    depends_on:
+      - "chat-api"
+      - "auth-api"
+      - "user-api"
+      - "swagger-ui"
 
   swagger-ui:
     container_name: swagger-ui
