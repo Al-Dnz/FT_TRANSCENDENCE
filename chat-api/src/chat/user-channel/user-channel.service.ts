@@ -71,6 +71,68 @@ export class UserChannelService {
       throw new HttpException('Channel not found', HttpStatus.NOT_FOUND);
   }
 
+//   async findByChan(id: number) 
+//   {
+// 	const userChannel = await this.userChannelsRepository.find({
+// 		where: {
+// 			channelId: id,
+// 		},
+// 	});
+//     if (!userChannel.length)
+//       throw new HttpException('userChannel not found', HttpStatus.NOT_FOUND);
+// 	else
+// 	  return userChannel 
+//   }
+  
+//   async findByUser(id: number) 
+//   {
+//     const userChannel = await this.userChannelsRepository.find({
+// 		where: {
+// 			userId: id,
+// 		},
+// 	});
+//     if (!userChannel.length)
+//       throw new HttpException('userChannel not found', HttpStatus.NOT_FOUND);
+// 	else
+// 		return userChannel 
+//   }
+
+ async getAllUsersFromChan(chanId: number)
+  {
+	const userChannels =  await this.userChannelsRepository.find(
+		{
+			relations: {
+			  channel: true,
+			  user: true,
+			},
+			where: {
+			  channel: {
+				id: chanId,
+			  },
+			},
+		})
+
+	let userList: User[] = [];
+	for (let userChannel of userChannels)
+		userList.push(userChannel.user)
+	return userList
+  }
+
+  
+
+
+
+
+  
+getAllChansFromUser(user: User)
+{
+	const userChannels = user.userChannels; 
+	let chansList: Channel[];
+	for (let userChannel of userChannels)
+		chansList.push(userChannel.channel)
+	return chansList
+}
+
   // update(id: number, updateUserChannelDto: UpdateUserChannelDto) {
   //   return `This action updates a #${id} userChannel`;
   // }

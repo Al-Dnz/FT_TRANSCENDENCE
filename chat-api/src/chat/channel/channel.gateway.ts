@@ -77,7 +77,23 @@ export class ChannelGateway
     } catch (error) {
       this.server.to(client.id).emit('chatError', error.message);
     }
-    
+  }
+
+  @SubscribeMessage('getChannelUsers')
+  async sendChannelUsers(client: Socket, payload: JoinChannelDto)
+  {
+	try 
+	{
+		const userList = await this.userChannelService.getAllUsersFromChan(payload.id)
+		for (let user of userList)
+		{
+			this.server.to(user.chatSocketId).emit('channelUsersToClient', userList);
+		}
+	} 
+	catch (error)
+	{
+		this.server.to(client.id).emit('chatError', error.message);
+	}
   }
 
   @SubscribeMessage('joinChannel')
@@ -89,6 +105,8 @@ export class ChannelGateway
       const user = await this.userService.getUserByToken(token);
 
       // const chan = checkChanValidity(payload.id, payload.password);
+
+	
 
       //joining channel
 
@@ -109,6 +127,7 @@ export class ChannelGateway
         messages: chanMessages,
       }
       this.server.to(client.id).emit('allChanMessagesToClient', sentPayload);
+	  this.sendChannelUsers(client, payload);
       
     } catch (error) {
       this.server.to(client.id).emit('allChanMessagesToClient', {locked: true, messages: {}});
