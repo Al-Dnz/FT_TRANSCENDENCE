@@ -25,6 +25,7 @@ import { IMessage } from '../interface/message.interface';
 import { ChannelService } from '../channel/channel.service';
 
 import {User} from 'db-interface/Core';
+import { UserChannelService } from '../user-channel/user-channel.service';
 
 @UsePipes(WSPipe)
 @WebSocketGateway({
@@ -38,7 +39,8 @@ export class MessageGateway
 {
   constructor(private messageService: MessageService,
               private userService: UserService,
-              private channelService: ChannelService   
+              private channelService: ChannelService,
+			  private userChannelService: UserChannelService,  
     ) {}
 
   @WebSocketServer() server: Server;
@@ -53,18 +55,23 @@ export class MessageGateway
       const token = client.handshake.auth.token;
       this.userService.checkToken(token);
       const sender = await this.userService.getUserByToken(token);
+	  const channel = await this.channelService.findOne(payload.channelId);
+	  const userchannels = await this.userChannelService.findByUserAndChan(sender.id, payload.channelId);
+
+	  if (userchannels.length == 0)
+	  {
+		this.server.to(client.id).emit('chatError', `You are not connected to the channel ${channel.name}`);
+		return;
+	  }
+
       const msgData: IMessage =
       {
         sender: sender,
         channelId: payload.channelId,
         text: payload.text
       }
-      const channel = await this.channelService.findOne(payload.channelId);
       const new_message = await this.messageService.create(msgData);
       
-      this.logger.log("HERE MESSAGE WEBSOCKET==>")
-      this.logger.log(new_message);
-
       // const usersOfChannel: User[] = channel.users;
       // for (let user of usersOfChannel) 
       // {

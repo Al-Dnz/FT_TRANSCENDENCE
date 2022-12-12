@@ -98,18 +98,33 @@ export class UserChannelService {
 	return userChannels;
   }
   
-//   async findByUser(id: number) 
-//   {
-//     const userChannel = await this.userChannelsRepository.find({
-// 		where: {
-// 			userId: id,
-// 		},
-// 	});
-//     if (!userChannel.length)
-//       throw new HttpException('userChannel not found', HttpStatus.NOT_FOUND);
-// 	else
-// 		return userChannel 
-//   }
+  async findByUserAndChan(userId: number, chanId: number) 
+  {
+	const user = await this.usersRepository.findOneBy({ id: userId });
+	if (!user)
+		throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+
+	const channel = await this.channelsRepository.findOneBy({ id: chanId });
+	if (!channel)
+		throw new HttpException('Channel not found', HttpStatus.NOT_FOUND);
+
+    const userChannels =  await this.userChannelsRepository.find(
+	{
+		relations: {
+			channel: true,
+			user: true,
+		},
+		where: {
+			channel: {
+				id: chanId,
+			},
+			user: {
+				id: userId,
+			},
+		},
+	})
+	return userChannels;
+  }
 
  async getAllUsersFromChan(chanId: number)
   {
@@ -156,6 +171,7 @@ getAllChansFromUser(user: User)
     const userChannel = await this.userChannelsRepository.findOneBy({ id: id })
     if (!userChannel)
       throw new HttpException('userChannel not found', HttpStatus.NOT_FOUND);
+	this.userChannelsRepository.delete(id);
   }
 
 }
