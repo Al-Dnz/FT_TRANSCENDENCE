@@ -67,6 +67,37 @@ export class ChannelGateway
     }
   }
 
+  @SubscribeMessage('quitChannel')
+  async quitChan(client: any, payload: JoinChannelDto): Promise<void> 
+  {
+	try 
+	{
+		const token = client.handshake.auth.token;
+		this.userService.checkToken(token);
+		const user = await this.userService.getUserByToken(token);
+
+		const userchannels = await this.userChannelService.findByUserAndChan(user.id, payload.id)
+		for(let userchannel of userchannels)
+		{
+			await this.userChannelService.remove(userchannel.id);
+		}
+		
+		const sentPayload =
+		{
+			locked: true,
+			messages: [],
+		}
+      	this.server.to(client.id).emit('allChanMessagesToClient', sentPayload);
+		this.sendChannelUsers(client, payload);
+		
+	} 
+	catch (error) 
+	{
+		this.server.to(client.id).emit('chatError', error.message);
+	}
+  }
+
+
   @SubscribeMessage('getAllChannels')
   async sendAllChan(client: Socket)
   {
