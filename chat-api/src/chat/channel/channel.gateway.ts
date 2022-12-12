@@ -16,7 +16,7 @@ import { CreateChannelDto } from './dto/create-channel.dto';
 import { UsePipes } from '@nestjs/common';
 import { WSPipe } from 'src/exception/websockets/ws-exception-filter'
 
-import { Channel, ChannelType, User } from 'db-interface/Core';
+import { Channel, ChannelType, User, UserChannelRole } from 'db-interface/Core';
 import { JoinChannelDto } from './dto/join-channel.dto';
 
 import { UserService } from '../user/user.service';
@@ -48,21 +48,23 @@ export class ChannelGateway
     try 
     {
       const token = client.handshake.auth.token;
-      // this.userService.checkToken(token);
+      this.userService.checkToken(token);
       const user = await this.userService.getUserByToken(token);
       const new_chan = await this.channelService.create(payload, user);
+
+	  const userChannelData: CreateUserChannelDto =
+      {
+        userId: user.id,
+        channelId: new_chan.id
+      }
+      this.userChannelService.create(userChannelData, UserChannelRole.owner);
+
       // if (new_chan.type != ChannelType.direct)
-        this.server.emit('chanToClient', new_chan);
-      // else
-      // {
-      //   for (let user of new_chan.users)
-      //     this.server.to(user.chatSocketId).emit('chanToClient', new_chan);
-      // }
+	  this.sendAllChan(client)
     } catch (error) 
     {
       this.server.to(client.id).emit('chatError', error.message);
     }
-  
   }
 
   @SubscribeMessage('getAllChannels')
@@ -73,6 +75,7 @@ export class ChannelGateway
       // this.userService.checkToken(token);
       // const user = await this.userService.getUserByToken(token);
       const all_chan = await this.channelService.findAll();
+	  
       this.server.emit('allChansToClient', all_chan);
     } catch (error) {
       this.server.to(client.id).emit('chatError', error.message);

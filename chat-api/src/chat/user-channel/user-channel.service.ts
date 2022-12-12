@@ -10,6 +10,7 @@ import { Logger } from '@nestjs/common';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
 
+import { UserChannelRole } from 'db-interface/Core';
 
 @Injectable()
 export class UserChannelService {
@@ -26,7 +27,7 @@ export class UserChannelService {
   private logger: Logger = new Logger('ChannelService');
 
 
-  async create(createUserChannelDto: CreateUserChannelDto)
+  async create(createUserChannelDto: CreateUserChannelDto, role?: UserChannelRole)
   { 
     const toFind = await this.userChannelsRepository.find(
       {
@@ -58,6 +59,10 @@ export class UserChannelService {
 
     userChannel.user = user;
     userChannel.channel = channel;
+
+	if(role)
+		userChannel.role = role;
+		
     return this.userChannelsRepository.save(userChannel);
   }
 

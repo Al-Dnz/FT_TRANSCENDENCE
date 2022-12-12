@@ -80,16 +80,19 @@ export default defineComponent({
     },
     getAllChannels(channels: any)
     {
-      const arr = channels;
+      
+	  this.dmChannels = [];
+	  this.regularChannels = [];
+	  const arr = channels;
       arr.forEach((chan: any) => (chan.type == 'direct' ? this.dmChannels : this.regularChannels).push(chan));
     },
-    addChannel(channel: any)
-    {
-      if (channel.type === 'direct')
-        this.dmChannels.push(channel);
-      else
-        this.regularChannels.push(channel);
-    }
+    // addChannel(channel: any)
+    // {
+    //   if (channel.type === 'direct')
+    //     this.dmChannels.push(channel);
+    //   else
+    //     this.regularChannels.push(channel);
+    // }
   },
   created()
   {
@@ -97,9 +100,6 @@ export default defineComponent({
           this.getAllChannels(channels)
         })
     this.socket?.emit('getAllChannels');
-    this.socket?.on('chanToClient', (channel: any) => {
-          this.addChannel(channel)
-        })
   },
   // mounted() {}
 });
