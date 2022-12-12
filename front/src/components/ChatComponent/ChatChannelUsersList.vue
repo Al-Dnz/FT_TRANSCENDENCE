@@ -11,8 +11,8 @@
           </div>
         </li> -->
 
-		<li v-for="user in users" :key="user.id">
-			<div>{{user.login}}</div>
+		<li v-for="userchan in userchannels" :key="userchan.id">
+			<div>{{userchan.user.login}} ({{userchan.role}})</div>
         </li>
       </ul>
     </div>
@@ -35,7 +35,7 @@ export default defineComponent({
   },
   data() {
     return {
-      users: [], //this.currentChan?.userList,
+      userchannels: [], //this.currentChan?.userList,
     };
   },
   methods: {
@@ -59,10 +59,11 @@ export default defineComponent({
     },
 	handleChanUsersList(payload: any)
 	{
+		console.log(payload);
 		if (payload.channelId != this.currentChan?.id)
 			return;
-		this.users = [];
-		this.users = payload.users;
+		this.userchannels = [];
+		this.userchannels = payload.userchannels;
 	}
   },
   created()
@@ -79,7 +80,7 @@ export default defineComponent({
         deep: true, 
         handler(newVal, old)
         {
-          this.users = [];
+          this.userchannels = [];
           this.socket?.emit('getChannelUsers', {id: this.currentChan?.id, password: null});
         },  
     }
