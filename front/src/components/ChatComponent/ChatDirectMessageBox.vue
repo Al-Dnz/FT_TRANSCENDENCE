@@ -1,21 +1,16 @@
 <template>
-  <div class="h-full w-full flex flex-row">
-    <div class="h-full w-full flex flex-col divide-y-2">
-      <div class="h-[22%]">
-        <ChatDirectMessageHeader :socket="socket" :currentChan="currentChan" />
-      </div>
-      <div class="flex flex-col h-[78%] ml-2 mr-2">
-        <div class="h-[90%]">
-          <ChatMessagesList :socket="socket" :currentUser="currentUser" :currentChan="currentChan" />
-        </div>
-        <div class="h-[10%] mb-8">
-          <ChatMessageInput :socket="socket" :currentUser="currentUser" :currentChan="currentChan"
-          @receiveNewMsg="receiveNewMsg" />
-        </div>
-      </div>
+  <div class="h-full w-full flex flex-col divide-y-2">
+    <div class="h-[22%]">
+      <ChatDirectMessageHeader :socket="socket" :currentUser="currentUser" :currentChan="currentChan" />
     </div>
-    <div class="h-full w-1/5 text-slate-600 bg-gray-100">
-      <ChatChannelUsersList :socket="socket" :currentUser="currentUser" :currentChan="currentChan" />
+    <div class="flex flex-col h-[78%] ml-2 mr-2">
+      <div class="h-[90%]">
+        <ChatMessagesList :socket="socket" :currentUser="currentUser" :currentChan="currentChan" />
+      </div>
+      <div class="h-[10%] mb-8">
+        <ChatMessageInput :socket="socket" :currentUser="currentUser" :currentChan="currentChan"
+        @receiveNewMsg="receiveNewMsg" />
+      </div>
     </div>
   </div>
 </template>
@@ -24,7 +19,6 @@
 import ChatMessagesList from "./ChatMessagesList.vue";
 import ChatMessageInput from "./ChatMessageInput.vue";
 import ChatDirectMessageHeader from "./ChatDirectMessageHeader.vue";
-import ChatChannelUsersList from "./ChatChannelUsersList.vue";
 import { defineComponent } from "vue";
 
 export default defineComponent({
@@ -38,7 +32,6 @@ export default defineComponent({
     ChatMessagesList,
     ChatMessageInput,
     ChatDirectMessageHeader,
-    ChatChannelUsersList,
   },
   data() {
     return {
