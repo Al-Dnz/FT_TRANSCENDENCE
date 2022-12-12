@@ -57,13 +57,12 @@ export default defineComponent({
         return (false);
       return (true);
     },
-	handleChanUsersList(users: any)
+	handleChanUsersList(payload: any)
 	{
-		console.log("USERS=>");
-		console.log(users);
-		
+		if (payload.channelId != this.currentChan?.id)
+			return;
 		this.users = [];
-		this.users = users;
+		this.users = payload.users;
 	}
   },
   created()
