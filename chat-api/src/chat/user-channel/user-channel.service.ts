@@ -153,18 +153,23 @@ export class UserChannelService {
 
 
   
-getAllChansFromUser(user: User)
-{
-	const userChannels = user.userChannels; 
-	let chansList: Channel[];
-	for (let userChannel of userChannels)
-		chansList.push(userChannel.channel)
-	return chansList
-}
+	getAllChansFromUser(user: User)
+	{
+		const userChannels = user.userChannels; 
+		let chansList: Channel[];
+		for (let userChannel of userChannels)
+			chansList.push(userChannel.channel)
+		return chansList
+	}
 
-  // update(id: number, updateUserChannelDto: UpdateUserChannelDto) {
-  //   return `This action updates a #${id} userChannel`;
-  // }
+  	async update(id: number, role?: UserChannelRole) 
+	{
+		const userChannel = await this.userChannelsRepository.findOneBy({ id: id })
+		if (!userChannel)
+			throw new HttpException('userChannel not found', HttpStatus.NOT_FOUND);
+		userChannel.role = role;
+		this.userChannelsRepository.save(userChannel);
+	}
 
   async remove(id: number)
   {

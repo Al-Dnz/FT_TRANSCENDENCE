@@ -92,11 +92,13 @@ export class ChannelService {
               .getOne();
     if (!channel)
       throw new HttpException('Channel not found', HttpStatus.NOT_FOUND);
-
-    const passwordMatch = bcrypt.compareSync(payload.password, channel.password);
-    if (!passwordMatch)
-      throw new HttpException('Channel password is wrong',  HttpStatus.FORBIDDEN);
-    
+	if (payload.password != null)
+	{
+		const passwordMatch = bcrypt.compareSync(payload.password, channel.password);
+		if (!passwordMatch)
+		  throw new HttpException('Channel password is wrong',  HttpStatus.FORBIDDEN);
+	}
+   
     return channel
   }
 

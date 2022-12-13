@@ -82,7 +82,7 @@ services:
       - 3002:80
     env_file: .env
 
-  chat:
+  chat-api:
     container_name: chat-api
     build:
       context: ./
