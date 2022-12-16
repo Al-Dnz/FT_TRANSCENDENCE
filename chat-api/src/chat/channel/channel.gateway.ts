@@ -16,13 +16,15 @@ import { CreateChannelDto } from './dto/create-channel.dto';
 import { UsePipes } from '@nestjs/common';
 import { WSPipe } from 'src/exception/websockets/ws-exception-filter'
 
-import { Channel, ChannelType, User, UserChannelRole } from 'db-interface/Core';
+import { Channel, ChannelType, User, UserChannel, UserChannelRole } from 'db-interface/Core';
 import { JoinChannelDto } from './dto/join-channel.dto';
 
 import { UserService } from '../user/user.service';
 
 import { UserChannelService } from '../user-channel/user-channel.service';
 import { CreateUserChannelDto } from '../user-channel/dto/create-user-channel.dto';
+import { KickUserDto } from './dto/kick-user.dto';
+import { GrantUserDto } from './dto/grant-user.dto';
 
 @UsePipes(WSPipe)
 @WebSocketGateway({cors: {origin: '*'}})
@@ -84,6 +86,7 @@ export class ChannelGateway
 		
 		const sentPayload =
 		{
+			channelId: payload.id,
 			locked: true,
 			messages: [],
 		}
@@ -103,9 +106,9 @@ export class ChannelGateway
   {
     try {
       const token = client.handshake.auth.token;
-      // this.userService.checkToken(token);
-      // const user = await this.userService.getUserByToken(token);
-      const all_chan = await this.channelService.findAll();
+      this.userService.checkToken(token);
+
+	  const all_chan = await this.channelService.findAll();
 	  
       this.server.emit('allChansToClient', all_chan);
     } catch (error) {
@@ -118,6 +121,8 @@ export class ChannelGateway
   {
 	try 
 	{
+		const token = client.handshake.auth.token;
+      	this.userService.checkToken(token);
 		const userchannels = await this.userChannelService.findByChanId(payload.id);
 		const sentDatas = 
 		{
@@ -140,10 +145,10 @@ export class ChannelGateway
   {
     try {
       const token = client.handshake.auth.token;
-      // this.userService.checkToken(payload.token);
+      this.userService.checkToken(token);
       const user = await this.userService.getUserByToken(token);
 
-      // const chan = checkChanValidity(payload.id, payload.password);
+      const chan = this.channelService.checkChanValidity(payload);
 
 	
 
@@ -162,6 +167,7 @@ export class ChannelGateway
       const chanMessages = await this.channelService.findMessages(payload.id)
       const sentPayload =
       {
+		channelId: payload.id,
         locked: false,
         messages: chanMessages,
       }
@@ -169,9 +175,119 @@ export class ChannelGateway
 	  this.sendChannelUsers(client, payload);
       
     } catch (error) {
-      this.server.to(client.id).emit('allChanMessagesToClient', {locked: true, messages: {}});
+      this.server.to(client.id).emit('allChanMessagesToClient', {channelId: payload.id, locked: true, messages: {}});
       this.server.to(client.id).emit('chatError', error.message);
     }
-
   }
+
+  @SubscribeMessage('kickUser')
+  async kickUserFromChan(client: Socket, payload: KickUserDto)
+  {
+	try 
+	{
+		const token = client.handshake.auth.token;
+		this.userService.checkToken(token);
+		const user = await this.userService.getUserByToken(token);
+		if (user.id == payload.userId)
+		{
+			this.server.to(client.id).emit('chatError', `you can't kick yourself`);
+			return;
+		}
+		const channel = await this.channelService.findOne(payload.channelId);
+		let userChannels: UserChannel[] = await this.userChannelService.findByUserAndChan(user.id, payload.channelId);
+		if (userChannels.length == 0)
+		{
+			this.server.to(client.id).emit('chatError', `you are not connected to channel ${channel.name} to use this privilege`);
+			return;
+		}
+		let userChannel = userChannels[0];
+		if (userChannel.role == UserChannelRole.member)
+		{
+			this.server.to(client.id).emit('chatError', `you have not enough rights inside channel ${channel.name} to use this privilege`);
+			return;
+		}
+		const kickedUser = await this.userService.getUserById(payload.userId);
+		const kickedUserChannels = await this.userChannelService.findByUserAndChan(kickedUser.id, payload.channelId);
+		const sentPayload =
+		{
+			channelId: channel.id,
+			locked: true,
+			messages: [],
+		}
+      	
+		if (kickedUserChannels.length != 0)
+		{
+			for (let kickedUserChan of kickedUserChannels)
+			{
+				this.userChannelService.update(kickedUserChan.id);
+				this.server.to(kickedUserChan.user.chatSocketId).emit('allChanMessagesToClient', sentPayload);
+			}	
+		}
+		//
+		// CREATE BAN USER LIST
+		// SEND USER CHANNEL
+	} 
+	catch (error) 
+	{
+		this.server.to(client.id).emit('chatError', error.message);
+	}
+  }
+
+
+  @SubscribeMessage('kickUser')
+  async transferPrivilegeToUser(client: Socket, payload: GrantUserDto)
+  {
+	try 
+	{
+		const token = client.handshake.auth.token;
+		this.userService.checkToken(token);
+		const user = await this.userService.getUserByToken(token);
+		if (user.id == payload.userId)
+		{
+			this.server.to(client.id).emit('chatError', `you can't grant yourself`);
+			return;
+		}
+		const channel = await this.channelService.findOne(payload.channelId);
+		let userChannels: UserChannel[] = await this.userChannelService.findByUserAndChan(user.id, payload.channelId);
+		if (userChannels.length == 0)
+		{
+			this.server.to(client.id).emit('chatError', `you are not connected to channel ${channel.name} to use this privilege`);
+			return;
+		}
+		let userChannel = userChannels[0];
+		if (userChannel.role == UserChannelRole.member)
+		{
+			this.server.to(client.id).emit('chatError', `you have not enough rights inside channel ${channel.name} to use this privilege`);
+			return;
+		}
+		const grantedUser = await this.userService.getUserById(payload.userId);
+		const grantedUserChannels = await this.userChannelService.findByUserAndChan(grantedUser.id, payload.channelId);
+		for (let userchannel of grantedUserChannels)
+		{
+			this.userChannelService.update(userchannel.id, payload.role)
+		}
+
+		// update user status in front
+		this.sendChannelUsers(client, {id: payload.channelId, password: null} );
+	} 
+	catch (error) 
+	{
+		this.server.to(client.id).emit('chatError', error.message);
+	}
+  }
+
+	@SubscribeMessage('muteUser')
+	async muteUser(client: Socket, payload: GrantUserDto)
+	{
+		try 
+		{
+			const token = client.handshake.auth.token;
+			this.userService.checkToken(token);
+		} 
+		catch (error)
+		{
+			
+		}
+		
+	}
 }

@@ -39,6 +39,14 @@ export class UserService {
 		return user
 	}
 
+	async getUserById(id: number)
+	{ 
+		const user = await this.usersRepository.findOneBy({ id: id });
+		if (!user)
+			throw new HttpException(`User not found`, HttpStatus.NOT_FOUND);
+		return user
+	}
+
 	async updateUserSocket(user: User, socketId: string)
 	{
 		user.chatSocketId = socketId;
