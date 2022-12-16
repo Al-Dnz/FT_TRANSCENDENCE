@@ -50,7 +50,7 @@ services:
       - 3003:3000
     env_file: .env
     depends_on:
-    - "postgres"
+      - "postgres"
     volumes:
       - ./upload:/app/upload
 
