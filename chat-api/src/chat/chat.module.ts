@@ -8,9 +8,11 @@ import { UserModule } from './user/user.module';
 import { ChatGateway } from './chat.gateway';
 
 import {User } from 'db-interface/Core';
+import { BannedChanService } from './banned-chan/banned-chan.service';
+import { BannedChanModule } from './banned-chan/banned-chan.module';
 
 @Module({
-	imports: [MessageModule, ChannelModule, UserChannelModule, UserModule, TypeOrmModule.forFeature([User])],
+	imports: [BannedChanModule, MessageModule, ChannelModule, UserChannelModule, UserModule, TypeOrmModule.forFeature([User])],
 	providers: [ChatGateway]
 })
 export class ChatModule {}
