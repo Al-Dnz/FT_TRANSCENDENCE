@@ -197,9 +197,19 @@ export class User extends Base {
     @JoinTable()
     friends: User[];
 
-    @ManyToMany(() => User, { cascade: true })
-    @JoinTable()
-    blockedUser: User[];
+    // @ManyToMany(() => User, { cascade: true })
+    // @JoinTable()
+    // blockedUser: User[];
+
+    @OneToMany(() => BlockerBlocked, (blockerBlocked: BlockerBlocked) => blockerBlocked.blocked, {
+        cascade: true,
+    })
+    blockerBlockeds: Relation< BlockerBlocked>[];
+
+    // @OneToMany(() => BlockerBlocked, (blockerBlocked: BlockerBlocked) => blockerBlocked.blocker, {
+    //     cascade: true,
+    // })
+    // blockerBlockeds: Relation< BlockerBlocked>[];
 
     @OneToMany(() => UserMatch, (userMatch: UserMatch) => userMatch.user, {
         cascade: true,
@@ -291,6 +301,24 @@ export class UserMatch extends Base {
 
     @Column()
     role: UserMatchRole;
+}
+
+
+@Entity()
+export class BlockerBlocked extends Base {
+    @ManyToOne(() => User, (user: User) => user.blockerBlockeds, {
+        onDelete: "CASCADE",
+        nullable: false,
+        eager: true,
+    })
+    blocker: User;
+
+    @ManyToOne(() => User, (user: User) => user.blockerBlockeds, {
+        onDelete: "CASCADE",
+        nullable: false,
+        eager: true,
+    })
+    blocked: User;
 }
 
 @Entity()

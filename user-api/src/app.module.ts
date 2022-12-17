@@ -12,6 +12,7 @@ import {
   Avatar,
   UserSettings,
   BannedChan,
+  BlockerBlocked
 } from 'db-interface/Core';
 import { AvatarModule } from './avatar/avatar.module';
 import { MatchModule } from './match/match.module';
@@ -39,6 +40,7 @@ import { MatchModule } from './match/match.module';
         User,
         UserSettings,
         BannedChan,
+        BlockerBlocked
       ],
       synchronize: true,
     }),

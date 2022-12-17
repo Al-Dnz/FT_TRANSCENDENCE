@@ -15,8 +15,6 @@ import { WSPipe } from 'src/exception/websockets/ws-exception-filter'
 
 import { UserService } from './user/user.service';
 
-import { RegisterChatDto } from './dto/register-chat.dto';
-
 @UsePipes(WSPipe)
 @WebSocketGateway({cors: {origin: '*',}})
 export class ChatGateway
@@ -29,7 +27,7 @@ export class ChatGateway
   @WebSocketServer() server: Server;
 
   @SubscribeMessage('update_socket')
-  async updateUserSocket(client: Socket, payload: RegisterChatDto)
+  async updateUserSocket(client: Socket)
   {
     // try
     // {
