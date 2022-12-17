@@ -13,77 +13,74 @@
 			</div>
 		</div>
 		<div v-for="(item, index) in sortedTab()" v-bind:key="index" className="lg:h-friendbox lg:w-3/4 w-11/12 h-16 pt-3">
-			<friendBox :obj=item :index="index"/>
+			<friendBox :obj=item :index="index" :refresh="fetchData"/>
 		</div>
 	</div>
 	
   </template>
   
-<script lang="ts">
-import friendBox from '../components/FriendBox.vue';
-import { defineComponent } from 'vue'
-import { FriendsApi, UserOutput, Configuration, ResponseError, ErrorOutput } from '@/api';
-import { getCredentials } from "@/frontJS/cookies"
-import  errorPage  from "@/components/Error.vue";
-import  loadingPage  from "@/components/Loading.vue"
-
-interface friendsData 
-{
-	tab: Array<UserOutput>;
-	loading: boolean;
-	newfriend: string;
-	error: string;
-}
-
-export default defineComponent({
-	name: 'friendPage',
-	data() : friendsData{
-		return {
-			tab: [],
-			loading : true,
-			newfriend: '',
-			error: ''
-		}
-	},
-	async mounted() {
-	  await this.fetchData()
-	  this.loading = false;
-
-  	},
-	components : {
-	friendBox,
-	errorPage,
-	loadingPage
-	},
-	methods : {
-		sortedTab() : Array<UserOutput>{
-		return this.tab.sort((a : UserOutput, b : UserOutput) =>  a.login.localeCompare(b.login)) // Number(a.friend) - Number(b.friend) ||
+  <script lang="ts">
+  import friendBox from '../components/FriendBox.vue';
+  import { defineComponent } from 'vue'
+  import { FriendsApi, UserOutput, Configuration, ResponseError, ErrorOutput } from '@/api';
+  import { getCredentials } from "@/frontJS/cookies"
+  import  errorPage  from "@/components/Error.vue";
+  import  loadingPage  from "@/components/Loading.vue"
+  interface friendsData 
+  {
+	  tab: Array<UserOutput>;
+	  loading: boolean;
+	  newfriend: string;
+	  error: string;
+  }
+  export default defineComponent({
+	  name: 'friendPage',
+	  data() : friendsData{
+		  return {
+			  tab: [],
+			  loading : true,
+			  newfriend: '',
+			  error: ''
+		  }
+	  },
+	  async mounted() {
+		await this.fetchData()
 		},
-		async add() {
-			getCredentials().then((accessToken: string) => {
-				const Fapi = new FriendsApi(new Configuration({accessToken: accessToken}))
-				Fapi.createFriendship({login:this.newfriend})
-					.then(() => this.newfriend = '')
-					.catch((msg:ResponseError) => { msg.response.json().then((str: ErrorOutput) =>
-						this.$toast(str.message, {
-              			styles: { backgroundColor: "#FF0000", color: "#FFFFFF" },
-            			}));})
-					.catch((msg :any) => {console.log(msg)})
-			})
-		},
-		async fetchData()
-		{
-			this.loading = true;   
-			getCredentials().then((accessToken: string ) => {
-				const Fapi = new FriendsApi(new Configuration({accessToken: accessToken}))
-				Fapi.listUsersFriends().then((user: Array<UserOutput> ) => {
-					this.tab = user
-				})
-				.catch((msg : ResponseError) => { msg.response.json().then((str : ErrorOutput) => {this.error = str.message;});}
-				)})
-		}
-	}
-  })
-  </script>
+	  components : {
+	  friendBox,
+	  errorPage,
+	  loadingPage
+	  },
+	  methods : {
+		  sortedTab() : Array<UserOutput>{
+		  return this.tab.sort((a : UserOutput, b : UserOutput) =>  a.login.localeCompare(b.login)) // Number(a.friend) - Number(b.friend) ||
+		  },
+		  async add() {
+			  getCredentials().then((accessToken: string) => {
+				  const Fapi = new FriendsApi(new Configuration({accessToken: accessToken}))
+				  Fapi.createFriendship({login:this.newfriend})
+					  .then(() => {this.newfriend = ''; this.fetchData();})
+					  .catch((msg:ResponseError) => { msg.response.json().then((str: ErrorOutput) =>
+						  this.$toast(str.message, {
+							styles: { backgroundColor: "#FF0000", color: "#FFFFFF" },
+						  }));})
+					  .catch((msg :any) => {console.log(msg)})
+			  })
+		  },
+		  async fetchData()
+		  {
+			  this.loading = true;   
+			  getCredentials().then((accessToken: string ) => {
+				  const Fapi = new FriendsApi(new Configuration({accessToken: accessToken}))
+				  Fapi.listUsersFriends().then((user: Array<UserOutput> ) => {
+					  this.tab = user
+				  })
+				  .catch((msg : ResponseError) => { msg.response.json().then((str : ErrorOutput) => {this.error = str.message;});}
+				  )})
+			  this.loading = false;
+		  }
+	  }
+	})
+</script>
   
-  <style src="../assets/tailwind.css" />
+<style src="../assets/tailwind.css" />
