@@ -18,6 +18,7 @@ import {
   Avatar,
   UserSettings,
   BannedChan,
+  BlockerBlocked
 } from 'db-interface/Core';
 
 @Module({
@@ -41,6 +42,7 @@ import {
                 User,
                 UserSettings,
                 BannedChan,
+                BlockerBlocked
 	],
       autoLoadEntities: true,
       synchronize: true,
