@@ -198,7 +198,7 @@ export class UserController {
         @Param('login') login: string,
     ): Promise<void> {
 
-        if (user.login == login) {throw new ForbiddenException(`User can't be blocked with himself`);}
+        if (user.login == login) {throw new ForbiddenException(`User can't block himself`);}
         const userOne: User | undefined = await this.userService.findOne(user.login,);
         if (!userOne) { throw new NotFoundException(`user ${user.login} not found`); }
         const userTwo: User | undefined = await this.userService.findOne(login);
@@ -220,7 +220,7 @@ export class UserController {
         @Param('login') login: string,
     ): Promise<void> {
 
-        if (user.login == login) {throw new ForbiddenException(`User can't be blocked with himself`);}
+        if (user.login == login) {throw new ForbiddenException(`User can't block himself`);}
         const userOne: User | undefined = await this.userService.findOne(user.login,);
         if (!userOne) { throw new NotFoundException(`user ${user.login} not found`); }
         const userTwo: User | undefined = await this.userService.findOne(login);
