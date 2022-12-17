@@ -191,6 +191,15 @@ export class ChannelGateway {
 			}
 			const kickedUser = await this.userService.getUserById(payload.userId);
 			const kickedUserChannels = await this.userChannelService.findByUserAndChan(kickedUser.id, payload.channelId);
+			if  (kickedUserChannels.length == 0)
+			{
+				this.server.to(client.id).emit('chatError', `${kickedUser.login} is not in channel ${channel.name} `);
+				return;
+			}
+			if (kickedUserChannels[0].role == UserChannelRole.owner || (kickedUserChannels[0].role == UserChannelRole.admin && userChannel.role == UserChannelRole.admin)) {
+				this.server.to(client.id).emit('chatError', `you can't ban ${kickedUser.login} in ${channel.name} `);
+				return;
+			}
 			const sentPayload =
 			{
 				channelId: channel.id,
@@ -200,13 +209,14 @@ export class ChannelGateway {
 
 			if (kickedUserChannels.length != 0) {
 				for (let kickedUserChan of kickedUserChannels) {
-					this.userChannelService.update(kickedUserChan.id);
+					// this.userChannelService.update(kickedUserChan.id);
 					this.server.to(kickedUserChan.user.chatSocketId).emit('allChanMessagesToClient', sentPayload);
 				}
 			}
-			//
-			// CREATE BAN USER LIST
+			this.bannedChanService.create(kickedUser.id, channel.id);
+		
 			// SEND USER CHANNEL
+			this.sendChannelUsers(client, { id: payload.channelId, password: null });
 		}
 		catch (error) {
 			this.server.to(client.id).emit('chatError', error.message);
@@ -214,7 +224,7 @@ export class ChannelGateway {
 	}
 
 
-	@SubscribeMessage('kickUser')
+	@SubscribeMessage('grantUser')
 	async transferPrivilegeToUser(client: Socket, payload: GrantUserDto) {
 		try {
 			const token = client.handshake.auth.token;
@@ -237,6 +247,11 @@ export class ChannelGateway {
 			}
 			const grantedUser = await this.userService.getUserById(payload.userId);
 			const grantedUserChannels = await this.userChannelService.findByUserAndChan(grantedUser.id, payload.channelId);
+			if  (grantedUserChannels.length == 0)
+			{
+				this.server.to(client.id).emit('chatError', `${grantedUser.login} is not in channel ${channel.name} `);
+				return;
+			}
 			for (let userchannel of grantedUserChannels) {
 				this.userChannelService.update(userchannel.id, payload.role)
 			}
