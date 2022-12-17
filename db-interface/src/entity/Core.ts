@@ -204,7 +204,7 @@ export class User extends Base {
     @OneToMany(() => BlockerBlocked, (blockerBlocked: BlockerBlocked) => blockerBlocked.blocked, {
         cascade: true,
     })
-    blockerBlockeds: Relation< BlockerBlocked>[];
+    blockerBlockeds: Relation<BlockerBlocked>[];
 
     // @OneToMany(() => BlockerBlocked, (blockerBlocked: BlockerBlocked) => blockerBlocked.blocker, {
     //     cascade: true,
@@ -311,14 +311,14 @@ export class BlockerBlocked extends Base {
         nullable: false,
         eager: true,
     })
-    blocker: User;
+    blocker: Relation<User>;
 
     @ManyToOne(() => User, (user: User) => user.blockerBlockeds, {
         onDelete: "CASCADE",
         nullable: false,
         eager: true,
     })
-    blocked: User;
+    blocked: Relation<User>;
 }
 
 @Entity()

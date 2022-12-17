@@ -2,6 +2,7 @@
 apis/AuthenticationApi.ts
 apis/AvatarsApi.ts
 apis/FriendsApi.ts
+apis/BlockedsApi.ts
 apis/MatchsApi.ts
 apis/UsersApi.ts
 apis/index.ts

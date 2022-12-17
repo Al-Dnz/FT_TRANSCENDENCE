@@ -1,7 +1,7 @@
-import { Injectable,  UnauthorizedException, } from '@nestjs/common';
+import { Injectable, UnauthorizedException, } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User, Avatar, UserStatus } from 'db-interface/Core';
+import { User, Avatar, UserStatus, BlockerBlocked } from 'db-interface/Core';
 import { DeleteResult, Like, Repository, UpdateResult } from 'typeorm';
 import { QueryFilterDto } from 'validation/query.dto';
 
@@ -15,8 +15,10 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(BlockerBlocked)
+    private blockerBlockedRepository: Repository<BlockerBlocked>,
     private readonly jwtService: JwtService
-  ) {}
+  ) { }
 
   private logger: Logger = new Logger('UserService');
 
@@ -32,8 +34,8 @@ export class UserService {
       take: query.length,
       where: query.search
         ? {
-            userName: Like(`%${query.search}%`),
-          }
+          userName: Like(`%${query.search}%`),
+        }
         : undefined,
       relations: {
         stats: true,
@@ -105,32 +107,116 @@ export class UserService {
       .remove(userTwo);
   }
 
-  async getUserByToken(token: string)
-	{ 
-		const decoded = this.jwtService.decode(token) as IToken;
-		const user = await this.userRepository.findOneBy({ login: decoded.login });
-		if (!user)
-			throw new HttpException(`User ${decoded.login} not found`, HttpStatus.NOT_FOUND);
-		return user
-	}
+  async getUserByToken(token: string) {
+    const decoded = this.jwtService.decode(token) as IToken;
+    const user = await this.userRepository.findOneBy({ login: decoded.login });
+    if (!user)
+      throw new HttpException(`User ${decoded.login} not found`, HttpStatus.NOT_FOUND);
+    return user
+  }
 
-  async updateUserStatus(user: User, status: UserStatus, socketId?: string)
-  {
+  async updateUserStatus(user: User, status: UserStatus, socketId?: string) {
     user.globalSocketId = socketId || user.globalSocketId;
     user.status = status;
     this.userRepository.save(user);
   }
 
-  async getUserBySocketId(socket: string)
-  {
+  async getUserBySocketId(socket: string) {
     const user = await this.userRepository
       .createQueryBuilder()
-      .select("user") 
-      .from(User, "user") 
+      .select("user")
+      .from(User, "user")
       .where("user.globalSocketId = :socketId", { socketId: socket })
       .getOne();
     if (!user)
       throw new HttpException(`User with global socket #${socket} not found`, HttpStatus.NOT_FOUND);
     return user;
   }
+
+
+  // ------BLOCKED_USERS UTILITARIES---------------------------
+
+
+
+  async findBlockeds(userLogin: string): Promise<User[]> {
+    const user: User = await this.userRepository.findOne({
+      where: {
+        login: userLogin,
+      },
+      relations: {
+        blockerBlockeds: true,
+      },
+    });
+    let blockedUsers: User[] = [];
+    let blockerBlockeds = await this.blockerBlockedRepository.find(
+      {
+        relations: {
+          blocked: true,
+          blocker: true
+        },
+        where: {
+          blocker: {
+            id: user.id,
+          },
+        },
+      })
+    if (blockerBlockeds.length != 0) {
+      for (let bb of blockerBlockeds) {
+        blockedUsers.push(bb.blocked);
+      }
+    }
+    return blockedUsers;
+  }
+
+  async addBlockeds(userLogin: string, blockedLogin: string): Promise<void> {
+    const userOne: User = await this.findOne(userLogin);
+    const userTwo: User = await this.findOne(blockedLogin);
+
+    const toFind = await this.blockerBlockedRepository.findOne(
+      {
+        relations: {
+          blocked: true,
+          blocker: true
+        },
+        where: {
+          blocker: {
+            id: userOne.id,
+          },
+          blocked: {
+            id: userTwo.id,
+          },
+        },
+      })
+    if (toFind)
+      return;
+    let bb = new BlockerBlocked;
+    bb.blocker = userOne;
+    bb.blocked = userTwo;
+    await this.blockerBlockedRepository.save(bb);
+  }
+
+  async removeBlockeds(userLogin: string, friendLogin: string): Promise<void> {
+    const userOne = await this.findOne(userLogin);
+    const userTwo = await this.findOne(friendLogin);
+    const toFind = await this.blockerBlockedRepository.findOne(
+      {
+        relations: {
+          blocked: true,
+          blocker: true
+        },
+        where: {
+          blocker: {
+            id: userOne.id,
+          },
+          blocked: {
+            id: userTwo.id,
+          },
+        },
+      })
+    if (!toFind)
+      return;
+    this.blockerBlockedRepository.delete(toFind.id);
+  }
+
+
 }
