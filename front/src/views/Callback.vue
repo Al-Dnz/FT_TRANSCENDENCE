@@ -10,6 +10,7 @@ import { AuthenticationApi, UsersApi, Configuration, ResponseError } from "@/api
 import { ErrorOutput, OauthToken } from "@/api/models";
 import { defineComponent } from "vue";
 import { setRefreshCookie, setAccessCookie } from "@/frontJS/cookies";
+import io from 'socket.io-client';
 
 export default defineComponent({
   name: "callBack",
@@ -30,20 +31,28 @@ export default defineComponent({
       .then(async (value: OauthToken) => {
         setAccessCookie(value.accessToken)
         setRefreshCookie(value.refreshToken)
-        await new UsersApi(new Configuration({accessToken: value.accessToken}))
-        .createUser()
-        .then(() => {this.$router.push("/param");})
-        .catch((errorMsg: ResponseError) => { errorMsg.response.json().then((str : ErrorOutput) =>
-          {
-            this.$cookies.remove("trans_access")
-		        this.$cookies.remove("trans_refresh")
-            this.$router.push("/");
-            this.$toast(str.message, {
-              styles: { backgroundColor: "#FF0000", color: "#FFFFFF" },
+        await new UsersApi(new Configuration({ accessToken: value.accessToken }))
+          .createUser()
+          .then(() => {
+            this.$store.commit('setGlobalSocket', io(`http://0.0.0.0:3003`, { auth: { token: this.$cookies.get("trans_access") } }));
+            this.$store.commit('setChatSocket', io(`http://0.0.0.0:3004`, { auth: { token: this.$cookies.get("trans_access") } }));
+            this.$store.commit('setGameSocket', io(`http://0.0.0.0:3005`, { auth: { token: this.$cookies.get("trans_access") } }));
+          })
+          .then(() => { this.$router.push("/param"); })
+          .catch((errorMsg: ResponseError) => {
+            errorMsg.response.json().then((str: ErrorOutput) => {
+              this.$cookies.remove("trans_access")
+              this.$cookies.remove("trans_refresh")
+              this.$router.push("/");
+              this.$toast(str.message, {
+                styles: { backgroundColor: "#FF0000", color: "#FFFFFF" },
+              });
             });
-          });})
+          })
       });
   },
 });
 </script>
+
+
 <style src="@/assets/tailwind.css" />
