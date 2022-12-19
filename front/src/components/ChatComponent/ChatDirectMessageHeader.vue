@@ -81,7 +81,7 @@ export default defineComponent({
         method: 'GET',
         headers: {}
       }
-      let response = await fetch(`http://localhost:3004/channel/${this.current_chan?.id}/messages`, bearer)
+      let response = await fetch("http://" + process.env.VUE_APP_IP + ":3004/channel/${this.current_chan?.id}/messages", bearer)
       let data: Response["type"] = await response.json();
       this.messages = [...data];
 

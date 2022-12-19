@@ -153,7 +153,7 @@ export default {
     },
   },
   created() {
-    this.socket = io(`http://127.0.0.1:3005`);
+    this.socket = io("http://"+ process.env.VUE_APP_IP +":3005");
 
     window.addEventListener('keydown', (e) => {
       switch (e.key) {
