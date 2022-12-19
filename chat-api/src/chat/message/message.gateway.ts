@@ -71,24 +71,33 @@ export class MessageGateway
       }
       const new_message = await this.messageService.create(msgData);
 
-      // const usersOfChannel: User[] = channel.users;
-      // for (let user of usersOfChannel) 
-      // {
-      //    IF USER IS NOT MUTED BY CHANNEL
-      //    IF SENDER IS NOT BLOCKED BY USER
-      // 
-      //   this.server.to(user.chatSocketId).emit(`msgToChannel`, new_message);
-      // }
-
-      if (channel.type = ChannelType.direct)
+      if (channel.type != ChannelType.direct)
+      {
+        const usersOfChannel: User[] = await this.userChannelService.getAllUsersFromChan(channel.id);
+        for (let user of usersOfChannel) 
+        {
+          //  IF USER IS NOT MUTED BY CHANNEL
+          //  IF SENDER IS NOT BLOCKED BY USER
+        
+          this.server.to(user.chatSocketId).emit(`msgToChannel`, new_message);
+        }
+      }
+      else
       {
         this.server.to(channel.userOne.chatSocketId).emit(`msgToChannel`, new_message);
         this.server.to(channel.userTwo.chatSocketId).emit(`msgToChannel`, new_message);
       }
-      else
-      {
-        this.server.emit(`msgToChannel`, new_message);
-      }
+      
+
+      // if (channel.type = ChannelType.direct)
+      // {
+      //   this.server.to(channel.userOne.chatSocketId).emit(`msgToChannel`, new_message);
+      //   this.server.to(channel.userTwo.chatSocketId).emit(`msgToChannel`, new_message);
+      // }
+      // else
+      // {
+        // this.server.emit(`msgToChannel`, new_message);
+      // }
       
     }
     catch (error) {

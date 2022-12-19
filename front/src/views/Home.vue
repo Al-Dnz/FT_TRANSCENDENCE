@@ -189,8 +189,13 @@ export default {
       this.socket.emit('getSizeToServer');
     },
   },
+  
+  unmounted() {
+    this.socket.disconnect();
+  },
   created() {
-    this.socket = this.$store.state.gameSocket;
+    const authPayload = { auth: { token: this.$cookies.get("trans_access") } };
+    this.socket = io("http://" + process.env.VUE_APP_IP + ":3005", authPayload);
  
     window.addEventListener('keydown', (e) => {
       switch (e.key) {
