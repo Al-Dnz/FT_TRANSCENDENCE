@@ -20,27 +20,10 @@ import { UserService } from './user/user.service';
 export class ChatGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
-
   constructor(private userService: UserService) {}
 
   private logger: Logger = new Logger('MainChatGateway');
   @WebSocketServer() server: Server;
-
-  @SubscribeMessage('update_socket')
-  async updateUserSocket(client: Socket)
-  {
-    // try
-    // {
-    //   // this.userService.checkToken(payload.token);
-    //   const user = await this.userService.getUserByToken(payload.token);
-    //   this.userService.updateUserSocket(user, client.id);
-    // } 
-    // catch (error)
-    // {
-    //   this.server.to(client.id).emit('chatError', error.message);
-    // }
-    
-  }
 
   afterInit(server: Server) {
     this.logger.log('Initialisation of Main Chat websocket');
@@ -53,13 +36,11 @@ export class ChatGateway
   {
     try
     {
-      // this.logger.log("WS AUTH TOKEN");
-      // this.logger.log(client.handshake);
       const token = client.handshake.auth.token;
-      // this.userService.checkToken(token);
+      this.userService.checkToken(token);
       const user = await this.userService.getUserByToken(token);
       this.userService.updateUserSocket(user, client.id);
-      this.logger.log(`User: ${user.login} is connected to chat with socket#${client.id}`);
+      this.logger.log(`User: ${user.login} is connected to chat with socket ${client.id}`);
     } 
     catch (error)
     {

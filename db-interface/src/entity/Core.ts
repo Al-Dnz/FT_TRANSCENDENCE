@@ -278,6 +278,18 @@ export class User extends Base {
         }
     )
     bannedChans: BannedChan[];
+
+    @OneToMany(() => Channel, (channel: Channel) => channel.userOne, {
+        cascade: true,
+    })
+    DMchannelsOne: Relation<Channel>[];
+
+
+    @OneToMany(() => Channel, (channel: Channel) => channel.userTwo, {
+        cascade: true,
+    })
+    DMchannelsTwo: Relation<Channel>[];
+
 }
 
 @Entity()
@@ -375,6 +387,21 @@ export class Channel extends Base {
         (bannedChan: BannedChan) => bannedChan.channel
     )
     bannedChans: BannedChan[];
+
+
+    @ManyToOne(() => User, (user: User) => user.DMchannelsOne, {
+        onDelete: "CASCADE",
+        nullable: true,
+        eager: true,
+    })
+    userOne: Relation<User>;
+
+    @ManyToOne(() => User, (user: User) => user.DMchannelsTwo, {
+        onDelete: "CASCADE",
+        nullable: true,
+        eager: true,
+    })
+    userTwo: Relation<User>;
 
 }
 
