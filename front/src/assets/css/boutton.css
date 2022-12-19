@@ -1,61 +1,36 @@
-/* * {
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
-}
-body {
-	height: 100vh;
-	overflow: hidden;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background-color: #05e8ba;
-	background-image: linear-gradient(315deg, #05e8ba 0%, #087ee1 74%);
-} */
-.PlayBtn {
-    position: fixed ;
-    top: 40%;
-    left: 30%;
-    transform: translate(-40%, 30);
-    opacity: 0.8;
+@charset "UTF-8";
+  .btn-1 {
+    font-family: Hack, monospace;
+    background: #e8e8e8;
+    color: #16A34A;
+    cursor: pointer;
+    font-size: 2em;
+    padding: 1.5rem;
+    border: 0;
+    transition: all 0.5s;
+    border-radius: 10px;
+    width: auto;
+    position: relative;
   }
-  
-  .ReturnBtn {
+  .btn-1::after {
+    content: ">";
+    font-weight: 600;
+    position: absolute;
+    left: 85%;
+    top: 24%;
+    right: 5%;
+    bottom: 0;
     opacity: 0;
   }
-  
-  .noselect {
-    -webkit-touch-callout: none;
-      -webkit-user-select: none;
-       -khtml-user-select: none;
-         -moz-user-select: none;
-          -ms-user-select: none;
-              user-select: none;
-          -webkit-tap-highlight-color: transparent;
+  .btn-1:hover {
+    background: #16A34A;
+    color: #ffffff;
+    transition: all 0.5s;
+    border-radius: 10px;
+    box-shadow: 0px 6px 15px #16a34a54;
+    padding: 1.5rem 4.5rem 1.5rem 1.5rem;
   }
-  
-  button {
-      width: 150px;
-      height: 50px;
-      cursor: pointer;
-      font-size: 20px;
-      font-weight: bold;
-      color: black;
-      background: white;
-      border: 2px solid black;
-      box-shadow: 5px 5px 0 black,
-          -5px -5px 0 black,
-          -5px 5px 0 black,
-          5px -5px 0 black;
-      transition: 500ms ease-in-out;
-  }
-  
-  button:hover {
-      box-shadow: 20px 5px 0 black, -20px -5px 0 black;
+  .btn-1:hover::after {
     opacity: 1;
-    transition: 400ms;
-  }
-  
-  button:focus {
-      outline: none;
+    transition: all 0.5s;
   }

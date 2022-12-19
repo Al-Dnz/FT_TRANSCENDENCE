@@ -25,6 +25,7 @@ export class GameService
 			width: 640,
 			height: 480
 		},
+		mode: 0,
 		paddle1 : new paddle({
 			width: 30,
 			height: 160,
@@ -89,16 +90,20 @@ export class GameService
 		state.game_data.paddle1.update();
 		state.game_data.paddle2.update();
 		ret = state.game_data.ball.update(state.game_data.paddle1, state.game_data.paddle2);
-		if (ret === 1){
+		if (ret === 2){
 			state.game_data.score.player1+= 1;
+			if (state.game_data.mode === "custom")
+				state.game_data.paddle1.height = state.game_data.paddle1.height * 0.8;
 			ret = 0;
-		} else if (ret === 2) {
+		} else if (ret === 1) {
 			state.game_data.score.player2+= 1;
+			if (state.game_data.mode === "custom")
+				state.game_data.paddle2.height = state.game_data.paddle2.height * 0.8;
 			ret = 0;
 		}
-		if (state.game_data.score.player1 > 2) {
+		if (state.game_data.score.player1 > 5) {
 			return (1);
-		} else if (state.game_data.score.player2 > 2) {
+		} else if (state.game_data.score.player2 > 5) {
 			return (2);
 		}
 		// console.log(this.game_data.score);
