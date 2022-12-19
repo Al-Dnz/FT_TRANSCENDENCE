@@ -32,7 +32,7 @@ export default createStore({
 		{
 			const authPayload = { auth: { token: authToken} };
 			commit('setGlobalSocket', authPayload);
-			commit('setChatSocket', authPayload);
+			// commit('setChatSocket', authPayload);
 			commit('setGameSocket', authPayload);
 		},
 		setGlobalSocket({commit, state}, authToken)

@@ -102,8 +102,12 @@ export default defineComponent({
 		}
 	},
 	created() {
-		const socket = this.$store.state.globalSocket;
-		socket.on('userStatus', (payload: Payload) => {
+		const globalSocket = this.$store.state.globalSocket;
+		const gameSocket = this.$store.state.gameSocket;
+		globalSocket.on('userStatus', (payload: Payload) => {
+			this.updateFriendStatus(payload);
+		})
+		gameSocket.on('userStatus', (payload: Payload) => {
 			this.updateFriendStatus(payload);
 		})
 	}
