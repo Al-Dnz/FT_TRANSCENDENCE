@@ -26,6 +26,8 @@ import { CreateUserChannelDto } from '../user-channel/dto/create-user-channel.dt
 import { KickUserDto } from './dto/kick-user.dto';
 import { GrantUserDto } from './dto/grant-user.dto';
 import { BannedChanService } from '../banned-chan/banned-chan.service';
+import { DirectMessageDto } from './dto/direct-message.dto';
+import { channel } from 'diagnostics_channel';
 
 @UsePipes(WSPipe)
 @WebSocketGateway({ cors: { origin: '*' } })
@@ -100,9 +102,7 @@ export class ChannelGateway {
 		try {
 			const token = client.handshake.auth.token;
 			this.userService.checkToken(token);
-
 			const all_chan = await this.channelService.findAll();
-
 			this.server.emit('allChansToClient', all_chan);
 		} catch (error) {
 			this.server.to(client.id).emit('chatError', error.message);
@@ -138,20 +138,19 @@ export class ChannelGateway {
 
 			this.bannedChanService.bannedChanGuard(user.id, payload.id);
 			
-			const chan = this.channelService.checkChanValidity(payload);
+			const chan = await this.channelService.checkChanValidity(payload);
 
 			//joining channel
 
 			// check if user is not banned
+
+
 			const userChannelData: CreateUserChannelDto =
 			{
 				userId: user.id,
 				channelId: payload.id
 			}
 			this.userChannelService.create(userChannelData)
-
-			// const chanMessages = await this.channelService.findMessagesWithPassword(payload)
-
 			const chanMessages = await this.channelService.findMessages(payload.id)
 			const sentPayload =
 			{
@@ -159,8 +158,10 @@ export class ChannelGateway {
 				locked: false,
 				messages: chanMessages,
 			}
+			
 			this.server.to(client.id).emit('allChanMessagesToClient', sentPayload);
 			this.sendChannelUsers(client, payload);
+			
 
 		} catch (error) {
 			this.server.to(client.id).emit('allChanMessagesToClient', { channelId: payload.id, locked: true, messages: {} });
@@ -179,6 +180,8 @@ export class ChannelGateway {
 				return;
 			}
 			const channel = await this.channelService.findOne(payload.channelId);
+			if (channel.type == ChannelType.direct)
+				return;
 			let userChannels: UserChannel[] = await this.userChannelService.findByUserAndChan(user.id, payload.channelId);
 			if (userChannels.length == 0) {
 				this.server.to(client.id).emit('chatError', `you are not connected to channel ${channel.name} to use this privilege`);
@@ -235,6 +238,8 @@ export class ChannelGateway {
 				return;
 			}
 			const channel = await this.channelService.findOne(payload.channelId);
+			if (channel.type == ChannelType.direct)
+				return;
 			let userChannels: UserChannel[] = await this.userChannelService.findByUserAndChan(user.id, payload.channelId);
 			if (userChannels.length == 0) {
 				this.server.to(client.id).emit('chatError', `you are not connected to channel ${channel.name} to use this privilege`);
@@ -264,6 +269,32 @@ export class ChannelGateway {
 		}
 	}
 
+
+
+	@SubscribeMessage('directMessage')
+	async createDirectMessage(client: Socket, payload: DirectMessageDto) 
+	{
+		try
+		{
+			const token = client.handshake.auth.token;
+			this.userService.checkToken(token);
+			const sender = await this.userService.getUserByToken(token);
+			const receiver = await this.userService.getUserById(payload.userId);
+
+			// check if channel exist as DMChannel
+			const DMChannels = await this.channelService.findDMChannel(sender.id, receiver.id);
+			if (DMChannels.length != 0)
+				this.server.to(client.id).emit('chatError', `There is already a private conversation between ${sender.login} and ${receiver.login}`);
+			// if no create it
+			this.channelService.createDMChannel(sender, receiver);
+			this.sendAllChan(client);
+		}
+		catch (error) 
+		{
+			
+		}
+	}
+
 	@SubscribeMessage('muteUser')
 	async muteUser(client: Socket, payload: GrantUserDto) {
 		try {
@@ -275,4 +306,7 @@ export class ChannelGateway {
 		}
 
 	}
+
+
+
 }

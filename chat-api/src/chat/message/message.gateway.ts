@@ -24,7 +24,7 @@ import { IMessage } from '../interface/message.interface';
 
 import { ChannelService } from '../channel/channel.service';
 
-import { User } from 'db-interface/Core';
+import { ChannelType, User } from 'db-interface/Core';
 import { UserChannelService } from '../user-channel/user-channel.service';
 import { BannedChanService } from '../banned-chan/banned-chan.service';
 
@@ -80,21 +80,20 @@ export class MessageGateway
       //   this.server.to(user.chatSocketId).emit(`msgToChannel`, new_message);
       // }
 
-      this.server.emit(`msgToChannel`, new_message);
+      if (channel.type = ChannelType.direct)
+      {
+        this.server.to(channel.userOne.chatSocketId).emit(`msgToChannel`, new_message);
+        this.server.to(channel.userTwo.chatSocketId).emit(`msgToChannel`, new_message);
+      }
+      else
+      {
+        this.server.emit(`msgToChannel`, new_message);
+      }
+      
     }
     catch (error) {
       this.server.to(client.id).emit('chatError', error);
     }
 
   }
-
-  // afterInit(server: Server) {
-  //   this.logger.log('Initialisation of Message websocket');
-  // }
-  // handleDisconnect(client: Socket) {
-  //   this.logger.log(`Client disconnected: ${client.id}`);
-  // }
-  // handleConnection(client: Socket, ...args: any[]) {
-  //   this.logger.log(`Client connected: ${client.id}`);
-  // }
 }
