@@ -153,7 +153,7 @@ export default {
     },
   },
   created() {
-    this.socket = io(`http://127.0.0.1:3005`);
+    this.socket = this.$store.state.gameSocket;
 
     window.addEventListener('keydown', (e) => {
       switch (e.key) {

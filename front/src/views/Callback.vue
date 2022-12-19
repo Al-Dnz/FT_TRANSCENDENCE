@@ -34,9 +34,8 @@ export default defineComponent({
         await new UsersApi(new Configuration({ accessToken: value.accessToken }))
           .createUser()
           .then(() => {
-            this.$store.commit('setGlobalSocket', io(`http://0.0.0.0:3003`, { auth: { token: this.$cookies.get("trans_access") } }));
-            this.$store.commit('setChatSocket', io(`http://0.0.0.0:3004`, { auth: { token: this.$cookies.get("trans_access") } }));
-            this.$store.commit('setGameSocket', io(`http://0.0.0.0:3005`, { auth: { token: this.$cookies.get("trans_access") } }));
+            const transAccessCookie = this.$cookies.get("trans_access");
+            this.$store.dispatch('setAllSockets', transAccessCookie);
           })
           .then(() => { this.$router.push("/param"); })
           .catch((errorMsg: ResponseError) => {
