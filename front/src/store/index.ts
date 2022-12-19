@@ -2,7 +2,7 @@ import Vuex from 'vuex';
 import { createStore } from 'vuex';
 import io from 'socket.io-client';
 
-const hostIp = "0.0.0.0";
+const hostIp = process.env.VUE_APP_IP;
 
 export default createStore({
 	state:
