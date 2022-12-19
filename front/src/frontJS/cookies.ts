@@ -11,15 +11,14 @@ export function getCookie(name: string): string {
 }
 
 export function setCookie(name: string, value: string, expiration: Date) {
-    document.cookie = `${name}=${value}; expires=${expiration.toUTCString()}; path=/; SameSite=none; Secure`;
+    document.cookie = `${name}=${value}; expires=${expiration.toUTCString()}; path=/; SameSite=Lax;`; //Secure et SameSite=none si retour a https
 }
-
 export async function getCredentials(): Promise<string> {
     const accessToken: string = getCookie("trans_access");
     const refreshToken: string = getCookie("trans_refresh");
 
     if (!refreshToken) {
-        location.href = "http://localhost";
+        location.href = "http://" + process.env.VUE_APP_IP;
         return "";
     }
     if (!accessToken) {
@@ -32,7 +31,7 @@ export async function getCredentials(): Promise<string> {
                 setRefreshCookie(value.refreshToken);
             })
             .catch(() => {
-                location.href = "http://localhost";
+                location.href = "http://" + process.env.VUE_APP_IP;
             });
     }
     return getCookie("trans_access");

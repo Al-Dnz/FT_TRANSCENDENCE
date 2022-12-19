@@ -1,10 +1,19 @@
 DOCKER_COMPOSE_FILE = docker-compose.yml
 FRONT_FOLDER= ./front
+MAKEFILE_FOLDER= ./make_src
+NGINX_FOLDER= ./nginx
 
 all: init up
 
 init:
-	cp .env ${FRONT_FOLDER}/.env
+	cp ${MAKEFILE_FOLDER}/.env_local ${FRONT_FOLDER}/.env
+	cp ${MAKEFILE_FOLDER}/.env_local ./.env
+	cp ${MAKEFILE_FOLDER}/nginx_local.conf ${NGINX_FOLDER}/nginx.conf
+
+init_multi:
+	cp ${MAKEFILE_FOLDER}/.env_multi ${FRONT_FOLDER}/.env
+	cp ${MAKEFILE_FOLDER}/.env_multi ./.env
+	cp ${MAKEFILE_FOLDER}/nginx_multi.conf ${NGINX_FOLDER}/nginx.conf
 
 up:
 	@-docker compose -f ${DOCKER_COMPOSE_FILE} up -d --build

@@ -154,7 +154,7 @@ export default {
   },
   created() {
     this.socket = this.$store.state.gameSocket;
-
+ 
     window.addEventListener('keydown', (e) => {
       switch (e.key) {
         case 'ArrowUp':
