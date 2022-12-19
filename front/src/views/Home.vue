@@ -1,10 +1,19 @@
 <template>
   <div className="absolute flex justify-center h-full w-full">
     <div id="background_game" style="width: 100%">
-    <div id="app" class="container" >
-			<div id="initialScreen" >
-				<button class="PlayBtn noselect" id = "findGameBtn">Play</button>
+    <div id="app" class="container" style="width: 100%; justify-content: center;"></div>
+    <div id="initialScreen" style="display: flex;">
+        <div style="margin: 0%; width: 100%; justify-content: center; align-items: center; flex-direction: column; position: relative; display: flex;">
+          <div style="margin: 2vh;">
+            <button class="btn-1" id = "findGameBtn">Play Normal Mode  </button>
+          </div>
+          <div style="margin: 2vh;">
+          <button class="btn-1" id = "findGameCustomBtn" style="top: 60%;" >Play Custom Mode</button>
+        </div>
+        </div>
 			</div>
+			<div class="queueScreen" id="queueScreen" >
+				In Queue . . .
 			</div>
 			<div id= "gameScreen" style="width: 100%;">
 				<!-- width and height SHOULD BE SET DYNAMICALLY -->
@@ -27,13 +36,10 @@
 							class="board"
 							style="border: 1px solid black ;" >
 					</canvas>
-					<button class="ReturnBtn noselect" id = "returnGameBtn" style="position: fixed ;top: 90%; left: 50%; transform: translate(-50%,0);width: 60%">
-						return
-					</button>
-
+        </div>
 			</div>
 	</div>
-</div>
+
   </div>
 </template>
 
@@ -66,11 +72,13 @@ export default {
 
       gameCodeDisplay: {},
       gameScreen: {},
+      queueScreen: {},
       initialScreen: {},
       newGameBtn: {},
       joinGameBtn: {},
       specGameBtn: {},
       findGameBtn: {},
+      findGameCustomBtn: {},
       returnGameBtn: {},
     };
   },
@@ -88,32 +96,61 @@ export default {
     },*/
     findGame() {
       this.socket.emit('findGame');
-      this.startAnimating(30);
+      this.setScreen("queue");
+    },
+    findGameCustom() {
+      this.socket.emit('findGameCustom');
+      this.setScreen("queue");
     },
     reset() {
-      this.initialScreen.style.display = 'block';
-      this.gameScreen.style.display = 'none';
+      this.setScreen("initial");
+    },
+    leaveGame() {
+      console.log("FUCK LA VIE");
+      this.setScreen("initial");
       this.socket.emit('leaveGame');
     },
     test() {
       console.log('test');
     },
     startAnimating(fps) {
-      this.initialScreen.style.display = 'none';
-      this.gameScreen.style.display = 'block';
+      this.setScreen("game");
+      // this.initialScreen.style.display = 'none';
+      // this.queueScreen.style.display = 'block';
+      // this.gameScreen.style.display = 'none';
 
       this.fpsInterval = 1000 / fps;
       this.then = Date.now();
       this.startTime = this.then;
 
       this.getSizeToServe();
-      this.paddle1.updateScale();
 
       this.background.imageSrc = require('../assets/game/SpaceBackground.png');
       this.background.update(this.context);
       console.log('this.context', this.context);
       console.log('this.background.imageSrc', this.background.imageSrc);
       this.game();
+    },
+    setScreen(State) {
+      switch (State) {
+        case "initial":
+        this.initialScreen.style.display = 'block';
+        this.queueScreen.style.display = 'none';
+        this.gameScreen.style.display = 'none';
+          break;
+        case "queue":
+        this.initialScreen.style.display = 'none';
+        this.queueScreen.style.display = 'block';
+        this.gameScreen.style.display = 'none';
+          break;
+        case "game":
+        this.initialScreen.style.display = 'none';
+        this.queueScreen.style.display = 'none';
+        this.gameScreen.style.display = 'block';
+          break;
+        default:
+          break;
+      }
     },
     game() {
       window.requestAnimationFrame(this.game);
@@ -127,7 +164,7 @@ export default {
         this.then = this.now - (this.elapsed % this.fpsInterval);
 
         // Put your drawing code here
-        // this.getInfo();
+        this.getSizeToServe();
         this.context.clearRect(0, 0, this.board.width, this.board.height);
         this.context.fillStyle = '#6bed74';
         this.context.fillRect(0, 0, this.board.width, this.board.height);
@@ -164,30 +201,24 @@ export default {
           this.sendPaddleMove('down');
           break;
         case ' ':
-          console.log('this.ball.position.x', this.ball.position.x);
-          console.log('this.ball.position.y', this.ball.position.y);
-          console.log('this.paddle1.position.x', this.paddle1.width);
-          console.log('this.paddle1.position.y', this.paddle1.height);
-          console.log('this.paddle2.position.x', this.paddle2.width);
-          console.log('this.paddle2.position.y', this.paddle2.height);
           this.getInfo();
           break;
       }
     });
   },
   mounted() {
-    this.gameScreen = document.getElementById('gameScreen');
+    this.queueScreen = document.getElementById('queueScreen');
     this.initialScreen = document.getElementById('initialScreen');
+    this.gameScreen = document.getElementById('gameScreen');
     // this.newGameBtn = document.getElementById('newGameBtn');
     // this.specGameBtn = document.getElementById('specGameBtn');
     this.findGameBtn = document.getElementById('findGameBtn');
+    this.findGameCustomBtn = document.getElementById('findGameCustomBtn');
     this.gameCodeDisplay = document.getElementById('gameCodeDisplay');
-    this.returnGameBtn = document.getElementById('returnGameBtn');
 
     // this.newGameBtn.addEventListener('click', this.newGame);
-    // this.specGameBtn.addEventListener('click', this.specGame);
+    this.findGameCustomBtn.addEventListener('click', this.findGameCustom);
     this.findGameBtn.addEventListener('click', this.findGame);
-    this.returnGameBtn.addEventListener('click', this.reset());
     // ----------------------------------------------
     this.socket.on(`test`, (data) => {
       this.test();
@@ -250,6 +281,18 @@ export default {
       console.log('unknownGame');
       this.reset();
       // alert('you loose ?');
+    });
+
+    this.socket.on('startGame', (data) => {
+      console.log("ISSOU");
+      // this.setScreen("game");
+      this.startAnimating(30);
+    });
+
+    this.socket.on('startGameCustom', (data) => {
+      console.log("ISSOUCustm");
+      // this.setScreen("game");
+      this.startAnimating(30);
     });
 
     this.socket.on('fullGame', (data) => {
