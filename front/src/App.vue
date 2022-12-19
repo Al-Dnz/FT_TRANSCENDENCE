@@ -15,9 +15,23 @@
 	</div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent } from 'vue';
 export default defineComponent({
-  name: 'App'
+  name: 'App',
+  created()
+  {
+	const transAccessCookie = this.$cookies.get("trans_access");
+	// const refreshAccessCookie = this.$cookies.get("trans_refresh");
+	if (transAccessCookie)
+	{
+		if (!this.$store.state.globalSocket.connected)
+			this.$store.dispatch('setGlobalSocket', transAccessCookie);
+		// if (!this.$store.state.chatSocket.connected)
+		// 	this.$store.dispatch('setChatSocket', transAccessCookie);
+		if (!this.$store.state.gameSocket.connected)
+			this.$store.dispatch('setGameSocket', transAccessCookie);
+	}
+  }
 })
 </script>
 

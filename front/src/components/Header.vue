@@ -19,6 +19,9 @@ methods : {
 	{
 		this.$cookies.remove("trans_access")
 		this.$cookies.remove("trans_refresh")
+		this.$store.state.globalSocket.disconnect();
+		// this.$store.state.chatSocket.disconnect();
+		this.$store.state.gameSocket.disconnect();
 		this.$router.push('/');
 
 	},

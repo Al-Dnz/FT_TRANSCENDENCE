@@ -153,8 +153,8 @@ export default {
     },
   },
   created() {
-    this.socket = io("http://"+ process.env.VUE_APP_IP +":3005");
-
+    this.socket = this.$store.state.gameSocket;
+ 
     window.addEventListener('keydown', (e) => {
       switch (e.key) {
         case 'ArrowUp':
