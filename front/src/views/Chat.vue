@@ -216,14 +216,21 @@ export default defineComponent({
     },
   },
   created() {
-    this.socket = this.$store.state.chatSocket;
-    this.socket?.on('chatError', (error: any) => {
+    // this.socket = this.$store.state.chatSocket;
+    const authPayload = { auth: { token: this.$cookies.get("trans_access") } };
+    this.socket = io(`http://0.0.0.0:3004`, authPayload);
+    this.socket.on('chatError', (error: any) => {
       this.$toast(error, { styles: { backgroundColor: "#FF0000", color: "#FFFFFF" } });
     })
+  },
+  unmounted() {
+    this.socket.disconnect();
   }
 })
 
 </script>
+
+
 
 
 
