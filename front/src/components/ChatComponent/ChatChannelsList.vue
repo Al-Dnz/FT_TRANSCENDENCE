@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!creatingChan" class="h-full w-full pl-2 pr-2 divide-y-2">
+  <div v-if="!creatingChan && !creatingDM" class="h-full w-full pl-2 pr-2 divide-y-2">
     <div>
       <h1 class="mt-3 font-semibold">DIRECT MESSAGES</h1>
       <div class="h-12 w-full mt-3">
@@ -9,7 +9,7 @@
         hover:rounded-xl rounded-3xl
         transition-all duration-300 ease-linear
         cursor-pointer shadow-lg">
-          <PlusIcon @click="showForm()"/>
+          <PlusIcon @click="showDMForm()"/>
         </div>
       </div>
       <div class="mt-1 mb-1">
@@ -31,7 +31,7 @@
         hover:rounded-xl rounded-3xl
         transition-all duration-300 ease-linear
         cursor-pointer shadow-lg">
-          <PlusIcon @click="showForm()"/>
+          <PlusIcon @click="showChanForm()"/>
         </div>
       </div>
       <div class="mt-1">
@@ -63,6 +63,7 @@ export default defineComponent({
     currentChan: Object,
     channelsList: Object,
     creatingChan: Boolean,
+    creatingDM: Boolean,
   },
   data(): DataI {
     return {
@@ -84,8 +85,11 @@ export default defineComponent({
     changeChannel(channel: any) {
       this.$emit('selectedChannel', channel); // here we need to modify currentChan
     },
-    showForm() {
-      this.$emit('showForm');
+    showDMForm() {
+      this.$emit('showDMForm');
+    },
+    showChanForm() {
+      this.$emit('showChanForm');
     },
   },
   mounted() {
