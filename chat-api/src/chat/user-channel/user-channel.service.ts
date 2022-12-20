@@ -58,7 +58,7 @@ export class UserChannelService {
 		userChannel.channel = channel;
 		if (role)
 			userChannel.role = role;
-		return this.userChannelsRepository.save(userChannel);
+		this.userChannelsRepository.save(userChannel);
 	}
 
 	async findAll() {

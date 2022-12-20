@@ -30,15 +30,17 @@ import { FriendsApi, UserOutput, Configuration, ResponseError, ErrorOutput, User
 import { getCredentials } from "@/frontJS/cookies"
 import errorPage from "@/components/Error.vue";
 import loadingPage from "@/components/Loading.vue"
+import { io, Socket } from "socket.io-client";
+
 interface friendsData {
 	tab: Array<UserOutput>;
 	loading: boolean;
 	newfriend: string;
 	error: string;
+	gameSocket: any,
 }
 
-interface Payload 
-{
+interface Payload {
 	login: string;
 	status: UserOutputStatusEnum;
 }
@@ -50,7 +52,8 @@ export default defineComponent({
 			tab: [],
 			loading: true,
 			newfriend: '',
-			error: ''
+			error: '',
+			gameSocket: {},
 		}
 	},
 	async mounted() {
@@ -91,10 +94,8 @@ export default defineComponent({
 			})
 			this.loading = false;
 		},
-		updateFriendStatus(payload: Payload)
-		{
-			for(let user of this.tab)
-			{
+		updateFriendStatus(payload: Payload) {
+			for (let user of this.tab) {
 				if (user.login == payload.login)
 					user.status = payload.status;
 			}
@@ -103,17 +104,24 @@ export default defineComponent({
 	},
 	created() {
 		const globalSocket = this.$store.state.globalSocket;
-		const gameSocket = this.$store.state.gameSocket;
 		globalSocket.on('userStatus', (payload: Payload) => {
 			this.updateFriendStatus(payload);
 		})
-		gameSocket.on('userStatus', (payload: Payload) => {
+		const authPayload = { auth: { token: this.$cookies.get("trans_access") } };
+		this.gameSocket = io("http://" + process.env.VUE_APP_IP + ":3005", authPayload);
+
+		this.gameSocket.on('userStatus', (payload: Payload) => {
 			this.updateFriendStatus(payload);
 		})
-	}
+	},
+	unmounted() {
+    	this.gameSocket.disconnect();
+  	}
 })
 </script>
   
+
+
 
 
 <style src="../assets/tailwind.css" />
