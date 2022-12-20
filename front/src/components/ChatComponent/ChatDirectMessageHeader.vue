@@ -50,8 +50,35 @@ export default defineComponent({
     getImgUrl(img: string) {
       return require('@/assets/' + img);
     },
+<<<<<<< HEAD
     blockUser() {
       alert('notCurrentUser has been blocked'); // here we need to add notCurrentUser() in currentUser's blockList
+=======
+    async fetchData() {
+      const bearer = {
+        method: 'GET',
+        headers: {}
+      }
+      let response = await fetch("http://" + process.env.VUE_APP_IP + ":3004/channel/${this.current_chan?.id}/messages", bearer)
+      let data: Response["type"] = await response.json();
+      this.messages = [...data];
+
+    },
+    goProfile(userName: string) {
+      this.$router.push('/user/' + userName);
+      alert("going to " + userName + "'s user account");
+    },
+    gameInvite(userName: string) {
+      alert("a game invitation has been sent to " + userName);
+    },
+    BlockUser(userName: string) {
+      alert(userName + "has been blocked/unblocked");
+    },
+    receivedMessage(message: MessageI) {
+      if (message.channel.id === this.current_chan?.id) {
+        this.messages.push(message);
+      }
+>>>>>>> master
     },
   },
   computed: {

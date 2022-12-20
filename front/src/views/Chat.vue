@@ -1,6 +1,7 @@
 <template>
   <div class="h-full w-full flex flex-row">
     <div class="h-full w-1/6 text-slate-600 bg-gray-100">
+<<<<<<< HEAD
       <ChatChannelsList :socket="socket" :currentUser="currentUser"
       :currentChan="currentChan" :channelsList="channelsList" :creatingChan="creatingChan" :creatingDM="creatingDM"
       @selectedChannel="changeCurrentChannel" @showChanForm="showChanCreationForm" @showDMForm="showDMCreationForm" />
@@ -18,6 +19,15 @@
     class="h-full w-5/6 bg-gray-50">
       <ChatDirectMessageBox :socket="socket" :currentUser="currentUser"
       :currentChan="currentChan" @receiveNewMsg="addMessage"/>
+=======
+      <ChatChannelsList :socket="socket" :currentUser="currentUser" :currentChan="currentChan"
+        :channelsList="channelsList" :creatingChan="creatingChan" @selectedChannel="changeCurrentChannel"
+        @showForm="showCreationForm" />
+    </div>
+    <div v-if="!creatingChan" class="h-full w-5/6 flex flex-row bg-gray-50">
+      <ChatChannelBox :socket="socket" :currentUser="currentUser" :currentChan="currentChan"
+        @receiveNewMsg="addMessage" />
+>>>>>>> master
     </div>
     <div v-else-if="currentChan?.type !== 'direct_message'"
     class="h-full w-5/6 bg-gray-50">
@@ -143,11 +153,11 @@ let main_chan: ChannelTmpI = {
   name: 'main_chan',
   type: 'public',
   owner: null as any,
-  userList: [ user1, ],
+  userList: [user1,],
   adminList: [],
   banList: [],
   muteList: [],
-  msgList: [ msg1 ],
+  msgList: [msg1],
 }
 let chan1: ChannelTmpI = {
   unremovable: false,
@@ -156,11 +166,11 @@ let chan1: ChannelTmpI = {
   name: 'chan_test_1',
   type: 'public',
   owner: user1,
-  userList: [ user1, user2, user3 ],
-  adminList: [ user1, ],
+  userList: [user1, user2, user3],
+  adminList: [user1,],
   banList: [],
   muteList: [],
-  msgList: [ msg1, msg2, msg3, ],
+  msgList: [msg1, msg2, msg3,],
 }
 let chan2: ChannelTmpI = {
   unremovable: false,
@@ -169,11 +179,11 @@ let chan2: ChannelTmpI = {
   name: 'chan_test_2',
   type: 'public',
   owner: user2,
-  userList: [ user2, user1, user3, ],
-  adminList: [ user2, user1, ],
+  userList: [user2, user1, user3,],
+  adminList: [user2, user1,],
   banList: [],
   muteList: [],
-  msgList: [ msg1, msg2, msg3, msg4, msg5, msg1, msg2, msg3, msg1, msg2, msg3, msg1, msg2, msg3, ],
+  msgList: [msg1, msg2, msg3, msg4, msg5, msg1, msg2, msg3, msg1, msg2, msg3, msg1, msg2, msg3,],
 }
 let chan3: ChannelTmpI = {
   unremovable: true,
@@ -182,11 +192,11 @@ let chan3: ChannelTmpI = {
   name: 'other_user_1',
   type: 'direct_message',
   owner: null as any,
-  userList: [ user1, user2,],
+  userList: [user1, user2,],
   adminList: [],
   banList: [],
   muteList: [],
-  msgList: [ msg1, msg2, ],
+  msgList: [msg1, msg2,],
 }
 let chan4: ChannelTmpI = {
   unremovable: true,
@@ -195,11 +205,11 @@ let chan4: ChannelTmpI = {
   name: 'other_user_2',
   type: 'direct_message',
   owner: null as any,
-  userList: [ user1, user3,],
+  userList: [user1, user3,],
   adminList: [],
   banList: [],
   muteList: [],
-  msgList: [ msg3, msg1, ],
+  msgList: [msg3, msg1,],
 }
 export default defineComponent({
   name: "ChatPage",
@@ -216,8 +226,13 @@ export default defineComponent({
       creatingDM: false,
       socket: null as any, // not of any use right now, but kept it around, it is still given as a property to children
       currentUser: user1,
+<<<<<<< HEAD
       currentChan: null as any,
       channelsList: [ main_chan, chan1, chan2, chan3, chan4, ],
+=======
+      currentChan: main_chan,
+      channelsList: [main_chan, chan1, chan2, chan3, chan4,],
+>>>>>>> master
     };
   },
   methods: {
@@ -234,12 +249,24 @@ export default defineComponent({
       this.currentChan.msgList.push(message); // this is temporary, this should be dealt with in ChatMessageInput
     },
   },
-  // created() {
-  //   this.socket = io(`http://127.0.0.1:3004`); // not of any use right now, but kept it around
-  // }
-});
+  created() {
+    // this.socket = this.$store.state.chatSocket;
+    const authPayload = { auth: { token: this.$cookies.get("trans_access") } };
+    this.socket = io("http://" + process.env.VUE_APP_IP + ":3004", authPayload);
+    this.socket.on('chatError', (error: any) => {
+      this.$toast(error, { styles: { backgroundColor: "#FF0000", color: "#FFFFFF" } });
+    })
+  },
+  unmounted() {
+    this.socket.disconnect();
+  }
+})
 
 </script>
+
+
+
+
 
 
 

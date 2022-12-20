@@ -26,20 +26,25 @@ export default defineComponent({
     };
   },
   methods: {
-    checkInputValidity() {
+    checkInputValidity(): boolean {
       return (this.text.length > 0);
     },
-    sendMessage() {
-      if (this.checkInputValidity() && this.currentChan) {
+    sendMessage(): void {
+      if (this.checkInputValidity() && this.currentChan) 
+      {
         let newMsg = {
-          id: undefined,
-          createdAt: '',
-          updatedAt: '',
-          author: this.currentUser,
+          // id: undefined,
+          // createdAt: '',
+          // updatedAt: '',
+          // author: this.currentUser,
           text: this.text,
-          channel: this.currentChan,
+          channelId: this.currentChan.id,
         };
-        this.$emit('receiveNewMsg', newMsg); // here we need to create a new message and at it to currentChan's messagesList
+        // this.$emit('receiveNewMsg', newMsg); // here we need to create a new message and at it to currentChan's messagesList
+        // console.log("newMsg");
+        // console.log(newMsg);
+              
+        this.socket?.emit('msgToServer', newMsg);
         this.text = '';
       }
     },
@@ -47,6 +52,4 @@ export default defineComponent({
 });
 </script>
   
-  
-
 <style src="../../assets/tailwind.css" />

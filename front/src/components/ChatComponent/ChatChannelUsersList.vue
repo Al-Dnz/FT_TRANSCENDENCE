@@ -3,12 +3,16 @@
     <h1 class="mt-3 font-bold">CHANNEL MEMBERS</h1>
     <div class="overflow-auto">
       <ul>
-        <li v-for="user in currentChan?.userList" :key="user.id">
+        <!-- <li v-for="user in currentChan?.userList" :key="user.id">
           <div v-if="!compareUsers(user, currentUser)"
           class="hover:text-black">
             <ChatChannelUserBox :socket="socket" :currentUser="currentUser"
             :currentChan="currentChan" :channelUser="user" />
           </div>
+        </li> -->
+
+		<li v-for="userchan in userchannels" :key="userchan.id">
+			<div>{{userchan.user.login}} ({{userchan.role}})</div>
         </li>
       </ul>
     </div>
@@ -27,11 +31,11 @@ export default defineComponent({
     currentChan: Object,
   },
   components: {
-    ChatChannelUserBox,
+    // ChatChannelUserBox,
   },
   data() {
     return {
-      users: this.currentChan?.userList,
+      userchannels: [], //this.currentChan?.userList,
     };
   },
   methods: {
@@ -53,7 +57,34 @@ export default defineComponent({
         return (false);
       return (true);
     },
+	handleChanUsersList(payload: any)
+	{
+		console.log(payload);
+		if (payload.channelId != this.currentChan?.id)
+			return;
+		this.userchannels = [];
+		this.userchannels = payload.userchannels;
+	}
   },
+  created()
+  {
+	this.socket?.on('channelUsersToClient', (payload: any) => {
+            this.handleChanUsersList(payload)
+    })
+    this.socket?.emit('getChannelUsers', {id: this.currentChan?.id, password: null});
+    
+  },
+  watch: {
+    currentChan: {
+        immediate: true, 
+        deep: true, 
+        handler(newVal, old)
+        {
+          this.userchannels = [];
+          this.socket?.emit('getChannelUsers', {id: this.currentChan?.id, password: null});
+        },  
+    }
+  }
 });
 </script>
 

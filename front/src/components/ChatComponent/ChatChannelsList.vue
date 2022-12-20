@@ -71,17 +71,8 @@ export default defineComponent({
       regularChannels: [],
     };
   },
-  methods: {
-    splitChannels() {
-      let i = -1;
-      while (++i < this.channelsList?.length) {
-        if (this.channelsList?.at(i).type === 'direct_message')
-          this.dmChannels.push(this.channelsList?.at(i));
-        else {
-          this.regularChannels.push(this.channelsList?.at(i));
-        }
-      }
-    },
+  methods: 
+  {  
     changeChannel(channel: any) {
       this.$emit('selectedChannel', channel); // here we need to modify currentChan
     },
@@ -91,13 +82,31 @@ export default defineComponent({
     showChanForm() {
       this.$emit('showChanForm');
     },
+    getAllChannels(channels: any)
+    {
+      
+	  this.dmChannels = [];
+	  this.regularChannels = [];
+	  const arr = channels;
+      arr.forEach((chan: any) => (chan.type == 'direct' ? this.dmChannels : this.regularChannels).push(chan));
+    },
+    // addChannel(channel: any)
+    // {
+    //   if (channel.type === 'direct')
+    //     this.dmChannels.push(channel);
+    //   else
+    //     this.regularChannels.push(channel);
+    // }
   },
-  mounted() {
-    this.splitChannels();
-  }
+  created()
+  {
+    this.socket?.on('allChansToClient', (channels: any) => {
+          this.getAllChannels(channels)
+        })
+    this.socket?.emit('getAllChannels');
+  },
+  // mounted() {}
 });
 </script>
-
-
 
 <style src="../../assets/tailwind.css" />

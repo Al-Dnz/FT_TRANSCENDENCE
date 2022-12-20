@@ -13,7 +13,7 @@ import {
 
 export const AppDataSource = new DataSource({
   type: "postgres",
-  host: "localhost",
+  host: process.env.VUE_APP_IP,
   port: 5432,
   username: "admin",
   password: "admin",

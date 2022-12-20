@@ -19,6 +19,7 @@ export class UserGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
   constructor(private userService: UserService) {}
+  @WebSocketServer() server: Server;
   private logger: Logger = new Logger('UserGateway');
 
   async handleConnection(client: Socket, ...args: any[]) 
@@ -29,6 +30,12 @@ export class UserGateway
       const user = await this.userService.getUserByToken(token);
       this.logger.log(`User ${user.login} is connected`);
       this.userService.updateUserStatus(user, UserStatus.online, client.id)
+      const payload =
+      {
+        login: user.login,
+        status: user.status
+      }
+      this.server.emit('userStatus', payload);
       
 
     } catch (error) 
@@ -45,6 +52,12 @@ export class UserGateway
       const user = await this.userService.getUserBySocketId(client.id);
       this.userService.updateUserStatus(user, UserStatus.offline, null)
       this.logger.log(`User ${user.login} is disconnected`);
+      const payload =
+      {
+        login: user.login,
+        status: user.status
+      }
+      this.server.emit('userStatus', payload);      
     } catch (error) 
     {
       client.disconnect();

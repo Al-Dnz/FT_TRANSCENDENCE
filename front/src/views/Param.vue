@@ -9,7 +9,7 @@
         <input type="text" v-model="new_username" name="search" placeholder="Changer de nom d'utilisateur" autocomplete="off" aria-label="Changer de nom d'utilisateur" className="rounded-2xl px-3 placeholder-slate-500 text-slate-500 focus-within:border-green-500 focus-within:outline-0 border-2 border-slate-500 w-1/2"/>
     </div>
     <div className= "h-48 w-2/6 lg:w-1/5 flex justify-center items-center ">
-        <button @click="send()" className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"> Sauvegarder</button>
+        <button @click="send()" className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"> Sauvegarder</button>
     </div>
   </div>
   <div className= "h-50 w-full  ptb-3">

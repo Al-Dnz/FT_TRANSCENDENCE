@@ -1,5 +1,7 @@
 # env
 .env
+./make_src/.env_local
+./make_src/.env_multi
 
 # compiled output
 /dist

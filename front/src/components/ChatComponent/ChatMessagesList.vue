@@ -3,9 +3,13 @@
     <div v-if="currentChan">
       <div class="">
         <ul>
-          <li v-for="message in currentChan?.msgList" :key="message.id">
+          <!-- <li v-for="message in messages" :key="message.id">
             <ChatMessageBox :socket="socket" :currentChan="currentChan"
             :currentUser="currentUser" :message="message" />
+          </li> -->
+
+          <li v-for="message in messages" :key="message.id">
+            {{message.sender.login}} : {{message.text}}
           </li>
         </ul>
       </div>
@@ -18,6 +22,8 @@
 import { defineComponent } from "vue";
 import ChatMessageBox from "./ChatMessageBox.vue";
 
+
+
 export default defineComponent({
   name: "ChatMessagesList",
   props: {
@@ -26,14 +32,52 @@ export default defineComponent({
     currentChan: Object,
   },
   components: {
-    ChatMessageBox,
+    // ChatMessageBox,
   },
   data() {
     return {
-      
+      locked: false as boolean,
+      messages: [] as any[],
+      password: null
     };
   },
-  methods: {},
+  methods:
+  {
+    handleChanConnection(payload: any)
+    {
+      this.locked =  payload.locked;
+      this.messages = [];
+      this.messages = payload.messages.reverse();
+    },
+    receiveMessage(message: any)
+    {
+      if (this.locked)
+        return;
+      if (message.channel.id == this.currentChan?.id)
+        this.messages.push(message);
+    }
+  },
+  created()
+  {
+    this.socket?.emit('joinChannel', {id: this.currentChan?.id, password: this.password});
+    this.socket?.on('allChanMessagesToClient', (payload: any) => {
+            this.handleChanConnection(payload)
+        })
+    this.socket?.on('msgToChannel', (message: any) => {
+        this.receiveMessage(message)
+    })
+  },
+  watch: {
+    currentChan: {
+        immediate: true, 
+        deep: true, 
+        handler(newVal, old)
+        {
+          this.messages = [];
+          this.socket?.emit('joinChannel', {id: this.currentChan?.id, password: this.password});
+        },  
+    }
+  }
 });
 </script>
 

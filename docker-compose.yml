@@ -1,6 +1,21 @@
 version: "3"
 
 services:
+
+    # swagger-ui:
+    # container_name: swagger-ui
+    # image: swaggerapi/swagger-ui:v4.15.5
+    # networks:
+    #   - backend
+    # ports:
+    #   - 8080:8080
+    # environment:
+    #   API_URL: docs/swagger.yml
+    # volumes:
+    #   - type: bind
+    #     source: ./swagger-ui/swagger.yml
+    #     target: /usr/share/nginx/html/docs/swagger.yml
+
   postgres:
     container_name: postgres
     image: postgres:latest
@@ -35,7 +50,7 @@ services:
       - 3003:3000
     env_file: .env
     depends_on:
-    - "postgres"
+      - "postgres"
     volumes:
       - ./upload:/app/upload
 
@@ -51,20 +66,12 @@ services:
       - type: bind
         source: ./nginx/nginx.conf
         target: /etc/nginx/nginx.conf
-
-  swagger-ui:
-    container_name: swagger-ui
-    image: swaggerapi/swagger-ui:v4.15.5
-    networks:
-      - backend
-    ports:
-      - 8080:8080
-    environment:
-      API_URL: docs/swagger.yml
-    volumes:
-      - type: bind
-        source: ./swagger-ui/swagger.yml
-        target: /usr/share/nginx/html/docs/swagger.yml
+    depends_on:
+      - "chat-api"
+      - "game-api"
+      - "auth-api"
+      - "user-api"
+      # - "swagger-ui"
 
   front-end:
     container_name: front-end
@@ -77,15 +84,28 @@ services:
       - 3002:80
     env_file: .env
 
-  chat:
-    container_name: chat
+  chat-api:
+    container_name: chat-api
     build:
       context: ./
-      dockerfile: ./chat/Dockerfile
+      dockerfile: ./chat-api/Dockerfile
     networks:
       - backend
     ports:
       - 3004:3000
+    depends_on:
+      - "postgres"
+    env_file: .env
+
+  game-api:
+    container_name: game-api
+    build:
+      context: ./
+      dockerfile: ./game-api/Dockerfile
+    networks:
+      - backend
+    ports:
+      - 3005:3000
     depends_on:
       - "postgres"
     env_file: .env

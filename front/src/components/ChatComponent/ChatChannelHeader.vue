@@ -30,7 +30,9 @@ export default defineComponent({
       return require('@/assets/' + img);
     },
     quitChannel() {
-      alert('current_user is quitting this channel'); // here we need to remove currentUser from currentChan and set currentChan either as '' or 'main_chan'
+		console.log(`QUIT CHANNEL ${this.currentChan?.id} `);
+		this.socket?.emit('quitChannel', {id: this.currentChan?.id});
+    //   alert('current_user is quitting this channel'); // here we need to remove currentUser from currentChan and set currentChan either as '' or 'main_chan'
     },
   },
 });

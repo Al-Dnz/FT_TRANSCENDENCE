@@ -136,7 +136,7 @@ export class UserController {
             throw new NotFoundException(`user ${login} not found`);
         }
 
-        const friends = await this.userService.findFriends(user.login, {search: login});
+        const friends = await this.userService.findFriends(user.login, { search: login });
         if (friends.length)
             throw new ForbiddenException(`${login} and ${user.login} are already friends`);
 
@@ -156,7 +156,7 @@ export class UserController {
         if (user.login == login) {
             throw new ForbiddenException(`User can't be friend with himself`);
         }
-        
+
         const userOne: User | undefined = await this.userService.findOne(
             user.login,
         );
@@ -169,11 +169,68 @@ export class UserController {
             throw new NotFoundException(`user ${login} not found`);
         }
 
-        const friends = await this.userService.findFriends(user.login, {search: login});
+        const friends = await this.userService.findFriends(user.login, { search: login });
         if (!friends.length)
             throw new ForbiddenException(`${login} and ${user.login} are not friends`);
 
         this.userService.removeFriends(user.login, login).catch((error: Error) => {
+            throw new InternalServerErrorException(error.message);
+        });
+    }
+
+
+    // ------BLOCKED_USERS UTILITARIES---------------------------
+
+
+    @Get('me/blockeds')
+    async findBlockeds(
+        @Identity() user: Identity,
+        // @Query() query: QueryFilterDto,
+    ): Promise<UserOutputDto[]> {
+        const users: User[] = await this.userService.findBlockeds(user.login);
+        return users.map((user: User) => new UserOutputDto(user));
+    }
+
+    @Put('me/blockeds/:login')
+    @HttpCode(204)
+    async addMeBlockeds(
+        @Identity() user: Identity,
+        @Param('login') login: string,
+    ): Promise<void> {
+
+        if (user.login == login) {throw new ForbiddenException(`User can't block himself`);}
+        const userOne: User | undefined = await this.userService.findOne(user.login,);
+        if (!userOne) { throw new NotFoundException(`user ${user.login} not found`); }
+        const userTwo: User | undefined = await this.userService.findOne(login);
+        if (!userTwo) { throw new NotFoundException(`user ${login} not found`); }
+
+        const friends = await this.userService.findBlockeds(user.login);
+        if (friends.length)
+            throw new ForbiddenException(`${login} is already blocked by ${user.login}`);
+
+        this.userService.addBlockeds(user.login, login).catch((error: Error) => {
+            throw new InternalServerErrorException(error.message);
+        });
+    }
+
+    @Delete('me/blockeds/:login')
+    @HttpCode(204)
+    async removeMeBlockeds(
+        @Identity() user: Identity,
+        @Param('login') login: string,
+    ): Promise<void> {
+
+        if (user.login == login) {throw new ForbiddenException(`User can't block himself`);}
+        const userOne: User | undefined = await this.userService.findOne(user.login,);
+        if (!userOne) { throw new NotFoundException(`user ${user.login} not found`); }
+        const userTwo: User | undefined = await this.userService.findOne(login);
+        if (!userTwo) { throw new NotFoundException(`user ${login} not found`); }
+
+        const friends = await this.userService.findBlockeds(user.login);
+        if (!friends.length)
+            throw new ForbiddenException(`${login} and ${user.login} are not blockeds`);
+
+        this.userService.removeBlockeds(user.login, login).catch((error: Error) => {
             throw new InternalServerErrorException(error.message);
         });
     }

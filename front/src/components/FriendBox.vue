@@ -39,16 +39,18 @@
 </template>
   
 <script lang="ts">
-  import { defineComponent, PropType } from 'vue'
-  import { UserOutput} from '@/api';
-  import GoToAcc from './GoToAcc.vue';
-  import GoToChat from './GoToChat.vue';
-  import GoToWatch from './GoToWatch.vue';
-  export default defineComponent({
+import { defineComponent, PropType } from 'vue'
+import GoToAcc from './GoToAcc.vue';
+import GoToChat from './GoToChat.vue';
+import GoToWatch from './GoToWatch.vue';
+import { FriendsApi, UserOutput, Configuration, ResponseError, ErrorOutput } from '@/api';
+import { getCredentials } from "@/frontJS/cookies"
+export default defineComponent({
 	name: 'friendBox',
 	props : {
 		obj: {type: Object as PropType<UserOutput>},
-		index: Number
+		index: Number,
+		refresh: {type: Function}
 	},
 	components : {
 		GoToAcc,
@@ -56,12 +58,20 @@
 		GoToWatch
 	},
 	methods: {
-		del(){
-			alert("delete friends");
-			//this.$emit("delI", this.index);
-		}
+		async del() {
+			getCredentials().then((accessToken: string) => {
+				const Fapi = new FriendsApi(new Configuration({accessToken: accessToken}))
+				Fapi.deleteFriendship({login:this.obj!.login})
+					.then(() => {this.obj!.login = ''; this.refresh!()})
+					.catch((msg:ResponseError) => { msg.response.json().then((str: ErrorOutput) =>
+						this.$toast(str.message, {
+              			styles: { backgroundColor: "#FF0000", color: "#FFFFFF" },
+            			}));})
+					.catch((msg :any) => {console.log(msg)})
+			})
+		},
 	},
-  })
+})
 </script>
   
 <style src="../assets/tailwind.css" />

@@ -92,7 +92,7 @@ export class UserChannel extends Base {
     // @Column()
     // status: UserChannelStatus;
 
-    @ManyToOne(() => Channel, (channel: Channel) => channel.members, {
+    @ManyToOne(() => Channel, (channel: Channel) => channel.userChannels, {
         onDelete: "CASCADE",
     })
     channel: Relation<Channel>;
@@ -106,45 +106,24 @@ export class UserChannel extends Base {
     // mutedBy: UserChannel;
 }
 
-// @Entity()
-// export class Channel extends Base {
-//     @OneToMany(
-//         () => UserChannel,
-//         (userChannel: UserChannel) => userChannel.channel
-//     )
-//     members: UserChannel[];
+@Entity()
+export class BannedChan extends Base 
+{
+    @Column({ type: 'date' })
+    expirationDate: string;
 
-//     @OneToOne(() => UserChannel)
-//     createdBy: UserChannel;
+    @ManyToOne(() => Channel, (channel: Channel) => channel.bannedChans, {
+        onDelete: "CASCADE",
+    })
+    channel: Relation<Channel>;
 
-//     @OneToMany(() => Message, (message: Message) => message.channel, {
-//         cascade: true,
-//     })
-//     messages: Message[];
+    @ManyToOne(() => User, (user: User) => user.bannedChans, {
+        onDelete: "CASCADE",
+    })
+    user: Relation<User>;
+}
 
-//     @Column()
-//     type: ChannelType;
 
-//     @Column({ nullable: true })
-//     password: string;
-// }
-
-// @Entity()
-// export class Message extends Base {
-//     @UpdateDateColumn()
-//     updatedAt: Date;
-
-//     @Column()
-//     content: string;
-
-//     @OneToOne(() => UserChannel)
-//     sentBy: UserChannel;
-
-//     @ManyToOne(() => Channel, (channel: Channel) => channel.messages, {
-//         onDelete: "CASCADE",
-//     })
-//     channel: Channel;
-// }
 
 @Entity()
 export class Avatar extends Base {
@@ -209,7 +188,7 @@ export class User extends Base {
     globalSocketId: string;
 
     @Column({ nullable: true, default: true })
-    socketId: string;
+    chatSocketId: string;
 
     @Column({ type: "enum", enum: UserStatus, default: UserStatus.offline })
     status: UserStatus;
@@ -218,9 +197,19 @@ export class User extends Base {
     @JoinTable()
     friends: User[];
 
-    @ManyToMany(() => User, { cascade: true })
-    @JoinTable()
-    blockedUser: User[];
+    // @ManyToMany(() => User, { cascade: true })
+    // @JoinTable()
+    // blockedUser: User[];
+
+    @OneToMany(() => BlockerBlocked, (blockerBlocked: BlockerBlocked) => blockerBlocked.blocked, {
+        cascade: true,
+    })
+    blockerBlockeds: Relation<BlockerBlocked>[];
+
+    // @OneToMany(() => BlockerBlocked, (blockerBlocked: BlockerBlocked) => blockerBlocked.blocker, {
+    //     cascade: true,
+    // })
+    // blockerBlockeds: Relation< BlockerBlocked>[];
 
     @OneToMany(() => UserMatch, (userMatch: UserMatch) => userMatch.user, {
         cascade: true,
@@ -280,6 +269,27 @@ export class User extends Base {
         cascade: true,
     })
     channels: Relation<Channel>[];
+
+    @OneToMany(
+        () => BannedChan,
+        (bannedChan: BannedChan) => bannedChan.user,
+        {
+            cascade: true,
+        }
+    )
+    bannedChans: BannedChan[];
+
+    @OneToMany(() => Channel, (channel: Channel) => channel.userOne, {
+        cascade: true,
+    })
+    DMchannelsOne: Relation<Channel>[];
+
+
+    @OneToMany(() => Channel, (channel: Channel) => channel.userTwo, {
+        cascade: true,
+    })
+    DMchannelsTwo: Relation<Channel>[];
+
 }
 
 @Entity()
@@ -305,6 +315,24 @@ export class UserMatch extends Base {
     role: UserMatchRole;
 }
 
+
+@Entity()
+export class BlockerBlocked extends Base {
+    @ManyToOne(() => User, (user: User) => user.blockerBlockeds, {
+        onDelete: "CASCADE",
+        nullable: false,
+        eager: true,
+    })
+    blocker: Relation<User>;
+
+    @ManyToOne(() => User, (user: User) => user.blockerBlockeds, {
+        onDelete: "CASCADE",
+        nullable: false,
+        eager: true,
+    })
+    blocked: Relation<User>;
+}
+
 @Entity()
 export class Message extends Base 
 {
@@ -323,7 +351,6 @@ export class Message extends Base
     channel: Relation<Channel>
 
 }
-
 
 @Entity()
 export class Channel extends Base {
@@ -344,7 +371,7 @@ export class Channel extends Base {
         () => UserChannel,
         (userChannel: UserChannel) => userChannel.channel
     )
-    members: UserChannel[];
+    userChannels: UserChannel[];
 
 	@ManyToOne(() => User, (user: User) => user.channels, { onDelete: "CASCADE" })
 	// @JoinColumn({name: "creator_id"})   
@@ -354,5 +381,72 @@ export class Channel extends Base {
         cascade: true,
     })
 	messages: Message[];
+
+    @OneToMany(
+        () => BannedChan,
+        (bannedChan: BannedChan) => bannedChan.channel
+    )
+    bannedChans: BannedChan[];
+
+
+    @ManyToOne(() => User, (user: User) => user.DMchannelsOne, {
+        onDelete: "CASCADE",
+        nullable: true,
+        eager: true,
+    })
+    userOne: Relation<User>;
+
+    @ManyToOne(() => User, (user: User) => user.DMchannelsTwo, {
+        onDelete: "CASCADE",
+        nullable: true,
+        eager: true,
+    })
+    userTwo: Relation<User>;
+
 }
+
+
+
+
+// @Entity()
+// export class Channel extends Base {
+//     @OneToMany(
+//         () => UserChannel,
+//         (userChannel: UserChannel) => userChannel.channel
+//     )
+//     members: UserChannel[];
+
+//     @OneToOne(() => UserChannel)
+//     createdBy: UserChannel;
+
+//     @OneToMany(() => Message, (message: Message) => message.channel, {
+//         cascade: true,
+//     })
+//     messages: Message[];
+
+//     @Column()
+//     type: ChannelType;
+
+//     @Column({ nullable: true })
+//     password: string;
+// }
+
+// @Entity()
+// export class Message extends Base {
+//     @UpdateDateColumn()
+//     updatedAt: Date;
+
+//     @Column()
+//     content: string;
+
+//     @OneToOne(() => UserChannel)
+//     sentBy: UserChannel;
+
+//     @ManyToOne(() => Channel, (channel: Channel) => channel.messages, {
+//         onDelete: "CASCADE",
+//     })
+//     channel: Channel;
+// }
+
+
 
