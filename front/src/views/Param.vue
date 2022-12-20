@@ -53,6 +53,7 @@ import { ResponseError, ErrorOutput, UserOutputStatusEnum } from '@/api';
 
 interface paramReturn {
     obj?: UserOutput;
+    file: any;
     new_username: string;
     twoFa: boolean;
     current_map: number;
@@ -66,6 +67,7 @@ export default defineComponent({
     data(): paramReturn {
         return {
             obj: undefined,
+            file: undefined,
             new_username: '',
             twoFa: false,
             current_map: 1,
@@ -109,6 +111,8 @@ export default defineComponent({
             var input = event.target;
             // Ensure that you have a file before attempting to read it
             if (input.files && input.files[0]) {
+                this.file = input.files;
+                console.log(this.file);
                 // create a new FileReader to read this image and convert to base64 format
                 var reader = new FileReader();
                 // Define a callback function to run, when FileReader finishes its job
