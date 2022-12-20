@@ -67,7 +67,7 @@ export default defineComponent({
     data(): paramReturn {
         return {
             obj: undefined,
-            file: undefined,
+            file: null,
             new_username: '',
             twoFa: false,
             current_map: 1,
@@ -106,12 +106,15 @@ export default defineComponent({
         getImgUrl: function (img: string): any {
             return require(img);
         },
+        fileToBlob: function(file: File): Blob {
+            return new Blob([file], { type: file.type });
+        },
         previewImage: function (event: any): any {
             // Reference to the DOM input element
             var input = event.target;
             // Ensure that you have a file before attempting to read it
             if (input.files && input.files[0]) {
-                this.file = input.files;
+                this.file = this.fileToBlob(input.files[0]);
                 console.log(this.file);
                 // create a new FileReader to read this image and convert to base64 format
                 var reader = new FileReader();
