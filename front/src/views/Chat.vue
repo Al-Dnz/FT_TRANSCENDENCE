@@ -5,8 +5,8 @@
       :currentChan="currentChan" :channelsList="channelsList" :creatingChan="creatingChan" :creatingDM="creatingDM"
       @selectedChannel="changeCurrentChannel" @showChanForm="showChanCreationForm" @showDMForm="showDMCreationForm" />
     </div>
-    <div v-if="(!currentChan && !creatingChan)">
-      <p>NO CHANNEL SELECTED</p>
+    <div v-if="(!currentChan && !creatingChan)" class="mt-4 ml-2">
+      <p class="text-3xl">NO CHANNEL SELECTED</p>
     </div>
     <div v-else-if="creatingChan" class="h-full w-5/6">
       <ChatNewChannelForm :socket="socket" @cancelForm="showChanCreationForm" />
@@ -216,7 +216,7 @@ export default defineComponent({
       creatingDM: false,
       socket: null as any, // not of any use right now, but kept it around, it is still given as a property to children
       currentUser: user1,
-      currentChan: chan2,
+      currentChan: null as any,
       channelsList: [ main_chan, chan1, chan2, chan3, chan4, ],
     };
   },
