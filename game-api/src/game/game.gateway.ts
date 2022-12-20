@@ -98,31 +98,31 @@ export class GameGateway
 		}
 	}
 
-	@SubscribeMessage('joinGame')
-	async handleJoinGame(client: Socket, gameCode: string): Promise<void>
-	{
-		// if game doesn't exist 
-		if (!this.state[gameCode]) {
-			client.emit('unknownGame');
-			return;
-		}
-		// if game is full
-		if (this.state[gameCode].game_data.idPlayers.player2 &&
-			this.state[gameCode].game_data.idPlayers.player2 != client.id) {
-			client.emit('fullGame');
-			return;
-		}
-		this.clientRooms[client.id] = gameCode;
-		client.join(gameCode);
-		this.state[gameCode].game_data.idPlayers.player2 = client.id;
+	// @SubscribeMessage('joinGame')
+	// async handleJoinGame(client: Socket, gameCode: string): Promise<void>
+	// {
+	// 	// if game doesn't exist 
+	// 	if (!this.state[gameCode]) {
+	// 		client.emit('unknownGame');
+	// 		return;
+	// 	}
+	// 	// if game is full
+	// 	if (this.state[gameCode].game_data.idPlayers.player2 &&
+	// 		this.state[gameCode].game_data.idPlayers.player2 != client.id) {
+	// 		client.emit('fullGame');
+	// 		return;
+	// 	}
+	// 	this.clientRooms[client.id] = gameCode;
+	// 	client.join(gameCode);
+	// 	this.state[gameCode].game_data.idPlayers.player2 = client.id;
 
-		client.emit('gameCode', gameCode);
-		client.emit('init', 1);
-		// client.emit('startGame');
-		setTimeout(() => {
-			this.startGameInterval(client, this.state[gameCode], gameCode, this.clientRooms);
-		}, 500);
-	}
+	// 	client.emit('gameCode', gameCode);
+	// 	client.emit('init', 1);
+	// 	// client.emit('startGame');
+	// 	setTimeout(() => {
+	// 		this.startGameInterval(client, this.state[gameCode], gameCode, this.clientRooms);
+	// 	}, 500);
+	// }
 
 	@SubscribeMessage('specGame')
 	async handleSpecGame(client: Socket, gameCode: string): Promise<void>
@@ -180,7 +180,16 @@ export class GameGateway
 
 	handleDisconnect(client: Socket, ...args: any[])
 	{
-		this.server.to(this.clientRooms[client.id]).emit('test');
+		console.log("DC");
+		console.log("void", this.openRooms.length);
+		console.log(this.clientRooms[client.id]);
+		console.log(this.state[this.clientRooms[client.id]]);
+		if (this.state[(this.clientRooms[client.id])]) {
+			if (this.state[this.clientRooms[client.id]].gameState == 'off') {
+				this.state[this.clientRooms[client.id]] = null;
+				delete this.state[this.clientRooms[client.id]];
+			}
+		}
 	}
 
 	afterInit(server: Server)
