@@ -23,13 +23,13 @@ class UserStatsOutputDto {
 }
 
 class SettingsOutputDto {
-  two_fa: boolean;
+  twoFa: boolean;
   map_id: MapID;
   paddle_id: PaddleID;
 
   constructor(settings: UserSettings) {
     this.paddle_id = settings.paddleId;
-    this.two_fa = settings.twoFa;
+    this.twoFa = settings.twoFa;
     this.map_id = settings.mapId;
   }
 }
@@ -47,6 +47,7 @@ export class UserOutputDto {
   constructor(user: User) {
     this.stats = new UserStatsOutputDto(user.stats);
     this.login = user.login;
+    this.twoFa = user.twoFa;
     this.username = user.userName;
     this.settings = new SettingsOutputDto(user.settings);
     this.actual_avatar = new ActualAvatarOutputDto(user.avatar);
@@ -55,6 +56,7 @@ export class UserOutputDto {
   login: string;
   actual_avatar: ActualAvatarOutputDto;
   username: string;
+  twoFa: boolean;
   settings: SettingsOutputDto;
   stats: UserStatsOutputDto;
   status: UserStatus;
