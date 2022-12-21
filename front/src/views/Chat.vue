@@ -1,7 +1,6 @@
 <template>
   <div class="h-full w-full flex flex-row">
     <div class="h-full w-1/6 text-slate-600 bg-gray-100">
-<<<<<<< HEAD
       <ChatChannelsList :socket="socket" :currentUser="currentUser"
       :currentChan="currentChan" :channelsList="channelsList" :creatingChan="creatingChan" :creatingDM="creatingDM"
       @selectedChannel="changeCurrentChannel" @showChanForm="showChanCreationForm" @showDMForm="showDMCreationForm" />
@@ -19,15 +18,6 @@
     class="h-full w-5/6 bg-gray-50">
       <ChatDirectMessageBox :socket="socket" :currentUser="currentUser"
       :currentChan="currentChan" @receiveNewMsg="addMessage"/>
-=======
-      <ChatChannelsList :socket="socket" :currentUser="currentUser" :currentChan="currentChan"
-        :channelsList="channelsList" :creatingChan="creatingChan" @selectedChannel="changeCurrentChannel"
-        @showForm="showCreationForm" />
-    </div>
-    <div v-if="!creatingChan" class="h-full w-5/6 flex flex-row bg-gray-50">
-      <ChatChannelBox :socket="socket" :currentUser="currentUser" :currentChan="currentChan"
-        @receiveNewMsg="addMessage" />
->>>>>>> master
     </div>
     <div v-else-if="currentChan?.type !== 'direct_message'"
     class="h-full w-5/6 bg-gray-50">
@@ -226,13 +216,8 @@ export default defineComponent({
       creatingDM: false,
       socket: null as any, // not of any use right now, but kept it around, it is still given as a property to children
       currentUser: user1,
-<<<<<<< HEAD
       currentChan: null as any,
       channelsList: [ main_chan, chan1, chan2, chan3, chan4, ],
-=======
-      currentChan: main_chan,
-      channelsList: [main_chan, chan1, chan2, chan3, chan4,],
->>>>>>> master
     };
   },
   methods: {
