@@ -28,8 +28,8 @@ export default defineComponent({
 			this.$store.dispatch('setGlobalSocket', transAccessCookie);
 		// if (!this.$store.state.chatSocket.connected)
 		// 	this.$store.dispatch('setChatSocket', transAccessCookie);
-		if (!this.$store.state.gameSocket.connected)
-			this.$store.dispatch('setGameSocket', transAccessCookie);
+		// if (!this.$store.state.gameSocket.connected)
+		// 	this.$store.dispatch('setGameSocket', transAccessCookie);
 	}
   }
 })

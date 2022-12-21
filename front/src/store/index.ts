@@ -2,7 +2,7 @@ import Vuex from 'vuex';
 import { createStore } from 'vuex';
 import io from 'socket.io-client';
 
-const hostIp = "0.0.0.0";
+const hostIp = process.env.VUE_APP_IP;
 
 export default createStore({
 	state:
@@ -33,7 +33,7 @@ export default createStore({
 			const authPayload = { auth: { token: authToken} };
 			commit('setGlobalSocket', authPayload);
 			// commit('setChatSocket', authPayload);
-			commit('setGameSocket', authPayload);
+			// commit('setGameSocket', authPayload);
 		},
 		setGlobalSocket({commit, state}, authToken)
 		{
