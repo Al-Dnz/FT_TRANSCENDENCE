@@ -16,6 +16,9 @@ import {
 } from 'db-interface/Core';
 import { AvatarModule } from './avatar/avatar.module';
 import { MatchModule } from './match/match.module';
+import { MailModule } from './mail/mail.module';
+import { TwoFaModule } from './two-fa/two-fa.module';
+
 
 @Module({
   imports: [
@@ -44,8 +47,8 @@ import { MatchModule } from './match/match.module';
       ],
       synchronize: true,
     }),
+    TwoFaModule,
   ],
-  controllers: [],
   providers: [],
 })
 export class AppModule {}
