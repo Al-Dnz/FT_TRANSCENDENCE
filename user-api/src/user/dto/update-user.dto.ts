@@ -1,10 +1,10 @@
-import { IsBoolean, IsEnum, IsOptional, ValidateNested } from 'class-validator';
+import { IsBoolean, IsEnum, IsOptional, ValidateNested, Length } from 'class-validator';
 import { Type } from 'class-transformer';
 import { MapID, PaddleID } from 'db-interface/Core';
 
 export class UpdateSettingsDto {
     @IsBoolean()
-    two_fa: boolean;
+    twoFa: boolean;
 
     @IsEnum(PaddleID)
     paddle_id: PaddleID;
@@ -15,7 +15,12 @@ export class UpdateSettingsDto {
 
 export class UpdateUserDto {
     @IsOptional()
+    @Length(1)
     username?: string;
+
+    @IsOptional()
+    @IsBoolean()
+    twoFa: boolean;
 
     @IsOptional()
     @ValidateNested()

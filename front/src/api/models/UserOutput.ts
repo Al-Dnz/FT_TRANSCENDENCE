@@ -112,7 +112,7 @@ export function UserOutputFromJSONTyped(json: any, ignoreDiscriminator: boolean)
         'login': json['login'],
         'actualAvatar': AvatarOutputFromJSON(json['actual_avatar']),
         'username': json['username'],
-        'twoFa': json['two_fa'],
+        'twoFa': json['twoFa'],
         'status': json['status'],
         'stats': UserStatsOutputFromJSON(json['stats']),
     };
@@ -130,7 +130,7 @@ export function UserOutputToJSON(value?: UserOutput | null): any {
         'login': value.login,
         'actual_avatar': AvatarOutputToJSON(value.actualAvatar),
         'username': value.username,
-        'two_fa': value.twoFa,
+        'twoFa': value.twoFa,
         'status': value.status,
         'stats': UserStatsOutputToJSON(value.stats),
     };
