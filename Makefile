@@ -6,6 +6,7 @@ NGINX_FOLDER= ./nginx
 LOCAL_IP := $(shell ipconfig getifaddr en1)
 GLOBAL_IP := $(shell curl ifconfig.me)
 ENV_FILE = ./.env
+ENVMULTI_FILE = ./.env_multi
 NGINX_CONF = nginx/nginx.conf
 
 # all: local init up
@@ -18,9 +19,7 @@ global:
 	sed -i '' "s/localhost/$(GLOBAL_IP)/g" $(ENV_FILE) $(NGINX_CONF)
 
 init:
-	cp ${MAKEFILE_FOLDER}/.env_local ${FRONT_FOLDER}/.env
-	cp ${MAKEFILE_FOLDER}/.env_local ./.env
-	cp ${MAKEFILE_FOLDER}/nginx_local.conf ${NGINX_FOLDER}/nginx.conf
+	cp ${ENV_FILE} ${FRONT_FOLDER}/.env
 
 init_multi:
 	cp ${MAKEFILE_FOLDER}/.env_multi ${FRONT_FOLDER}/.env
