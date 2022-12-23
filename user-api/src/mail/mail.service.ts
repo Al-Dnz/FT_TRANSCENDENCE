@@ -6,15 +6,19 @@ export class MailService {
   constructor(private mailerService: MailerService) {}
 
   async sendMail(email: string, text: string) {
-    console.log(email);
-    await this.mailerService.sendMail({
-      to: email,
-      subject: 'Your FT_TRANSCENDENCE 2FA code',
-      html: `<b>${text}</b>`,
-    //   template: '/email',
-    //   context: {
-    //     name: name,
-    //   },
-    });
+    await this.mailerService
+      .sendMail({
+        to: email,
+        from: process.env.EMAIL_FROM,
+        subject: 'Your 2FA code',
+        html: `<b>${text}</b>`,
+        text: `${text}`,
+        template: './verification-code',
+        context: {
+          text: text,
+        },
+      })
+      .then(() => {})
+      .catch(() => {});
   }
 }
