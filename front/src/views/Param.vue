@@ -16,14 +16,14 @@
                     Sauvegarder</button>
             </div>
         </div>
-        <div className="h-50 w-full  ptb-3">
+        <!-- <div className="h-50 w-full  ptb-3">
             <imageBox :current_obj="current_map" :obj="maps" :set_object="set_map"
                 :declare_text="'Choose your map :'" />
         </div>
         <div className="h-50 w-full  ptb-3">
             <imageBox :current_obj="current_paddle" :obj="paddles" :set_object="set_paddle"
                 :declare_text="'Choose your paddle :'" />
-        </div>
+        </div> -->
         <div className="h-50 w-full ptb-3 flex flex-col justify-around">
             <p className="h-6">Use a custom Avatar :</p>
             <div className="flex flex-row justify-center h-44">
@@ -44,7 +44,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import imageBox from '@/components/ImageBox.vue'
+/*import imageBox from '@/components/ImageBox.vue'*/
 import { UsersApi, Configuration, UserOutput } from '@/api';
 import { getCredentials } from "@/frontJS/cookies"
 import { ResponseError, ErrorOutput, UserOutputStatusEnum } from '@/api';
@@ -140,10 +140,10 @@ export default defineComponent({
             
             
         }
-    },
+    },/*
     components: {
         imageBox
-    },
+    },*/
     async created() {
         await this.fetchData();
     }
