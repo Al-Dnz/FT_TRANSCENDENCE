@@ -16,6 +16,8 @@ import {
 } from 'db-interface/Core';
 import { AvatarModule } from './avatar/avatar.module';
 import { MatchModule } from './match/match.module';
+import { MailModule } from './mail/mail.module';
+import { TwoFaModule } from './two-fa/two-fa.module';
 import { StreamModule } from './stream/stream.module';
 
 @Module({
@@ -24,6 +26,7 @@ import { StreamModule } from './stream/stream.module';
     AvatarModule,
     MatchModule,
 	StreamModule,
+	TwoFaModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.POSTGRES_HOST,
@@ -45,9 +48,8 @@ import { StreamModule } from './stream/stream.module';
         BlockerBlocked
       ],
       synchronize: true,
-    })
+    }),
   ],
-  controllers: [],
   providers: [],
 })
 export class AppModule {}
