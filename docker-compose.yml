@@ -52,7 +52,7 @@ services:
     depends_on:
       - "postgres"
     volumes:
-      - ./upload:/app/upload
+      - ./upload:/app/dist/upload
 
   nginx:
     container_name: nginx
