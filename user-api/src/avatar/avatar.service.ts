@@ -27,7 +27,7 @@ export class AvatarService {
   }
 
   async create(user: User, fileName: string): Promise<Avatar> {
-    user.avatar.path = `/static/img/${fileName}`;
+	user.avatar.path = `http://${process.env.VUE_APP_IP}:3003/upload/${fileName}`;
     return this.userRepository.save(user).then((value: User) => value.avatar);
   }
 }

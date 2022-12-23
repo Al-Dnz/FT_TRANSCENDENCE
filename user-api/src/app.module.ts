@@ -18,13 +18,14 @@ import { AvatarModule } from './avatar/avatar.module';
 import { MatchModule } from './match/match.module';
 import { MailModule } from './mail/mail.module';
 import { TwoFaModule } from './two-fa/two-fa.module';
-
+import { StreamModule } from './stream/stream.module';
 
 @Module({
   imports: [
     UserModule,
     AvatarModule,
     MatchModule,
+	StreamModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.POSTGRES_HOST,
@@ -46,8 +47,12 @@ import { TwoFaModule } from './two-fa/two-fa.module';
         BlockerBlocked
       ],
       synchronize: true,
+<<<<<<< HEAD
     }),
     TwoFaModule,
+=======
+    })
+>>>>>>> 15bb7116e3d473e00837c471e95efe2d360405c2
   ],
   providers: [],
 })

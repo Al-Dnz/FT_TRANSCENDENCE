@@ -51,12 +51,17 @@ export class UserService {
     user.userName = updateUserDto.username
       ? updateUserDto.username
       : user.userName;
+    
+    user.twoFa = updateUserDto.twoFa;
+
+    // user.settings.twoFa = updateUserDto.settings
+    // ? updateUserDto.settings.two_fa
+    // : user.settings.twoFa;
+
     user.settings.mapId = updateUserDto.settings
       ? updateUserDto.settings.map_id
       : user.settings.mapId;
-    user.settings.twoFa = updateUserDto.settings
-      ? updateUserDto.settings.two_fa
-      : user.settings.twoFa;
+  
     user.settings.paddleId = updateUserDto.settings
       ? updateUserDto.settings.paddle_id
       : user.settings.paddleId;

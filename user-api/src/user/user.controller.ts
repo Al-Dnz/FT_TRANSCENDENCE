@@ -24,12 +24,14 @@ import { Identity } from './user.decorator';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { LoggingInterceptor } from 'src/auth/auth.interceptor';
+import { Logger } from '@nestjs/common'
 
 @Controller('api/users')
 @UseGuards(AuthGuard)
 @UseInterceptors(LoggingInterceptor)
 export class UserController {
     constructor(private readonly userService: UserService) { }
+    private logger: Logger = new Logger('UserController');
 
     @Get()
     async findAll(@Query() query: QueryFilterDto): Promise<UserOutputDto[]> {
@@ -78,7 +80,6 @@ export class UserController {
         if (!found) {
             throw new NotFoundException(`user ${user.login} not found`);
         }
-
         return this.userService
             .updateOne(found, updateUserDto)
             .then((value: User) => new UserOutputDto(value));
@@ -198,7 +199,7 @@ export class UserController {
         @Param('login') login: string,
     ): Promise<void> {
 
-        if (user.login == login) {throw new ForbiddenException(`User can't block himself`);}
+        if (user.login == login) { throw new ForbiddenException(`User can't block himself`); }
         const userOne: User | undefined = await this.userService.findOne(user.login,);
         if (!userOne) { throw new NotFoundException(`user ${user.login} not found`); }
         const userTwo: User | undefined = await this.userService.findOne(login);
@@ -220,7 +221,7 @@ export class UserController {
         @Param('login') login: string,
     ): Promise<void> {
 
-        if (user.login == login) {throw new ForbiddenException(`User can't block himself`);}
+        if (user.login == login) { throw new ForbiddenException(`User can't block himself`); }
         const userOne: User | undefined = await this.userService.findOne(user.login,);
         if (!userOne) { throw new NotFoundException(`user ${user.login} not found`); }
         const userTwo: User | undefined = await this.userService.findOne(login);
