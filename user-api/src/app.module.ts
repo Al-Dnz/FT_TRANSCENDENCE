@@ -26,6 +26,7 @@ import { StreamModule } from './stream/stream.module';
     AvatarModule,
     MatchModule,
 	StreamModule,
+	TwoFaModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.POSTGRES_HOST,
@@ -47,12 +48,7 @@ import { StreamModule } from './stream/stream.module';
         BlockerBlocked
       ],
       synchronize: true,
-<<<<<<< HEAD
     }),
-    TwoFaModule,
-=======
-    })
->>>>>>> 15bb7116e3d473e00837c471e95efe2d360405c2
   ],
   providers: [],
 })

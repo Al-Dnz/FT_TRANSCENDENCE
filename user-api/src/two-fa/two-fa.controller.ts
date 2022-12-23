@@ -5,6 +5,9 @@ import { HttpStatus } from '@nestjs/common';
 import { MailService } from 'src/mail/mail.service';
 import { UserService } from 'user-api/user.service';
 import {  SendMailDto, VerifyTwoFaCodeDto } from './dto/two-fa.dto'
+import { Logger } from '@nestjs/common';
+
+
 
 @Controller('2fa')
 export class TwoFaController {
@@ -13,31 +16,37 @@ export class TwoFaController {
     private userService: UserService,
   ) {}
 
-  @Get()
+  private logger: Logger = new Logger('2FA Controller');
+
+
+  @Post('/verify')
   async verify2FaCode(@Body() body: VerifyTwoFaCodeDto)
   {
-    try 
-	{
-		const token = body.token;
+   
+	const token = body.token;
+	let user;
+	try {
 		this.userService.checkToken(token);
-		const user = await this.userService.getUserByToken(token);
-		if (!user.twoFa)
+		 user = await this.userService.getUserByToken(token);
+	} catch (error) {
+		throw new HttpException(error.message, HttpStatus.FORBIDDEN);
+	}
+	
+	if (!user.twoFa)
 		return;
 
-		const isValidated: boolean = user.twoFaCode != body.code;
-		this.userService.updateTwoFaCode(user, null);
+	this.logger.log(user.twoFaCode);
+	this.logger.log(body.code);
 
-		if (!isValidated)
-			throw new HttpException('2Fa code is wrong', HttpStatus.FORBIDDEN);
+	const isValidated: boolean = user.twoFaCode === body.code;
+	this.userService.updateTwoFaCode(user, null);
 
-	} 
-	catch (error) 
-	{
-		return error;
-	}
+	if (isValidated == false)
+		throw new HttpException('2Fa code is wrong', HttpStatus.FORBIDDEN);
   }
 
-  @Post()
+  
+  @Post('/mail')
   async sendCodeToUser(@Body() body: SendMailDto) 
   {
     try 
@@ -46,7 +55,7 @@ export class TwoFaController {
       this.userService.checkToken(token);
       const user = await this.userService.getUserByToken(token);
      
-	  if (!user.twoFa)
+	  if (user.twoFa == false)
 		return;
 
 	const randomNumber = Math.floor(100000 + Math.random() * 900000);
@@ -57,7 +66,7 @@ export class TwoFaController {
 	  else
 	  	email = `${user.login}@student.42.fr`;
       
-    //   await this.mailService.sendMail(email, user.twoFacode);
+      this.mailService.sendMail(email, user.twoFaCode);
     } 
 	catch (error) 
 	{
