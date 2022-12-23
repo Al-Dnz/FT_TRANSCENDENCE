@@ -22,6 +22,7 @@ import { AvatarOutputDto } from './dto/avatar-output.dto';
 import { User, Avatar } from 'db-interface/Core';
 import { diskStorage } from 'multer';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Logger } from '@nestjs/common'
 
 @Controller('api/users/me/avatars')
 @UseGuards(AuthGuard)
@@ -31,6 +32,9 @@ export class AvatarController {
     private readonly avatarService: AvatarService,
     private readonly userService: UserService,
   ) {}
+
+  private logger: Logger = new Logger('AvatarController');
+
 
   @Post()
   @UseInterceptors(
@@ -42,7 +46,7 @@ export class AvatarController {
     @UploadedFile() file: Express.Multer.File,
     @Identity() user: Identity,
   ) {
-	if (file.mimetype == 'image/png' || file.mimetype == 'image/jpg') 
+	if (file.mimetype == 'image/png' || file.mimetype == 'image/jpg' ||  file.mimetype == 'image/jpeg') 
 	{
         const userFound: User | undefined = await this.userService.findOne(
           user.login,
@@ -60,7 +64,7 @@ export class AvatarController {
 	else
 	{
         throw new BadRequestException(
-          `invalid file type ${file.mimetype}. File type shoud be png or jpg`,
+          `invalid file type ${file.mimetype}. File type shoud be .png, .jpeg or .jpg`,
         );
     }
   }
