@@ -107,6 +107,14 @@ export class UserService {
       .remove(userTwo);
   }
 
+  checkToken(token: string)
+  {
+	  const validated = this.jwtService.verify(token);
+	  if (!validated)
+		  throw new HttpException(`Invalid token`, HttpStatus.FORBIDDEN);
+	  return validated;
+  }
+
   async getUserByToken(token: string) {
     const decoded = this.jwtService.decode(token) as IToken;
     const user = await this.userRepository.findOneBy({ login: decoded.login });
@@ -218,5 +226,10 @@ export class UserService {
     this.blockerBlockedRepository.delete(toFind.id);
   }
 
+  updateTwoFaCode(user: User, code: string)
+  {
+	user.twoFaCode = code;
+	this.userRepository.save(user);
+  }
 
 }
