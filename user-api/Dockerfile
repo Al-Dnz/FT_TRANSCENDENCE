@@ -13,6 +13,12 @@ RUN npm install && npm run build
 FROM gcr.io/distroless/nodejs:18
 COPY --from=builder /app/user-api /app
 
+FROM busybox:1.35.0-uclibc as busybox
+COPY --from=busybox /bin/sh /bin/sh
+COPY --from=busybox /bin/ls /bin/ls
+COPY --from=busybox /bin/cp /bin/cp
+COPY --from=busybox /bin/mv /bin/mv
+
 WORKDIR /app/dist
 
 ENV PORT="3000"

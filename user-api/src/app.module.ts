@@ -16,12 +16,14 @@ import {
 } from 'db-interface/Core';
 import { AvatarModule } from './avatar/avatar.module';
 import { MatchModule } from './match/match.module';
+import { StreamModule } from './stream/stream.module';
 
 @Module({
   imports: [
     UserModule,
     AvatarModule,
     MatchModule,
+	StreamModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.POSTGRES_HOST,
@@ -43,7 +45,7 @@ import { MatchModule } from './match/match.module';
         BlockerBlocked
       ],
       synchronize: true,
-    }),
+    })
   ],
   controllers: [],
   providers: [],
