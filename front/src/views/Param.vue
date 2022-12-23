@@ -11,7 +11,7 @@
                     className="rounded-2xl px-3 placeholder-slate-500 text-slate-500 focus-within:border-green-500 focus-within:outline-0 border-2 border-slate-500 w-1/2" />
             </div>
             <div className="h-48 w-2/6 lg:w-1/5 flex justify-center items-center ">
-                <button @click="send()"
+                <button @click="update()"
                     className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
                     Sauvegarder</button>
             </div>
@@ -37,6 +37,13 @@
                             class="h-36 w-36 border-4 bg-slate-200 rounded-xl border-green-600">
                     </div>
                 </div>
+
+				<div className="h-48 w-2/6 lg:w-1/5 flex justify-center items-center ">
+					<button @click="updateAvatar()"
+						className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+						Sauvegarder</button>
+            	</div>
+				
             </div>
         </div>
     </div>
@@ -45,7 +52,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import imageBox from '@/components/ImageBox.vue'
-import { UsersApi, Configuration, UserOutput } from '@/api';
+import { AvatarsApi, UsersApi, Configuration, UserOutput } from '@/api';
 import { getCredentials } from "@/frontJS/cookies"
 import { ResponseError, ErrorOutput, UserOutputStatusEnum } from '@/api';
 
@@ -92,6 +99,22 @@ export default defineComponent({
                     .catch((msg: any) => { console.log(msg) })
             });    
         },
+		async updateAvatar() {
+            getCredentials().then((accessToken: string) => {
+                const Aapi = new AvatarsApi(new Configuration({ accessToken: accessToken }))
+                Aapi.uploadUserAvatar({ file: this.file })
+                    .then(() => { this.fetchData(); })
+                    .then(() => { this.$toast("Avatar updated !", { styles: { backgroundColor: "#16b918", color: "#FFFFFF" } }) })
+                    .catch((msg: ResponseError) => {
+                        msg.response.json().then((str: ErrorOutput) =>
+                            this.$toast(str.message, {
+                                styles: { backgroundColor: "#FF0000", color: "#FFFFFF" },
+                            }));
+                    })
+                    .catch((msg: any) => { console.log(msg) })
+            });
+        },
+		
         set_map(num: number) {
             this.current_map = num;
         },
@@ -115,7 +138,6 @@ export default defineComponent({
             // Ensure that you have a file before attempting to read it
             if (input.files && input.files[0]) {
                 this.file = this.fileToBlob(input.files[0]);
-                console.log(this.file);
                 // create a new FileReader to read this image and convert to base64 format
                 var reader = new FileReader();
                 // Define a callback function to run, when FileReader finishes its job
