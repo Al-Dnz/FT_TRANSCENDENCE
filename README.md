@@ -47,3 +47,8 @@ EMAIL_PASSWORD=<your_SENDGRID_API_password>
 ```
 make db
 ```
+
+## TO DO
+
+[ ] remove adenhez user seed
+[ ] check if mailing is connected
