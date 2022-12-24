@@ -51,4 +51,5 @@ make db
 ## TO DO
 
 [ ] remove adenhez user seed
+
 [ ] check if mailing is connected
