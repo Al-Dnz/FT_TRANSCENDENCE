@@ -22,7 +22,7 @@ async function bootstrap() {
 
     // Custom http error handler
     app.useGlobalFilters(new HttpExceptionFilter());
-
+	app.enableCors();
     await app.listen(3000);
 }
 bootstrap();
