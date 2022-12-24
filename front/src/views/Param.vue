@@ -2,7 +2,13 @@
     <div class="flex flex-col h-full w-full overflow-auto">
         <div className="h-48 w-full flex flex-row">
             <div className="h-48 w-1/6 lg:w-1/5 flex justify-center items-center">
-                <input type="checkbox" v-model="twoFa"> <span class="slider round">2FA</span>
+                <label class="toggler-wrapper style-1">
+                    <input type="checkbox" v-model="twoFa">
+                    <div class="toggler-slider">
+                    <div class="toggler-knob"></div>
+                </div>
+                </label>
+                <span className="ml-2">2FA</span>
             </div>
             <div className="h-48 w-3/6 lg:w-3/5 flex flex-col justify-center items-center  overflow-hidden">
                 <span>Nom d'utilisateur actuel : {{ this.obj?.username }} </span>
@@ -174,4 +180,7 @@ export default defineComponent({
 
 
 
-<style src="../assets/tailwind.css" />
+<style>
+@import "../assets/tailwind.css";
+@import "../assets/css/checkbox.css";
+</style>
