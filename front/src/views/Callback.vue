@@ -5,9 +5,11 @@
   <div v-else-if="twoFa" className="absolute flex justify-center h-full w-full overflow-auto m-8">
     <div className="flex flex-col justify-around">
       <div className="flex flex-col justify-around text-center items-center" >
-          <label for="code">La 2FA a été activée.</label><br>
+          <label for="code">Le 2FA a été activé.</label><br>
           <span> Afin de vous connecter, merci de rentrer le code qui a été envoyé à l'adresse</span><br>
-          <span> {{ email }}</span><br>
+          <span> <b>{{ email }}</b></span><br>
+
+ 
           <input type="text" v-model="code" id="code" @keyup.enter="submit()" class="form-input" maxlength="6" className="text-center h-16 m-10 text-3xl w-48 tracking-wider border-green-500 border-2 focus:outline-none focus:border-4 focus:border-green-700"><br>
           <button type="button" @click="submit()" className="w-48 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Submit</button>
       </div>
@@ -29,6 +31,11 @@ import { defineComponent } from "vue";
 import { setRefreshCookie, setAccessCookie } from "@/frontJS/cookies";
 import io from 'socket.io-client';
 import loadingPage from "@/components/Loading.vue"
+
+
+import CodeInput from "vue-verification-code-input";
+
+
 
 interface CbReturn {
     obj?: UserOutput;
@@ -67,12 +74,13 @@ export default defineComponent({
         })
         this.loading = false;
         if (this.twoFa == false)
-        {
-          this.set_and_go();
-        }/* -----------> si tu dois faire un appel au back pour envoyer un email et générer un code
-        else
-        {
-        }*/
+        	this.set_and_go();
+		else
+		{
+			this.$store.state.globalSocket = null;
+			await this.getMail();
+		}
+			
       }).catch((errorMsg: ResponseError) => {
             errorMsg.response.json().then((str: ErrorOutput) => {
               this.$router.push("/");
@@ -94,6 +102,25 @@ export default defineComponent({
     }
   },
   methods: {
+	async getMail()
+	{
+		const requestOptions = 
+		{
+			method: "POST",
+			headers: 
+			{
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+   			},
+			body: JSON.stringify({ token: this.vala })
+  		}
+		await fetch(`http://${process.env.VUE_APP_IP}:3003/2fa/mail`, requestOptions)
+		.catch(e => {
+			this.$toast(e.message, {styles: { backgroundColor: "#FF0000", color: "#FFFFFF" }});
+			console.log(e);
+        	this.$router.push("/");
+		})
+	},
     set_and_go : function()
     {
       setAccessCookie(this.vala);
@@ -101,22 +128,48 @@ export default defineComponent({
       this.$store.dispatch('setAllSockets', this.vala);
       this.$router.push("/param")
     },
-    submit: function()
+	async verify(twoFaCode: string): Promise<boolean>
+	{
+		let ret = false;
+		const requestOptions = 
+		{
+			method: "POST",
+			headers: 
+			{
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+   			},
+			body: JSON.stringify(
+				{	
+					token: this.vala,
+					code: twoFaCode
+				}
+			)
+  		}
+		await fetch(`http://${process.env.VUE_APP_IP}:3003/2fa/verify`, requestOptions)
+		.then(async response => { ret = response.ok })
+		.catch(e => {
+			this.$toast(e.message, {styles: { backgroundColor: "#FF0000", color: "#FFFFFF" }});
+        	this.$router.push("/");
+			return 0;
+		})
+
+		return (ret);
+		
+	},
+    submit: async function()
     {
-      /*CALL a l'api pour checker this.code avec le back*/
-      if (this.code === "111111")
-      {
-        this.twoFa = true;
-        this.set_and_go();
-      }
-      else
-      {
-        console.log(this.code);
-        this.$toast("Erreur code invalide", {
-        styles: { backgroundColor: "#FF0000", color: "#FFFFFF" },
-        });
-        this.$router.push("/");
-      }
+		let isVerified: boolean;
+		isVerified = await this.verify(this.code);
+		if (isVerified == true)
+		{
+			this.set_and_go();
+		}
+		else
+		{
+			this.$toast("Incorrect 2FA code", {styles: { backgroundColor: "#FF0000", color: "#FFFFFF" }});
+        	this.$router.push("/");
+		}
     }
   },
   components :{
