@@ -93,16 +93,16 @@ export class UserController {
             .then((value: User) => new UserOutputDto(value));
     }
 
-    @Delete('me')
-    @HttpCode(204)
-    async remove(@Identity() user: Identity): Promise<void> {
-        const result: DeleteResult = await this.userService.removeByLogin(
-            user.login,
-        );
-        if (!result.affected || (result.affected && result.affected == 0)) {
-            throw new NotFoundException(`user ${user.login} not found`);
-        }
-    }
+    // @Delete('me')
+    // @HttpCode(204)
+    // async remove(@Identity() user: Identity): Promise<void> {
+    //     const result: DeleteResult = await this.userService.removeByLogin(
+    //         user.login,
+    //     );
+    //     if (!result.affected || (result.affected && result.affected == 0)) {
+    //         throw new NotFoundException(`user ${user.login} not found`);
+    //     }
+    // }
 
     @Get(':login')
     async findOne(@Param('login') login: string): Promise<UserOutputDto> {
