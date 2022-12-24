@@ -32,11 +32,6 @@ import { setRefreshCookie, setAccessCookie } from "@/frontJS/cookies";
 import io from 'socket.io-client';
 import loadingPage from "@/components/Loading.vue"
 
-
-import CodeInput from "vue-verification-code-input";
-
-
-
 interface CbReturn {
     obj?: UserOutput;
     twoFa: boolean;
