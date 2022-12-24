@@ -10,5 +10,6 @@ import {JwtModule } from '@nestjs/jwt';
   imports: [JwtModule.register({ secret: process.env.ACCESS_TOKEN_SECRET }), TypeOrmModule.forFeature([User, UserStats, Avatar, UserSettings, BlockerBlocked])],
   controllers: [UserController],
   providers: [UserService, UserGateway],
+  exports: [UserService]
 })
 export class UserModule {}

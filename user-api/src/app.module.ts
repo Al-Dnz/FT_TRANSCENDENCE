@@ -16,12 +16,17 @@ import {
 } from 'db-interface/Core';
 import { AvatarModule } from './avatar/avatar.module';
 import { MatchModule } from './match/match.module';
+import { MailModule } from './mail/mail.module';
+import { TwoFaModule } from './two-fa/two-fa.module';
+import { StreamModule } from './stream/stream.module';
 
 @Module({
   imports: [
     UserModule,
     AvatarModule,
     MatchModule,
+	StreamModule,
+	TwoFaModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.POSTGRES_HOST,
@@ -45,7 +50,6 @@ import { MatchModule } from './match/match.module';
       synchronize: true,
     }),
   ],
-  controllers: [],
   providers: [],
 })
 export class AppModule {}
