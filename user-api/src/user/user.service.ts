@@ -47,6 +47,10 @@ export class UserService {
     return this.userRepository.findOneBy({ login: login });
   }
 
+  findOneByUsername(username: string): Promise<User> {
+    return this.userRepository.findOneBy({ userName: username });
+  }
+
   updateOne(user: User, updateUserDto: UpdateUserDto): Promise<User> {
     user.userName = updateUserDto.username
       ? updateUserDto.username

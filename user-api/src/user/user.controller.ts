@@ -80,6 +80,14 @@ export class UserController {
         if (!found) {
             throw new NotFoundException(`user ${user.login} not found`);
         }
+
+		if(updateUserDto.username)
+		{
+			const namesakedUser: User = await this.userService.findOneByUsername(updateUserDto.username);
+			if (namesakedUser && namesakedUser.id != found.id)
+				throw new ForbiddenException(`${namesakedUser.login} and ${found.login} could not have the same username`);
+		}
+
         return this.userService
             .updateOne(found, updateUserDto)
             .then((value: User) => new UserOutputDto(value));
