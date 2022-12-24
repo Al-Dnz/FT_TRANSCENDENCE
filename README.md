@@ -20,58 +20,30 @@ make down
 
 don't forget to set up a .env file at the root of the project with env variable:
 
-```bash
+```
 POSTGRES_HOST=postgres
 POSTGRES_USER=root
 POSTGRES_PASSWORD=root
 POSTGRES_DB=transcendencedb
-REDIRECT_URI=http://localhost/api/auth/callback
+
 CLIENT_ID=<your_42_API_UUID>
 CLIENT_SECRET=<your_42_API_SECRET>
+
 REFRESH_TOKEN_SECRET=refresh
 ACCESS_TOKEN_SECRET=access
+
+VUE_APP_IP=localhost
+REDIRECT_URI=http://localhost/api/auth/callback
+VUE_APP_CALLBACK=<URL_of_API_callback>
+
+EMAIL_HOST=smtp.sendgrid.net
+EMAIL_USER=apikey
+EMAIL_FROM=<your_SENDGRID_API_sender_domain>
+EMAIL_PASSWORD=<your_SENDGRID_API_password>
 ```
 
-## CONFIG OWN DB
-
-https://www.codementor.io/@engineerapart/getting-started-with-postgresql-on-mac-osx-are8jcopb
-
-## EXPLORE POSTGRESQL DB
-
-` docker compose exec postgres psql transcendencedb `
-
-go on container:
+## EXPLORE DB
 
 ```
-docker compose exec postgres bash
-```
-
-connect to db:
-
-```
-psql transcendencedb
-```
-
-see all db
-
-```
-\l
-```
-
-use trnascendencedb:
-
-```
-\c transcendencedb
-```
-
-show tables:
-
-```
-\dt
-```
-
-get data from table <table>:
-
-```
-select * from <table> ;
+make db
 ```
