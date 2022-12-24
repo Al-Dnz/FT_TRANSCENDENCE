@@ -13,7 +13,7 @@
             <div className="h-48 w-3/6 lg:w-3/5 flex flex-col justify-center items-center  overflow-hidden">
                 <span>Nom d'utilisateur actuel : {{ this.obj?.username }} </span>
                 <input type="text" v-model="new_username" name="search" placeholder="Changer de nom d'utilisateur"
-                    autocomplete="off" aria-label="Changer de nom d'utilisateur"
+                    autocomplete="off" aria-label="Changer de nom d'utilisateur" maxlength="12"
                     className="rounded-2xl px-3 placeholder-slate-500 text-slate-500 focus-within:border-green-500 focus-within:outline-0 border-2 border-slate-500 w-1/2" />
             </div>
             <div className="h-48 w-2/6 lg:w-1/5 flex justify-center items-center ">
