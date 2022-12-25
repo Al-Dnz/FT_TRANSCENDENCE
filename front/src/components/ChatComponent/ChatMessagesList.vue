@@ -59,7 +59,7 @@ export default defineComponent({
   },
   created()
   {
-    this.socket?.emit('joinChannel', {id: this.currentChan?.id, password: this.password});
+    // this.socket?.emit('joinChannel', {id: this.currentChan?.id, password: this.password});
     this.socket?.on('allChanMessagesToClient', (payload: any) => {
             this.handleChanConnection(payload)
         })

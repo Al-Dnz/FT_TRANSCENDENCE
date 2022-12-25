@@ -150,7 +150,7 @@ export class ChannelGateway {
 				userId: user.id,
 				channelId: payload.id
 			}
-			this.userChannelService.create(userChannelData)
+			await this.userChannelService.create(userChannelData)
 			const chanMessages = await this.channelService.findMessages(payload.id)
 			const sentPayload =
 			{
