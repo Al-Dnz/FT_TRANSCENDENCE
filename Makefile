@@ -48,4 +48,8 @@ nuke:
 db: 
 	@-docker-compose exec postgres psql transcendencedb
 
-.PHONY: all init up down stop restart nuke db local global init_multi
+sgapi:
+	@-cd sendgrid; bundle
+	@-ruby sendgrid/api_info.rb
+
+.PHONY: all init up down stop restart nuke db local global init_multi sgapi
