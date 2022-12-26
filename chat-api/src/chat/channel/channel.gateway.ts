@@ -6,28 +6,21 @@ import {
 	OnGatewayConnection,
 	OnGatewayDisconnect,
 } from '@nestjs/websockets';
-
 import { Logger } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
-
 import { ChannelService } from './channel.service';
 import { CreateChannelDto } from './dto/create-channel.dto';
-
 import { UsePipes } from '@nestjs/common';
 import { WSPipe } from 'src/exception/websockets/ws-exception-filter'
-
 import { Channel, ChannelType, User, UserChannel, UserChannelRole } from 'db-interface/Core';
 import { JoinChannelDto } from './dto/join-channel.dto';
-
 import { UserService } from '../user/user.service';
-
 import { UserChannelService } from '../user-channel/user-channel.service';
 import { CreateUserChannelDto } from '../user-channel/dto/create-user-channel.dto';
 import { KickUserDto } from './dto/kick-user.dto';
 import { GrantUserDto } from './dto/grant-user.dto';
 import { BannedChanService } from '../banned-chan/banned-chan.service';
 import { DirectMessageDto } from './dto/direct-message.dto';
-import { channel } from 'diagnostics_channel';
 
 @UsePipes(WSPipe)
 @WebSocketGateway({ cors: { origin: '*' } })
@@ -269,8 +262,6 @@ export class ChannelGateway {
 		}
 	}
 
-
-
 	@SubscribeMessage('directMessage')
 	async createDirectMessage(client: Socket, payload: DirectMessageDto) 
 	{
@@ -279,19 +270,22 @@ export class ChannelGateway {
 			const token = client.handshake.auth.token;
 			this.userService.checkToken(token);
 			const sender = await this.userService.getUserByToken(token);
-			const receiver = await this.userService.getUserById(payload.userId);
+			const receiver = await this.userService.getUserByLogin(payload.login);
 
 			// check if channel exist as DMChannel
 			const DMChannels = await this.channelService.findDMChannel(sender.id, receiver.id);
 			if (DMChannels.length != 0)
-				this.server.to(client.id).emit('chatError', `There is already a private conversation between ${sender.login} and ${receiver.login}`);
+			{
+				this.server.to(client.id).emit('chatError', `There is already a conversation between ${sender.login} and ${receiver.login}`);
+				return;
+			}
 			// if no create it
 			this.channelService.createDMChannel(sender, receiver);
 			this.sendAllChan(client);
 		}
 		catch (error) 
 		{
-			
+			this.server.to(client.id).emit('chatError', error.message);
 		}
 	}
 

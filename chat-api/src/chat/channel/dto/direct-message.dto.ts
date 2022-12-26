@@ -3,8 +3,7 @@ import {IsNotEmpty, IsInt, IsString, Min, Length, IsOptional, IsEnum, NotContain
 
 export class DirectMessageDto
 {
-	@IsInt()
-	@Min(1)
-	userId: number
-
+	@IsString()
+	@Length(1)
+	login: string
 }
