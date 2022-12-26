@@ -32,6 +32,8 @@ export class ChannelService {
 
   async create(createChannelDto: CreateChannelDto, user?: User) {
     const channel = new Channel();
+	if (createChannelDto.name[0] == '#')
+		throw new HttpException("Channel name can't begin with #", HttpStatus.FORBIDDEN);
     channel.name = createChannelDto.name;
     const same_named_channel = await this.channelsRepository.findOneBy({ name: channel.name });
     if (same_named_channel)
@@ -88,12 +90,14 @@ export class ChannelService {
       .getOne();
     if (!channel)
       throw new HttpException('Channel not found', HttpStatus.NOT_FOUND);
-    if (payload.password != null) {
+    if (channel.type === ChannelType.protected) 
+	{
+	  if (!payload.password)
+		throw new HttpException('Channel password is needed', HttpStatus.FORBIDDEN);
       const passwordMatch = bcrypt.compareSync(payload.password, channel.password);
       if (!passwordMatch)
         throw new HttpException('Channel password is wrong', HttpStatus.FORBIDDEN);
-    }
-
+   	}
     return channel
   }
 
