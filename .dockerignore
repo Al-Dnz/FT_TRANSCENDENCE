@@ -1,9 +1,10 @@
 Dockerfile
 .dockerignore
-node_modules
+*/node_modules
 npm-debug.log
-dist
+*/dist
 test
 Dockerfile
 *.md
 package-lock.json
+

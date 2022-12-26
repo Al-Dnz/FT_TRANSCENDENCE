@@ -53,3 +53,5 @@ make db
 [ ] remove adenhez user seed
 
 [ ] check if mailing is connected
+
+[ ] erase adenhez redirection mailing
