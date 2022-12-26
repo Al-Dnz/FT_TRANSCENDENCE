@@ -1,44 +1,14 @@
 <template>
-  <div class="flex flex-col pt-3 pl-4 pr-4 divide-y-2">
-    <div class="flex flex-row pb-8">
-      <div class="flex flex-col">
-        <!-- <img :src="getImgUrl('MultipleUsers')" class="w-20 h-20 rounded-full" /> -->
-        <h1 class="text-3xl font-bold">{{ current_chan?.name }}</h1>
-        <p class="mt-4">This is the beginning of your direct message history with {{ current_chan?.name }}.</p>
-      </div>
-      <div class="pt-8 pl-16">
-        <div class="relative flex items-center justify-center 
-        w-16 h-16 mt-2 mb-2 mx-auto  
-        bg-slate-50 border-4 hover:bg-green-600
-        text-green-500 hover:text-white
-        hover:rounded-xl rounded-3xl
-        transition-all duration-300 ease-linear
-        cursor-pointer shadow-lg">
-          <UserIcon @click="goProfile('User')"/>
-        </div>  
-      </div>
-      <div class="pt-8 pl-10">
-        <div class="relative flex items-center justify-center 
-        w-16 h-16 mt-2 mb-2 mx-auto  
-        bg-slate-50 border-4 hover:bg-green-600
-        text-green-500 hover:text-white
-        hover:rounded-xl rounded-3xl
-        transition-all duration-300 ease-linear
-        cursor-pointer shadow-lg">
-          <PlayIcon @click="gameInvite('User')"/>
-        </div>  
-      </div>
-      <div class="pt-8 pl-10">
-        <div class="relative flex items-center justify-center 
-        w-16 h-16 mt-2 mb-2 mx-auto  
-        bg-slate-50 border-4 hover:bg-red-600
-        text-red-500 hover:text-white
-        hover:rounded-xl rounded-3xl
-        transition-all duration-300 ease-linear
-        cursor-pointer shadow-lg">
-          <XCircleIcon @click="BlockUser('User')"/>
-        </div>  
-      </div>
+  <div class="h-full w-full flex flex-col pt-2 pl-4 pr-4">
+    <div class="h-16 w-16">
+      <img :src="getImgUrl(getOtherUserPic)" class="rounded-full" />
+    </div>
+    <h1 class="text-3xl font-bold">{{ getOtherUserName }}</h1>
+    <p class="mt-3">This is the start of the #{{ getOtherUserName }} channel.</p>
+    <div v-if="!currentChan?.unremovable" class="w-full flex mt-2 mb-2">
+      <button @click="BlockUser(getOtherUserName)"
+      class="pl-1 pr-1 rounded-lg border-2 border-slate-600
+    hover:text-red-500 hover:border-red-500">Quit channel</button>
     </div>
   </div>
 </template>
@@ -65,14 +35,34 @@ export default defineComponent({
   name: "ChatDirectMessageHeader",
   props: {
     socket: Object,
-    current_chan: Object
+    currentUser: Object,
+    currentChan: Object,
   },
   data() {
     return {
+      otherUser: null as any,
       messages: null as any,
     };
   },
   methods: {
+    compareArrays(arr1: any[], arr2: any[]): boolean {
+      let i = arr1?.length;
+      if (i !== arr2?.length)
+        return (false);
+      while (i) {
+        if (arr1[i] !== arr2[i])
+          return (false);
+        --i;
+      }
+      return (true);
+    },
+    compareUsers(user1: any, user2: any): boolean {
+      if (user1?.length !== user2?.length || user1?.id !== user2?.id
+          || user1?.name !== user2?.name || user1?.pic !== user2?.pic
+          || !this.compareArrays(user1?.blockList, user2?.blockList))
+        return (false);
+      return (true);
+    },
     getImgUrl(img: string) {
       return require('@/assets/' + img);
     },
@@ -81,7 +71,7 @@ export default defineComponent({
         method: 'GET',
         headers: {}
       }
-      let response = await fetch("http://" + process.env.VUE_APP_IP + ":3004/channel/${this.current_chan?.id}/messages", bearer)
+      let response = await fetch("http://" + process.env.VUE_APP_IP + ":3004/channel/${this.currentChan?.id}/messages", bearer)
       let data: Response["type"] = await response.json();
       this.messages = [...data];
 
@@ -97,18 +87,28 @@ export default defineComponent({
       alert(userName + "has been blocked/unblocked");
     },
     receivedMessage(message: MessageI) {
-      if (message.channel.id === this.current_chan?.id) {
+      if (message.channel.id === this.currentChan?.id) {
         this.messages.push(message);
       }
     },
   },
   computed: {
+    getOtherUserName() {
+      if (!this.compareUsers(this.currentUser, this.currentChan?.userList[0]))
+        return (this.currentChan?.userList[0].name);
+      return (this.currentChan?.userList[1].name);
+    },
+    getOtherUserPic() {
+      if (!this.compareUsers(this.currentUser, this.currentChan?.userList[0]))
+        return (this.currentChan?.userList[0].pic);
+      return (this.currentChan?.userList[1].pic);
+    },
     loadMessage() {
       return (this.messages);
-    }
+    },
   },
   async created() {
-    if (this.current_chan) {
+    if (this.currentChan) {
       this.fetchData();
       this.socket?.on(`msgToChannel`, (message: MessageI) => {
         this.receivedMessage(message);

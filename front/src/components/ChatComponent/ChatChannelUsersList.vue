@@ -23,6 +23,10 @@
 import { defineComponent } from "vue";
 import ChatChannelUserBox from "./ChatChannelUserBox.vue";
 
+interface DataI {
+  userchannels: any[],
+}
+
 export default defineComponent({
   name: "ChatChannelUsersList",
   props: {
@@ -33,7 +37,7 @@ export default defineComponent({
   components: {
     // ChatChannelUserBox,
   },
-  data() {
+  data(): DataI {
     return {
       userchannels: [], //this.currentChan?.userList,
     };

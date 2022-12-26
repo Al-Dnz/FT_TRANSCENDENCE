@@ -1,16 +1,28 @@
 <template>
   <div class="h-full w-full flex flex-row">
     <div class="h-full w-1/6 text-slate-600 bg-gray-100">
-      <ChatChannelsList :socket="socket" :currentUser="currentUser" :currentChan="currentChan"
-        :channelsList="channelsList" :creatingChan="creatingChan" @selectedChannel="changeCurrentChannel"
-        @showForm="showCreationForm" />
+      <ChatChannelsList :socket="socket" :currentUser="currentUser"
+      :currentChan="currentChan" :channelsList="channelsList" :creatingChan="creatingChan" :creatingDM="creatingDM"
+      @selectedChannel="changeCurrentChannel" @showChanForm="showChanCreationForm" @showDMForm="showDMCreationForm" />
     </div>
-    <div v-if="!creatingChan" class="h-full w-5/6 flex flex-row bg-gray-50">
-      <ChatChannelBox :socket="socket" :currentUser="currentUser" :currentChan="currentChan"
-        @receiveNewMsg="addMessage" />
+    <div v-if="(!currentChan && !creatingChan)" class="mt-4 ml-2">
+      <p class="text-3xl">NO CHANNEL SELECTED</p>
     </div>
-    <div v-else class="h-full w-4/5">
-      <ChatNewChannelForm :socket="socket" @cancelForm="showCreationForm" />
+    <div v-else-if="creatingChan" class="h-full w-5/6">
+      <ChatNewChannelForm :socket="socket" @cancelForm="showChanCreationForm" />
+    </div>
+    <div v-else-if="creatingDM" class="h-full w-5/6">
+      <ChatNewDirectMessageForm :socket="socket" @cancelForm="showDMCreationForm" />
+    </div>
+    <div v-else-if="currentChan?.type === 'direct_message'"
+    class="h-full w-5/6 bg-gray-50">
+      <ChatDirectMessageBox :socket="socket" :currentUser="currentUser"
+      :currentChan="currentChan" @receiveNewMsg="addMessage"/>
+    </div>
+    <div v-else-if="currentChan?.type !== 'direct_message'"
+    class="h-full w-5/6 bg-gray-50">
+      <ChatChannelBox :socket="socket" :currentUser="currentUser"
+      :currentChan="currentChan" @receiveNewMsg="addMessage"/>
     </div>
   </div>
 </template>
@@ -19,8 +31,9 @@
 import io from 'socket.io-client';
 import ChatChannelsList from "../components/ChatComponent/ChatChannelsList.vue";
 import ChatChannelBox from "../components/ChatComponent/ChatChannelBox.vue";
-// import ChatDirectMessageBox from "../components/ChatComponent/ChatDirectMessagebox.vue";
+import ChatDirectMessageBox from "../components/ChatComponent/ChatDirectMessageBox.vue";
 import ChatNewChannelForm from "../components/ChatComponent/ChatNewChannelForm.vue";
+import ChatNewDirectMessageForm from "../components/ChatComponent/ChatNewDirectMessageForm.vue";
 import { defineComponent } from "vue";
 
 // tmp var
@@ -53,6 +66,7 @@ interface MessageTmpI {
 }
 interface DataI {
   creatingChan: boolean,
+  creatingDM: boolean,
   socket: any,
   currentUser: UserTmpI,
   currentChan: ChannelTmpI,
@@ -192,24 +206,29 @@ export default defineComponent({
   components: {
     ChatChannelsList,
     ChatChannelBox,
-    // ChatDirectMessageBox, // WIP
+    ChatDirectMessageBox,
     ChatNewChannelForm,
+    ChatNewDirectMessageForm,
   },
   data(): DataI {
     return {
       creatingChan: false,
+      creatingDM: false,
       socket: null as any, // not of any use right now, but kept it around, it is still given as a property to children
       currentUser: user1,
-      currentChan: main_chan,
-      channelsList: [main_chan, chan1, chan2, chan3, chan4,],
+      currentChan: null as any,
+      channelsList: [ main_chan, chan1, chan2, chan3, chan4, ],
     };
   },
   methods: {
     changeCurrentChannel(channel: ChannelTmpI) {
       this.currentChan = channel;
     },
-    showCreationForm() {
+    showChanCreationForm() {
       this.creatingChan = !this.creatingChan;
+    },
+    showDMCreationForm() {
+      this.creatingDM = !this.creatingDM;
     },
     addMessage(message: MessageTmpI) {
       this.currentChan.msgList.push(message); // this is temporary, this should be dealt with in ChatMessageInput
