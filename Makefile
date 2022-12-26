@@ -40,6 +40,7 @@ restart:
 nuke:
 	@-docker stop $(docker ps -qa)
 	@-docker rmi $(docker images -qa)
+	@-docker volume rm $(docker volume ls -q)
 	@-docker system prune --force --all
 	@-docker volume prune --force
 	@-docker network prune --force

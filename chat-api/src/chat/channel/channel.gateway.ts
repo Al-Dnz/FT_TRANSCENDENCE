@@ -69,7 +69,7 @@ export class ChannelGateway {
 			this.userService.checkToken(token);
 			const user = await this.userService.getUserByToken(token);
 
-			const userchannels = await this.userChannelService.findByUserAndChan(user.id, payload.id)
+			let userchannels = await this.userChannelService.findByUserAndChan(user.id, payload.id)
 			for (let userchannel of userchannels) {
 				await this.userChannelService.remove(userchannel.id);
 			}
@@ -80,6 +80,32 @@ export class ChannelGateway {
 				locked: true,
 				messages: [],
 			}
+
+			// case for DM
+			const channel = await this.channelService.findOne(payload.id);
+			if (channel.type == ChannelType.direct)
+			{
+				userchannels = await this.userChannelService.findByChanId(channel.id)
+				for (let userchannel of userchannels) {
+					await this.userChannelService.remove(userchannel.id);
+				}
+				const userOne = channel.userOne;
+				const userTwo = channel.userTwo;
+				this.server.to(userOne.chatSocketId).emit('allChanMessagesToClient', sentPayload);
+				this.server.to(userTwo.chatSocketId).emit('allChanMessagesToClient', sentPayload);
+				const userchandatas =
+				{
+					channelId: channel.id,
+					userchannels: {}
+				}
+				this.server.to(userOne.chatSocketId).emit('channelUsersToClient', userchandatas);
+				this.server.to(userTwo.chatSocketId).emit('channelUsersToClient', userchandatas);
+
+				await this.channelService.remove(channel.id);
+				await this.sendAllChan(client);
+				return;
+			}
+			
 			this.server.to(client.id).emit('allChanMessagesToClient', sentPayload);
 			this.sendChannelUsers(client, payload);
 
@@ -97,6 +123,7 @@ export class ChannelGateway {
 			this.userService.checkToken(token);
 			const all_chan = await this.channelService.findAll();
 			this.server.emit('allChansToClient', all_chan);
+
 		} catch (error) {
 			this.server.to(client.id).emit('chatError', error.message);
 		}
@@ -279,8 +306,18 @@ export class ChannelGateway {
 				this.server.to(client.id).emit('chatError', `There is already a conversation between ${sender.login} and ${receiver.login}`);
 				return;
 			}
-			// if no create it
-			this.channelService.createDMChannel(sender, receiver);
+			// if no create it			
+			const chan = await this.channelService.createDMChannel(sender, receiver);
+			// join 2 participant
+			const userChannelData: CreateUserChannelDto =
+			{
+				userId: sender.id,
+				channelId: chan.id
+			}
+			await this.userChannelService.create(userChannelData, UserChannelRole.member);
+			userChannelData.userId = receiver.id;
+			await this.userChannelService.create(userChannelData, UserChannelRole.member);
+
 			this.sendAllChan(client);
 		}
 		catch (error) 
