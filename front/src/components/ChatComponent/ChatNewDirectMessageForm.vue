@@ -43,7 +43,7 @@ export default defineComponent({
     createChannel() {
       if (this.validateInput()) 
 	  {
-		payload =
+		let payload =
 		{
 			login: this.newUser
 		}
