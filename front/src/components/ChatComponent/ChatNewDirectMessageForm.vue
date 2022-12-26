@@ -41,8 +41,13 @@ export default defineComponent({
   },
   methods: {
     createChannel() {
-      if (this.validateInput()) {
-        // here we create a new channel
+      if (this.validateInput()) 
+	  {
+		payload =
+		{
+			login: this.newUser
+		}
+        this.socket?.emit('directMessage', payload)
         this.cancelForm();
       }
       else
