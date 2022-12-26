@@ -121,17 +121,21 @@ export class BannedChanService {
 	}
 
 	async bannedChanGuard(userId: number, chanId: number) {
-		const bannedChans = await this.findByUserAndChan(userId, chanId);
-		if (bannedChans.length == 0)
+		try {
+			const bannedChans = await this.findByUserAndChan(userId, chanId);
+			if (bannedChans.length == 0)
 			return;
-		const bannedChan = bannedChans[0];
-		if (!bannedChan.expirationDate)
-			return;
-		if (Date.parse(bannedChan.expirationDate) < Date.now())
-			throw new HttpException(`user ${bannedChan.user.login} is ban fron ${bannedChan.channel.name} until ${bannedChan.expirationDate}`
-				, HttpStatus.FORBIDDEN);
-		else
-			this.remove(bannedChan.id);
+			const bannedChan = bannedChans[0];
+			if (!bannedChan.expirationDate)
+				return;
+			if (Date.parse(bannedChan.expirationDate) < Date.now())
+				throw new HttpException(`user ${bannedChan.user.login} is ban fron ${bannedChan.channel.name} until ${bannedChan.expirationDate}`
+					, HttpStatus.FORBIDDEN);
+			else
+				this.remove(bannedChan.id);
+		} catch (error) {
+			throw new HttpException(error, HttpStatus.FORBIDDEN);
+		}
 	}
 
 	async remove(id: number) {

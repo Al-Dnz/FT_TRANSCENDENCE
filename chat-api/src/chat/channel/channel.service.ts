@@ -157,10 +157,8 @@ export class ChannelService {
     const channel = await this.channelsRepository.findOneBy({ id: id })
     if (!channel)
       throw new HttpException('Channel not found', HttpStatus.NOT_FOUND);
-    else if (channel.unremovable == false) {
+    else if (channel.unremovable == false)
       await this.channelsRepository.delete(id);
-      throw new HttpException(`Channel #${id} was deleted succesfully`, HttpStatus.OK);
-    }
     else
       throw new HttpException('Forbidden: unremovable channel', HttpStatus.FORBIDDEN);
   }
