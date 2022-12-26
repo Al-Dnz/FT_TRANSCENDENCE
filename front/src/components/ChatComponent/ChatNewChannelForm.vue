@@ -22,7 +22,7 @@
       </select>
     </div>
     <div v-if="newType === 'protected'" class="w-fit mt-4">
-      <input type="text" v-model="newName" name="Name"
+      <input type="text" v-model="newPassword" name="Password"
       placeholder="Choose a password" autocomplete="off"
       class="w-full rounded-2xl px-3 placeholder-slate-500 text-slate-500
       focus-within:border-green-500 focus-within:outline-0 border-2 border-slate-500" />
@@ -41,6 +41,14 @@
 <script lang="ts">
 import { XCircleIcon } from "@heroicons/vue/24/outline";
 import { defineComponent } from "vue";
+import io from 'socket.io-client';
+
+interface Payload{
+   name: string;
+   type: string;
+   password?: string | undefined;
+}
+
 
 export default defineComponent({
   name: 'ChatNewChannelForm',
@@ -57,21 +65,39 @@ export default defineComponent({
   },
   methods: {
     createChannel() {
-      if (this.validateInput()) {
-        // here we create a new channel
+      if (this.validateInput()) 
+	  {
+		let payload = this.newType != 'protected' ?
+		{
+			name: this.newName,
+			type: this.newType,
+		} :
+		{
+			name: this.newName,
+			type: this.newType,
+			password: this.newPassword
+		};
+		this.socket?.emit('createChannel', payload);
         this.cancelForm();
       }
       else
         this.formInvalid = true;
     },
+	validateType(type: string)
+	{
+		if (type === 'protected' && this.newPassword.length == 0)
+			return false;
+		return true;
+	},
     validateInput() {
-      return (this.newName.length > 0 && this.newType.length > 0
-      && !(this.newType === 'protected' && !this.newPassword.length));
+      return (
+		this.newName.length > 0 && this.newType.length > 0
+      && this.validateType(this.newType));
     },
     cancelForm() {
       this.newName = '';
       this.newType = '';
-      this.newType = '';
+      this.newPassword = '';
       this.$emit("cancelForm");
     }
   },
