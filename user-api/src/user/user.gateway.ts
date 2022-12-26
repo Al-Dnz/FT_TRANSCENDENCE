@@ -26,7 +26,7 @@ export class UserGateway
   {
     try {
       const token = client.handshake.auth.token;
-      // this.userService.checkToken(token);
+    //   this.userService.checkToken(token);
       const user = await this.userService.getUserByToken(token);
       this.logger.log(`User ${user.login} is connected`);
       this.userService.updateUserStatus(user, UserStatus.online, client.id)

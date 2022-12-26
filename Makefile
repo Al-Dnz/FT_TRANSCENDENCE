@@ -5,30 +5,28 @@ NGINX_FOLDER= ./nginx
 
 LOCAL_IP := $(shell ipconfig getifaddr en1)
 GLOBAL_IP := $(shell curl ifconfig.me)
+
 ENV_FILE = ./.env
+ENV_MULTI = ./.env_multi
 NGINX_CONF = nginx/nginx.conf
 
 # all: local init up
 all: init up
 
 local:
-	sed -i '' "s/localhost/$(LOCAL_IP)/g" $(ENV_FILE) $(NGINX_CONF)
+	sed -i '' "s/localhost/$(LOCAL_IP)/g" $(ENV_FILE)
 
 global:
-	sed -i '' "s/localhost/$(GLOBAL_IP)/g" $(ENV_FILE) $(NGINX_CONF)
+	sed -i '' "s/localhost/$(GLOBAL_IP)/g" $(ENV_FILE)
 
 init:
-	cp ${MAKEFILE_FOLDER}/.env_local ${FRONT_FOLDER}/.env
-	cp ${MAKEFILE_FOLDER}/.env_local ./.env
-	cp ${MAKEFILE_FOLDER}/nginx_local.conf ${NGINX_FOLDER}/nginx.conf
+	cp ${ENV_FILE} ${FRONT_FOLDER}/.env
 
 init_multi:
-	cp ${MAKEFILE_FOLDER}/.env_multi ${FRONT_FOLDER}/.env
-	cp ${MAKEFILE_FOLDER}/.env_multi ./.env
-	cp ${MAKEFILE_FOLDER}/nginx_multi.conf ${NGINX_FOLDER}/nginx.conf
+	cp ${ENV_MULTI} ${FRONT_FOLDER}/.env
 
 up:
-	@-docker-compose -f ${DOCKER_COMPOSE_FILE} up -d --build
+	@-docker-compose -f ${DOCKER_COMPOSE_FILE} up --build -d
 
 down:
 	@-docker-compose -f ${DOCKER_COMPOSE_FILE} down
@@ -49,4 +47,8 @@ nuke:
 db: 
 	@-docker-compose exec postgres psql transcendencedb
 
-.PHONY: all init up down stop restart nuke db local global init_multi
+sgapi:
+	@-cd sendgrid; bundle
+	@-ruby sendgrid/api_info.rb
+
+.PHONY: all init up down stop restart nuke db local global init_multi sgapi

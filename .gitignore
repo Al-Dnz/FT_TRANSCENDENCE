@@ -1,7 +1,10 @@
 # env
+make_src/
+make_src/*
 .env*
-./make_src/.env_local
-./make_src/.env_multi
+
+#rb
+sendgrid/Gemfile.lock
 
 # compiled output
 /dist

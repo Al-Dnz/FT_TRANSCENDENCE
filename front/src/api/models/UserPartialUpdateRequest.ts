@@ -53,7 +53,7 @@ export function UserPartialUpdateRequestFromJSONTyped(json: any, ignoreDiscrimin
     return {
         
         'username': !exists(json, 'username') ? undefined : json['username'],
-        'twoFa': !exists(json, 'two_fa') ? undefined : json['two_fa'],
+        'twoFa': !exists(json, 'twoFa') ? undefined : json['twoFa'],
     };
 }
 
@@ -67,7 +67,7 @@ export function UserPartialUpdateRequestToJSON(value?: UserPartialUpdateRequest 
     return {
         
         'username': value.username,
-        'two_fa': value.twoFa,
+        'twoFa': value.twoFa,
     };
 }
 

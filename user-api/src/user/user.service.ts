@@ -47,16 +47,25 @@ export class UserService {
     return this.userRepository.findOneBy({ login: login });
   }
 
+  findOneByUsername(username: string): Promise<User> {
+    return this.userRepository.findOneBy({ userName: username });
+  }
+
   updateOne(user: User, updateUserDto: UpdateUserDto): Promise<User> {
     user.userName = updateUserDto.username
       ? updateUserDto.username
       : user.userName;
+    
+    user.twoFa = updateUserDto.twoFa;
+
+    // user.settings.twoFa = updateUserDto.settings
+    // ? updateUserDto.settings.two_fa
+    // : user.settings.twoFa;
+
     user.settings.mapId = updateUserDto.settings
       ? updateUserDto.settings.map_id
       : user.settings.mapId;
-    user.settings.twoFa = updateUserDto.settings
-      ? updateUserDto.settings.two_fa
-      : user.settings.twoFa;
+  
     user.settings.paddleId = updateUserDto.settings
       ? updateUserDto.settings.paddle_id
       : user.settings.paddleId;
@@ -105,6 +114,14 @@ export class UserService {
       .relation(User, 'friends')
       .of(userOne)
       .remove(userTwo);
+  }
+
+  checkToken(token: string)
+  {
+	  const validated = this.jwtService.verify(token);
+	  if (!validated)
+		  throw new HttpException(`Invalid token`, HttpStatus.FORBIDDEN);
+	  return validated;
   }
 
   async getUserByToken(token: string) {
@@ -218,5 +235,10 @@ export class UserService {
     this.blockerBlockedRepository.delete(toFind.id);
   }
 
+  updateTwoFaCode(user: User, code: string)
+  {
+	user.twoFaCode = code;
+	this.userRepository.save(user);
+  }
 
 }

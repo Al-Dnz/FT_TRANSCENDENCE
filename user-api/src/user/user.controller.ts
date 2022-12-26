@@ -24,12 +24,14 @@ import { Identity } from './user.decorator';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { LoggingInterceptor } from 'src/auth/auth.interceptor';
+import { Logger } from '@nestjs/common'
 
 @Controller('api/users')
 @UseGuards(AuthGuard)
 @UseInterceptors(LoggingInterceptor)
 export class UserController {
     constructor(private readonly userService: UserService) { }
+    private logger: Logger = new Logger('UserController');
 
     @Get()
     async findAll(@Query() query: QueryFilterDto): Promise<UserOutputDto[]> {
@@ -79,21 +81,28 @@ export class UserController {
             throw new NotFoundException(`user ${user.login} not found`);
         }
 
+		if(updateUserDto.username)
+		{
+			const namesakedUser: User = await this.userService.findOneByUsername(updateUserDto.username);
+			if (namesakedUser && namesakedUser.id != found.id)
+				throw new ForbiddenException(`${namesakedUser.login} and ${found.login} could not have the same username`);
+		}
+
         return this.userService
             .updateOne(found, updateUserDto)
             .then((value: User) => new UserOutputDto(value));
     }
 
-    @Delete('me')
-    @HttpCode(204)
-    async remove(@Identity() user: Identity): Promise<void> {
-        const result: DeleteResult = await this.userService.removeByLogin(
-            user.login,
-        );
-        if (!result.affected || (result.affected && result.affected == 0)) {
-            throw new NotFoundException(`user ${user.login} not found`);
-        }
-    }
+    // @Delete('me')
+    // @HttpCode(204)
+    // async remove(@Identity() user: Identity): Promise<void> {
+    //     const result: DeleteResult = await this.userService.removeByLogin(
+    //         user.login,
+    //     );
+    //     if (!result.affected || (result.affected && result.affected == 0)) {
+    //         throw new NotFoundException(`user ${user.login} not found`);
+    //     }
+    // }
 
     @Get(':login')
     async findOne(@Param('login') login: string): Promise<UserOutputDto> {
@@ -198,7 +207,7 @@ export class UserController {
         @Param('login') login: string,
     ): Promise<void> {
 
-        if (user.login == login) {throw new ForbiddenException(`User can't block himself`);}
+        if (user.login == login) { throw new ForbiddenException(`User can't block himself`); }
         const userOne: User | undefined = await this.userService.findOne(user.login,);
         if (!userOne) { throw new NotFoundException(`user ${user.login} not found`); }
         const userTwo: User | undefined = await this.userService.findOne(login);
@@ -220,7 +229,7 @@ export class UserController {
         @Param('login') login: string,
     ): Promise<void> {
 
-        if (user.login == login) {throw new ForbiddenException(`User can't block himself`);}
+        if (user.login == login) { throw new ForbiddenException(`User can't block himself`); }
         const userOne: User | undefined = await this.userService.findOne(user.login,);
         if (!userOne) { throw new NotFoundException(`user ${user.login} not found`); }
         const userTwo: User | undefined = await this.userService.findOne(login);
