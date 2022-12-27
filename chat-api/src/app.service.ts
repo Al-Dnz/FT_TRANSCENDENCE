@@ -17,6 +17,19 @@ export class AppService implements OnApplicationBootstrap
 	  ) {}
 
 	private logger: Logger = new Logger('onApplicationBootstrap');
+
+
+	async createFakeUser(name: string, avatar: string)
+	{
+		this.logger.log(`Creation of user ${name}`);
+		let user = await this.usersRepository.findOne({ where: {login: name} })
+		if (!user)
+		{
+		  let user = new User(name);
+		  user.avatar = new Avatar(avatar);
+		  this.usersRepository.save(user);			
+		}
+	}
 	
 	async onApplicationBootstrap()
 	{
@@ -31,15 +44,13 @@ export class AppService implements OnApplicationBootstrap
 			this.channelsRepository.save(channel);
 		}
 
+		this.createFakeUser("adenhez", "https://pickaface.net/gallery/avatar/unr_random_180410_1905_z1exb.png");
+		this.createFakeUser("pmartinezi", "https://res.cloudinary.com/demo/image/facebook/65646572251.jpg");
+		this.createFakeUser("gbaltring", "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8cmFuZG9tJTIwcGVvcGxlfGVufDB8fDB8fA%3D%3D&w=1000&q=80");
+		this.createFakeUser("malik", "https://apiwp.thelocal.com/wp-content/uploads/2018/12/6d67730d16af04f3f956389d4cc244af808b8381c23b1e3d218ecd792de14fa8-616x431.jpg");
+		this.createFakeUser("myoyo", "https://risibank.fr/cache/medias/0/17/1767/176765/full.png");
 
-		this.logger.log(`Creation of user adenhez`);
-		let user = await this.usersRepository.findOne({ where: {login: "adenhez"} })
-		if (!user)
-		{
-		  let user = new User("adenhez");
-		  user.avatar = new Avatar("https://pickaface.net/gallery/avatar/unr_random_180410_1905_z1exb.png");
-		  this.usersRepository.save(user);			
-		}
+
 	}
 
   getHello(): string {

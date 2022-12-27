@@ -21,7 +21,7 @@
 			</div>
 			<div className="icon w-1/4 mt-1 mb-1 mx-2">
 				<div className="w-1/2">
-					<goToChat :accName=obj?.username />
+					<goToChat  @click="createDM()" :accName=obj?.username />
 				</div>
 			</div>
 			<div className="icon w-1/4 mt-1 mb-1 mx-2">
@@ -58,6 +58,35 @@ export default defineComponent({
 		GoToWatch
 	},
 	methods: {
+		async createDM()
+		{
+			const requestOptions = 
+			{
+				method: "POST",
+				headers: 
+				{
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(
+					{	
+						token: this.$cookies.get("trans_access"),
+						login: this.obj?.login
+					}
+				)
+			}
+			await fetch(`http://${process.env.VUE_APP_IP}:3004/channel/direct_message`, requestOptions)
+			.then(async response => 
+			{ 
+				const data = await response.json();
+				console.log("CREATE DM RESPONSE =>");	
+				console.log(data);
+			})
+			.catch(e => {
+				this.$toast(e.message, {styles: { backgroundColor: "#FF0000", color: "#FFFFFF" }});
+				return 0;
+			})
+		},
 		async del() {
 			getCredentials().then((accessToken: string) => {
 				const Fapi = new FriendsApi(new Configuration({accessToken: accessToken}))
