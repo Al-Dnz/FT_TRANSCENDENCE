@@ -6,16 +6,15 @@
       </div>
       <div class="flex flex-col h-[78%] ml-2 mr-2">
         <div class="h-[90%]">
-          <ChatMessagesList :socket="socket" :currentUser="currentUser" :currentChan="currentChan" />
+          <ChatMessagesList :socket="socket" :currentChan="currentChan" />
         </div>
         <div class="h-[10%] mb-8">
-          <ChatMessageInput :socket="socket" :currentUser="currentUser" :currentChan="currentChan"
-          @receiveNewMsg="receiveNewMsg" />
+          <ChatMessageInput :socket="socket" :currentChan="currentChan" />
         </div>
       </div>
     </div>
     <div class="h-full w-1/5 text-slate-600 bg-gray-100">
-      <ChatChannelUsersList :socket="socket" :currentUser="currentUser" :currentChan="currentChan" />
+      <ChatChannelUsersList :socket="socket" :currentChan="currentChan" />
     </div>
   </div>
 </template>
@@ -31,7 +30,6 @@ export default defineComponent({
   name: "ChatChannelBox",
   props: {
     socket: Object,
-    currentUser: Object,
     currentChan: Object,
   },
   components: {
@@ -41,14 +39,9 @@ export default defineComponent({
     ChatChannelUsersList,
   },
   data() {
-    return {
-
-    };
+    return {};
   },
   methods: {
-    receiveNewMsg(newMsg: any) {
-      this.$emit('receiveNewMsg', newMsg); // this is temporary, this should be dealt with in ChatMessageInput
-    },
     quitChan() {
       this.$emit('quitChan');
     },
