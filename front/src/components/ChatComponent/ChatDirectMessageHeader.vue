@@ -84,7 +84,8 @@ export default defineComponent({
       alert("a game invitation has been sent to " + userName);
     },
     BlockUser(userName: string) {
-      alert(userName + "has been blocked/unblocked");
+      // alert(userName + "has been blocked/unblocked");
+      this.$emit('quitChan');
     },
     receivedMessage(message: MessageI) {
       if (message.channel.id === this.currentChan?.id) {

@@ -1,7 +1,7 @@
 <template>
   <div class="h-full w-full flex flex-col divide-y-2">
     <div class="h-[22%]">
-      <ChatDirectMessageHeader :socket="socket" :currentUser="currentUser" :currentChan="currentChan" />
+      <ChatDirectMessageHeader :socket="socket" :currentUser="currentUser" :currentChan="currentChan" @quitChan="quitChan" />
     </div>
     <div class="flex flex-col h-[78%] ml-2 mr-2">
       <div class="h-[90%]">
@@ -41,7 +41,10 @@ export default defineComponent({
   methods: {
     receiveNewMsg(newMsg: any) {
       this.$emit('receiveNewMsg', newMsg); // this is temporary, this should be dealt with in ChatMessageInput
-    }
+    },
+    quitChan() {
+      this.$emit('quitChan');
+    },
   },
 });
 </script>

@@ -17,7 +17,7 @@
     <div v-else-if="currentChan?.type === 'direct_message'"
     class="h-full w-5/6 bg-gray-50">
       <ChatDirectMessageBox :socket="socket" :currentUser="currentUser"
-      :currentChan="currentChan" @receiveNewMsg="addMessage" />
+      :currentChan="currentChan" @receiveNewMsg="addMessage" @quitChan="quitChan" />
     </div>
     <div v-else-if="currentChan?.type !== 'direct_message'"
     class="h-full w-5/6 bg-gray-50">
