@@ -17,12 +17,12 @@
     <div v-else-if="currentChan?.type === 'direct_message'"
     class="h-full w-5/6 bg-gray-50">
       <ChatDirectMessageBox :socket="socket" :currentUser="currentUser"
-      :currentChan="currentChan" @receiveNewMsg="addMessage"/>
+      :currentChan="currentChan" @receiveNewMsg="addMessage" />
     </div>
     <div v-else-if="currentChan?.type !== 'direct_message'"
     class="h-full w-5/6 bg-gray-50">
       <ChatChannelBox :socket="socket" :currentUser="currentUser"
-      :currentChan="currentChan" @receiveNewMsg="addMessage"/>
+      :currentChan="currentChan" @receiveNewMsg="addMessage" @quitChan="quitChan" />
     </div>
   </div>
 </template>
@@ -232,6 +232,9 @@ export default defineComponent({
     },
     addMessage(message: MessageTmpI) {
       this.currentChan.msgList.push(message); // this is temporary, this should be dealt with in ChatMessageInput
+    },
+    quitChan() {
+      this.currentChan = null as any;
     },
   },
   created() {
