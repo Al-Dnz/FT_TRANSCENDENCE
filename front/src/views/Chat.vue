@@ -5,7 +5,7 @@
       :currentChan="currentChan" :channelsList="channelsList" :creatingChan="creatingChan" :creatingDM="creatingDM"
       @selectedChannel="changeCurrentChannel" @showChanForm="showChanCreationForm" @showDMForm="showDMCreationForm" />
     </div>
-    <div v-if="(!currentChan && !creatingChan)" class="mt-4 ml-2">
+    <div v-if="(!currentChan && !creatingChan && !creatingDM)" class="mt-4 ml-2">
       <p class="text-3xl">NO CHANNEL SELECTED</p>
     </div>
     <div v-else-if="creatingChan" class="h-full w-5/6">
