@@ -1,11 +1,12 @@
-import { IsBoolean, Length, IsJWT } from 'class-validator';
+import { IsString, IsBoolean, Length, IsJWT } from 'class-validator';
 
 export class VerifyTwoFaCodeDto
 {
 	@IsJWT()
     token: string;
 
-	@Length(6, 6)
+	@IsString()
+	@Length(1)
 	code: string
 }
 
