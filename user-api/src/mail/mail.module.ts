@@ -28,6 +28,6 @@ import { MailService } from './mail.service';
     }),
   ],
   providers: [MailService],
-  exports: [MailService], // 👈 export for DI
+  exports: [MailService],
 })
 export class MailModule {}
