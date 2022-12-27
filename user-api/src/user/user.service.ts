@@ -120,7 +120,12 @@ export class UserService {
   {
 	if (typeof token != "string")
 		throw new HttpException(`Invalid token type`, HttpStatus.FORBIDDEN);
-	  const validated = this.jwtService.verify(token);
+		let validated;
+		try {
+			validated = this.jwtService.verify(token);
+		} catch (error) {
+			throw new HttpException(error.message, HttpStatus.FORBIDDEN);
+		}
 	  if (!validated)
 		  throw new HttpException(`Invalid token`, HttpStatus.FORBIDDEN);
 	  return validated;
