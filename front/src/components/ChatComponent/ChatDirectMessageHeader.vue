@@ -5,7 +5,7 @@
     </div>
     <h1 class="text-3xl font-bold">{{ getOtherUserName }}</h1>
     <p class="mt-3">This is the start of the #{{ getOtherUserName }} channel.</p>
-    <div v-if="!currentChan?.unremovable" class="w-full flex mt-2 mb-2">
+    <div class="w-full flex mt-2 mb-2">
       <button @click="BlockUser(getOtherUserName)"
       class="pl-1 pr-1 rounded-lg border-2 border-slate-600
     hover:text-red-500 hover:border-red-500">Quit channel</button>
@@ -84,7 +84,8 @@ export default defineComponent({
       alert("a game invitation has been sent to " + userName);
     },
     BlockUser(userName: string) {
-      alert(userName + "has been blocked/unblocked");
+      // alert(userName + "has been blocked/unblocked");
+      this.$emit('quitChan');
     },
     receivedMessage(message: MessageI) {
       if (message.channel.id === this.currentChan?.id) {

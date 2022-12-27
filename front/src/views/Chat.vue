@@ -5,7 +5,7 @@
       :currentChan="currentChan" :channelsList="channelsList" :creatingChan="creatingChan" :creatingDM="creatingDM"
       @selectedChannel="changeCurrentChannel" @showChanForm="showChanCreationForm" @showDMForm="showDMCreationForm" />
     </div>
-    <div v-if="(!currentChan && !creatingChan)" class="mt-4 ml-2">
+    <div v-if="(!currentChan && !creatingChan && !creatingDM)" class="mt-4 ml-2">
       <p class="text-3xl">NO CHANNEL SELECTED</p>
     </div>
     <div v-else-if="creatingChan" class="h-full w-5/6">
@@ -17,12 +17,12 @@
     <div v-else-if="currentChan?.type === 'direct_message'"
     class="h-full w-5/6 bg-gray-50">
       <ChatDirectMessageBox :socket="socket" :currentUser="currentUser"
-      :currentChan="currentChan" @receiveNewMsg="addMessage"/>
+      :currentChan="currentChan" @receiveNewMsg="addMessage" @quitChan="quitChan" />
     </div>
     <div v-else-if="currentChan?.type !== 'direct_message'"
     class="h-full w-5/6 bg-gray-50">
       <ChatChannelBox :socket="socket" :currentUser="currentUser"
-      :currentChan="currentChan" @receiveNewMsg="addMessage"/>
+      :currentChan="currentChan" @receiveNewMsg="addMessage" @quitChan="quitChan" />
     </div>
   </div>
 </template>
@@ -232,6 +232,9 @@ export default defineComponent({
     },
     addMessage(message: MessageTmpI) {
       this.currentChan.msgList.push(message); // this is temporary, this should be dealt with in ChatMessageInput
+    },
+    quitChan() {
+      this.currentChan = null as any;
     },
   },
   created() {

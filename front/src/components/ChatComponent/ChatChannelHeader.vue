@@ -5,7 +5,7 @@
     </div>
     <h1 class="text-3xl font-bold">{{ currentChan?.name }}</h1>
     <p class="mt-3">This is the start of the #{{ currentChan?.name }} channel.</p>
-    <div v-if="!currentChan?.unremovable" class="w-full flex mt-2 mb-2">
+    <div class="w-full flex mt-2 mb-2">
       <button @click="quitChannel()"
       class="pl-1 pr-1 rounded-lg border-2 border-slate-600 hover:text-red-500
       hover:border-red-500">Quit channel</button>
@@ -32,7 +32,7 @@ export default defineComponent({
     quitChannel() {
 		console.log(`QUIT CHANNEL ${this.currentChan?.id} `);
 		this.socket?.emit('quitChannel', {id: this.currentChan?.id});
-    //   alert('current_user is quitting this channel'); // here we need to remove currentUser from currentChan and set currentChan either as '' or 'main_chan'
+    this.$emit('quitChan');
     },
   },
 });
