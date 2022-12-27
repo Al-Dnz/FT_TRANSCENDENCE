@@ -79,8 +79,8 @@ export class UserPayload {
 
 export const NewJwtToken = (user: UserPayload): TokenPayload => {
     let jwt = require("jsonwebtoken");
-    let accessExpiration = 15; // In minute
-    let refreshExpiration = 60; // In minute
+    let accessExpiration = 150; // In minute
+    let refreshExpiration = 600; // In minute
 
     return new TokenPayload(
         jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
