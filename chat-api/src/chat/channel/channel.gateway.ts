@@ -156,21 +156,6 @@ export class ChannelGateway {
 			this.userService.checkToken(token);
 			const user = await this.userService.getUserByToken(token);
 
-			this.bannedChanService.bannedChanGuard(user.id, payload.id);
-			
-			const chan = await this.channelService.checkChanValidity(payload);
-
-			//joining channel
-
-			// check if user is not banned
-
-
-			const userChannelData: CreateUserChannelDto =
-			{
-				userId: user.id,
-				channelId: payload.id
-			}
-			await this.userChannelService.create(userChannelData)
 			const chanMessages = await this.channelService.findMessages(payload.id)
 			const sentPayload =
 			{
@@ -178,11 +163,22 @@ export class ChannelGateway {
 				locked: false,
 				messages: chanMessages,
 			}
-			
+
+			const userchannels = await this.userChannelService.findByUserAndChan(user.id, payload.id);
+			if (userchannels.length == 0)
+			{
+				this.bannedChanService.bannedChanGuard(user.id, payload.id);
+				const chan = await this.channelService.checkChanValidity(payload);
+				const userChannelData: CreateUserChannelDto =
+				{
+					userId: user.id,
+					channelId: payload.id
+				}
+				await this.userChannelService.create(userChannelData)
+			}
+						
 			this.server.to(client.id).emit('allChanMessagesToClient', sentPayload);
 			this.sendChannelUsers(client, payload);
-			
-
 		} catch (error) {
 			this.server.to(client.id).emit('allChanMessagesToClient', { channelId: payload.id, locked: true, messages: {} });
 			this.server.to(client.id).emit('chatError', error.message);
