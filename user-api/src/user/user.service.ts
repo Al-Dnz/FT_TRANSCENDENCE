@@ -116,8 +116,10 @@ export class UserService {
       .remove(userTwo);
   }
 
-  checkToken(token: string)
+  checkToken(token: any)
   {
+	if (typeof token != "string")
+		throw new HttpException(`Invalid token type`, HttpStatus.FORBIDDEN);
 	  const validated = this.jwtService.verify(token);
 	  if (!validated)
 		  throw new HttpException(`Invalid token`, HttpStatus.FORBIDDEN);
