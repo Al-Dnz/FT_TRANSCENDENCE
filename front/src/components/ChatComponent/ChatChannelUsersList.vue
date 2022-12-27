@@ -31,7 +31,6 @@ export default defineComponent({
   name: "ChatChannelUsersList",
   props: {
     socket: Object,
-    currentUser: Object,
     currentChan: Object,
   },
   components: {

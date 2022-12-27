@@ -59,9 +59,7 @@ export default defineComponent({
   name: "ChatChannelsList",
   props: {
     socket: Object,
-    currentUser: Object,
     currentChan: Object,
-    channelsList: Object,
     creatingChan: Boolean,
     creatingDM: Boolean,
   },
@@ -74,7 +72,7 @@ export default defineComponent({
   methods: 
   {  
     changeChannel(channel: any) {
-      this.$emit('selectedChannel', channel); // here we need to modify currentChan
+      this.$emit('selectedChannel', channel);
     },
     showDMForm() {
       this.$emit('showDMForm');
@@ -84,19 +82,11 @@ export default defineComponent({
     },
     getAllChannels(channels: any)
     {
-      
 	  this.dmChannels = [];
 	  this.regularChannels = [];
 	  const arr = channels;
       arr.forEach((chan: any) => (chan.type == 'direct' ? this.dmChannels : this.regularChannels).push(chan));
     },
-    // addChannel(channel: any)
-    // {
-    //   if (channel.type === 'direct')
-    //     this.dmChannels.push(channel);
-    //   else
-    //     this.regularChannels.push(channel);
-    // }
   },
   created()
   {
@@ -105,8 +95,9 @@ export default defineComponent({
         })
     this.socket?.emit('getAllChannels');
   },
-  // mounted() {}
 });
 </script>
+
+
 
 <style src="../../assets/tailwind.css" />

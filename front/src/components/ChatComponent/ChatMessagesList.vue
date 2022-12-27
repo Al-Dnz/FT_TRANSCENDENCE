@@ -28,7 +28,6 @@ export default defineComponent({
   name: "ChatMessagesList",
   props: {
     socket: Object,
-    currentUser: Object,
     currentChan: Object,
   },
   components: {
