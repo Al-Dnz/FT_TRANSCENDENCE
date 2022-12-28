@@ -7,7 +7,7 @@
     <goToAcc/>
   </div>
   <div className="icon w-1/2 mt-2 mb-2 mx-auto "> 
-    <goToChat/>
+    <goToChat @click="goChat()"/>
   </div>
   <div className="icon w-1/2 mt-2 mb-2 mx-auto "> 
     <UserGroupIcon @click="goFriend()" />
@@ -52,6 +52,10 @@ methods : {
   goParam()
   {
     this.$router.push('/param');
+  },
+  goChat()
+  {
+    this.$router.push('/chat');
   }
   }
 })

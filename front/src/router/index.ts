@@ -75,20 +75,6 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: "/chat/:id",
-    components: {
-      default: () => import("@/views/Chat.vue"),
-      navbar: () => import("@/components/Nav.vue"),
-      headbar: () => import("@/components/Header.vue"),
-    },
-    props: {
-      headbar: {
-        sectionTitle: "Chat",
-        type: String,
-      },
-    },
-  },
-  {
     path: "/friendList",
     name: "friendPage",
     components: {
