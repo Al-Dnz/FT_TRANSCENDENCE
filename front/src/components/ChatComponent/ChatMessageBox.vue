@@ -5,14 +5,13 @@
     class="w-12 h-12 rounded-full cursor-pointer" />
     <div class="flex flex-col w-fit ml-2">
       <div class="flex flex-row w-full">
-        <h1 @click="goProfile" class="max-w-[95%] font-semibold cursor-pointer break-all">
+        <h1 @click="goProfile" class="max-w-[95%] mr-1 font-semibold cursor-pointer break-all">
         {{ message?.sender?.userName }}</h1>
-        <div v-if="!isCurrentUser(message?.author)" v-show="isOptMenuButtonVisible"
+        <div v-if="message?.sender.login !== currentUser?.login" v-show="isOptMenuButtonVisible"
         class="ml-1">
-          B
-          <!-- <UserOptionsMenu :socket="socket" :currentChan="getCurrentChan" :currentUser="getCurrentUser"
+          <UserOptionsMenu :socket="socket" :currentChan="getCurrentChan" :currentUser="getCurrentUser"
           :targetUser="getMessageAuthor" @toggle-opt-menu="switchOptMenuState" @hideMenu="hideMenu"
-          class="rounded-full bg-gray-300" /> -->
+          class="rounded-full bg-gray-300" />
         </div>
       </div>
       <p class="break-all">{{ message?.text }}</p>
@@ -22,7 +21,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-// import UserOptionsMenu from "../UserOptionsMenu.vue";
+import UserOptionsMenu from "../UserOptionsMenu.vue";
 
 interface DataI {
   isOptMenuButtonVisible: boolean,
@@ -38,7 +37,7 @@ export default defineComponent({
     message: Object,
   },
   components: {
-    // UserOptionsMenu,
+    UserOptionsMenu,
   },
   data(): DataI {
     return {
@@ -64,9 +63,6 @@ export default defineComponent({
         return (false);
       return (true);
     },
-    // getImgUrl(img: string) {
-    //   return require('@/assets/' + img);
-    // },
     showOptMenuButton() {
       this.isOptMenuButtonVisible = true;
     },
