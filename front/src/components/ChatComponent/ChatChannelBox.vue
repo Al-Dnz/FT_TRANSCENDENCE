@@ -14,7 +14,7 @@
       </div>
     </div>
     <div class="h-full w-1/5 text-slate-600 bg-gray-100">
-      <ChatChannelUsersList :socket="socket" :currentChan="currentChan" />
+      <ChatChannelUsersList :socket="socket" :currentUser="currentUser" :currentChan="currentChan" />
     </div>
   </div>
 </template>

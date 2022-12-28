@@ -3,17 +3,17 @@
     <h1 class="mt-3 font-bold">CHANNEL MEMBERS</h1>
     <div class="overflow-auto">
       <ul>
-        <!-- <li v-for="user in currentChan?.userList" :key="user.id">
-          <div v-if="!compareUsers(user, currentUser)"
+        <li v-for="userChannel in currentChan?.userChannels" :key="userChannel.id">
+          <div v-if="userChannel?.user.login !== currentUser?.login"
           class="hover:text-black">
             <ChatChannelUserBox :socket="socket" :currentUser="currentUser"
-            :currentChan="currentChan" :channelUser="user" />
+            :currentChan="currentChan" :userChannel="userChannel" />
           </div>
-        </li> -->
-
-		<li v-for="userchan in userchannels" :key="userchan.id">
-			<div>{{userchan.user.login}} ({{userchan.role}})</div>
         </li>
+
+		<!-- <li v-for="userchan in userchannels" :key="userchan.id">
+			<div>{{userchan.user.login}} ({{userchan.role}})</div>
+    </li> -->
       </ul>
     </div>
   </div>
@@ -31,10 +31,11 @@ export default defineComponent({
   name: "ChatChannelUsersList",
   props: {
     socket: Object,
+    currentUser: Object,
     currentChan: Object,
   },
   components: {
-    // ChatChannelUserBox,
+    ChatChannelUserBox,
   },
   data(): DataI {
     return {
@@ -55,8 +56,7 @@ export default defineComponent({
     },
     compareUsers(user1: any, user2: any): boolean {
       if (user1?.length !== user2?.length || user1?.id !== user2?.id
-          || user1?.name !== user2?.name || user1?.pic !== user2?.pic
-          || !this.compareArrays(user1?.blockList, user2?.blockList))
+          || user1?.login !== user2?.login)
         return (false);
       return (true);
     },
