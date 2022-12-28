@@ -1,14 +1,30 @@
 <template>
-  <div class="h-full w-full flex flex-col pt-2 pl-4 pr-4">
-    <div class="h-16 w-16">
-      <img :src="getImgUrl('Hashtag.png')" class="rounded-full" />
+  <div class="h-full w-full flex flex-row">
+    <div class="h-full w-1/2 flex flex-col pt-2 pl-4 pr-4">
+      <div class="h-16 w-16">
+        <img :src="getImgUrl('Hashtag.png')" class="rounded-full" />
+      </div>
+      <h1 class="text-3xl font-bold">{{ currentChan?.name }}</h1>
+      <p class="mt-3">This is the start of the #{{ currentChan?.name }} channel.</p>
+      <div class="w-full flex mt-2 mb-2">
+        <button @click="quitChannel()" class="pl-1 pr-1 rounded-lg border-2 border-slate-600 hover:text-red-500
+        hover:border-red-500">Quit channel</button>
+        <div v-if="isOwner" class="w-10 h-10 ml-16
+        rounded-3xl bg-gray-100 text-gray-500 hover:text-black
+        cursor-pointer shadow-lg">
+          <Cog8ToothIcon @click="toggleLockOpt()" />
+        </div>
+      </div>
     </div>
-    <h1 class="text-3xl font-bold">{{ currentChan?.name }}</h1>
-    <p class="mt-3">This is the start of the #{{ currentChan?.name }} channel.</p>
-    <div class="w-full flex mt-2 mb-2">
-      <button @click="quitChannel()"
-      class="pl-1 pr-1 rounded-lg border-2 border-slate-600 hover:text-red-500
-      hover:border-red-500">Quit channel</button>
+    <div v-if="isLockOptVisible" class="h-full w-1/2 flex flex-col pt-2 pl-4 pr-4">
+      <p>Set a new password for this channel:</p>
+      <input type="text" v-model="newPassword" @keyup.enter="setPassword()" name="setPassword"
+      placeholder="Choose a password" autocomplete="off"
+      class="w-52 mt-2 rounded-2xl px-3 placeholder-slate-500 text-slate-500
+      focus-within:border-green-500 focus-within:outline-0 border-2 border-slate-500" />
+      <button @click="removePassword()" class="w-40 mt-12 pl-1 pr-1 rounded-lg border-2
+      text-gray-500 border-gray-500 hover:text-black
+      hover:border-black">Remove password</button>
     </div>
   </div>
 </template>
@@ -20,19 +36,43 @@ export default defineComponent({
   name: "ChatChannelHeader",
   props: {
     socket: Object,
-    currentChan: Object
+    currentUser: Object,
+    currentChan: Object,
   },
   data() {
-    return {};
+    return {
+      lockOptVisible: false,
+      newPassword:'',
+    };
   },
   methods: {
     getImgUrl(img: string) {
       return require('@/assets/' + img);
     },
+    toggleLockOpt() {
+      this.lockOptVisible = !this.lockOptVisible;
+    },
     quitChannel() {
 		console.log(`QUIT CHANNEL ${this.currentChan?.id} `);
 		this.socket?.emit('quitChannel', {id: this.currentChan?.id});
     this.$emit('quitChan');
+    },
+    setPassword() {
+      console.log('new password set'); //this is where we set a new password
+      this.newPassword = '';
+    },
+    removePassword() {
+      console.log('password removed'); //this is where we remove the password
+    },
+  },
+  computed: {
+    isOwner() {
+      if (this.currentChan?.creator?.login === this.currentUser?.login)
+        return (true);
+      return (false);
+    },
+    isLockOptVisible() {
+      return (this.lockOptVisible);
     },
   },
 });

@@ -3,14 +3,14 @@
     <div v-if="currentChan">
       <div class="">
         <ul>
-          <!-- <li v-for="message in messages" :key="message.id">
+          <li v-for="message in messages" :key="message.id">
             <ChatMessageBox :socket="socket" :currentChan="currentChan"
             :currentUser="currentUser" :message="message" />
-          </li> -->
-
-          <li v-for="message in messages" :key="message.id">
-            {{message.sender.login}} : {{message.text}}
           </li>
+
+          <!-- <li v-for="message in messages" :key="message.id">
+            {{message.sender.login}} : {{message.text}}
+          </li> -->
         </ul>
       </div>
     </div>
@@ -28,10 +28,11 @@ export default defineComponent({
   name: "ChatMessagesList",
   props: {
     socket: Object,
+    currentUser: Object,
     currentChan: Object,
   },
   components: {
-    // ChatMessageBox,
+    ChatMessageBox,
   },
   data() {
     return {

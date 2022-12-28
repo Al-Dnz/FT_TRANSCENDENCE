@@ -88,22 +88,21 @@ export default defineComponent({
       },
       compareUsers(user1: any, user2: any): boolean {
         if (user1?.length !== user2?.length || user1?.id !== user2?.id
-            || user1?.name !== user2?.name || user1?.pic !== user2?.pic
-            || !this.compareArrays(user1?.blockList, user2?.blockList))
+            || user1?.login !== user2?.login)
           return (false);
         return (true);
       },
       isUserOwner(): boolean {
-        return (this.compareUsers(this.currentChan?.owner, this.currentUser));
+        return (this.compareUsers(this.currentChan?.creator, this.currentUser));
       },
       isUserAdmin(): boolean {
-        return (this.currentChan?.adminList.includes(this.currentUser));
+        return (this.currentChan?.adminList?.includes(this.currentUser));
       },
       isTargetOwner(): boolean {
-        return (this.compareUsers(this.currentChan?.owner, this.targetUser));
+        return (this.compareUsers(this.currentChan?.creator, this.targetUser));
       },
       isTargetAdmin(): boolean {
-        return (this.currentChan?.adminList.includes(this.targetUser));
+        return (this.currentChan?.adminList?.includes(this.targetUser));
       },
       haveAuthorityOver(): boolean {
         if (this.isUserOwner() || (this.isUserAdmin()
@@ -112,13 +111,13 @@ export default defineComponent({
         return (false);
       },
       isUserBlocked(): boolean {
-        return (this.currentUser?.blockList.includes(this.targetUser));
+        return (this.currentUser?.blockList?.includes(this.targetUser));
       },
       isUserBanned(): boolean {
-        return (this.currentChan?.banList.includes(this.targetUser));
+        return (this.currentChan?.banList?.includes(this.targetUser));
       },
       isUserMuted(): boolean {
-        return (this.currentChan?.muteList.includes(this.targetUser));
+        return (this.currentChan?.muteList?.includes(this.targetUser));
       },
       setCanBlock() {
         if (!this.isUserBlocked())
