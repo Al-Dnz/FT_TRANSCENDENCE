@@ -36,7 +36,8 @@ export default defineComponent({
   name: "ChatChannelHeader",
   props: {
     socket: Object,
-    currentChan: Object
+    currentUser: Object,
+    currentChan: Object,
   },
   data() {
     return {
@@ -66,7 +67,9 @@ export default defineComponent({
   },
   computed: {
     isOwner() {
-      return (true); //check if currentUser is the owner of the currentChan
+      if (this.currentChan?.creator?.login === this.currentUser?.login)
+        return (true);
+      return (false);
     },
     isLockOptVisible() {
       return (this.lockOptVisible);

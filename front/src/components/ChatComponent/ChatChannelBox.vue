@@ -2,11 +2,11 @@
   <div class="h-full w-full flex flex-row">
     <div class="h-full w-full flex flex-col divide-y-2">
       <div class="h-[22%]">
-        <ChatChannelHeader :socket="socket" :currentChan="currentChan" @quitChan="quitChan" />
+        <ChatChannelHeader :socket="socket" :currentUser="currentUser" :currentChan="currentChan" @quitChan="quitChan" />
       </div>
       <div class="flex flex-col h-[78%] ml-2 mr-2">
         <div class="h-[90%]">
-          <ChatMessagesList :socket="socket" :currentChan="currentChan" />
+          <ChatMessagesList :socket="socket" :currentUser="currentUser" :currentChan="currentChan" />
         </div>
         <div class="h-[10%] mb-8">
           <ChatMessageInput :socket="socket" :currentChan="currentChan" />
@@ -30,6 +30,7 @@ export default defineComponent({
   name: "ChatChannelBox",
   props: {
     socket: Object,
+    currentUser: Object,
     currentChan: Object,
   },
   components: {

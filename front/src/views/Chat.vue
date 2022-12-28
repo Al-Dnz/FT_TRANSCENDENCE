@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full w-full flex flex-row">
+  <div v-if="finished" class="h-full w-full flex flex-row">
     <div class="h-full w-1/6 text-slate-600 bg-gray-100">
       <ChatChannelsList :socket="socket"
       :currentChan="currentChan" :creatingChan="creatingChan" :creatingDM="creatingDM"
@@ -21,7 +21,7 @@
     </div>
     <div v-else-if="currentChan?.type !== 'direct_message'"
     class="h-full w-5/6 bg-gray-50">
-      <ChatChannelBox :socket="socket"
+      <ChatChannelBox :socket="socket" :currentUser="currentUser"
       :currentChan="currentChan" @quitChan="quitChan" />
     </div>
   </div>
@@ -35,12 +35,16 @@ import ChatDirectMessageBox from "../components/ChatComponent/ChatDirectMessageB
 import ChatNewChannelForm from "../components/ChatComponent/ChatNewChannelForm.vue";
 import ChatNewDirectMessageForm from "../components/ChatComponent/ChatNewDirectMessageForm.vue";
 import { defineComponent } from "vue";
+import { UsersApi, Configuration, UserOutput } from '@/api';
+import { getCredentials } from "@/frontJS/cookies"
 
 interface DataI {
   creatingChan: boolean,
   creatingDM: boolean,
   socket: any,
   currentChan: any,
+  currentUser?: UserOutput,
+  finished: boolean,
 }
 export default defineComponent({
   name: "ChatPage",
@@ -57,6 +61,8 @@ export default defineComponent({
       creatingDM: false,
       socket: null as any,
       currentChan: null as any,
+      currentUser: undefined,
+      finished: false,
     };
   },
   methods: {
@@ -72,13 +78,23 @@ export default defineComponent({
     quitChan() {
       this.currentChan = null as any;
     },
+    async fetchData() {   
+      getCredentials().then((accessToken: string ) => {
+        const userAPI = new UsersApi(new Configuration({accessToken: accessToken}))
+        userAPI.getUserMe().then((user: UserOutput ) => {
+          this.currentUser = user
+          this.finished = true
+        })
+      })        
+    }
   },
-  created() {
+  async created() {
     const authPayload = { auth: { token: this.$cookies.get("trans_access") } };
     this.socket = io("http://" + process.env.VUE_APP_IP + ":3004", authPayload);
     this.socket.on('chatError', (error: any) => {
       this.$toast(error, { styles: { backgroundColor: "#FF0000", color: "#FFFFFF" } });
     })
+    await this.fetchData();
   },
   unmounted() {
     this.socket.disconnect();
