@@ -42,9 +42,9 @@ export function addMinutes(date: Date, minutes: number) {
 }
 
 export function setAccessCookie(accessToken: string) {
-    setCookie("trans_access", accessToken, addMinutes(new Date(), 1));
+    setCookie("trans_access", accessToken, addMinutes(new Date(), 150));
 }
 
 export function setRefreshCookie(accessToken: string) {
-    setCookie("trans_refresh", accessToken, addMinutes(new Date(), 60));
+    setCookie("trans_refresh", accessToken, addMinutes(new Date(), 151));
 }

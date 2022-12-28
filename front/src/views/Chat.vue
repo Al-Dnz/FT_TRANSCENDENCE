@@ -1,5 +1,8 @@
 <template>
-  <div class="h-full w-full flex flex-row">
+  <div v-if="loading">
+    <loadingPage />
+  </div>
+  <div v-else class="h-full w-full flex flex-row">
     <div class="h-full w-1/6 text-slate-600 bg-gray-100">
       <ChatChannelsList :socket="socket"
       :currentChan="currentChan" :creatingChan="creatingChan" :creatingDM="creatingDM"
@@ -35,12 +38,15 @@ import ChatDirectMessageBox from "../components/ChatComponent/ChatDirectMessageB
 import ChatNewChannelForm from "../components/ChatComponent/ChatNewChannelForm.vue";
 import ChatNewDirectMessageForm from "../components/ChatComponent/ChatNewDirectMessageForm.vue";
 import { defineComponent } from "vue";
+import loadingPage from "@/components/Loading.vue"
+import { getCredentials } from '@/frontJS/cookies';
 
 interface DataI {
   creatingChan: boolean,
   creatingDM: boolean,
   socket: any,
   currentChan: any,
+  loading: boolean
 }
 export default defineComponent({
   name: "ChatPage",
@@ -50,6 +56,7 @@ export default defineComponent({
     ChatDirectMessageBox,
     ChatNewChannelForm,
     ChatNewDirectMessageForm,
+    loadingPage
   },
   data(): DataI {
     return {
@@ -57,6 +64,7 @@ export default defineComponent({
       creatingDM: false,
       socket: null as any,
       currentChan: null as any,
+      loading: true
     };
   },
   methods: {
@@ -73,16 +81,18 @@ export default defineComponent({
       this.currentChan = null as any;
     },
   },
-  created() {
-    const authPayload = { auth: { token: this.$cookies.get("trans_access") } };
+  async created() {
+    await getCredentials().then((accessToken: string) => {
+    const authPayload = { auth: { token: accessToken } };
     this.socket = io("http://" + process.env.VUE_APP_IP + ":3004", authPayload);
     this.socket.on('chatError', (error: any) => {
-      this.$toast(error, { styles: { backgroundColor: "#FF0000", color: "#FFFFFF" } });
-    })
+      this.$toast(error, { styles: { backgroundColor: "#FF0000", color: "#FFFFFF" }});
+    })})
+    this.loading = false
   },
   unmounted() {
     this.socket.disconnect();
-  }
+  },
 })
 </script>
 

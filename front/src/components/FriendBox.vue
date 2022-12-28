@@ -81,6 +81,7 @@ export default defineComponent({
 				const data = await response.json();
 				console.log("CREATE DM RESPONSE =>");	
 				console.log(data);
+				this.$router.push('/chat');
 			})
 			.catch(e => {
 				this.$toast(e.message, {styles: { backgroundColor: "#FF0000", color: "#FFFFFF" }});
