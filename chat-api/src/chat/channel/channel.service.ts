@@ -50,7 +50,7 @@ export class ChannelService {
 
   async findAll() {
     return await this.channelsRepository.find({
-        relations: { userChannels: { user: true } }
+        relations: { creator: true, userChannels: { user: true } }
 	});
   }
 
