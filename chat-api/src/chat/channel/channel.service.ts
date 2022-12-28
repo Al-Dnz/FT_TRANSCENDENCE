@@ -49,7 +49,9 @@ export class ChannelService {
   }
 
   async findAll() {
-    return await this.channelsRepository.find();
+    return await this.channelsRepository.find({
+        relations: { creator: true, userChannels: { user: true } }
+	});
   }
 
   getAllChannels() {
