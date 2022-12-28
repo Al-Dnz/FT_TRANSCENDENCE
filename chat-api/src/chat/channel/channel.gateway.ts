@@ -56,7 +56,7 @@ export class ChannelGateway {
 			this.userChannelService.create(userChannelData, UserChannelRole.owner);
 
 			// if (new_chan.type != ChannelType.direct)
-			this.sendAllChan(client)
+			await this.sendAllChan(client)
 		} catch (error) {
 			this.server.to(client.id).emit('chatError', error.message);
 		}
@@ -107,7 +107,8 @@ export class ChannelGateway {
 			}
 			
 			this.server.to(client.id).emit('allChanMessagesToClient', sentPayload);
-			this.sendChannelUsers(client, payload);
+			await this.sendAllChan(client);
+			await this.sendChannelUsers(client, payload);
 
 		}
 		catch (error) {
@@ -178,7 +179,8 @@ export class ChannelGateway {
 			}
 						
 			this.server.to(client.id).emit('allChanMessagesToClient', sentPayload);
-			this.sendChannelUsers(client, payload);
+			await this.sendChannelUsers(client, payload);
+			await this.sendAllChan(client);
 		} catch (error) {
 			this.server.to(client.id).emit('allChanMessagesToClient', { channelId: payload.id, locked: true, messages: {} });
 			this.server.to(client.id).emit('chatError', error.message);
@@ -235,7 +237,8 @@ export class ChannelGateway {
 			this.bannedChanService.create(kickedUser.id, channel.id);
 		
 			// SEND USER CHANNEL
-			this.sendChannelUsers(client, { id: payload.channelId, password: null });
+			await this.sendChannelUsers(client, { id: payload.channelId, password: null });
+			await this.sendAllChan(client);
 		}
 		catch (error) {
 			this.server.to(client.id).emit('chatError', error.message);

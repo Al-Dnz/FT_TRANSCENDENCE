@@ -358,6 +358,7 @@ export class Message extends Base
 @Entity()
 export class Channel extends Base {
 
+    @Index("name-idx")
 	@Column({ unique: true })
 	name: string;
 
