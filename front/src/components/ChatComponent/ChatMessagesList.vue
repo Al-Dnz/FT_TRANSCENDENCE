@@ -47,6 +47,10 @@ export default defineComponent({
       this.locked =  payload.locked;
       this.messages = [];
       this.messages = payload.messages.reverse();
+
+      this.messages = this.messages.sort(function (a: any, b: any) {
+        return a.id - b.id;
+      });
     },
     receiveMessage(message: any)
     {
