@@ -9,7 +9,7 @@
         hover:rounded-xl rounded-3xl
         transition-all duration-300 ease-linear
         cursor-pointer shadow-lg">
-          <PlusIcon @click="showDMForm()"/>
+          <PlusIcon @click="showDMForm()" />
         </div>
       </div>
       <div class="mt-1 mb-1">
@@ -31,14 +31,14 @@
         hover:rounded-xl rounded-3xl
         transition-all duration-300 ease-linear
         cursor-pointer shadow-lg">
-          <PlusIcon @click="showChanForm()"/>
+          <PlusIcon @click="showChanForm()" />
         </div>
       </div>
       <div class="mt-1">
         <ul class="list-none">
           <li v-for="channel in regularChannels" :key="channel.id">
             <div class="pb-2 font-semibold hover:text-black">
-              <button @click="changeChannel(channel)"># {{ channel.name }} </button>
+              <button @click="changeChannel(channel)"># {{ channel.name }} => {{ channel.participation }} </button>
             </div>
           </li>
         </ul>
@@ -51,6 +51,7 @@
 import { defineComponent } from "vue";
 
 interface DataI {
+  allChannels: any[],
   dmChannels: any[],
   regularChannels: any[],
 }
@@ -65,12 +66,13 @@ export default defineComponent({
   },
   data(): DataI {
     return {
+      allChannels: [],
       dmChannels: [],
       regularChannels: [],
     };
   },
-  methods: 
-  {  
+  methods:
+  {
     changeChannel(channel: any) {
       this.$emit('selectedChannel', channel);
     },
@@ -80,23 +82,63 @@ export default defineComponent({
     showChanForm() {
       this.$emit('showChanForm');
     },
-    getAllChannels(channels: any)
-    {
-	  this.dmChannels = [];
-	  this.regularChannels = [];
-	  const arr = channels;
+    getRole(name: string, chan: any): string {
+      for (let j = 0; j < chan["userChannels"].length; j++) {
+        if (chan["userChannels"][j].user.login == name)
+          return chan["userChannels"][j].role;
+      }
+      return "undefined";
+    },
+    getAllChannels(channels: any) {
+      this.allChannels = channels;
+      this.dmChannels = [];
+      this.regularChannels = [];
+
+      let arr = channels;
+      for (let i = 0; i < arr.length; i++) 
+      {
+        arr[i].participation = false;
+        for (let j = 0; j < arr[i]["userChannels"].length; j++) 
+        {
+          if (arr[i]["userChannels"][j].user.login == 'nschmitt') 
+          {
+            arr[i].participation = true;
+            break;
+          }
+        }
+      }
+      arr.sort(function (a: any, b: any) {
+        return a.id - b.id;
+      });
+      console.log(arr);
+      
       arr.forEach((chan: any) => (chan.type == 'direct' ? this.dmChannels : this.regularChannels).push(chan));
+    
     },
   },
-  created()
-  {
+  
+  created() {
     this.socket?.on('allChansToClient', (channels: any) => {
-          this.getAllChannels(channels)
-        })
+      this.getAllChannels(channels)
+    })
     this.socket?.emit('getAllChannels');
   },
 });
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
