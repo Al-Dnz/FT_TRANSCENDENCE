@@ -3,10 +3,13 @@ import { ConsoleLogger, Injectable } from '@nestjs/common';
 import { Position, Dimension } from './game_interface';
 
 import { Sprite, paddle, ball } from './gameClass';
+import { MatchService } from 'src/match/match.service';
 
 @Injectable()
 export class GameService 
 {
+	constructor(private matchService: MatchService) {}
+
 	game_data =
 	{
 		gameState: 'off',
