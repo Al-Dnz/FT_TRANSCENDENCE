@@ -188,9 +188,6 @@ export class GameGateway
 				return;
 			}
 
-			const match = await this.matchService.findByGameCode(gameCode);
-			await this.matchService.updateMatchCreation(match, user);
-
 			this.clientRooms[user.login] = gameCode;
 			client.join(gameCode);
 			this.state[gameCode].game_data.idPlayers.player2 = user.login;
@@ -245,6 +242,8 @@ export class GameGateway
 					return;
 				}
 				gameCode = this.openRooms[0];
+				const match = await this.matchService.findByGameCode(gameCode);
+				await this.matchService.updateMatchCreation(match, user);
 				this.clientRooms[user.login] = gameCode;
 				this.state[gameCode].game_data.idPlayers.player2 = user.login;
 				this.openRooms.shift();
@@ -293,20 +292,22 @@ export class GameGateway
 			else
 			{
 
-				client.emit('gameOver');
-				clearInterval(intervalID);
 
-				const match = await this.matchService.findByGameCode(gameCode);
-				await this.matchService.updateScore(match, state.game_data.score.player1, state.game_data.score.player2)
+				clearInterval(intervalID);
+				this.server.to(clientRooms[user.login]).emit('gameOver');
 
 				if (this.clientRooms[this.state[gameCode]]) {
 					this.clientRooms[this.state[gameCode].idPlayers.player1] = null;
 					this.clientRooms[this.state[gameCode].idPlayers.player2] = null;
 				}
+				
 				this.state[gameCode] = null;
 				delete this.state[gameCode];
+				return;
 			}
 		}, 1000 / 60);
+			const match = await this.matchService.findByGameCode(gameCode);
+			await this.matchService.updateScore(match, state.game_data.score.player1, state.game_data.score.player2);
 		} 
 		catch (error)
 		{
