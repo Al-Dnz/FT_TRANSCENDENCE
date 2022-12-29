@@ -12,7 +12,7 @@ import { Socket, Server } from 'socket.io';
 
 import { Position } from './game_interface';
 import { GameService } from './game.service';
-import { makeid } from './utils';
+import { makeid, generateUUID } from './utils';
 import { Sprite } from './gameClass';
 import { fips } from 'crypto';
 import { IoAdapter } from '@nestjs/platform-socket.io';
@@ -114,7 +114,9 @@ export class GameGateway
 			const user = await this.userService.getUserByToken(token);
 
 			console.log('handleNewGame');
-			let roomName = makeid(5);
+			// let roomName = makeid(5);
+			let roomName = generateUUID();
+
 			if (this.clientRooms[user.login]) {
 				return;
 			}
@@ -321,7 +323,9 @@ export class GameGateway
 	async handleNewGameCustom(client: Socket): Promise<void>
 	{
 		console.log('handleNewGame');
-		let roomName = makeid(5);
+		// let roomName = makeid(5);
+		let roomName = generateUUID();
+		
 		this.clientRoomsCustom[client.id] = roomName;
 		client.emit('gameCode', roomName);
 

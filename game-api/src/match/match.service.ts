@@ -37,6 +37,7 @@ export class MatchService {
 	{
 		match.score1 = score1;
 		match.score2 = score2;
+		// match.finishedAt =  new Date().getTime();
 		return await this.matchesRepository.save(match);
 	}
 
