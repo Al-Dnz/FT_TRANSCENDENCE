@@ -17,6 +17,11 @@
     <div v-else-if="creatingDM" class="h-full w-5/6">
       <ChatNewDirectMessageForm :socket="socket" @cancelForm="showDMCreationForm" />
     </div>
+    <div v-else-if="currentChan && changingSett"
+    class="h-full w-5/6 bg-gray-50">
+      <ChatChannelSettings :socket="socket" :currentChan="currentChan"
+      @toggleSettings="showChannelSettings" />
+    </div>
     <div v-else-if="currentChan?.type === 'direct_message'"
     class="h-full w-5/6 bg-gray-50">
       <ChatDirectMessageBox :socket="socket"
@@ -24,8 +29,8 @@
     </div>
     <div v-else-if="currentChan?.type !== 'direct_message'"
     class="h-full w-5/6 bg-gray-50">
-      <ChatChannelBox :socket="socket" :currentUser="currentUser"
-      :currentChan="currentChan" @quitChan="quitChan" />
+      <ChatChannelBox :socket="socket" :currentUser="currentUser" :currentChan="currentChan"
+      @toggleSettings="showChannelSettings" @quitChan="quitChan" />
     </div>
   </div>
 </template>
@@ -37,6 +42,7 @@ import ChatChannelBox from "../components/ChatComponent/ChatChannelBox.vue";
 import ChatDirectMessageBox from "../components/ChatComponent/ChatDirectMessageBox.vue";
 import ChatNewChannelForm from "../components/ChatComponent/ChatNewChannelForm.vue";
 import ChatNewDirectMessageForm from "../components/ChatComponent/ChatNewDirectMessageForm.vue";
+import ChatChannelSettings from "../components/ChatComponent/ChatChannelSettings.vue";
 import { defineComponent } from "vue";
 import { UsersApi, Configuration, UserOutput } from '@/api';
 import { getCredentials } from "@/frontJS/cookies"
@@ -45,10 +51,10 @@ import loadingPage from "@/components/Loading.vue"
 interface DataI {
   creatingChan: boolean,
   creatingDM: boolean,
+  changingSett: boolean,
   socket: any,
   currentChan: any,
   currentUser?: UserOutput,
-  // finished: boolean,
   loading: boolean
 }
 export default defineComponent({
@@ -59,28 +65,33 @@ export default defineComponent({
     ChatDirectMessageBox,
     ChatNewChannelForm,
     ChatNewDirectMessageForm,
+    ChatChannelSettings,
     loadingPage
   },
   data(): DataI {
     return {
       creatingChan: false,
       creatingDM: false,
+      changingSett: false,
       socket: null as any,
       currentChan: null as any,
       currentUser: undefined,
-      // finished: false,
       loading: true
     };
   },
   methods: {
     changeCurrentChannel(channel: any) {
       this.currentChan = channel;
+      this.changingSett = false;
     },
     showChanCreationForm() {
       this.creatingChan = !this.creatingChan;
     },
     showDMCreationForm() {
       this.creatingDM = !this.creatingDM;
+    },
+    showChannelSettings() {
+      this.changingSett = !this.changingSett;
     },
     quitChan() {
       this.currentChan = null;
@@ -91,7 +102,6 @@ export default defineComponent({
         const userAPI = new UsersApi(new Configuration({accessToken: accessToken}))
         userAPI.getUserMe().then((user: UserOutput ) => {
           this.currentUser = user
-          // this.finished = true
         })
       })        
     }

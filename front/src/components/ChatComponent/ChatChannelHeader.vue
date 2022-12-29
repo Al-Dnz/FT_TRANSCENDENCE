@@ -12,19 +12,9 @@
         <div v-if="isOwner" class="w-10 h-10 ml-16
         rounded-3xl bg-gray-100 text-gray-500 hover:text-black
         cursor-pointer shadow-lg">
-          <Cog8ToothIcon @click="toggleLockOpt()" />
+          <Cog8ToothIcon @click="toggleSettings()" />
         </div>
       </div>
-    </div>
-    <div v-if="isLockOptVisible" class="h-full w-1/2 flex flex-col pt-2 pl-4 pr-4">
-      <p>Set a new password for this channel:</p>
-      <input type="text" v-model="newPassword" @keyup.enter="setPassword()" name="setPassword"
-      placeholder="Choose a password" autocomplete="off"
-      class="w-52 mt-2 rounded-2xl px-3 placeholder-slate-500 text-slate-500
-      focus-within:border-green-500 focus-within:outline-0 border-2 border-slate-500" />
-      <button @click="removePassword()" class="w-40 mt-12 pl-1 pr-1 rounded-lg border-2
-      text-gray-500 border-gray-500 hover:text-black
-      hover:border-black">Remove password</button>
     </div>
   </div>
 </template>
@@ -41,7 +31,6 @@ export default defineComponent({
   },
   data() {
     return {
-      lockOptVisible: false,
       newPassword:'',
     };
   },
@@ -49,13 +38,13 @@ export default defineComponent({
     getImgUrl(img: string) {
       return require('@/assets/' + img);
     },
-    toggleLockOpt() {
-      this.lockOptVisible = !this.lockOptVisible;
+    toggleSettings() {
+      this.$emit('toggleSettings');
     },
     quitChannel() {
-		console.log(`QUIT CHANNEL ${this.currentChan?.id} `);
-		this.socket?.emit('quitChannel', {id: this.currentChan?.id});
-    this.$emit('quitChan');
+      console.log(`QUIT CHANNEL ${this.currentChan?.id} `);
+      this.socket?.emit('quitChannel', {id: this.currentChan?.id});
+      this.$emit('quitChan');
     },
     setPassword() {
       console.log('new password set'); //this is where we set a new password
@@ -70,9 +59,6 @@ export default defineComponent({
       if (this.currentChan?.creator?.login === this.currentUser?.login)
         return (true);
       return (false);
-    },
-    isLockOptVisible() {
-      return (this.lockOptVisible);
     },
   },
 });

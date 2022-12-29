@@ -43,17 +43,16 @@ import { XCircleIcon } from "@heroicons/vue/24/outline";
 import { defineComponent } from "vue";
 import io from 'socket.io-client';
 
-interface Payload{
-   name: string;
-   type: string;
-   password?: string | undefined;
+interface Payload {
+  name: string;
+  type: string;
+  password?: string | undefined;
 }
-
 
 export default defineComponent({
   name: 'ChatNewChannelForm',
   props: {
-      socket: Object,
+    socket: Object,
   },
   data() {
     return {
@@ -65,34 +64,32 @@ export default defineComponent({
   },
   methods: {
     createChannel() {
-      if (this.validateInput()) 
-	  {
-		let payload = this.newType != 'protected' ?
-		{
-			name: this.newName,
-			type: this.newType,
-		} :
-		{
-			name: this.newName,
-			type: this.newType,
-			password: this.newPassword
-		};
-		this.socket?.emit('createChannel', payload);
+      if (this.validateInput()) {
+        let payload = this.newType != 'protected' ?
+          {
+            name: this.newName,
+            type: this.newType,
+          } :
+          {
+            name: this.newName,
+            type: this.newType,
+            password: this.newPassword
+          };
+        this.socket?.emit('createChannel', payload);
         this.cancelForm();
       }
       else
         this.formInvalid = true;
     },
-	validateType(type: string)
-	{
-		if (type === 'protected' && this.newPassword.length == 0)
-			return false;
-		return true;
-	},
+    validateType(type: string) {
+      if (type === 'protected' && this.newPassword.length == 0)
+        return false;
+      return true;
+    },
     validateInput() {
       return (
-		this.newName.length > 0 && this.newType.length > 0
-      && this.validateType(this.newType));
+        this.newName.length > 0 && this.newType.length > 0
+        && this.validateType(this.newType));
     },
     cancelForm() {
       this.newName = '';
