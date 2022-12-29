@@ -6,10 +6,10 @@ import { MatchModule } from '../match/match.module';
 import { UserMatchModule } from '../user-match/user-match.module';
 
 import { GameService } from './game.service';
-
+import { User } from 'db-interface/Core';
 
 @Module({
-	imports: [MatchModule, UserModule, UserMatchModule],
+	imports: [MatchModule, UserModule, UserMatchModule, TypeOrmModule.forFeature([User])],
 	providers: [GameService],
 	exports: [GameService],
 })

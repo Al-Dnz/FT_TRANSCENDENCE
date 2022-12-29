@@ -50,6 +50,6 @@ import { GameModule } from './game/game.module';
     }),
     GameModule],
   controllers: [AppController],
-  providers: [AppService, GameGateway, GameService],
+  providers: [AppService],
 })
 export class AppModule {}
