@@ -4,7 +4,7 @@
   </div>
   <div v-else class="h-full w-full flex flex-row">
     <div class="h-full w-1/6 text-slate-600 bg-gray-100">
-      <ChatChannelsList :socket="socket"
+      <ChatChannelsList :socket="socket" :currentUser="currentUser"
       :currentChan="currentChan" :creatingChan="creatingChan" :creatingDM="creatingDM"
       @selectedChannel="changeCurrentChannel" @showChanForm="showChanCreationForm" @showDMForm="showDMCreationForm" />
     </div>
@@ -83,7 +83,8 @@ export default defineComponent({
       this.creatingDM = !this.creatingDM;
     },
     quitChan() {
-      this.currentChan = null as any;
+      this.currentChan = null;
+      window.location.reload();
     },
     async fetchData() {   
       getCredentials().then((accessToken: string ) => {
