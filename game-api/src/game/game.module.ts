@@ -7,10 +7,11 @@ import { UserMatchModule } from '../user-match/user-match.module';
 
 import { GameService } from './game.service';
 import { User } from 'db-interface/Core';
+import { GameGateway } from './game.gateway';
 
 @Module({
 	imports: [MatchModule, UserModule, UserMatchModule, TypeOrmModule.forFeature([User])],
-	providers: [GameService],
+	providers: [GameService, GameGateway],
 	exports: [GameService],
 })
 export class GameModule {
