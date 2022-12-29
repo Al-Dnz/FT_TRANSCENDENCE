@@ -51,8 +51,8 @@ export class GameService
 			}
 		}),
 		ball : new ball({
-			width: 33,
-			height: 33,
+			width: 15,
+			height: 15,
 			position: {
 				x: 640/2,
 				y: 480/2
