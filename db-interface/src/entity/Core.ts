@@ -194,6 +194,9 @@ export class User extends Base {
     @Column({ nullable: true, default: null })
     chatSocketId: string;
 
+    @Column({ nullable: true, default: null })
+    gameSocketId: string;
+
 	@Column({ nullable: true, default: null })
     twoFaCode: string;
 

@@ -16,6 +16,7 @@ import { makeid } from './utils';
 import { Sprite } from './gameClass';
 import { fips } from 'crypto';
 import { IoAdapter } from '@nestjs/platform-socket.io';
+import { UserService } from 'src/user/user.service';
 
 @WebSocketGateway({
 	cors: {
@@ -27,7 +28,9 @@ import { IoAdapter } from '@nestjs/platform-socket.io';
 export class GameGateway 
 	implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
-	constructor(private gameService: GameService) {}
+	constructor(private gameService: GameService,
+				private userService: UserService) {}
+
 	@WebSocketServer() server: Server;
 	private logger: Logger = new Logger('GameGateway');
 
@@ -174,20 +177,7 @@ export class GameGateway
 		this.server.to(this.clientRooms[client.id]).emit(`gameOver`);
 	}
 
-	handleConnection(client: Socket, ...args: any[])
-	{
-		this.server.emit(`gameData`, this.gameService.game_data);
-		this.server.emit(`positionToClient`, this.gameService.game_data);
-	}
 
-	handleDisconnect(client: Socket, ...args: any[])
-	{
-		this.server.to(this.clientRooms[client.id]).emit('test');
-	}
-
-	afterInit(server: Server)
-	{
-	}
 
 	startGameInterval(client, state, gameCode, clientRooms) {
 		const intervalID = setInterval(() => {
@@ -260,4 +250,37 @@ export class GameGateway
 			this.startGameInterval(client, this.stateCustom[gameCode], gameCode, this.clientRoomsCustom);
 		}, 500);
 	}
+
+
+
+
+
+	///-------------------connection----------------------------------------------------
+
+	async handleConnection(client: Socket, ...args: any[])
+	{
+		try
+		{
+			const token = client.handshake.auth.token;
+			this.userService.checkToken(token);
+			const user = await this.userService.getUserByToken(token);
+			this.userService.updateUserSocket(user, client.id);
+			this.logger.log(`User: ${user.login} is connected to game with socket ${client.id}`);
+		} 
+		catch (error)
+		{
+			this.server.to(client.id).emit('gameError', error.message);
+			client.disconnect();
+		}
+
+		this.server.emit(`gameData`, this.gameService.game_data);
+		this.server.emit(`positionToClient`, this.gameService.game_data);
+	}
+
+	handleDisconnect(client: Socket, ...args: any[])
+	{
+		this.server.to(this.clientRooms[client.id]).emit('test');
+	}
+
+	afterInit(server: Server){}
 }
