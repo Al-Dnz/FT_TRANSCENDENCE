@@ -37,6 +37,8 @@ stop:
 restart:
 	@-docker-compose -f ${DOCKER_COMPOSE_FILE} restart
 
+
+
 nuke:
 	@-docker stop $(docker ps -qa)
 	@-docker rmi $(docker images -qa)
@@ -48,8 +50,12 @@ nuke:
 db: 
 	@-docker-compose exec postgres psql transcendencedb
 
+reset_db:
+	@-docker-compose -f ${DOCKER_COMPOSE_FILE} down
+	@-docker volume rm  $(docker volume ls -q)
+
 sgapi:
 	@-cd sendgrid; bundle
 	@-ruby sendgrid/api_info.rb
 
-.PHONY: all init up down stop restart nuke db local global init_multi sgapi
+.PHONY: all init up down stop restart nuke db local global init_multi sgapi reset_db
