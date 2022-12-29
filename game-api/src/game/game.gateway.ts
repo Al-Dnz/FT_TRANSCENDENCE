@@ -247,6 +247,7 @@ export class GameGateway
 				client.emit('test');
 				client.join(gameCode);
 				client.emit('gameCode', gameCode);
+				this.server.to(this.clientRooms[user.login]).emit(`startGame`);
 			}
 		} 
 		catch (error)
