@@ -221,27 +221,33 @@ export class GameGateway
 			const user = await this.userService.getUserByToken(token);
 
 			let gameCode = "";
-			console.log(this.openRooms);
-			if (!this.openRooms.length) {
-				console.log("void", this.openRooms.length);
-				this.handleNewGame(client);
-				return;
+			if (!this.clientRooms[user.login]) {
+				console.log(this.openRooms);
+				if (!this.openRooms.length) {
+					console.log("void", this.openRooms.length);
+					this.handleNewGame(client);
+					return;
+				}
+				if (!this.openRooms[0]) {
+					client.emit("errFindGame");
+					return;
+				}
+				gameCode = this.openRooms[0];
+				this.clientRooms[user.login] = gameCode;
+				this.state[gameCode].game_data.idPlayers.player2 = user.login;
+				this.openRooms.shift();
+				client.join(gameCode);
+				client.emit('gameCode', gameCode);
+				this.server.to(this.clientRooms[user.login]).emit(`startGame`);
+				setTimeout(() => {
+					this.startGameInterval(client, this.state[gameCode], gameCode, this.clientRooms);
+				}, 500);
+			} else {
+				gameCode = this.clientRooms[user.login];
+				client.emit('test');
+				client.join(gameCode);
+				client.emit('gameCode', gameCode);
 			}
-			if (!this.openRooms[0]) {
-				client.emit("errFindGame");
-				return;
-			}
-			gameCode = this.openRooms[0];
-			this.clientRooms[user.login] = gameCode;
-			client.join(gameCode);
-			this.state[gameCode].game_data.idPlayers.player2 = user.login;
-			client.emit('gameCode', gameCode);
-			client.emit('init', 2);
-			this.openRooms.shift();
-			this.server.to(this.clientRooms[user.login]).emit(`startGame`);
-			setTimeout(() => {
-				this.startGameInterval(client, this.state[gameCode], gameCode, this.clientRooms);
-			}, 500);
 		} 
 		catch (error)
 		{

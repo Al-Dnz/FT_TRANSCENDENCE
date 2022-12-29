@@ -5,7 +5,6 @@ import { MatchService } from './match.service';
 import { MatchController } from './match.controller';
 
 import {Match, UserMatch, User, UserStats } from 'db-interface/Core';
-import { MatchController } from './match.controller';
 
 
 @Module({
