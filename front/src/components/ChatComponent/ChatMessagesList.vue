@@ -1,7 +1,7 @@
 <template>
   <div class="h-full w-full overflow-y-auto pt-3">
     <div v-if="currentChan">
-      <div class="">
+      <div id="messages" class="">
         <ul>
           <li v-for="message in messages" :key="message.id">
             <ChatMessageBox :socket="socket" :currentChan="currentChan"
@@ -59,14 +59,17 @@ export default defineComponent({
         return;
       if (message.channel.id == this.currentChan?.id)
         this.messages.push(message);
+        var objDiv = document.getElementById("messages");
+        if (objDiv)
+          objDiv.scrollTop = objDiv.scrollHeight;
     }
   },
-  created()
+  mounted()
   {
     // this.socket?.emit('joinChannel', {id: this.currentChan?.id, password: this.password});
     this.socket?.on('allChanMessagesToClient', (payload: any) => {
-            this.handleChanConnection(payload)
-        })
+        this.handleChanConnection(payload)
+    })
     this.socket?.on('msgToChannel', (message: any) => {
         this.receiveMessage(message)
     })
@@ -78,8 +81,8 @@ export default defineComponent({
         handler(newVal, old)
         {
           this.messages = [];
-          this.socket?.emit('joinChannel', {id: this.currentChan?.id, password: this.password});
-        },  
+          this.socket?.emit('joinChannel', {id: this.currentChan?.id, password: this.password});         
+        },
     }
   }
 });

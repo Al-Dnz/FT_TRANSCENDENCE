@@ -60,6 +60,7 @@ export default defineComponent({
   name: "ChatChannelsList",
   props: {
     socket: Object,
+    currentUser: Object,
     currentChan: Object,
     creatingChan: Boolean,
     creatingDM: Boolean,
@@ -100,7 +101,7 @@ export default defineComponent({
         arr[i].participation = false;
         for (let j = 0; j < arr[i]["userChannels"].length; j++) 
         {
-          if (arr[i]["userChannels"][j].user.login == 'nschmitt') 
+          if (arr[i]["userChannels"][j].user.login === this.currentUser?.login) 
           {
             arr[i].participation = true;
             break;
@@ -125,20 +126,6 @@ export default defineComponent({
   },
 });
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
