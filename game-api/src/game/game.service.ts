@@ -27,7 +27,7 @@ export class GameService
 		},
 		mode: 0,
 		paddle1 : new paddle({
-			width: 30,
+			width: 15,
 			height: 160,
 			position: {
 				x: 10,
@@ -39,10 +39,10 @@ export class GameService
 			}
 		}),
 		paddle2 : new paddle({
-			width: 30,
+			width: 15,
 			height: 160,
 			position: {
-				x: 640 - 40,
+				x: 640 - 25,
 				y: 200,
 			},
 			canvasDim: {
