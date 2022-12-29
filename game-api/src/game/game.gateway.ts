@@ -32,12 +32,14 @@ export class GameGateway
 	private logger: Logger = new Logger('GameGateway');
 
 	state = {};
-	stateCustom = {};
 	clientRooms = {};
-	clientRoomsCustom = {};
 	openRooms: string[] = [];
+
+	stateCustom = {};
+	clientRoomsCustom = {};
 	openRoomsCustom: string[] = [];
-	io = require('socket.io')();
+	
+	// io = require('socket.io')();
 	// -----------
 
 	@SubscribeMessage('MovePaddleToServer')

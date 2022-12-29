@@ -91,12 +91,12 @@ export class GameService
 		state.game_data.paddle2.update();
 		ret = state.game_data.ball.update(state.game_data.paddle1, state.game_data.paddle2);
 		if (ret === 2){
-			state.game_data.score.player1+= 1;
+			state.game_data.score.player1 += 1;
 			if (state.game_data.mode === "custom")
 				state.game_data.paddle1.height = state.game_data.paddle1.height * 0.8;
 			ret = 0;
 		} else if (ret === 1) {
-			state.game_data.score.player2+= 1;
+			state.game_data.score.player2 += 1;
 			if (state.game_data.mode === "custom")
 				state.game_data.paddle2.height = state.game_data.paddle2.height * 0.8;
 			ret = 0;

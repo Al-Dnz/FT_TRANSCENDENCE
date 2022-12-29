@@ -102,8 +102,12 @@ export class UserChannel extends Base {
     })
     user: Relation<User>;
 
-    // @OneToOne(() => UserChannel)
-    // mutedBy: UserChannel;
+    @Column({ default: false })
+    muted: boolean;
+
+    @Column({ nullable: true, default: null })
+    muteExpiration: string;
+    
 }
 
 @Entity()
@@ -358,8 +362,7 @@ export class Message extends Base
 @Entity()
 export class Channel extends Base {
 
-    @Index("name-idx")
-	@Column({ unique: true })
+    @PrimaryColumn()
 	name: string;
 
 	@Column('boolean', {default: false})

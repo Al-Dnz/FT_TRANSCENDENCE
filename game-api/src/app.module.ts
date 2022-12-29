@@ -20,10 +20,7 @@ import {
   BannedChan,
   BlockerBlocked
 } from 'db-interface/Core';
-import { UserModule } from './user/user.module';
-import { ServiceModule } from './match/service/service.module';
-import { MatchModule } from './match/match.module';
-import { UserMatchModule } from './user-match/user-match.module';
+import { GameModule } from './game/game.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Channel, User, Avatar]),
@@ -51,10 +48,7 @@ import { UserMatchModule } from './user-match/user-match.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
-    UserModule,
-    ServiceModule,
-    MatchModule,
-    UserMatchModule],
+    GameModule],
   controllers: [AppController],
   providers: [AppService, GameGateway, GameService],
 })
