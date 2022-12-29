@@ -121,7 +121,8 @@ export class GameGateway
 			this.clientRooms[user.login] = roomName;
 			client.emit('gameCode', roomName);
 
-			const match = await this.matchService.create(user,roomName, false);
+			// create match in db
+			const match = await this.matchService.create(user, roomName, false);
 
 			this.state[roomName] = new GameService(this.matchService);
 	
@@ -275,15 +276,20 @@ export class GameGateway
 			this.userService.checkToken(token);
 			const user = await this.userService.getUserByToken(token);
 			
-			const intervalID = setInterval(() => {
+			const intervalID = setInterval(async () => {
 				const winner = state.gameLoop(state);
 			if (!winner) {
 				this.server.to(clientRooms[user.login]).emit('gameState', state.game_data);
 			}
 			else
 			{
+
 				client.emit('gameOver');
 				clearInterval(intervalID);
+
+				const match = await this.matchService.findByGameCode(gameCode);
+				await this.matchService.updateScore(match, state.game_data.score.player1, state.game_data.score.player2)
+
 				if (this.clientRooms[this.state[gameCode]]) {
 					this.clientRooms[this.state[gameCode].idPlayers.player1] = null;
 					this.clientRooms[this.state[gameCode].idPlayers.player2] = null;
