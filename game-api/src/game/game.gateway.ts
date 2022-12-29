@@ -17,6 +17,7 @@ import { Sprite } from './gameClass';
 import { fips } from 'crypto';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { UserService } from 'src/user/user.service';
+import { MatchService } from 'src/match/match.service';
 
 @WebSocketGateway({
 	cors: {
@@ -29,7 +30,8 @@ export class GameGateway
 	implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
 	constructor(private gameService: GameService,
-				private userService: UserService) {}
+				private userService: UserService,
+				private matchService: MatchService) {}
 
 	@WebSocketServer() server: Server;
 	private logger: Logger = new Logger('GameGateway');
@@ -118,8 +120,10 @@ export class GameGateway
 			}
 			this.clientRooms[user.login] = roomName;
 			client.emit('gameCode', roomName);
-	
-			this.state[roomName] = new GameService;
+
+			const match = await this.matchService.create(user,roomName, false);
+
+			this.state[roomName] = new GameService(this.matchService);
 	
 			this.state[roomName].game_data.idPlayers.player1 = user.login;
 			client.join(roomName);
@@ -175,10 +179,15 @@ export class GameGateway
 			}
 			// if game is full
 			if (this.state[gameCode].game_data.idPlayers.player2 &&
-				this.state[gameCode].game_data.idPlayers.player2 != user.login) {
+				this.state[gameCode].game_data.idPlayers.player2 != user.login)
+			{
 				client.emit('fullGame');
 				return;
 			}
+
+			const match = await this.matchService.findByGameCode(gameCode);
+			await this.matchService.updateMatchCreation(match, user);
+
 			this.clientRooms[user.login] = gameCode;
 			client.join(gameCode);
 			this.state[gameCode].game_data.idPlayers.player2 = user.login;
@@ -310,7 +319,9 @@ export class GameGateway
 		this.clientRoomsCustom[client.id] = roomName;
 		client.emit('gameCode', roomName);
 
-		this.stateCustom[roomName] = new GameService;
+		this.stateCustom[roomName] = new GameService(this.matchService);
+
+		// const match = await this.matchService.create(user, roomName, true);
 
 		this.stateCustom[roomName].game_data.idPlayers.player1 = client.id;
 		this.stateCustom[roomName].game_data.mode = "custom";
