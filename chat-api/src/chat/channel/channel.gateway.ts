@@ -12,6 +12,7 @@ import { ChannelService } from './channel.service';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { UsePipes } from '@nestjs/common';
 import { WSPipe } from 'src/exception/websockets/ws-exception-filter'
+import { HttpException, HttpStatus } from '@nestjs/common';
 import { Channel, ChannelType, User, UserChannel, UserChannelRole } from 'db-interface/Core';
 import { JoinChannelDto } from './dto/join-channel.dto';
 import { UserService } from '../user/user.service';
@@ -55,6 +56,14 @@ export class ChannelGateway {
 				channelId: new_chan.id
 			}
 			this.userChannelService.create(userChannelData, UserChannelRole.owner);
+
+			const sentPayload =
+			{
+				channelId: new_chan.id,
+				locked: false,
+				messages: [],
+			}
+			this.server.to(client.id).emit('allChanMessagesToClient', sentPayload);
 
 			// if (new_chan.type != ChannelType.direct)
 			await this.sendAllChan(client)
@@ -346,8 +355,15 @@ export class ChannelGateway {
 		try {
 			const token = client.handshake.auth.token;
 			this.userService.checkToken(token);
+
+			const user = await this.userService.getUserByToken(token);
 			this.channelService.update(payload);
 			const channel = await this.channelService.findOne(payload.id);
+
+			const userChannels = await this.userChannelService.findByUserAndChan(user.id, payload.id);
+			if (userChannels[0].role == UserChannelRole.member)
+				throw new HttpException(`You have not enougth privileges in channel #${channel.name} to update settings. Only owner and admin are authorized`, HttpStatus.FORBIDDEN);
+
 			this.server.to(client.id).emit('chatMsg', `channel ${channel.name} updated !`);
 		}
 		catch (error) {
