@@ -112,7 +112,11 @@ export default defineComponent({
     this.socket = io("http://" + process.env.VUE_APP_IP + ":3004", authPayload);
     this.socket.on('chatError', (error: any) => {
       this.$toast(error, { styles: { backgroundColor: "#FF0000", color: "#FFFFFF" }});
-    })})
+    })
+    this.socket.on('chatMsg', (error: any) => {
+      this.$toast(error, { styles: { backgroundColor: "#16b918", color: "#FFFFFF" }});
+    })
+  })
     await this.fetchData();
     this.loading = false
   },

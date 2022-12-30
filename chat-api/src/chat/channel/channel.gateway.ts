@@ -21,6 +21,7 @@ import { KickUserDto } from './dto/kick-user.dto';
 import { GrantUserDto } from './dto/grant-user.dto';
 import { BannedChanService } from '../banned-chan/banned-chan.service';
 import { DirectMessageDto } from './dto/direct-message.dto';
+import { UpdateChannelDto } from './dto/update-channel.dto';
 
 @UsePipes(WSPipe)
 @WebSocketGateway({ cors: { origin: '*' } })
@@ -325,6 +326,8 @@ export class ChannelGateway {
 		}
 	}
 
+
+
 	@SubscribeMessage('muteUser')
 	async muteUser(client: Socket, payload: GrantUserDto) {
 		try {
@@ -333,6 +336,22 @@ export class ChannelGateway {
 		}
 		catch (error) {
 
+		}
+
+	}
+
+
+	@SubscribeMessage('updateChannel')
+	async updateChannel(client: Socket, payload: UpdateChannelDto) {
+		try {
+			const token = client.handshake.auth.token;
+			this.userService.checkToken(token);
+			this.channelService.update(payload);
+			const channel = await this.channelService.findOne(payload.id);
+			this.server.to(client.id).emit('chatMsg', `channel ${channel.name} updated !`);
+		}
+		catch (error) {
+			this.server.to(client.id).emit('chatError', error.message);
 		}
 
 	}

@@ -14,7 +14,7 @@
           focus-within:border-green-500 focus-within:outline-0 border-2 border-slate-500" />
         </div>
         <div class="w-12 flex justify-center mt-3 text-slate-500 hover:text-green-500 cursor-pointer">
-          <ArrowRightCircleIcon class="h-10 w-10" @click.prevent="changePassword" />
+          <ArrowRightCircleIcon class="h-10 w-10" @click.prevent="changePassword()" />
         </div>
       </div>
       <div class="h-4 mt-2 text-green-500">
@@ -71,6 +71,14 @@ export default defineComponent({
   methods: {
     changePassword() {
       if (this.newPassword.length > 0) {
+
+        const payload = 
+        {
+          id: this.currentChan?.id,
+          password: this.newPassword,
+        }
+        this.socket?.emit('updateChannel', payload);
+
         console.log('password changed'); //here we change the password
         this.newPassword = '';
         this.passwordSuccess = true;
@@ -79,7 +87,25 @@ export default defineComponent({
         this.passwordSuccess = false;
     },
     changeType() {
-      if (this.newType.length > 0 && !(this.newType === 'protected' && !(this.newPassword.length > 0))) {
+
+      if (this.newType.length > 0 && !(this.newType === 'protected' && (this.newPassword.length == 0))) {
+
+        const payload = this.newPassword.length > 0 ?
+        {
+          id: this.currentChan?.id,
+          password: this.newPassword, 
+          type: this.newType,
+        }:
+        {
+          id: this.currentChan?.id,
+          type: this.newType,
+        }
+
+        console.log("type payload");
+        console.log(payload);
+
+        this.socket?.emit('updateChannel', payload);
+
         console.log('type changed'); //here we change the type of the channel
         this.newType = '';
         this.newPassword = '';
