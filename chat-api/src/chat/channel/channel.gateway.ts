@@ -55,7 +55,7 @@ export class ChannelGateway {
 				userId: user.id,
 				channelId: new_chan.id
 			}
-			this.userChannelService.create(userChannelData, UserChannelRole.owner);
+			await this.userChannelService.create(userChannelData, UserChannelRole.owner);
 
 			const sentPayload =
 			{
