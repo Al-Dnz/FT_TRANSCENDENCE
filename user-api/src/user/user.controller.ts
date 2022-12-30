@@ -213,8 +213,8 @@ export class UserController {
         const userTwo: User | undefined = await this.userService.findOne(login);
         if (!userTwo) { throw new NotFoundException(`user ${login} not found`); }
 
-        const friends = await this.userService.findBlockeds(user.login);
-        if (friends.length)
+        const blockeds = await this.userService.findBlockedsByLogin(user.login, login);
+        if (blockeds.length)
             throw new ForbiddenException(`${login} is already blocked by ${user.login}`);
 
         this.userService.addBlockeds(user.login, login).catch((error: Error) => {
@@ -235,7 +235,7 @@ export class UserController {
         const userTwo: User | undefined = await this.userService.findOne(login);
         if (!userTwo) { throw new NotFoundException(`user ${login} not found`); }
 
-        const friends = await this.userService.findBlockeds(user.login);
+        const friends = await this.userService.findBlockedsByLogin(user.login, login);
         if (!friends.length)
             throw new ForbiddenException(`${login} and ${user.login} are not blockeds`);
 
