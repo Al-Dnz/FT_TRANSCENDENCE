@@ -3,8 +3,8 @@
     <div class="h-12 w-12 bg-inherit text-slate-500 hover:text-red-500 cursor-pointer">
       <XCircleIcon @click="cancelSettings()"/>
     </div>
-    <h1 class="mt-4 text-3xl font-semibold">Channel Settings</h1>
-    <div v-if="currentChan?.type === 'protected'" class="w-full mt-4 mb-8">
+    <h1 class="mt-4 text-3xl font-semibold">Channel Settings: {{ currentChan?.name }}</h1>
+    <!-- <div v-if="currentChan?.type === 'protected'" class="w-full mt-4 mb-8">
       <h2>Change password:</h2>
       <div class="w-full flex flex-row">
         <div class="w-fit mt-4">
@@ -17,10 +17,9 @@
           <ArrowRightCircleIcon class="h-10 w-10" @click.prevent="changePassword()" />
         </div>
       </div>
-    </div>
+    </div> -->
     <div class="mt-4">
-      <h2>Change channel type:</h2>
-      <p>(current type: {{ currentChan?.type }})</p>
+      <h2>Change channel settings:</h2>
       <div class="w-fit mt-4">
         <select v-model="newType">
           <option disabled value="">Select type</option>
@@ -37,9 +36,9 @@
       focus-within:border-green-500 focus-within:outline-0 border-2 border-slate-500" />
     </div>
     <div class="mt-4">
-      <button @click="changeType()"
+      <button @click="updateChan()"
       class="pl-1 pr-1 rounded-lg border-2 border-slate-600 hover:text-green-500
-      hover:border-green-500">Change type</button>
+      hover:border-green-500">Update Channel</button>
     </div>
   </div>
 </template>
@@ -57,7 +56,7 @@ export default defineComponent({
   data() {
     return {
       newPassword: '',
-      newType: '',
+      newType: this.currentChan?.type,
     };
   },
   methods: {
@@ -75,7 +74,7 @@ export default defineComponent({
         this.newPassword = '';
       }
     },
-    changeType() {
+    updateChan() {
 
       if (this.newType.length > 0 && !(this.newType === 'protected' && (this.newPassword.length == 0))) {
 
@@ -89,14 +88,8 @@ export default defineComponent({
           id: this.currentChan?.id,
           type: this.newType,
         }
-
-        console.log("type payload");
-        console.log(payload);
-
         this.socket?.emit('updateChannel', payload);
-
-        console.log('type changed'); //here we change the type of the channel
-        this.newType = '';
+        // this.newType = '';
         this.newPassword = '';
       }
     },
