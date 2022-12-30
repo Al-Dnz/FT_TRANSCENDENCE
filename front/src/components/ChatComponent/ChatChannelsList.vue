@@ -89,6 +89,13 @@ export default defineComponent({
       }
       return "undefined";
     },
+    isInChan(name: string, chan: any): boolean {
+      for (let j = 0; j < chan["userChannels"].length; j++) {
+        if (chan["userChannels"][j].user.login == name)
+          return true
+      }
+      return false;
+    },
     getAllChannels(channels: any) {
       this.allChannels = channels;
       this.dmChannels = [];
