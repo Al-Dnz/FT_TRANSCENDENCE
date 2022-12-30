@@ -3,7 +3,8 @@
     <div class="h-12 w-12 bg-inherit text-slate-500 hover:text-red-500 cursor-pointer">
       <XCircleIcon @click="cancelSettings()"/>
     </div>
-    <h1 class="mt-4 text-3xl font-semibold">Channel Settings: {{ currentChan?.name }}</h1>
+    <h1 class="mt-4 text-3xl font-semibold">Channel Settings</h1>
+    <h1 class="mt-4 text-3xl font-semibold">#{{ currentChan?.name }}</h1>
     <!-- <div v-if="currentChan?.type === 'protected'" class="w-full mt-4 mb-8">
       <h2>Change password:</h2>
       <div class="w-full flex flex-row">
@@ -19,7 +20,7 @@
       </div>
     </div> -->
     <div class="mt-4">
-      <h2>Change channel settings:</h2>
+      <h2>Channel settings:</h2>
       <div class="w-fit mt-4">
         <select v-model="newType">
           <option disabled value="">Select type</option>
@@ -38,7 +39,7 @@
     <div class="mt-4">
       <button @click="updateChan()"
       class="pl-1 pr-1 rounded-lg border-2 border-slate-600 hover:text-green-500
-      hover:border-green-500">Update Channel</button>
+      hover:border-green-500">Update Settings</button>
     </div>
   </div>
 </template>
