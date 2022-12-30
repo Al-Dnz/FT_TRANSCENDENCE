@@ -78,7 +78,7 @@ export class UserService {
   }
 
   async findFriends(userLogin: string, query: QueryFilterDto): Promise<User[]> {
-    let user: User = await this.userRepository.findOne({
+    let users: User[] = await this.userRepository.find({
       where: {
         login: userLogin,
       },
@@ -86,7 +86,7 @@ export class UserService {
         friends: true,
       },
     });
-
+    let user = users[0];
     let friends: User[] = user.friends.slice(query.onset, query.length);
     if (query.search) {
       return friends.filter((value: User) =>
@@ -160,17 +160,35 @@ export class UserService {
 
   // ------BLOCKED_USERS UTILITARIES---------------------------
 
+  async findBlockedsByLogin(userLogin: string, blockedLogin: string): Promise<User[]> {
+    let blockedUsers: User[] = [];
+    let blockerBlockeds = await this.blockerBlockedRepository.find(
+      {
+        relations: {
+          blocked: true,
+          blocker: true
+        },
+        where: {
+          blocker: {
+            login: userLogin,
+          },
+          blocked: {
+            login: blockedLogin,
+          }
+        },
+      })
+    if (blockerBlockeds.length != 0) {
+      for (let bb of blockerBlockeds) {
+        blockedUsers.push(bb.blocked);
+      }
+    }
+    return blockedUsers;
+  }
 
 
   async findBlockeds(userLogin: string): Promise<User[]> {
-    const user: User = await this.userRepository.findOne({
-      where: {
-        login: userLogin,
-      },
-      relations: {
-        blockerBlockeds: true,
-      },
-    });
+    const user: User = await this.userRepository.findOneBy({ login: userLogin })
+
     let blockedUsers: User[] = [];
     let blockerBlockeds = await this.blockerBlockedRepository.find(
       {
@@ -196,7 +214,7 @@ export class UserService {
     const userOne: User = await this.findOne(userLogin);
     const userTwo: User = await this.findOne(blockedLogin);
 
-    const toFind = await this.blockerBlockedRepository.findOne(
+    const toFind = await this.blockerBlockedRepository.find(
       {
         relations: {
           blocked: true,
@@ -211,7 +229,7 @@ export class UserService {
           },
         },
       })
-    if (toFind)
+    if (toFind.length)
       return;
     let bb = new BlockerBlocked;
     bb.blocker = userOne;
@@ -222,7 +240,7 @@ export class UserService {
   async removeBlockeds(userLogin: string, friendLogin: string): Promise<void> {
     const userOne = await this.findOne(userLogin);
     const userTwo = await this.findOne(friendLogin);
-    const toFind = await this.blockerBlockedRepository.findOne(
+    const toFind = await this.blockerBlockedRepository.find(
       {
         relations: {
           blocked: true,
@@ -237,9 +255,9 @@ export class UserService {
           },
         },
       })
-    if (!toFind)
+    if (toFind.length == 0)
       return;
-    this.blockerBlockedRepository.delete(toFind.id);
+    this.blockerBlockedRepository.delete(toFind[0].id);
   }
 
   updateTwoFaCode(user: User, code: string)
