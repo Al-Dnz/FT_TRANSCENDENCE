@@ -5,9 +5,9 @@ import { UserChannelRole } from 'db-interface/Core';
 
 export class InviteUserDto
 {
-	@IsInt()
-	@Min(1)
-	userId: number
+	@IsString()
+	@Length(1)
+	userLogin: string
 
 	@IsInt()
 	@Min(1)

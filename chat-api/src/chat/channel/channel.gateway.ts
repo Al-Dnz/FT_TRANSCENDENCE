@@ -357,7 +357,7 @@ export class ChannelGateway {
 			this.userService.checkToken(token);
 			const user = await this.userService.getUserByToken(token);
 
-			const invited = await this.userService.getUserById(payload.userId)
+			const invited = await this.userService.getUserByLogin(payload.userLogin);
 			const chan = await this.channelService.findOne(payload.channelId)
 			const userChannels = await this.userChannelService.findByUserAndChan(invited.id, chan.id);
 			if (userChannels.length)
@@ -366,6 +366,7 @@ export class ChannelGateway {
 			const userchannel = await this.userChannelService.create({userId: invited.id, channelId: chan.id});
 
 			this.sendAllChan(client)
+			this.server.to(client.id).emit('chatMsg', `Invitation in channel #${chan.name} sent to ${user.login} `);
 			this.server.to(invited.chatSocketId).emit('chatMsg', `You have been invited by ${user.login} in channel #${chan.name}`);
 		}
 		catch (error) {
