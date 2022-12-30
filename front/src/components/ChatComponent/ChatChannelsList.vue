@@ -82,12 +82,19 @@ export default defineComponent({
     showChanForm() {
       this.$emit('showChanForm');
     },
-    getRole(name: string, chan: any): string {
+    getRole(login: string, chan: any): string {
       for (let j = 0; j < chan["userChannels"].length; j++) {
-        if (chan["userChannels"][j].user.login == name)
+        if (chan["userChannels"][j].user.login == login)
           return chan["userChannels"][j].role;
       }
       return "undefined";
+    },
+    isInChan(login: string, chan: any): boolean {
+      for (let j = 0; j < chan["userChannels"].length; j++) {
+        if (chan["userChannels"][j].user.login == login)
+          return true
+      }
+      return false;
     },
     getAllChannels(channels: any) {
       this.allChannels = channels;
