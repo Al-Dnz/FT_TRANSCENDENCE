@@ -14,6 +14,11 @@
         cursor-pointer shadow-lg">
           <Cog8ToothIcon @click="toggleSettings()" />
         </div>
+        <div class="w-10 h-10 ml-16
+        rounded-3xl bg-gray-100 text-gray-500 hover:text-black
+        cursor-pointer shadow-lg">
+          <PlusIcon @click="toggleInvite()" />
+        </div>
       </div>
     </div>
   </div>
@@ -40,6 +45,10 @@ export default defineComponent({
     },
     toggleSettings() {
       this.$emit('toggleSettings');
+    },
+    toggleInvite()
+    {
+      this.$emit('toggleInvite');
     },
     quitChannel() {
       console.log(`QUIT CHANNEL ${this.currentChan?.id} `);

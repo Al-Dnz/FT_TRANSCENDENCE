@@ -22,6 +22,11 @@
       <ChatChannelSettings :socket="socket" :currentChan="currentChan"
       @toggleSettings="showChannelSettings" />
     </div>
+    <div v-else-if="currentChan && changingInvite"
+    class="h-full w-5/6 bg-gray-50">
+      <ChatChannelInvite :socket="socket" :currentChan="currentChan"
+      @toggleInvite="showChannelInvite" />
+    </div>
     <div v-else-if="currentChan?.type === 'direct_message'"
     class="h-full w-5/6 bg-gray-50">
       <ChatDirectMessageBox :socket="socket"
@@ -30,7 +35,7 @@
     <div v-else-if="currentChan?.type !== 'direct_message'"
     class="h-full w-5/6 bg-gray-50">
       <ChatChannelBox :socket="socket" :currentUser="currentUser" :currentChan="currentChan"
-      @toggleSettings="showChannelSettings" @quitChan="quitChan" />
+      @toggleSettings="showChannelSettings" @quitChan="quitChan" @toggleInvite="showChannelInvite" />
     </div>
   </div>
 </template>
@@ -43,6 +48,7 @@ import ChatDirectMessageBox from "../components/ChatComponent/ChatDirectMessageB
 import ChatNewChannelForm from "../components/ChatComponent/ChatNewChannelForm.vue";
 import ChatNewDirectMessageForm from "../components/ChatComponent/ChatNewDirectMessageForm.vue";
 import ChatChannelSettings from "../components/ChatComponent/ChatChannelSettings.vue";
+import ChatChannelInvite from '@/components/ChatComponent/ChatChannelInvite.vue';
 import { defineComponent } from "vue";
 import { UsersApi, Configuration, UserOutput } from '@/api';
 import { getCredentials } from "@/frontJS/cookies"
@@ -52,6 +58,7 @@ interface DataI {
   creatingChan: boolean,
   creatingDM: boolean,
   changingSett: boolean,
+  changingInvite: boolean
   socket: any,
   currentChan: any,
   currentUser?: UserOutput,
@@ -66,13 +73,15 @@ export default defineComponent({
     ChatNewChannelForm,
     ChatNewDirectMessageForm,
     ChatChannelSettings,
-    loadingPage
+    loadingPage,
+    ChatChannelInvite
   },
   data(): DataI {
     return {
       creatingChan: false,
       creatingDM: false,
       changingSett: false,
+      changingInvite: false,
       socket: null as any,
       currentChan: null as any,
       currentUser: undefined,
@@ -92,6 +101,9 @@ export default defineComponent({
     },
     showChannelSettings() {
       this.changingSett = !this.changingSett;
+    },
+    showChannelInvite() {
+      this.changingInvite = !this.changingInvite;
     },
     quitChan() {
       this.currentChan = null;
