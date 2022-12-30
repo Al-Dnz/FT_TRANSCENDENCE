@@ -66,7 +66,7 @@ export class ChannelGateway {
 			this.server.to(client.id).emit('allChanMessagesToClient', sentPayload);
 
 			// if (new_chan.type != ChannelType.direct)
-			await this.sendAllChan(client)
+			this.sendAllChan(client)
 		} catch (error) {
 			this.server.to(client.id).emit('chatError', error.message);
 		}
