@@ -122,8 +122,7 @@ export default defineComponent({
       arr.forEach((chan: any) => (chan.type == 'direct' ? this.dmChannels : this.regularChannels).push(chan));
     
     },
-  },
-  
+  }, 
   created() {
     this.socket?.on('allChansToClient', (channels: any) => {
       this.getAllChannels(channels)
@@ -132,20 +131,6 @@ export default defineComponent({
   },
 });
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

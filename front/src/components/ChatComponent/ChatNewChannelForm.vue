@@ -10,9 +10,6 @@
       class="w-full rounded-2xl px-3 placeholder-slate-500 text-slate-500
       focus-within:border-green-500 focus-within:outline-0 border-2 border-slate-500" />
     </div>
-    <div v-if="isNameTaken" class="mt-4 text-red-500">
-      <p>This name is already taken</p>
-    </div>
     <div class="w-fit mt-4">
       <select v-model="newType">
         <option disabled value="">Select a type</option>
@@ -53,6 +50,7 @@ export default defineComponent({
   name: 'ChatNewChannelForm',
   props: {
     socket: Object,
+    changeChan: { type: Function, required: true, }
   },
   data() {
     return {
@@ -96,21 +94,19 @@ export default defineComponent({
       this.newType = '';
       this.newPassword = '';
       this.$emit("cancelForm");
-    }
+    },
+    goToChan() {
+      console.log('goToChan');
+      this.$emit('goToChan');
+    },
   },
-  mounted()
-  {
+  mounted() {
     this.socket?.on('currentChanToClient', (payload: any) => {
-        // this.currentChan = payload.channel;
-        console.log("NEW CURRENT CREATED CHAN =");
-        console.log(payload);
+      this.changeChan(payload.channel);
+      console.log("NEW CURRENT CREATED CHAN =");
+      console.log(payload);
     })
   },
-  computed: {
-    isNameTaken() {
-      return (false); // here we check if this name is already used by another channel
-    },
-  }
 });
 </script>
 
