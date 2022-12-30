@@ -63,6 +63,8 @@ export class ChannelGateway {
 				locked: false,
 				messages: [],
 			}
+
+			this.server.to(client.id).emit('currentChanToClient', {channel: new_chan});
 			this.server.to(client.id).emit('allChanMessagesToClient', sentPayload);
 
 			// if (new_chan.type != ChannelType.direct)

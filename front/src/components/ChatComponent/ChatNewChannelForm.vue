@@ -98,6 +98,14 @@ export default defineComponent({
       this.$emit("cancelForm");
     }
   },
+  mounted()
+  {
+    this.socket?.on('currentChanToClient', (payload: any) => {
+        // this.currentChan = payload.channel;
+        console.log("NEW CURRENT CREATED CHAN =");
+        console.log(payload);
+    })
+  },
   computed: {
     isNameTaken() {
       return (false); // here we check if this name is already used by another channel
