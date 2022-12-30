@@ -12,7 +12,8 @@
       <p class="text-3xl">NO CHANNEL SELECTED</p>
     </div>
     <div v-else-if="creatingChan" class="h-full w-5/6">
-      <ChatNewChannelForm :socket="socket" @cancelForm="showChanCreationForm" />
+      <ChatNewChannelForm :socket="socket" :changeChan="changeCurrentChannel"
+      @cancelForm="showChanCreationForm" />
     </div>
     <div v-else-if="creatingDM" class="h-full w-5/6">
       <ChatNewDirectMessageForm :socket="socket" @cancelForm="showDMCreationForm" />

@@ -17,9 +17,6 @@
           <ArrowRightCircleIcon class="h-10 w-10" @click.prevent="changePassword()" />
         </div>
       </div>
-      <div class="h-4 mt-2 text-green-500">
-        <p v-show="passwordSuccess">A new password has been set</p>
-      </div>
     </div>
     <div class="mt-4">
       <h2>Change channel type:</h2>
@@ -27,9 +24,9 @@
       <div class="w-fit mt-4">
         <select v-model="newType">
           <option disabled value="">Select type</option>
-          <option v-if="currentChan?.type !== 'public'">public</option>
-          <option v-if="currentChan?.type !== 'private'">private</option>
-          <option v-if="currentChan?.type !== 'protected'">protected</option>
+          <option>public</option>
+          <option>private</option>
+          <option>protected</option>
         </select>
       </div>
     </div>
@@ -43,9 +40,6 @@
       <button @click="changeType()"
       class="pl-1 pr-1 rounded-lg border-2 border-slate-600 hover:text-green-500
       hover:border-green-500">Change type</button>
-    </div>
-    <div class="h-4 mt-2 text-green-500">
-      <p v-show="typeSuccess">Channel's type has been changed</p>
     </div>
   </div>
 </template>
@@ -64,8 +58,6 @@ export default defineComponent({
     return {
       newPassword: '',
       newType: '',
-      passwordSuccess: false,
-      typeSuccess: false,
     };
   },
   methods: {
@@ -81,10 +73,7 @@ export default defineComponent({
 
         console.log('password changed'); //here we change the password
         this.newPassword = '';
-        this.passwordSuccess = true;
       }
-      else
-        this.passwordSuccess = false;
     },
     changeType() {
 
@@ -109,10 +98,7 @@ export default defineComponent({
         console.log('type changed'); //here we change the type of the channel
         this.newType = '';
         this.newPassword = '';
-        this.typeSuccess = true;
       }
-      else
-        this.typeSuccess = false;
     },
     cancelSettings() {
       this.newPassword = '';
