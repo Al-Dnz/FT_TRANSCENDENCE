@@ -41,9 +41,9 @@ export class MatchService {
 		return await this.matchesRepository.save(match);
 	}
 
-	updateScoreByGameCode(gameCode: string, score1?: number, score2?: number): Promise<Match>
+	async updateScoreByGameCode(gameCode: string, score1?: number, score2?: number): Promise<Match>
 	{
-		const match = this.matchesRepository.findOneBy({ gameCode: gameCode })
+		const match = await this.matchesRepository.findOneBy({ gameCode: gameCode })
 		if (!match)
 		  throw new HttpException('Match not found', HttpStatus.NOT_FOUND);
 		match.score1 = score1;
