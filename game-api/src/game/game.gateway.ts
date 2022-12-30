@@ -284,16 +284,13 @@ export class GameGateway
 			this.userService.checkToken(token);
 			const user = await this.userService.getUserByToken(token);
 			
-			const intervalID = setInterval(async () => {
+			const intervalID = setInterval(() => {
 				const winner = state.gameLoop(state);
 			if (!winner) {
 				this.server.to(clientRooms[user.login]).emit('gameState', state.game_data);
 			}
 			else
 			{
-
-
-				clearInterval(intervalID);
 				this.server.to(clientRooms[user.login]).emit('gameOver');
 
 				if (this.clientRooms[this.state[gameCode]]) {
@@ -303,11 +300,14 @@ export class GameGateway
 				
 				this.state[gameCode] = null;
 				delete this.state[gameCode];
+				this.matchService.updateScoreByGameCode(gameCode, state.game_data.score.player1, state.game_data.score.player2);
+
+				clearInterval(intervalID);
 				return;
 			}
 		}, 1000 / 60);
-			const match = await this.matchService.findByGameCode(gameCode);
-			await this.matchService.updateScore(match, state.game_data.score.player1, state.game_data.score.player2);
+			// const match = await this.matchService.findByGameCode(gameCode);
+			// await this.matchService.updateScore(match, state.game_data.score.player1, state.game_data.score.player2);
 		} 
 		catch (error)
 		{
