@@ -3,10 +3,13 @@ import { ConsoleLogger, Injectable } from '@nestjs/common';
 import { Position, Dimension } from './game_interface';
 
 import { Sprite, paddle, ball } from './gameClass';
+import { MatchService } from 'src/match/match.service';
 
 @Injectable()
 export class GameService 
 {
+	constructor(private matchService: MatchService) {}
+
 	game_data =
 	{
 		gameState: 'off',
@@ -27,7 +30,7 @@ export class GameService
 		},
 		mode: 0,
 		paddle1 : new paddle({
-			width: 30,
+			width: 15,
 			height: 160,
 			position: {
 				x: 10,
@@ -39,10 +42,10 @@ export class GameService
 			}
 		}),
 		paddle2 : new paddle({
-			width: 30,
+			width: 15,
 			height: 160,
 			position: {
-				x: 640 - 40,
+				x: 640 - 25,
 				y: 200,
 			},
 			canvasDim: {
@@ -51,8 +54,8 @@ export class GameService
 			}
 		}),
 		ball : new ball({
-			width: 33,
-			height: 33,
+			width: 15,
+			height: 15,
 			position: {
 				x: 640/2,
 				y: 480/2
@@ -91,12 +94,12 @@ export class GameService
 		state.game_data.paddle2.update();
 		ret = state.game_data.ball.update(state.game_data.paddle1, state.game_data.paddle2);
 		if (ret === 2){
-			state.game_data.score.player1+= 1;
+			state.game_data.score.player1 += 1;
 			if (state.game_data.mode === "custom")
 				state.game_data.paddle1.height = state.game_data.paddle1.height * 0.8;
 			ret = 0;
 		} else if (ret === 1) {
-			state.game_data.score.player2+= 1;
+			state.game_data.score.player2 += 1;
 			if (state.game_data.mode === "custom")
 				state.game_data.paddle2.height = state.game_data.paddle2.height * 0.8;
 			ret = 0;

@@ -20,6 +20,7 @@ import {
   BannedChan,
   BlockerBlocked
 } from 'db-interface/Core';
+import { GameModule } from './game/game.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Channel, User, Avatar]),
@@ -46,8 +47,9 @@ import {
 	],
       autoLoadEntities: true,
       synchronize: true,
-    })],
+    }),
+    GameModule],
   controllers: [AppController],
-  providers: [AppService, GameGateway, GameService],
+  providers: [AppService],
 })
 export class AppModule {}

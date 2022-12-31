@@ -166,12 +166,16 @@ export default {
         // Put your drawing code here
         this.getSizeToServe();
         this.context.clearRect(0, 0, this.board.width, this.board.height);
-        this.context.fillStyle = '#6bed74';
+        this.context.fillStyle = '#000000';
         this.context.fillRect(0, 0, this.board.width, this.board.height);
-        this.background.draw(this.context);
-        this.ball.update(this.context);
-        this.paddle1.draw(this.context);
-        this.paddle2.draw(this.context);
+        // this.background.draw(this.context);
+        this.context.fillStyle = '#FFFFFF';
+        this.context.fillRect(this.ball.position.x, this.ball.position.y, this.ball.width, this.ball.height);
+        // this.ball.update(this.context);
+        // this.paddle1.draw(this.context);
+        this.context.fillRect(this.paddle1.position.x, this.paddle1.position.y, this.paddle1.width, this.paddle1.height);
+        // this.paddle2.draw(this.context);
+        this.context.fillRect(this.paddle2.position.x, this.paddle2.position.y, this.paddle2.width, this.paddle2.height);
       }
     },
     sendInstruction(instruction) {

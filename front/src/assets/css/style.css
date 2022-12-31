@@ -87,6 +87,7 @@ html * {
 
 .queueScreen {
     font-family: Hack, monospace;
+    display: none;
     align-content: center;
     text-align: center;
     background: #e8e8e8;
