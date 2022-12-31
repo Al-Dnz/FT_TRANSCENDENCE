@@ -43,6 +43,14 @@ export class UserService {
 		return user
 	}
 
+	async getUserByLogin(login: string)
+	{ 
+		const user = await this.usersRepository.findOneBy({ login: login });
+		if (!user)
+			throw new HttpException(`User ${login} not found`, HttpStatus.NOT_FOUND);
+		return user
+	}
+
 	async updateUserSocket(user: User, socketId: string)
 	{
 		user.gameSocketId = socketId;

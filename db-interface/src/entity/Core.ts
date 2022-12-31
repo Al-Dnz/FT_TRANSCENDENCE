@@ -67,6 +67,13 @@ export enum PaddleID {
     paddle4,
 }
 
+export enum MatchStatus {
+    pending = "pending",
+    requested = "requested",
+    live = "live",
+    finished = "finished",
+}
+
 /**********************************************************************************************
  *                                     Entities
  **********************************************************************************************/
@@ -92,6 +99,9 @@ export class Match extends Base {
 
     @Column({ default: 0 })
     score2: number;
+
+    @Column({ type: "enum", enum: MatchStatus, default: MatchStatus.pending })
+    status: MatchStatus;
 
     @OneToMany(() => UserMatch, (userMatch: UserMatch) => userMatch.match)
     @JoinTable()
@@ -456,49 +466,4 @@ export class Channel extends Base {
     userTwo: Relation<User>;
 
 }
-
-
-
-
-// @Entity()
-// export class Channel extends Base {
-//     @OneToMany(
-//         () => UserChannel,
-//         (userChannel: UserChannel) => userChannel.channel
-//     )
-//     members: UserChannel[];
-
-//     @OneToOne(() => UserChannel)
-//     createdBy: UserChannel;
-
-//     @OneToMany(() => Message, (message: Message) => message.channel, {
-//         cascade: true,
-//     })
-//     messages: Message[];
-
-//     @Column()
-//     type: ChannelType;
-
-//     @Column({ nullable: true })
-//     password: string;
-// }
-
-// @Entity()
-// export class Message extends Base {
-//     @UpdateDateColumn()
-//     updatedAt: Date;
-
-//     @Column()
-//     content: string;
-
-//     @OneToOne(() => UserChannel)
-//     sentBy: UserChannel;
-
-//     @ManyToOne(() => Channel, (channel: Channel) => channel.messages, {
-//         onDelete: "CASCADE",
-//     })
-//     channel: Channel;
-// }
-
-
 
