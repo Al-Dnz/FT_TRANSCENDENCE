@@ -417,7 +417,7 @@ export class Message extends Base
 @Entity()
 export class Channel extends Base {
 
-    @PrimaryColumn()
+    @Column({ unique: true})
 	name: string;
 
 	@Column('boolean', {default: false})
