@@ -39,7 +39,12 @@
         <ul class="list-none">
           <li v-for="channel in getMyChannels()" :key="channel.id">
             <div class="pb-2 font-semibold hover:text-black">
-              <button @click="changeChannel(channel)"># {{ channel.name }}</button>
+              <button @click="changeChannel(channel)">
+                 <span v-if="channel.type == 'private'">👁️</span>
+                 <span v-else-if="channel.type == 'protected'">🔓</span>
+                 <span v-else>✔️</span> 
+                {{ channel.name }}
+              </button>
             </div>
           </li>
         </ul>
@@ -49,7 +54,7 @@
         <ul class="list-none">
           <li v-for="channel in getPublic()" :key="channel.id">
             <div class="pb-2 font-semibold hover:text-black">
-              <button @click="changeChannel(channel)">🔓 {{ channel.name }}</button>
+              <button @click="changeChannel(channel)"> #  {{ channel.name }}</button>
             </div>
           </li>
         </ul>
