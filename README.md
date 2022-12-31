@@ -10,12 +10,6 @@
 http://localhost:8000
 ```
 
-After use don't forget to
-
-```
-make down
-```
-
 ## CAREFFUL
 
 don't forget to set up a .env file at the root of the project with env variable:
