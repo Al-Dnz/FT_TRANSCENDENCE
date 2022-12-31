@@ -1,14 +1,17 @@
 <template>
   <div @mouseover="showOptMenuButton" @mouseleave="hideOptMenuButton"
   class="flex flex-row w-full mt-2 pt-2 pb-2 bg-inherit hover:bg-gray-300">
-    <img :src="getImgUrl(channelUser?.pic)" @click="goProfile"
+    <img :src="userChannel?.user.avatar.path" @click="goProfile"
     class="w-12 h-12 rounded-full cursor-pointer" />
     <div class="flex flex-col ml-2">
       <h1 @click="goProfile" class="font-semibold cursor-pointer break-all">
-      {{ channelUser?.name }}</h1>
-      <div v-if="!isCurrentUser(channelUser)" v-show="isOptMenuButtonVisible">
+      {{ userChannel?.user.userName }}
+      <span v-if="userChannel?.role==='owner'">♛</span>
+      <span v-if="userChannel?.role==='admin'">☆</span>
+      </h1>
+      <div v-if="userChannel?.user.login !== currentUser?.login" v-show="isOptMenuButtonVisible">
         <UserOptionsMenu :socket="socket" :currentChan="getCurrentChan" :currentUser="getCurrentUser"
-        :targetUser="getChannelUser" @toggle-opt-menu="switchOptMenuState"
+        :targetUser="getUserChannel" @toggle-opt-menu="switchOptMenuState"
         class="h-6 w-6 rounded-full bg-gray-400" />
       </div>
     </div>
@@ -25,7 +28,7 @@ export default defineComponent({
     socket: Object,
     currentUser: Object,
     currentChan: Object,
-    channelUser: Object,
+    userChannel: Object,
   },
   components: {
     UserOptionsMenu,
@@ -50,13 +53,9 @@ export default defineComponent({
     },
     compareUsers(user1: any, user2: any): boolean {
       if (user1?.length !== user2?.length || user1?.id !== user2?.id
-          || user1?.name !== user2?.name || user1?.pic !== user2?.pic
-          || !this.compareArrays(user1?.blockList, user2?.blockList))
+          || user1?.login !== user2?.login)
         return (false);
       return (true);
-    },
-    getImgUrl(img: string) {
-      return require('@/assets/' + img);
     },
     showOptMenuButton() {
       this.isOptMenuButtonVisible = true;
@@ -69,7 +68,7 @@ export default defineComponent({
       this.isOptMenuVisible = !this.isOptMenuVisible;
     },
     goProfile() {
-        alert("going to " + this.channelUser?.name + "'s profile"); // placeholder
+        alert("going to " + this.userChannel?.user.userName + "'s profile"); // placeholder
     },
     isCurrentUser(user: any) {
       return(this.compareUsers(this.currentUser, user));
@@ -82,8 +81,8 @@ export default defineComponent({
     getCurrentChan() {
       return (this.currentChan);
     },
-    getChannelUser() {
-      return (this.channelUser);
+    getUserChannel() {
+      return (this.userChannel?.user);
     },
   }
 });

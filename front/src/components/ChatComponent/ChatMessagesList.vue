@@ -1,16 +1,16 @@
 <template>
   <div class="h-full w-full overflow-y-auto pt-3">
     <div v-if="currentChan">
-      <div class="">
+      <div id="messages" class="">
         <ul>
-          <!-- <li v-for="message in messages" :key="message.id">
+          <li v-for="message in messages" :key="message.id">
             <ChatMessageBox :socket="socket" :currentChan="currentChan"
             :currentUser="currentUser" :message="message" />
-          </li> -->
-
-          <li v-for="message in messages" :key="message.id">
-            {{message.sender.login}} : {{message.text}}
           </li>
+
+          <!-- <li v-for="message in messages" :key="message.id">
+            {{message.sender.login}} : {{message.text}}
+          </li> -->
         </ul>
       </div>
     </div>
@@ -28,10 +28,11 @@ export default defineComponent({
   name: "ChatMessagesList",
   props: {
     socket: Object,
+    currentUser: Object,
     currentChan: Object,
   },
   components: {
-    // ChatMessageBox,
+    ChatMessageBox,
   },
   data() {
     return {
@@ -45,6 +46,8 @@ export default defineComponent({
     handleChanConnection(payload: any)
     {
       this.locked =  payload.locked;
+      if (this.locked === false)
+        this.$emit('isValidated');
       this.messages = [];
       this.messages = payload.messages.reverse();
 
@@ -58,14 +61,27 @@ export default defineComponent({
         return;
       if (message.channel.id == this.currentChan?.id)
         this.messages.push(message);
-    }
+        var objDiv = document.getElementById("messages");
+        if (objDiv)
+          objDiv.scrollTop = objDiv.scrollHeight;
+    },
+    isUserMember() {
+      let i = this.currentChan?.userChannels.length;
+      i--;
+      while (i >= 0) {
+        if (this.currentChan?.userChannels[i].user.login === this.currentUser?.login)
+          return (true);
+        --i;
+      }
+      return (false);
+    },
   },
-  created()
+  mounted()
   {
     // this.socket?.emit('joinChannel', {id: this.currentChan?.id, password: this.password});
     this.socket?.on('allChanMessagesToClient', (payload: any) => {
-            this.handleChanConnection(payload)
-        })
+        this.handleChanConnection(payload)
+    })
     this.socket?.on('msgToChannel', (message: any) => {
         this.receiveMessage(message)
     })
@@ -77,8 +93,12 @@ export default defineComponent({
         handler(newVal, old)
         {
           this.messages = [];
-          this.socket?.emit('joinChannel', {id: this.currentChan?.id, password: this.password});
-        },  
+          if (this.currentChan?.type === 'protected' && !this.isUserMember()) //rajouter une condition
+            this.$emit('isProtected');
+          else {
+            this.socket?.emit('joinChannel', {id: this.currentChan?.id, password: this.password}); 
+          }        
+        },
     }
   }
 });

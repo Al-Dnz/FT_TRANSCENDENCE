@@ -12,6 +12,7 @@ import { ChannelService } from './channel.service';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { UsePipes } from '@nestjs/common';
 import { WSPipe } from 'src/exception/websockets/ws-exception-filter'
+import { HttpException, HttpStatus } from '@nestjs/common';
 import { Channel, ChannelType, User, UserChannel, UserChannelRole } from 'db-interface/Core';
 import { JoinChannelDto } from './dto/join-channel.dto';
 import { UserService } from '../user/user.service';
@@ -21,6 +22,9 @@ import { KickUserDto } from './dto/kick-user.dto';
 import { GrantUserDto } from './dto/grant-user.dto';
 import { BannedChanService } from '../banned-chan/banned-chan.service';
 import { DirectMessageDto } from './dto/direct-message.dto';
+import { UpdateChannelDto } from './dto/update-channel.dto';
+import { InviteUserDto } from './dto/invite-user.dto';
+import { UserChannelDto } from './dto/user-channel.dto';
 
 @UsePipes(WSPipe)
 @WebSocketGateway({ cors: { origin: '*' } })
@@ -53,10 +57,20 @@ export class ChannelGateway {
 				userId: user.id,
 				channelId: new_chan.id
 			}
-			this.userChannelService.create(userChannelData, UserChannelRole.owner);
+			await this.userChannelService.create(userChannelData, UserChannelRole.owner);
+
+			const sentPayload =
+			{
+				channelId: new_chan.id,
+				locked: false,
+				messages: [],
+			}
+
+			this.server.to(client.id).emit('currentChanToClient', {channel: new_chan});
+			this.server.to(client.id).emit('allChanMessagesToClient', sentPayload);
 
 			// if (new_chan.type != ChannelType.direct)
-			await this.sendAllChan(client)
+			this.sendAllChan(client)
 		} catch (error) {
 			this.server.to(client.id).emit('chatError', error.message);
 		}
@@ -131,7 +145,8 @@ export class ChannelGateway {
 	}
 
 	@SubscribeMessage('getChannelUsers')
-	async sendChannelUsers(client: Socket, payload: JoinChannelDto) {
+	// async sendChannelUsers(client: Socket, payload: JoinChannelDto)
+	async sendChannelUsers(client: Socket, payload: UserChannelDto) {
 		try {
 			const token = client.handshake.auth.token;
 			this.userService.checkToken(token);
@@ -237,7 +252,7 @@ export class ChannelGateway {
 			this.bannedChanService.create(kickedUser.id, channel.id);
 		
 			// SEND USER CHANNEL
-			await this.sendChannelUsers(client, { id: payload.channelId, password: null });
+			await this.sendChannelUsers(client, { id: payload.channelId });
 			await this.sendAllChan(client);
 		}
 		catch (error) {
@@ -281,7 +296,7 @@ export class ChannelGateway {
 			}
 
 			// update user status in front
-			this.sendChannelUsers(client, { id: payload.channelId, password: null });
+			this.sendChannelUsers(client, { id: payload.channelId });
 		}
 		catch (error) {
 			this.server.to(client.id).emit('chatError', error.message);
@@ -333,6 +348,56 @@ export class ChannelGateway {
 		}
 		catch (error) {
 
+		}
+
+	}
+
+	@SubscribeMessage('inviteUser')
+	async inviteUser(client: Socket, payload: InviteUserDto) {
+		try {
+			const token = client.handshake.auth.token;
+			this.userService.checkToken(token);
+			const user = await this.userService.getUserByToken(token);
+
+			const invited = await this.userService.getUserByLogin(payload.userLogin);
+			const chan = await this.channelService.findOne(payload.channelId)
+			const userChannels = await this.userChannelService.findByUserAndChan(invited.id, chan.id);
+			if (userChannels.length)
+				throw new HttpException(`${invited.login} is already in private channel #${chan.name}`, HttpStatus.FORBIDDEN);
+
+			const userchannel = await this.userChannelService.create({userId: invited.id, channelId: chan.id});
+
+			this.sendChannelUsers(client, { id: chan.id })
+			this.sendAllChan(client)
+			this.server.to(client.id).emit('chatMsg', `Invitation in channel #${chan.name} sent to ${invited.login} `);
+			this.server.to(invited.chatSocketId).emit('chatMsg', `You have been invited by ${user.login} in channel #${chan.name}`);
+
+			
+		}
+		catch (error) {
+			this.server.to(client.id).emit('chatError', error.message);
+		}
+	}
+
+
+	@SubscribeMessage('updateChannel')
+	async updateChannel(client: Socket, payload: UpdateChannelDto) {
+		try {
+			const token = client.handshake.auth.token;
+			this.userService.checkToken(token);
+
+			const user = await this.userService.getUserByToken(token);
+			this.channelService.update(payload);
+			const channel = await this.channelService.findOne(payload.id);
+
+			const userChannels = await this.userChannelService.findByUserAndChan(user.id, payload.id);
+			if (userChannels[0].role == UserChannelRole.member)
+				throw new HttpException(`You have not enougth privileges in channel #${channel.name} to update settings. Only owner and admin are authorized`, HttpStatus.FORBIDDEN);
+
+			this.server.to(client.id).emit('chatMsg', `channel ${channel.name} updated !`);
+		}
+		catch (error) {
+			this.server.to(client.id).emit('chatError', error.message);
 		}
 
 	}

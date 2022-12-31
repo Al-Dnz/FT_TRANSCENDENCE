@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!creatingChan && !creatingDM" class="h-full w-full pl-2 pr-2 divide-y-2">
+  <div v-if="!creatingChan && !creatingDM" class="h-full w-full pl-2 pr-2 divide-y-2 overflow-auto">
     <div>
       <h1 class="mt-3 font-semibold">DIRECT MESSAGES</h1>
       <div class="h-12 w-full mt-3">
@@ -34,11 +34,31 @@
           <PlusIcon @click="showChanForm()" />
         </div>
       </div>
+      <h1 class="mt-3 font-semibold">MY CHANNELS</h1>
       <div class="mt-1">
         <ul class="list-none">
-          <li v-for="channel in regularChannels" :key="channel.id">
+          <li v-for="channel in getMyChannels()" :key="channel.id">
             <div class="pb-2 font-semibold hover:text-black">
-              <button @click="changeChannel(channel)"># {{ channel.name }} => {{ channel.participation }} </button>
+              <button @click="changeChannel(channel)"># {{ channel.name }}</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <h1 class="mt-3 font-semibold">OTHER CHANNELS</h1>
+      <div class="mt-1">
+        <ul class="list-none">
+          <li v-for="channel in getPublic()" :key="channel.id">
+            <div class="pb-2 font-semibold hover:text-black">
+              <button @click="changeChannel(channel)">🔓 {{ channel.name }}</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="mt-1">
+        <ul class="list-none">
+          <li v-for="channel in getProtected()" :key="channel.id">
+            <div class="pb-2 font-semibold hover:text-black">
+              <button @click="changeChannel(channel)">🔒 {{ channel.name }} </button>
             </div>
           </li>
         </ul>
@@ -63,6 +83,9 @@ export default defineComponent({
     currentChan: Object,
     creatingChan: Boolean,
     creatingDM: Boolean,
+    currentUser: { 
+      type: Object,
+      required: true}
   },
   data(): DataI {
     return {
@@ -82,12 +105,19 @@ export default defineComponent({
     showChanForm() {
       this.$emit('showChanForm');
     },
-    getRole(name: string, chan: any): string {
+    getRole(login: string, chan: any): string {
       for (let j = 0; j < chan["userChannels"].length; j++) {
-        if (chan["userChannels"][j].user.login == name)
+        if (chan["userChannels"][j].user.login == login)
           return chan["userChannels"][j].role;
       }
       return "undefined";
+    },
+    isInChan(login: string, chan: any): boolean {
+      for (let j = 0; j < chan["userChannels"].length; j++) {
+        if (chan["userChannels"][j].user.login == login)
+          return true
+      }
+      return false;
     },
     getAllChannels(channels: any) {
       this.allChannels = channels;
@@ -95,13 +125,10 @@ export default defineComponent({
       this.regularChannels = [];
 
       let arr = channels;
-      for (let i = 0; i < arr.length; i++) 
-      {
+      for (let i = 0; i < arr.length; i++) {
         arr[i].participation = false;
-        for (let j = 0; j < arr[i]["userChannels"].length; j++) 
-        {
-          if (arr[i]["userChannels"][j].user.login == 'nschmitt') 
-          {
+        for (let j = 0; j < arr[i]["userChannels"].length; j++) {
+          if (arr[i]["userChannels"][j].user.login == this.currentUser?.login) {
             arr[i].participation = true;
             break;
           }
@@ -111,12 +138,38 @@ export default defineComponent({
         return a.id - b.id;
       });
       console.log(arr);
-      
+
       arr.forEach((chan: any) => (chan.type == 'direct' ? this.dmChannels : this.regularChannels).push(chan));
-    
+
     },
+    getMyChannels() : Array<any> {
+      let channel = [];
+      for (let i = 0; i < this.regularChannels.length; i++)
+      {
+        if (this.isInChan(this.currentUser.login, this.regularChannels[i]))
+          channel.push(this.regularChannels[i]);
+      }
+      return (channel);
+    },
+    getPublic() : Array<any> {
+      let channel = [];
+      for (let i = 0; i < this.regularChannels.length; i++)
+      {
+        if (!this.isInChan(this.currentUser.login, this.regularChannels[i]) && this.regularChannels[i].type === 'public')
+          channel.push(this.regularChannels[i]);
+      }
+      return (channel);
+    },
+    getProtected() : Array<any> {
+      let channel = [];
+      for (let i = 0; i < this.regularChannels.length; i++)
+      {
+        if (!this.isInChan(this.currentUser.login, this.regularChannels[i]) && this.regularChannels[i].type === 'protected')
+          channel.push(this.regularChannels[i]);
+      }
+      return (channel);
+    }
   },
-  
   created() {
     this.socket?.on('allChansToClient', (channels: any) => {
       this.getAllChannels(channels)
@@ -125,21 +178,5 @@ export default defineComponent({
   },
 });
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 <style src="../../assets/tailwind.css" />

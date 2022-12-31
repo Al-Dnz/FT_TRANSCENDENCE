@@ -28,7 +28,7 @@ export default defineComponent({
 			getCredentials().then((accessToken: string) => {
 				const Fapi = new BlockedsApi(new Configuration({accessToken: accessToken}))
 				Fapi.deleteBlockedship({login:this.obj!.login})
-					.then(() => {this.obj!.login = ''; this.refresh!()})
+					.then(() => {this.obj!.login = ''; window.location.reload()})
 					.catch((msg:ResponseError) => { msg.response.json().then((str: ErrorOutput) =>
 						this.$toast(str.message, {
               			styles: { backgroundColor: "#FF0000", color: "#FFFFFF" },

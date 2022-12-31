@@ -1,13 +1,13 @@
 <template>
   <div @mouseover="showOptMenuButton" @mouseleave="hideOptMenuButton"
   class="flex flex-row w-full mt-2 pt-2 pb-2 pl-4 pr-4 bg-gray-50 hover:bg-gray-200">
-    <img :src="getImgUrl(message?.author.pic)" @click="goProfile"
+    <img :src="message?.sender.avatar.path" @click="goProfile"
     class="w-12 h-12 rounded-full cursor-pointer" />
     <div class="flex flex-col w-fit ml-2">
       <div class="flex flex-row w-full">
-        <h1 @click="goProfile" class="max-w-[95%] font-semibold cursor-pointer break-all">
-        {{ message?.author.name }}</h1>
-        <div v-if="!isCurrentUser(message?.author)" v-show="isOptMenuButtonVisible"
+        <h1 @click="goProfile" class="max-w-[95%] mr-1 font-semibold cursor-pointer break-all">
+        {{ message?.sender?.userName }}</h1>
+        <div v-if="message?.sender.login !== currentUser?.login" v-show="isOptMenuButtonVisible"
         class="ml-1">
           <UserOptionsMenu :socket="socket" :currentChan="getCurrentChan" :currentUser="getCurrentUser"
           :targetUser="getMessageAuthor" @toggle-opt-menu="switchOptMenuState" @hideMenu="hideMenu"
@@ -23,7 +23,7 @@
 import { defineComponent } from "vue";
 import UserOptionsMenu from "../UserOptionsMenu.vue";
 
-interface DataTmpI {
+interface DataI {
   isOptMenuButtonVisible: boolean,
   isOptMenuVisible: boolean,
 }
@@ -32,14 +32,14 @@ export default defineComponent({
   name: "ChatMessagesList",
   props: {
     socket: Object,
-    currentChan: Object,
     currentUser: Object,
+    currentChan: Object,
     message: Object,
   },
   components: {
     UserOptionsMenu,
   },
-  data(): DataTmpI {
+  data(): DataI {
     return {
       isOptMenuButtonVisible: false,
       isOptMenuVisible: false,
@@ -59,13 +59,9 @@ export default defineComponent({
     },
     compareUsers(user1: any, user2: any): boolean {
       if (user1?.length !== user2?.length || user1?.id !== user2?.id
-          || user1?.name !== user2?.name || user1?.pic !== user2?.pic
-          || !this.compareArrays(user1?.blockList, user2?.blockList))
+          || user1?.login !== user2?.login)
         return (false);
       return (true);
-    },
-    getImgUrl(img: string) {
-      return require('@/assets/' + img);
     },
     showOptMenuButton() {
       this.isOptMenuButtonVisible = true;
@@ -82,7 +78,7 @@ export default defineComponent({
       this.isOptMenuVisible = false;
     },
     goProfile() {
-        alert("going to " + this.message?.author.name + "'s profile"); // placeholder
+        alert("going to " + this.message?.sender?.userName + "'s profile"); // placeholder
     },
     isCurrentUser(user: any) {
       return(this.compareUsers(this.currentUser, user));
@@ -93,7 +89,7 @@ export default defineComponent({
       return (this.currentUser);
     },
     getMessageAuthor() {
-      return (this.message?.author);
+      return (this.message?.sender);
     },
     getCurrentChan() {
       return (this.currentChan);
