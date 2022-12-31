@@ -54,9 +54,6 @@ export default defineComponent({
         return (false);
       return (true);
     },
-    // getImgUrl(img: string) {
-    //   return require('@/assets/' + img);
-    // },
     showOptMenuButton() {
       this.isOptMenuButtonVisible = true;
     },

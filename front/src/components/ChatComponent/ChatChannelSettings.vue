@@ -4,7 +4,8 @@
       <XCircleIcon @click="cancelSettings()"/>
     </div>
     <h1 class="mt-4 text-3xl font-semibold">Channel Settings</h1>
-    <div v-if="currentChan?.type === 'protected'" class="w-full mt-4 mb-8">
+    <h1 class="mt-4 text-3xl font-semibold">#{{ currentChan?.name }}</h1>
+    <!-- <div v-if="currentChan?.type === 'protected'" class="w-full mt-4 mb-8">
       <h2>Change password:</h2>
       <div class="w-full flex flex-row">
         <div class="w-fit mt-4">
@@ -17,19 +18,15 @@
           <ArrowRightCircleIcon class="h-10 w-10" @click.prevent="changePassword()" />
         </div>
       </div>
-      <div class="h-4 mt-2 text-green-500">
-        <p v-show="passwordSuccess">A new password has been set</p>
-      </div>
-    </div>
+    </div> -->
     <div class="mt-4">
-      <h2>Change channel type:</h2>
-      <p>(current type: {{ currentChan?.type }})</p>
+      <h2>Channel settings:</h2>
       <div class="w-fit mt-4">
         <select v-model="newType">
           <option disabled value="">Select type</option>
-          <option v-if="currentChan?.type !== 'public'">public</option>
-          <option v-if="currentChan?.type !== 'private'">private</option>
-          <option v-if="currentChan?.type !== 'protected'">protected</option>
+          <option>public</option>
+          <option>private</option>
+          <option>protected</option>
         </select>
       </div>
     </div>
@@ -40,12 +37,9 @@
       focus-within:border-green-500 focus-within:outline-0 border-2 border-slate-500" />
     </div>
     <div class="mt-4">
-      <button @click="changeType()"
+      <button @click="updateChan()"
       class="pl-1 pr-1 rounded-lg border-2 border-slate-600 hover:text-green-500
-      hover:border-green-500">Change type</button>
-    </div>
-    <div class="h-4 mt-2 text-green-500">
-      <p v-show="typeSuccess">Channel's type has been changed</p>
+      hover:border-green-500">Update Settings</button>
     </div>
   </div>
 </template>
@@ -63,9 +57,7 @@ export default defineComponent({
   data() {
     return {
       newPassword: '',
-      newType: '',
-      passwordSuccess: false,
-      typeSuccess: false,
+      newType: this.currentChan?.type,
     };
   },
   methods: {
@@ -81,12 +73,9 @@ export default defineComponent({
 
         console.log('password changed'); //here we change the password
         this.newPassword = '';
-        this.passwordSuccess = true;
       }
-      else
-        this.passwordSuccess = false;
     },
-    changeType() {
+    updateChan() {
 
       if (this.newType.length > 0 && !(this.newType === 'protected' && (this.newPassword.length == 0))) {
 
@@ -100,19 +89,10 @@ export default defineComponent({
           id: this.currentChan?.id,
           type: this.newType,
         }
-
-        console.log("type payload");
-        console.log(payload);
-
         this.socket?.emit('updateChannel', payload);
-
-        console.log('type changed'); //here we change the type of the channel
-        this.newType = '';
+        // this.newType = '';
         this.newPassword = '';
-        this.typeSuccess = true;
       }
-      else
-        this.typeSuccess = false;
     },
     cancelSettings() {
       this.newPassword = '';

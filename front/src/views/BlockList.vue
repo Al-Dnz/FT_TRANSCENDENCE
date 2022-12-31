@@ -59,8 +59,9 @@ export default defineComponent({
 		  async add() {
 			  getCredentials().then((accessToken: string) => {
 				  const Fapi = new BlockedsApi(new Configuration({accessToken: accessToken}))
-				  Fapi.createBlockedship({login:this.newblock})
-					  .then(() => {this.newblock = ''; this.fetchData();})
+				  Fapi.createBlockedship({login: this.newblock})
+					  .then( () => { this.newblock = '' })
+					  .then (() => { window.location.reload() })
 					  .catch((msg:ResponseError) => { msg.response.json().then((str: ErrorOutput) =>
 						  this.$toast(str.message, {
 							styles: { backgroundColor: "#FF0000", color: "#FFFFFF" },

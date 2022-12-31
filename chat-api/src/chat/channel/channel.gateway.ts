@@ -23,6 +23,7 @@ import { GrantUserDto } from './dto/grant-user.dto';
 import { BannedChanService } from '../banned-chan/banned-chan.service';
 import { DirectMessageDto } from './dto/direct-message.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
+import { InviteUserDto } from './dto/invite-user.dto';
 
 @UsePipes(WSPipe)
 @WebSocketGateway({ cors: { origin: '*' } })
@@ -63,6 +64,8 @@ export class ChannelGateway {
 				locked: false,
 				messages: [],
 			}
+
+			this.server.to(client.id).emit('currentChanToClient', {channel: new_chan});
 			this.server.to(client.id).emit('allChanMessagesToClient', sentPayload);
 
 			// if (new_chan.type != ChannelType.direct)
@@ -335,8 +338,6 @@ export class ChannelGateway {
 		}
 	}
 
-
-
 	@SubscribeMessage('muteUser')
 	async muteUser(client: Socket, payload: GrantUserDto) {
 		try {
@@ -347,6 +348,30 @@ export class ChannelGateway {
 
 		}
 
+	}
+
+	@SubscribeMessage('inviteUser')
+	async inviteUser(client: Socket, payload: InviteUserDto) {
+		try {
+			const token = client.handshake.auth.token;
+			this.userService.checkToken(token);
+			const user = await this.userService.getUserByToken(token);
+
+			const invited = await this.userService.getUserByLogin(payload.userLogin);
+			const chan = await this.channelService.findOne(payload.channelId)
+			const userChannels = await this.userChannelService.findByUserAndChan(invited.id, chan.id);
+			if (userChannels.length)
+				throw new HttpException(`${invited.login} is already in private channel #${chan.name}`, HttpStatus.FORBIDDEN);
+
+			const userchannel = await this.userChannelService.create({userId: invited.id, channelId: chan.id});
+
+			this.sendAllChan(client)
+			this.server.to(client.id).emit('chatMsg', `Invitation in channel #${chan.name} sent to ${user.login} `);
+			this.server.to(invited.chatSocketId).emit('chatMsg', `You have been invited by ${user.login} in channel #${chan.name}`);
+		}
+		catch (error) {
+			this.server.to(client.id).emit('chatError', error.message);
+		}
 	}
 
 

@@ -58,6 +58,8 @@ export class UserChannelService {
 		userChannel.channel = channel;
 		if (role)
 			userChannel.role = role;
+		else
+			userChannel.role = UserChannelRole.member;
 		await this.userChannelsRepository.save(userChannel);
 	}
 
