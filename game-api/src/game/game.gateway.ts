@@ -283,7 +283,7 @@ export class GameGateway
 			const token = client.handshake.auth.token;
 			this.userService.checkToken(token);
 			const user = await this.userService.getUserByToken(token);
-			
+			this.state[gameCode].game_data.gameState = 'on';
 			const intervalID = setInterval(() => {
 				const winner = state.gameLoop(state);
 			if (!winner) {
@@ -291,19 +291,25 @@ export class GameGateway
 			}
 			else
 			{
+				console.log("1 ",this.clientRooms);
 				this.server.to(clientRooms[user.login]).emit('gameOver');
 
-				if (this.clientRooms[this.state[gameCode]]) {
-					this.clientRooms[this.state[gameCode].idPlayers.player1] = null;
-					this.clientRooms[this.state[gameCode].idPlayers.player2] = null;
+				if (this.clientRooms[this.state[gameCode].game_data.idPlayers.player1] || this.clientRooms[this.state[gameCode].game_data.idPlayers.player2]) {
+					this.clientRooms[this.state[gameCode].game_data.idPlayers.player1] = null;
+					this.clientRooms[this.state[gameCode].game_data.idPlayers.player2] = null;
 				}
 				
-				this.state[gameCode] = null;
-				delete this.state[gameCode];
 				this.matchService.updateScoreByGameCode(gameCode, state.game_data.score.player1, state.game_data.score.player2);
 
+				this.state[gameCode] = null;
+				delete this.state[gameCode].game_data.ball;
+				delete this.state[gameCode].game_data.paddle1;
+				delete this.state[gameCode].game_data.paddle2;
+				delete this.state[gameCode];
+				console.log("2 ",this.clientRooms);
+
 				clearInterval(intervalID);
-				return;
+				// return; 
 			}
 		}, 1000 / 60);
 			// const match = await this.matchService.findByGameCode(gameCode);
@@ -402,8 +408,38 @@ export class GameGateway
 		this.server.emit(`positionToClient`, this.gameService.game_data);
 	}
 
-	handleDisconnect(client: Socket, ...args: any[])
+	async handleDisconnect(client: Socket, ...args: any[])
 	{
+		try
+		{
+			console.log("handleDisconnect", this.clientRooms);
+			const token = client.handshake.auth.token;
+			this.userService.checkToken(token);
+			const user = await this.userService.getUserByToken(token);
+			console.log("HYHYH", this.state);
+			console.log("nooo", this.clientRooms);
+			// console.log("1 ->", this.state[this.clientRooms[user.login]]);
+			// console.log("2 ->", this.state[this.clientRooms[user.login]].game_data.gameState);
+			if (this.state[this.clientRooms[user.login]] && this.state[this.clientRooms[user.login]].game_data.gameState === 'off') {
+				console.log("ok");
+				// console.log("yep console log", this.clientRooms);
+				// this.clientRooms[this.state[this.clientRooms[client.id]].game_data.idPlayers.player1] = null;
+				// this.clientRooms[this.state[this.clientRooms[client.id]].game_data.idPlayers.player2] = null;
+				let tmp = this.clientRooms[user.login];
+				this.clientRooms[this.state[tmp].game_data.idPlayers.player1] = null;
+				this.clientRooms[this.state[tmp].game_data.idPlayers.player2] = null;
+				this.state[tmp] = null;
+				delete this.state[tmp];
+				console.log("azeazeazeaze", this.state);
+				console.log("YESSSS", this.clientRooms);
+			}
+			
+		} 
+		catch (error)
+		{
+			this.server.to(client.id).emit('gameError', error.message);
+			client.disconnect();
+		}
 		this.server.to(this.clientRooms[client.id]).emit('test');
 	}
 
