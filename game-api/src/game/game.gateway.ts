@@ -195,9 +195,11 @@ export class GameGateway
 			client.emit('gameCode', gameCode);
 			client.emit('init', 1);
 			// client.emit('startGame');
-			setTimeout(() => {
-				this.startGameInterval(client, this.state[gameCode], gameCode, this.clientRooms);
-			}, 500);
+			if (this.state[gameCode].game_data.idPlayers.player1 && this.state[gameCode].game_data.idPlayers.player2) {
+				setTimeout(() => {
+					this.startGameInterval(client, this.state[gameCode], gameCode, this.clientRooms);
+				}, 500);
+			}
 		} 
 		catch (error)
 		{
@@ -230,7 +232,7 @@ export class GameGateway
 			const user = await this.userService.getUserByToken(token);
 
 			let gameCode = "";
-			if (!this.clientRooms[user.login]) {
+			if (!this.clientRooms[user.login] != null) {
 				console.log(this.openRooms);
 				if (!this.openRooms.length) {
 					console.log("void", this.openRooms.length);
@@ -392,11 +394,14 @@ export class GameGateway
 	{
 		try
 		{
+			console.log("handleConnection");
 			const token = client.handshake.auth.token;
 			this.userService.checkToken(token);
 			const user = await this.userService.getUserByToken(token);
 			this.userService.updateUserSocket(user, client.id);
 			this.logger.log(`User: ${user.login} is connected to game with socket ${client.id}`);
+			console.log("this.state", this.state);
+			console.log("this.clientRooms", this.clientRooms);
 		} 
 		catch (error)
 		{
@@ -433,6 +438,7 @@ export class GameGateway
 				console.log("azeazeazeaze", this.state);
 				console.log("YESSSS", this.clientRooms);
 			}
+			this.clientRooms[user.login] = null;
 			
 		} 
 		catch (error)
