@@ -5,10 +5,11 @@ import { MatchService } from './match.service';
 import { MatchController } from './match.controller';
 
 import {Match, UserMatch, User, UserStats } from 'db-interface/Core';
+import { UserModule } from 'src/user/user.module';
 
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Match, UserMatch, User, UserStats])], 
+  imports: [UserModule, TypeOrmModule.forFeature([Match, UserMatch, User, UserStats])], 
   providers: [MatchService],
   controllers: [MatchController],
   exports: [MatchService],
