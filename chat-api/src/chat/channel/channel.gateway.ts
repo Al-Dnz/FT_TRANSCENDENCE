@@ -24,6 +24,7 @@ import { BannedChanService } from '../banned-chan/banned-chan.service';
 import { DirectMessageDto } from './dto/direct-message.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
 import { InviteUserDto } from './dto/invite-user.dto';
+import { UserChannelDto } from './dto/user-channel.dto';
 
 @UsePipes(WSPipe)
 @WebSocketGateway({ cors: { origin: '*' } })
@@ -144,7 +145,8 @@ export class ChannelGateway {
 	}
 
 	@SubscribeMessage('getChannelUsers')
-	async sendChannelUsers(client: Socket, payload: JoinChannelDto) {
+	// async sendChannelUsers(client: Socket, payload: JoinChannelDto)
+	async sendChannelUsers(client: Socket, payload: UserChannelDto) {
 		try {
 			const token = client.handshake.auth.token;
 			this.userService.checkToken(token);
@@ -250,7 +252,7 @@ export class ChannelGateway {
 			this.bannedChanService.create(kickedUser.id, channel.id);
 		
 			// SEND USER CHANNEL
-			await this.sendChannelUsers(client, { id: payload.channelId, password: null });
+			await this.sendChannelUsers(client, { id: payload.channelId });
 			await this.sendAllChan(client);
 		}
 		catch (error) {
@@ -294,7 +296,7 @@ export class ChannelGateway {
 			}
 
 			// update user status in front
-			this.sendChannelUsers(client, { id: payload.channelId, password: null });
+			this.sendChannelUsers(client, { id: payload.channelId });
 		}
 		catch (error) {
 			this.server.to(client.id).emit('chatError', error.message);
@@ -365,9 +367,12 @@ export class ChannelGateway {
 
 			const userchannel = await this.userChannelService.create({userId: invited.id, channelId: chan.id});
 
+			this.sendChannelUsers(client, { id: chan.id })
 			this.sendAllChan(client)
-			this.server.to(client.id).emit('chatMsg', `Invitation in channel #${chan.name} sent to ${user.login} `);
+			this.server.to(client.id).emit('chatMsg', `Invitation in channel #${chan.name} sent to ${invited.login} `);
 			this.server.to(invited.chatSocketId).emit('chatMsg', `You have been invited by ${user.login} in channel #${chan.name}`);
+
+			
 		}
 		catch (error) {
 			this.server.to(client.id).emit('chatError', error.message);
