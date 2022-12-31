@@ -16,7 +16,10 @@
         <ul class="list-none">
           <li v-for="dm in dmChannels" :key="dm.id">
             <div class="pb-2 font-semibold hover:text-black">
-              <button @click="changeChannel(dm)">{{ dm.name }} </button>
+              <button @click="changeChannel(dm)">
+                <span v-if="this.currentUser?.login === dm.userOne.login">📞 {{ dm.userTwo.login }}</span>
+                <span v-else>📞 {{ dm.userOne.login }}</span>
+              </button>
             </div>
           </li>
         </ul>
