@@ -3,7 +3,7 @@ import { Post, Get, Body, Param, ValidationPipe } from '@nestjs/common';
 import { HttpException } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common';
 import { Logger } from '@nestjs/common';
-import { MatchStatus } from 'db-interface/Core';
+import { MatchStatus, UserStatus } from 'db-interface/Core';
 
 import { UserService } from 'src/user/user.service';
 import { CreateMatchDto } from './dto/create-match.dto';
@@ -64,6 +64,8 @@ export class MatchController {
 			throw new HttpException(error.message, HttpStatus.FORBIDDEN);
 		}
 		const userTwo = await this.userService.getUserByLogin(body.login);
+		if (userTwo.status == UserStatus.offline)
+			throw new HttpException(`${userTwo.login} is offline`, HttpStatus.FORBIDDEN);
 
 		const currentMatches = await this.macthService.findCurrentMatches(userOne, userTwo);
 		if (currentMatches.length != 0)
@@ -90,8 +92,23 @@ export class MatchController {
 			throw new HttpException(error.message, HttpStatus.FORBIDDEN);
 		}
 		let match = await this.macthService.findByGameCode(body.gameCode);
+
 		if (match.playerTwo != userTwo)
+		{
+			await this.macthService.removeByGameCode(body.gameCode)
 			throw new HttpException(`${userTwo.login} is not invited at this match`, HttpStatus.FORBIDDEN);
+		}
+
+		if (userTwo.status == UserStatus.offline)
+		{
+			await this.macthService.removeByGameCode(body.gameCode)
+			throw new HttpException(`${userTwo.login} is offline`, HttpStatus.FORBIDDEN);
+		}
+		if (match.playerOne.status == UserStatus.offline)
+		{
+			await this.macthService.removeByGameCode(body.gameCode)
+			throw new HttpException(`${match.playerOne.login} is offline`, HttpStatus.FORBIDDEN);
+		}
 
 		if (body.accepted == true) {
 			await this.macthService.updateMatchStatus(match, MatchStatus.live)
@@ -99,7 +116,7 @@ export class MatchController {
 		}
 		else {
 			await this.macthService.removeByGameCode(body.gameCode)
-			throw new HttpException('Request Refused', HttpStatus.NOT_ACCEPTABLE);
+			throw new HttpException(`${userTwo.login} has refused the invitation`, HttpStatus.NOT_ACCEPTABLE);
 		}
 	}
 
