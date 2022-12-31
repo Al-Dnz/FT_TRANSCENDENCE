@@ -225,6 +225,8 @@ export class GameGateway
 	@SubscribeMessage('findGame')
 	async handleFindGame(client: Socket): Promise<void>
 	{
+		console.log("handleFindGame 1 :", this.state);
+		console.log("handleFindGame 2 :", this.clientRooms);
 		try
 		{
 			const token = client.handshake.auth.token;
@@ -232,7 +234,7 @@ export class GameGateway
 			const user = await this.userService.getUserByToken(token);
 
 			let gameCode = "";
-			if (!this.clientRooms[user.login] != null) {
+			if (!this.clientRooms[user.login]) {
 				console.log(this.openRooms);
 				if (!this.openRooms.length) {
 					console.log("void", this.openRooms.length);
@@ -260,6 +262,7 @@ export class GameGateway
 				client.emit('test');
 				client.join(gameCode);
 				client.emit('gameCode', gameCode);
+				if (this.state[this.clientRooms[user.login]].game_data.gameState === 'on')
 				this.server.to(this.clientRooms[user.login]).emit(`startGame`);
 			}
 		} 
@@ -302,13 +305,12 @@ export class GameGateway
 				}
 				
 				this.matchService.updateScoreByGameCode(gameCode, state.game_data.score.player1, state.game_data.score.player2);
-
-				this.state[gameCode] = null;
+				if (this.state[gameCode]) {
 				delete this.state[gameCode].game_data.ball;
 				delete this.state[gameCode].game_data.paddle1;
 				delete this.state[gameCode].game_data.paddle2;
 				delete this.state[gameCode];
-				console.log("2 ",this.clientRooms);
+				}
 
 				clearInterval(intervalID);
 				// return; 
@@ -421,24 +423,18 @@ export class GameGateway
 			const token = client.handshake.auth.token;
 			this.userService.checkToken(token);
 			const user = await this.userService.getUserByToken(token);
-			console.log("HYHYH", this.state);
-			console.log("nooo", this.clientRooms);
-			// console.log("1 ->", this.state[this.clientRooms[user.login]]);
-			// console.log("2 ->", this.state[this.clientRooms[user.login]].game_data.gameState);
 			if (this.state[this.clientRooms[user.login]] && this.state[this.clientRooms[user.login]].game_data.gameState === 'off') {
-				console.log("ok");
-				// console.log("yep console log", this.clientRooms);
-				// this.clientRooms[this.state[this.clientRooms[client.id]].game_data.idPlayers.player1] = null;
-				// this.clientRooms[this.state[this.clientRooms[client.id]].game_data.idPlayers.player2] = null;
-				let tmp = this.clientRooms[user.login];
+				let tmp = this.clientRooms[user.login]; // tmp = gamecode;
 				this.clientRooms[this.state[tmp].game_data.idPlayers.player1] = null;
-				this.clientRooms[this.state[tmp].game_data.idPlayers.player2] = null;
+				delete this.clientRooms[this.state[tmp].game_data.idPlayers.player1];
 				this.state[tmp] = null;
 				delete this.state[tmp];
-				console.log("azeazeazeaze", this.state);
-				console.log("YESSSS", this.clientRooms);
+				const index = this.openRooms.indexOf(tmp);
+				if (index > -1) { // only splice array when item is found
+					this.openRooms.splice(index, 1); // 2nd parameter means remove one item only
+				}
+				// remove empty deleted match
 			}
-			this.clientRooms[user.login] = null;
 			
 		} 
 		catch (error)
