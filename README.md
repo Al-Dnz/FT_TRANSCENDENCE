@@ -7,7 +7,7 @@
 ```
 
 ```
-http://localhost:3000
+http://localhost:8000
 ```
 
 After use don't forget to
@@ -49,8 +49,6 @@ make db
 ```
 
 ## TO DO
-
-[ ] remove adenhez user seed
 
 [ ] check if mailing is connected
 
