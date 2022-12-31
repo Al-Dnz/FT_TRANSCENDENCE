@@ -115,7 +115,7 @@ export class ChannelGateway {
 				this.server.to(userOne.chatSocketId).emit('channelUsersToClient', userchandatas);
 				this.server.to(userTwo.chatSocketId).emit('channelUsersToClient', userchandatas);
 
-				await this.channelService.remove(channel.id);
+				await this.channelService.remove(payload.id);
 				await this.sendAllChan(client);
 				return;
 			}
