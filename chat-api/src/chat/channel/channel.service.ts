@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, getRepository } from 'typeorm';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { JoinChannelDto } from './dto/join-channel.dto';
+import { UpdateChannelDto } from './dto/update-channel.dto';
 
 import { Body } from '@nestjs/common';
 
@@ -141,9 +142,33 @@ export class ChannelService {
     })
   }
 
-  // update(id: number, updateChannelDto: UpdateChannelDto) {
-  //   return `This action updates a #${id} channel`;
-  // }
+  async update(updateChannelDto: UpdateChannelDto) {
+    const channel = await this.channelsRepository
+    .createQueryBuilder("channel")
+    .where("channel.id = :id", { id: updateChannelDto.id })
+    .addSelect("channel.password")
+    .getOne();
+    if (!channel)
+      throw new HttpException('Channel not found', HttpStatus.NOT_FOUND);
+    if (updateChannelDto.type)
+    {
+      if (!updateChannelDto.password && updateChannelDto.type == ChannelType.protected)
+      {
+        throw new HttpException('A password is needed to set protected channels', HttpStatus.FORBIDDEN);
+        return;
+      }
+      channel.type = updateChannelDto.type;
+    }
+    if (updateChannelDto.password)
+    {
+      channel.type = ChannelType.protected;
+      channel.password = await bcrypt.hash(updateChannelDto.password, this.saltOrRounds);
+    }
+    if (channel.type != ChannelType.protected)
+      channel.password = null;
+    await this.channelsRepository.save(channel);
+
+  }
 
   chanAllowedUsers(channel: Channel, sender?: User): User[] {
     let arr: User[];

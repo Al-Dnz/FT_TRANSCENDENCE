@@ -16,7 +16,7 @@
     <GoToWatch />
   </div>
   <div className="icon w-1/2 mt-2 mb-2 mx-auto "> 
-    <EyeSlashIcon @click="goBlock()"/>
+    <NoSymbolIcon @click="goBlock()"/>
   </div>
   <div className="icon w-1/2 mt-2 mb-2 mx-auto "> 
     <Cog8ToothIcon @click="goParam()" />
