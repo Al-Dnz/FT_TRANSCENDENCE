@@ -8,7 +8,7 @@
       <h2>Login:</h2>
       <div class="w-full flex flex-row">
         <div class="w-fit mt-4">
-          <input type="text" v-model="newUser" name="Name" @keyup.enter="changePassword"
+          <input type="text" v-model="newUser" name="Name" @keyup.enter="addUser()"
           placeholder="His 42 Login" autocomplete="off"
           class="w-full rounded-2xl px-3 placeholder-slate-500 text-slate-500
           focus-within:border-green-500 focus-within:outline-none border-2 border-slate-500" />
@@ -43,14 +43,13 @@ export default defineComponent({
 
         const payload = 
         {
-          id: this.currentChan?.id,
-          password: this.newUser,
+          userLogin: this.newUser,
+          channelId: this.currentChan?.id
         }
-        this.socket?.emit('updateChannel', payload);
-
-        console.log('password changed'); //here we change the password
+        this.socket?.emit('inviteUser', payload);
         this.newUser = '';
         this.addSuccess = true;
+        // this.cancelInvite();
       }
       else
         this.addSuccess = false;
