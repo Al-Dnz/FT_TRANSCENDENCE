@@ -1,5 +1,5 @@
 import { Controller } from '@nestjs/common';
-import { Post, Get, Body, Param, ValidationPipe } from '@nestjs/common';
+import { Post, Get, Body, Param, ValidationPipe, Headers } from '@nestjs/common';
 import { HttpException } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common';
 import { Logger } from '@nestjs/common';
@@ -21,15 +21,14 @@ export class MatchController {
 		private userService: UserService,
 	) { }
 
-	@Get(':gameCode')
+	@Get('/game/:gameCode')
 	async getOne(@Param('gameCode') gameCode: string)
 	{
 		return await this.macthService.findByGameCode(gameCode);
 	}
 
 	@Get('/history')
-	async getMatchHistory(@Body() body: GetMatchesDto) {
-		const token = body.token;
+	async getMatchHistory(@Headers('token') token: string) {
 		let user;
 		try {
 			this.userService.checkToken(token);
@@ -41,12 +40,9 @@ export class MatchController {
 	}
 
 	@Get('/live')
-	async getLiveMatches(@Body() body: GetMatchesDto) {
-		const token = body.token;
-		let user;
+	async getLiveMatches(@Headers('token') token: string) {
 		try {
 			this.userService.checkToken(token);
-			user = await this.userService.getUserByToken(token);
 		} catch (error) {
 			throw new HttpException(error.message, HttpStatus.FORBIDDEN);
 		}
