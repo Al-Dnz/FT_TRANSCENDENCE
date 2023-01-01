@@ -18,6 +18,7 @@ import { fips } from 'crypto';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { UserService } from 'src/user/user.service';
 import { MatchService } from 'src/match/match.service';
+import { MatchStatus } from 'db-interface/Core';
 
 @WebSocketGateway({
 	cors: {
@@ -114,12 +115,11 @@ export class GameGateway
 			const user = await this.userService.getUserByToken(token);
 
 			console.log('handleNewGame');
-			// let roomName = makeid(5);
-			let roomName = generateUUID();
-
 			if (this.clientRooms[user.login]) {
 				return;
 			}
+
+			let roomName = await this.matchService.generateGameCode();
 			this.clientRooms[user.login] = roomName;
 			client.emit('gameCode', roomName);
 
@@ -248,6 +248,7 @@ export class GameGateway
 				gameCode = this.openRooms[0];
 				const match = await this.matchService.findByGameCode(gameCode);
 				await this.matchService.updateMatchCreation(match, user);
+				await this.matchService.updateMatchStatus(match, MatchStatus.live)
 				this.clientRooms[user.login] = gameCode;
 				this.state[gameCode].game_data.idPlayers.player2 = user.login;
 				this.openRooms.shift();
@@ -304,7 +305,7 @@ export class GameGateway
 					this.clientRooms[this.state[gameCode].game_data.idPlayers.player2] = null;
 				}
 				
-				this.matchService.updateScoreByGameCode(gameCode, state.game_data.score.player1, state.game_data.score.player2);
+				this.matchService.updateFinishedGame(gameCode, state.game_data.score.player1, state.game_data.score.player2);
 				if (this.state[gameCode]) {
 				delete this.state[gameCode].game_data.ball;
 				delete this.state[gameCode].game_data.paddle1;
@@ -316,8 +317,6 @@ export class GameGateway
 				// return; 
 			}
 		}, 1000 / 60);
-			// const match = await this.matchService.findByGameCode(gameCode);
-			// await this.matchService.updateScore(match, state.game_data.score.player1, state.game_data.score.player2);
 		} 
 		catch (error)
 		{
@@ -342,7 +341,7 @@ export class GameGateway
 	{
 		console.log('handleNewGame');
 		// let roomName = makeid(5);
-		let roomName = generateUUID();
+		let roomName = await this.matchService.generateGameCode();
 		
 		this.clientRoomsCustom[client.id] = roomName;
 		client.emit('gameCode', roomName);
@@ -434,6 +433,7 @@ export class GameGateway
 					this.openRooms.splice(index, 1); // 2nd parameter means remove one item only
 				}
 				// remove empty deleted match
+				this.matchService.removeByGameCode(tmp);
 			}
 			
 		} 
