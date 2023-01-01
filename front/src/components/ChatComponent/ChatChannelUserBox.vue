@@ -1,7 +1,7 @@
 <template>
   <div @mouseover="showOptMenuButton" @mouseleave="hideOptMenuButton"
   class="flex flex-row w-full mt-2 pt-2 pb-2 bg-inherit hover:bg-gray-300">
-    <img :src="currentUser?.actualAvatar.path" @click="goProfile"
+    <img :src="userChannel?.user.avatar.path" @click="goProfile"
     class="w-12 h-12 rounded-full cursor-pointer" />
     <div class="flex flex-col ml-2">
       <h1 @click="goProfile" class="font-semibold cursor-pointer break-all">

@@ -7,10 +7,6 @@
             <ChatMessageBox :socket="socket" :currentChan="currentChan"
             :currentUser="currentUser" :message="message" />
           </li>
-
-          <!-- <li v-for="message in messages" :key="message.id">
-            {{message.sender.login}} : {{message.text}}
-          </li> -->
         </ul>
       </div>
     </div>
