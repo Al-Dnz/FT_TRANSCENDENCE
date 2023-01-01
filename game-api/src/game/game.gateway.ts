@@ -18,7 +18,7 @@ import { fips } from 'crypto';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { UserService } from 'src/user/user.service';
 import { MatchService } from 'src/match/match.service';
-import { MatchStatus } from 'db-interface/Core';
+import { MatchStatus, User, UserStatus } from 'db-interface/Core';
 
 @WebSocketGateway({
 	cors: {
@@ -47,6 +47,14 @@ export class GameGateway
 	
 	// io = require('socket.io')();
 	// -----------
+
+
+	async updateStatus(userLogin: string, status: UserStatus)
+	{
+		const user: User = await this.userService.getUserByLogin(userLogin); 
+		this.userService.updateUserStatus(user, status)
+		this.server.emit('userStatus', {login: user.login, status: user.status});
+	}
 
 	@SubscribeMessage('MovePaddleToServer')
 	async handlePaddle(client: Socket, instruction : string): Promise<void>
@@ -125,6 +133,7 @@ export class GameGateway
 
 			// create match in db
 			const match = await this.matchService.create(user, roomName, false);
+			this.updateStatus(user.login, UserStatus.in_game);
 
 			this.state[roomName] = new GameService(this.matchService);
 	
@@ -246,9 +255,12 @@ export class GameGateway
 					return;
 				}
 				gameCode = this.openRooms[0];
+
 				const match = await this.matchService.findByGameCode(gameCode);
 				await this.matchService.updateMatchCreation(match, user);
 				await this.matchService.updateMatchStatus(match, MatchStatus.live)
+				this.updateStatus(user.login, UserStatus.in_game);
+
 				this.clientRooms[user.login] = gameCode;
 				this.state[gameCode].game_data.idPlayers.player2 = user.login;
 				this.openRooms.shift();
@@ -306,6 +318,12 @@ export class GameGateway
 				}
 				
 				this.matchService.updateFinishedGame(gameCode, state.game_data.score.player1, state.game_data.score.player2);
+				const login1 = this.state[gameCode].game_data.idPlayers.player1;
+				const login2 = this.state[gameCode].game_data.idPlayers.player2;
+				this.updateStatus(login1, UserStatus.online);
+				this.updateStatus(login2, UserStatus.online);
+				
+
 				if (this.state[gameCode]) {
 				delete this.state[gameCode].game_data.ball;
 				delete this.state[gameCode].game_data.paddle1;
@@ -434,6 +452,7 @@ export class GameGateway
 				}
 				// remove empty deleted match
 				this.matchService.removeByGameCode(tmp);
+				this.updateStatus(user.login, UserStatus.online);
 			}
 			
 		} 
