@@ -131,7 +131,7 @@ export class GameGateway
 			this.state[roomName].game_data.idPlayers.player1 = user.login;
 			client.join(roomName);
 			console.log('client.rooms.size', client.rooms);
-			client.emit('init', 1);
+			client.emit('init', this.state[roomName]);
 			this.openRooms.push(roomName);
 		} 
 		catch (error)
@@ -193,7 +193,7 @@ export class GameGateway
 			this.state[gameCode].game_data.idPlayers.player2 = user.login;
 	
 			client.emit('gameCode', gameCode);
-			client.emit('init', 1);
+			client.emit('init', this.state[gameCode]);
 			// client.emit('startGame');
 			if (this.state[gameCode].game_data.idPlayers.player1 && this.state[gameCode].game_data.idPlayers.player2) {
 				setTimeout(() => {
@@ -219,7 +219,7 @@ export class GameGateway
 		this.clientRooms[client.id] = gameCode;
 		client.join(gameCode);
 		client.emit('gameCode', gameCode);
-		client.emit('init', 1);
+		client.emit('init', this.state[gameCode]);
 	}
 
 	@SubscribeMessage('findGame')
@@ -378,7 +378,7 @@ export class GameGateway
 		client.join(gameCode);
 		this.stateCustom[gameCode].game_data.idPlayers.player2 = client.id;
 		client.emit('gameCode', gameCode);
-		client.emit('init', 2);
+		client.emit('init', 1);
 		this.openRoomsCustom.shift();
 		this.server.to(this.clientRoomsCustom[client.id]).emit(`startGameCustom`);
 		setTimeout(() => {
