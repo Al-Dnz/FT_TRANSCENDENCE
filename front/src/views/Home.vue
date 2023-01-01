@@ -125,10 +125,10 @@ export default {
 
       this.getSizeToServe();
 
-      this.background.imageSrc = require('../assets/game/SpaceBackground.png');
-      this.background.update(this.context);
-      console.log('this.context', this.context);
-      console.log('this.background.imageSrc', this.background.imageSrc);
+      // this.background.imageSrc = require('../assets/game/SpaceBackground.png');
+      // this.background.update(this.context);
+      // console.log('this.context', this.context);
+      // console.log('this.background.imageSrc', this.background.imageSrc);
       this.game();
     },
     setScreen(State) {
