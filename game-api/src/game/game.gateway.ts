@@ -115,7 +115,7 @@ export class GameGateway
 
 			console.log('handleNewGame');
 			// let roomName = makeid(5);
-			let roomName = generateUUID();
+			let roomName = await this.matchService.generateGameCode();
 
 			if (this.clientRooms[user.login]) {
 				return;
@@ -342,7 +342,7 @@ export class GameGateway
 	{
 		console.log('handleNewGame');
 		// let roomName = makeid(5);
-		let roomName = generateUUID();
+		let roomName = await this.matchService.generateGameCode();
 		
 		this.clientRoomsCustom[client.id] = roomName;
 		client.emit('gameCode', roomName);
@@ -434,6 +434,7 @@ export class GameGateway
 					this.openRooms.splice(index, 1); // 2nd parameter means remove one item only
 				}
 				// remove empty deleted match
+				this.matchService.removeByGameCode(tmp);
 			}
 			
 		} 
