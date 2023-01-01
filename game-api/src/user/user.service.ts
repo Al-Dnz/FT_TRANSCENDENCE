@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, getRepository } from 'typeorm';
-import { User } from 'db-interface/Core';
+import { User, UserStatus } from 'db-interface/Core';
 import { JwtService } from '@nestjs/jwt';
 import { Logger } from '@nestjs/common';
 import { HttpException, HttpStatus } from '@nestjs/common';
@@ -54,6 +54,12 @@ export class UserService {
 	async updateUserSocket(user: User, socketId: string)
 	{
 		user.gameSocketId = socketId;
+		this.usersRepository.save(user);
+	}
+
+	async updateUserStatus(user: User, status: UserStatus)
+	{
+		user.status = status;
 		this.usersRepository.save(user);
 	}
 }
