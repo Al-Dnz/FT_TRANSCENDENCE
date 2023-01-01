@@ -7,13 +7,7 @@
 ```
 
 ```
-http://localhost:3000
-```
-
-After use don't forget to
-
-```
-make down
+http://localhost:8000
 ```
 
 ## CAREFFUL
@@ -49,8 +43,6 @@ make db
 ```
 
 ## TO DO
-
-[ ] remove adenhez user seed
 
 [ ] check if mailing is connected
 

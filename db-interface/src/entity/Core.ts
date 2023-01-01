@@ -67,21 +67,62 @@ export enum PaddleID {
     paddle4,
 }
 
+export enum MatchStatus {
+    pending = "pending",
+    requested = "requested",
+    live = "live",
+    finished = "finished",
+}
+
 /**********************************************************************************************
  *                                     Entities
  **********************************************************************************************/
 
 @Entity()
 export class Match extends Base {
-    @OneToOne(() => UserMatch, (userMatch: UserMatch) => userMatch.match)
-    userMatch: Relation<UserMatch>;
+    
 
-    @Column({ type: "date" })
+    @Column({ type: "date", nullable: true, default: null })
     finishedAt: Date;
+
+    @Column({ default: false })
+    custom: boolean;
+
+    @Column({ unique: true, nullable: true, default: null })
+    gameCode: string;
+
+    @Column({ default: false })
+    full: boolean;
+
+    @Column({ default: 0 })
+    score1: number;
+
+    @Column({ default: 0 })
+    score2: number;
+
+    @Column({ type: "enum", enum: MatchStatus, default: MatchStatus.pending })
+    status: MatchStatus;
 
     @OneToMany(() => UserMatch, (userMatch: UserMatch) => userMatch.match)
     @JoinTable()
     participants: Relation<UserMatch[]>;
+
+    @ManyToOne(() => User, (user: User) => user.matchesOne, {
+        onDelete: "CASCADE",
+        nullable: true,
+        eager: true,
+    })
+    playerOne: Relation<User>;
+
+    @ManyToOne(() => User, (user: User) => user.matchesTwo, {
+        onDelete: "CASCADE",
+        nullable: true,
+        eager: true,
+    })
+    playerTwo: Relation<User>;
+
+    @OneToOne(() => UserMatch, (userMatch: UserMatch) => userMatch.match)
+    userMatch: Relation<UserMatch>;
 }
 
 @Entity()
@@ -102,8 +143,12 @@ export class UserChannel extends Base {
     })
     user: Relation<User>;
 
-    // @OneToOne(() => UserChannel)
-    // mutedBy: UserChannel;
+    @Column({ default: false })
+    muted: boolean;
+
+    @Column({ nullable: true, default: null })
+    muteExpiration: string;
+    
 }
 
 @Entity()
@@ -127,7 +172,7 @@ export class BannedChan extends Base
 
 @Entity()
 export class Avatar extends Base {
-    @Column({ unique: true })
+    @Column()
     path: string;
 
     @OneToOne(() => User, { onDelete: "CASCADE" })
@@ -189,6 +234,9 @@ export class User extends Base {
 
     @Column({ nullable: true, default: null })
     chatSocketId: string;
+
+    @Column({ nullable: true, default: null })
+    gameSocketId: string;
 
 	@Column({ nullable: true, default: null })
     twoFaCode: string;
@@ -293,6 +341,17 @@ export class User extends Base {
     })
     DMchannelsTwo: Relation<Channel>[];
 
+
+    @OneToMany(() => Match, (match: Match) => match.playerOne, {
+        cascade: true,
+    })
+    matchesOne: Relation<Match>[];
+
+    @OneToMany(() => Match, (match: Match) => match.playerTwo, {
+        cascade: true,
+    })
+    matchesTwo: Relation<Match>[];
+
 }
 
 @Entity()
@@ -358,8 +417,7 @@ export class Message extends Base
 @Entity()
 export class Channel extends Base {
 
-    @Index("name-idx")
-	@Column({ unique: true })
+    @Column({ unique: true})
 	name: string;
 
 	@Column('boolean', {default: false})
@@ -408,49 +466,4 @@ export class Channel extends Base {
     userTwo: Relation<User>;
 
 }
-
-
-
-
-// @Entity()
-// export class Channel extends Base {
-//     @OneToMany(
-//         () => UserChannel,
-//         (userChannel: UserChannel) => userChannel.channel
-//     )
-//     members: UserChannel[];
-
-//     @OneToOne(() => UserChannel)
-//     createdBy: UserChannel;
-
-//     @OneToMany(() => Message, (message: Message) => message.channel, {
-//         cascade: true,
-//     })
-//     messages: Message[];
-
-//     @Column()
-//     type: ChannelType;
-
-//     @Column({ nullable: true })
-//     password: string;
-// }
-
-// @Entity()
-// export class Message extends Base {
-//     @UpdateDateColumn()
-//     updatedAt: Date;
-
-//     @Column()
-//     content: string;
-
-//     @OneToOne(() => UserChannel)
-//     sentBy: UserChannel;
-
-//     @ManyToOne(() => Channel, (channel: Channel) => channel.messages, {
-//         onDelete: "CASCADE",
-//     })
-//     channel: Channel;
-// }
-
-
 

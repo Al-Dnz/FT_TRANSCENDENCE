@@ -4,8 +4,7 @@
     <div class="overflow-auto">
       <ul>
         <li v-for="userChannel in currentChan?.userChannels" :key="userChannel.id">
-          <div v-if="userChannel?.user.login !== currentUser?.login"
-          class="hover:text-black">
+          <div class="hover:text-black">
             <ChatChannelUserBox :socket="socket" :currentUser="currentUser"
             :currentChan="currentChan" :userChannel="userChannel" />
           </div>

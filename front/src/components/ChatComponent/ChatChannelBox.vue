@@ -6,7 +6,7 @@
     <div class="h-full w-full flex flex-col divide-y-2">
       <div class="h-[22%]">
         <ChatChannelHeader :socket="socket" :currentUser="currentUser" :currentChan="currentChan"
-        @toggleSettings="toggleSettings" @quitChan="quitChan" />
+        @toggleSettings="toggleSettings" @toggleInvite="toggleInvite" @quitChan="quitChan" />
       </div>
       <div class="flex flex-col h-[78%] ml-2 mr-2">
         <div class="h-[90%]">
@@ -63,6 +63,10 @@ export default defineComponent({
     },
     toggleSettings() {
       this.$emit('toggleSettings');
+    },
+    toggleInvite()
+    {
+      this.$emit('toggleInvite');
     },
     quitChan() {
       this.$emit('quitChan');

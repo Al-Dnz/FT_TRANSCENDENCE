@@ -5,7 +5,10 @@
     class="w-12 h-12 rounded-full cursor-pointer" />
     <div class="flex flex-col ml-2">
       <h1 @click="goProfile" class="font-semibold cursor-pointer break-all">
-      {{ userChannel?.user.userName }}</h1>
+      {{ userChannel?.user.userName }}
+      <span v-if="userChannel?.role==='owner'">♛</span>
+      <span v-if="userChannel?.role==='admin'">☆</span>
+      </h1>
       <div v-if="userChannel?.user.login !== currentUser?.login" v-show="isOptMenuButtonVisible">
         <UserOptionsMenu :socket="socket" :currentChan="getCurrentChan" :currentUser="getCurrentUser"
         :targetUser="getUserChannel" @toggle-opt-menu="switchOptMenuState"
