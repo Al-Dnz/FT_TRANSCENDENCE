@@ -91,10 +91,31 @@
         returnGameBtn: {},
         loading: true,
         testo : true,
-        error : ""
+        error : "",
+        gameCode: "",
       };
     },
     methods: {
+      async fetchInGame()
+      {
+        const requestOptions =
+      {
+        method: "GET",
+        headers:
+        {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'token': this.$cookies.get("trans_access")
+        },
+      }
+      await fetch(`http://${process.env.VUE_APP_IP}:3005/match/isingame/${this.$route?.params.id}`, requestOptions)
+        .then(res => res.json())
+        .then(match => this.gameCode = match.gameCode)
+        .then(() => this.loading = false)
+        .catch(e => {
+          this.error = e
+        })
+      },
       newGame() {
         console.log('NIK');
         this.socket.emit('newGame');
@@ -209,7 +230,7 @@
     unmounted() {
       this.socket.disconnect();
     },
-    created() {
+    async created() {
       const authPayload = { auth: { token: this.$cookies.get("trans_access") } };
       this.socket = io("http://" + process.env.VUE_APP_IP + ":3005", authPayload);
       this.loading = false;
@@ -226,6 +247,7 @@
             break;
         }
       });
+      await this.fetchInGame()
     },
     mounted() {
       this.queueScreen = document.getElementById('queueScreen');
