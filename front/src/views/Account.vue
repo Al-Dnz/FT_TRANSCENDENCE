@@ -104,7 +104,7 @@ export default defineComponent({
     {
       if (matche.score1 === matche.score2)
         return true
-      if (matche.playerOne.login === this.$route?.params.id)
+      if (matche.playerOne.login === this.obj?.login)
       {
         if (matche.score1 > matche.score2)
           return true;
@@ -113,7 +113,7 @@ export default defineComponent({
       }
       else
       {
-        if (matche.socre2 > matche.score1)
+        if (matche.score2 > matche.score1)
           return true;
         else
           return false;

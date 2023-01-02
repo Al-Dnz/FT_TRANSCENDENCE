@@ -125,7 +125,7 @@ export default defineComponent({
       }
       else
       {
-        if (matche.socre2 > matche.score1)
+        if (matche.score2 > matche.score1)
           return true;
         else
           return false;
