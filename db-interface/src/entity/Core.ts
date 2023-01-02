@@ -199,7 +199,6 @@ export class UserSettings extends Base {
 @Entity()
 export class UserStats extends Base {
     @Column({ default: 0 })
-    @Min(0)
     level: number;
 
     @Column({ default: 0 })
@@ -274,7 +273,7 @@ export class User extends Base {
     userChannels: UserChannel[];
 
     @OneToOne(() => UserStats, (stats: UserStats) => stats.user, {
-        onDelete: "RESTRICT",
+        // onDelete: "RESTRICT",
         eager: true,
         cascade: true,
     })
@@ -282,7 +281,7 @@ export class User extends Base {
     stats: UserStats;
 
     @OneToOne(() => UserSettings, (settings: UserSettings) => settings.user, {
-        onDelete: "RESTRICT",
+        // onDelete: "RESTRICT",
         cascade: true,
         eager: true,
         nullable: false,
@@ -303,8 +302,8 @@ export class User extends Base {
 
         this.login = login;
         this.userName = login;
-        this.stats = new UserStats();
-        this.settings = new UserSettings();
+        // this.stats = new UserStats();
+        // this.settings = new UserSettings();
     }
 
 	@OneToMany(() => Message, (message: Message) => message.sender, {
