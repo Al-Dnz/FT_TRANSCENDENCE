@@ -65,13 +65,22 @@ export class MatchService {
 			stats.victories++;
 		else
 			stats.defeats++;
+		await this.updateElo(playerOne);
 		this.statsRepository.save(stats);
 		stats = playerTwo.stats;
 		if (score2 > score1)
 			stats.victories++;
 		else
 			stats.defeats++;
-		this.statsRepository.save(stats);
+		await this.updateElo(playerTwo);	
+		await this.statsRepository.save(stats);
+	}
+
+	async updateElo(player: User)
+	{
+		let stats = player.stats;
+		stats.level = 3 * stats.victories - 2 * stats.defeats;
+		await this.statsRepository.save(stats);
 	}
 
 	async findAll(): Promise<Match[]> {
