@@ -50,12 +50,26 @@ export class MatchService {
 			throw new HttpException('Match not found', HttpStatus.NOT_FOUND);
 		match.score1 = score1;
 		match.score2 = score2;
+		match.finishedAt = new Date(Date.now());
 		match.status = MatchStatus.finished;
 		return this.matchesRepository.save(match);
 	}
 
 	async findAll(): Promise<Match[]> {
 		return await this.matchesRepository.find({ relations: ["playerOne", "playerTwo"] });
+	}
+
+
+	async findAllUnfinieshedMatches(): Promise<Match[]> {
+		return await this.matchesRepository.find(
+			{
+				where:
+				[
+					{ status: MatchStatus.pending },
+					{ status: MatchStatus.live },
+					{ status: MatchStatus.requested },
+				]
+			});
 	}
 
 	async findOne(id: number) {
@@ -90,8 +104,7 @@ export class MatchService {
 		return matches;
 	}
 
-	async findLiveMatches()
-	{
+	async findLiveMatches() {
 		const matches = await this.matchesRepository.find(
 			{
 				relations: { playerOne: true, playerTwo: true },
@@ -100,28 +113,31 @@ export class MatchService {
 		return matches;
 	}
 
-	async generateGameCode()
-	{
+	async generateGameCode() {
 		let gameCode = generateUUID();
 		let match = await this.matchesRepository.findOneBy({ gameCode: gameCode });
-		while (match)
-		{
+		while (match) {
 			gameCode = generateUUID();
 			match = await this.matchesRepository.findOneBy({ gameCode: gameCode });
 		}
 		return gameCode;
 	}
 
-	async removeByGameCode(gameCode: string)
-	{
+	async removeByGameCode(gameCode: string) {
 		const match = await this.matchesRepository.findOneBy({ gameCode: gameCode })
 		if (!match)
 			return;
 		await this.matchesRepository.delete(match.id);
 	}
 
-	async findCurrentMatches(userOne: User, userTwo: User)
-	{
+	async remove(id: number) {
+		const match = await this.matchesRepository.findOneBy({ id: id })
+		if (!match)
+			return;
+		await this.matchesRepository.delete(match.id);
+	}
+
+	async findCurrentMatches(userOne: User, userTwo: User) {
 		const matches = await this.matchesRepository.find(
 			{
 				relations: { playerOne: true, playerTwo: true },
@@ -173,7 +189,27 @@ export class MatchService {
 				]
 			})
 		return matches;
+	}
 
+	async isInGame(user: User): Promise<boolean>
+	{
+		const matches = await this.matchesRepository.find(
+			{
+				relations: { playerOne: true, playerTwo: true },
+				where: [
+					{
+						playerOne: { id: user.id },
+						status: MatchStatus.live
+					},
+					{
+						playerTwo: { id: user.id },
+						status: MatchStatus.live
+					},
+				]
+			});
+		if (matches.length > 0)
+			return true;
+		return false;
 	}
 }
 

@@ -30,10 +30,20 @@ export class AppService {
       match.playerOne = playerOne;
       match.playerTwo = playerTwo;
       match.gameCode = gameCode;
+      match.finishedAt = new Date(Date.now());
       match.status = status;
       this.matchesRepository.save(match);
     }
 
+  }
+
+  async removeUnfinishedMatches()
+  {
+    const allUnfinishedMatches =  await this.matchService.findAllUnfinieshedMatches()
+    for (let match of allUnfinishedMatches)
+    {
+      this.matchService.remove(match.id);
+    }
   }
 
   async onApplicationBootstrap() {
@@ -44,10 +54,11 @@ export class AppService {
 
     try 
     {
-      await this.createMatch(login1, login2, MatchStatus.finished);
-      await this.createMatch(login3, login2, MatchStatus.finished);
-      await this.createMatch(login1, login4, MatchStatus.finished);
-      await this.createMatch(login4, login3, MatchStatus.finished);
+      this.removeUnfinishedMatches();
+      // await this.createMatch(login1, login2, MatchStatus.finished);
+      // await this.createMatch(login3, login2, MatchStatus.finished);
+      // await this.createMatch(login1, login4, MatchStatus.finished);
+      // await this.createMatch(login4, login3, MatchStatus.finished);
 
       this.logger.log(`Creation of seed macth`);
     } catch (error) {}

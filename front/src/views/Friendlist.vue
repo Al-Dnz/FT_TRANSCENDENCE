@@ -15,9 +15,17 @@
 				<PaperAirplaneIcon @click="add()" className="cursor-pointer" />
 			</div>
 		</div>
-		<div v-for="(item, index) in sortedTab()" v-bind:key="index"
+		<div v-if="tab.length === 0">
+			<div className="pt-20 flex flex-col justify-start items-center w-full h-full overflow-hidden">
+				<img src="@/assets/nofriend.gif" className="object-scale-down h-44 w-44 rounded-xl"/>
+            	<span className="text-slate-500 text-2xl pt-4" >No friends yet</span>
+			</div>
+		</div>
+		<div v-else className="flex flex-col justify-start items-center w-full h-full overflow-auto">
+			<div v-for="(item, index) in sortedTab()" v-bind:key="index"
 			className="lg:h-friendbox lg:w-3/4 w-11/12 h-16 pt-3">
 			<friendBox :obj=item :index="index" :refresh="fetchData" />
+		</div>
 		</div>
 	</div>
 
