@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException, } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User, Avatar, UserStatus, BlockerBlocked } from 'db-interface/Core';
+import { User, Avatar, UserStatus, BlockerBlocked, UserSettings, UserStats } from 'db-interface/Core';
 import { DeleteResult, Like, Repository, UpdateResult } from 'typeorm';
 import { QueryFilterDto } from 'validation/query.dto';
 
@@ -25,6 +25,8 @@ export class UserService {
   create(login: string, avatarPath: string): Promise<User> {
     let user = new User(login);
     user.avatar = new Avatar(avatarPath);
+    user.settings = new UserSettings;
+    user.stats = new UserStats;
     return this.userRepository.save(user);
   }
 
