@@ -1,36 +1,37 @@
 <template>
-	<div :class=" obj.results === 'W' ? 'bg-green-400' : 'bg-red-400'" class="flex flex-row justify-between w-full h-full rounded-2xl" >
+	<div :class=" results === true ? 'bg-green-400' : 'bg-red-400'" class="flex flex-row justify-between w-full h-full rounded-2xl" >
 		<div className="pl-4 h-full flex flex-col justify-center ">
-			<img :src="getImgUrl(obj.pp1)" className ="h-5/6 rounded-xl hidden lg:block"/>
+			<img :src="obj.playerOne.avatar.path" className ="h-20 w-12 rounded-xl hidden lg:block"/>
 		</div>
-		<div className="flex flex-col justify-center overflow-hidden w-1/3 lg:w-1/5">
-			<span className="center-x">{{obj.p1}} </span>
+		<div className="flex flex-col justify-center overflow-hidden w-1/3 lg:w-1/5 ">
+			<span className="center-x">{{obj.playerOne.login}} </span>
 		</div>
 		<div className='flex flex-col justify-center overflow-hidden w-1/3 lg:w-1/5'>
-			<span className="center-x">{{obj.pts1}}	{{obj.results}}	{{obj.pts2}}</span>
+			<span className="center-x">{{obj.score1}} - {{obj.score2}}</span>
 		</div>	
 		<div className="flex flex-col justify-center overflow-hidden w-1/3 lg:w-1/5">
-			<span className="center-x">{{obj.p2}} </span>
+			<span className="center-x">{{obj.playerTwo.login}} </span>
 		</div>
 		<div className="pr-4 h-full flex flex-col justify-center ">
-			<img :src="getImgUrl(obj.pp2)" className ="h-5/6 rounded-xl hidden lg:block"/>
+			<img :src="obj.playerTwo.avatar.path" className ="h-20 w-12  rounded-xl hidden lg:block"/>
 		</div>
 	</div>
 </template>
   
-  <script>
-  export default {
+<script lang="ts">
+export default {
 	name: 'historyBox',
 	props : {
-		obj: Object,
-		index: Number
+		obj: {type: Object,
+			required: true},
+		index: {type : Number,
+			required: true},
+		results: {type: Boolean,
+			required: true}
 	},
 	methods: {
-		getImgUrl: function (img) {
-			return require('@/assets/' + img);
-		}
 	},
-  }
-  </script>
+}
+</script>
   
-  <style src="../assets/tailwind.css" />
+<style src="../assets/tailwind.css" />
