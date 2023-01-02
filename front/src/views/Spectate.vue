@@ -67,8 +67,8 @@ export default defineComponent({
     });
     this.socket.on('updateLiveMatches', async (payload : any) => {
       this.tab = [];
-      await this.getLiveMatches();
-      // setTimeout(() => {this.getLiveMatches()}, 1000)
+      // await this.getLiveMatches();
+      setTimeout(() => {this.getLiveMatches()}, 1000)
       console.log("finito game");
     })
   },
