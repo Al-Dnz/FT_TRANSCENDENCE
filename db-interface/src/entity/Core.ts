@@ -91,9 +91,6 @@ export class Match extends Base {
     @Column({ unique: true, nullable: true, default: null })
     gameCode: string;
 
-    @Column({ default: false })
-    full: boolean;
-
     @Column({ default: 0 })
     score1: number;
 
