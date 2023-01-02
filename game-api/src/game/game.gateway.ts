@@ -197,7 +197,7 @@ export class GameGateway
 			
 			// if game doesn't exist 
 			if (!this.state[gameCode]) {
-				client.emit('unknownGame');
+				client.emit('unknownGame', this.clientRooms);
 				return;
 			}
 			// if game is full

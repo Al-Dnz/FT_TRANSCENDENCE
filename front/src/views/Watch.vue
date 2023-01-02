@@ -1,13 +1,7 @@
 <template>
-  <div v-if="(loading == true)">
-		<loadingPage />
-	</div>
-	<div v-else-if="error" className="flex items-center w-full h-full">
+	<div v-if="error" className="flex items-center w-full h-full">
 		<errorPage :str="error" />
 	</div>
-  <div v-else-if="testo">
-      <span>Hello {{this.$route?.params.id}}</span>
-  </div>
   <div v-else className="absolute flex justify-center h-full w-full">
       <div id="background_game" style="width: 100%">
       <div id="app" class="container" style="width: 100%; justify-content: center;"></div>
@@ -54,7 +48,7 @@
   import io from 'socket.io-client';
   import {Sprite, ball, paddle } from "../frontJS/game.js";
   import errorPage from "@/components/Error.vue";
-  import loadingPage from "@/components/Loading.vue";
+  //import loadingPage from "@/components/Loading.vue";
 
   export default {
     name: 'gameComp',
@@ -89,8 +83,6 @@
         findGameBtn: {},
         findGameCustomBtn: {},
         returnGameBtn: {},
-        loading: true,
-        testo : true,
         error : "",
         gameCode: "",
       };
@@ -111,22 +103,23 @@
       await fetch(`http://${process.env.VUE_APP_IP}:3005/match/isingame/${this.$route?.params.id}`, requestOptions)
         .then(res => res.json())
         .then(match => this.gameCode = match.gameCode)
-        .then(() => this.loading = false)
         .catch(e => {
-          this.error = e
+          this.error = e.message;
+          console.log(e.message);
         })
+        console.log(this.gameCode);
       },
       newGame() {
         console.log('NIK');
         this.socket.emit('newGame');
         this.startAnimating(30);
-      },/*
-      specGame() {
-        const code = SpecGameCodeInput.value;
+      },
+      specGame(code) {
         console.log('Spec YEP');
+        this.setScreen("game");
         this.socket.emit('specGame', code);
         this.startAnimating(30);
-      },*/
+      },
       findGame() {
         this.socket.emit('findGame');
         this.setScreen("queue");
@@ -230,38 +223,22 @@
     unmounted() {
       this.socket.disconnect();
     },
-    async created() {
+    created() {
       const authPayload = { auth: { token: this.$cookies.get("trans_access") } };
       this.socket = io("http://" + process.env.VUE_APP_IP + ":3005", authPayload);
-      this.loading = false;
-      window.addEventListener('keydown', (e) => {
-        switch (e.key) {
-          case 'ArrowUp':
-            this.sendPaddleMove('up');
-            break;
-          case 'ArrowDown':
-            this.sendPaddleMove('down');
-            break;
-          case ' ':
-            this.getInfo();
-            break;
-        }
-      });
-      await this.fetchInGame()
     },
-    mounted() {
+    async mounted() {
+      await this.fetchInGame();
       this.queueScreen = document.getElementById('queueScreen');
       this.initialScreen = document.getElementById('initialScreen');
       this.gameScreen = document.getElementById('gameScreen');
       // this.newGameBtn = document.getElementById('newGameBtn');
       // this.specGameBtn = document.getElementById('specGameBtn');
       this.findGameBtn = document.getElementById('findGameBtn');
-      this.findGameCustomBtn = document.getElementById('findGameCustomBtn');
       this.gameCodeDisplay = document.getElementById('gameCodeDisplay');
   
       // this.newGameBtn.addEventListener('click', this.newGame);
-      this.findGameCustomBtn.addEventListener('click', this.findGameCustom);
-      this.findGameBtn.addEventListener('click', this.findGame);
+      this.findGameBtn.addEventListener('click', this.specGame(this.gameCode));
       // ----------------------------------------------
       this.socket.on(`test`, (data) => {
         this.test();
@@ -322,6 +299,7 @@
       this.socket.on('unknownGame', (data) => {
         // this.returnGameBtn.style.display = 'block';
         console.log('unknownGame');
+        console.log(data);
         this.reset();
         // alert('you loose ?');
       });
@@ -395,9 +373,13 @@
         speed: 4,
         framesMax: 10,
       });
+      if (this.gameCode != '')
+      {
+        console.log("code sent");
+        this.specGame(this.gameCode);
+      }
     },
     components : {
-        loadingPage,
         errorPage
     }
   };
