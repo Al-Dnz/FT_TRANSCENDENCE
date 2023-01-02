@@ -27,6 +27,20 @@ export class MatchController {
 		return await this.macthService.findByGameCode(gameCode);
 	}
 
+	@Get('/isingame')
+	async isInGame(@Headers('token') token: string)
+	{
+		let user;
+		try {
+			this.userService.checkToken(token);
+			user = await this.userService.getUserByToken(token);
+		} catch (error) {
+			throw new HttpException(error.message, HttpStatus.FORBIDDEN);
+		}
+		const res = await this.macthService.isInGame(user);
+		return { isInGame: res }; 
+	}
+
 	@Get('/history/:login')
 	async getMatchHistory(@Param('login') login: string,  @Headers('token') token: string) {
 		

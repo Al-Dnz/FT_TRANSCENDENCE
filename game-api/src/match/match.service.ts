@@ -189,7 +189,27 @@ export class MatchService {
 				]
 			})
 		return matches;
+	}
 
+	async isInGame(user: User): Promise<boolean>
+	{
+		const matches = await this.matchesRepository.find(
+			{
+				relations: { playerOne: true, playerTwo: true },
+				where: [
+					{
+						playerOne: { id: user.id },
+						status: MatchStatus.live
+					},
+					{
+						playerTwo: { id: user.id },
+						status: MatchStatus.live
+					},
+				]
+			});
+		if (matches.length > 0)
+			return true;
+		return false;
 	}
 }
 
