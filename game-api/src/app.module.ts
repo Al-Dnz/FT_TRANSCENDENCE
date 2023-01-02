@@ -21,9 +21,11 @@ import {
   BlockerBlocked
 } from 'db-interface/Core';
 import { GameModule } from './game/game.module';
+import { UserModule } from './user/user.module';
+import { MatchModule } from './match/match.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Channel, User, Avatar]),
+  imports: [TypeOrmModule.forFeature([Match]),
 	ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -48,6 +50,8 @@ import { GameModule } from './game/game.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
+    UserModule,
+    MatchModule,
     GameModule],
   controllers: [AppController],
   providers: [AppService],

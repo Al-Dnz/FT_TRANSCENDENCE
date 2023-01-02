@@ -29,7 +29,6 @@ export class MatchService {
 
 	async updateMatchCreation(match: Match, playerTwo: User): Promise<Match> {
 		match.playerTwo = playerTwo;
-		match.full = true;
 		return await this.matchesRepository.save(match);
 	}
 
