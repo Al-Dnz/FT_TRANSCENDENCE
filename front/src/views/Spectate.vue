@@ -4,16 +4,10 @@
       <span className ="text-slate-500 text-2xl"> No one is playing :/ </span>
     </div>
     <div v-else>
-    <div v-for="(item, index) in this.tab" v-bind:key="index" className="h-1/4 w-3/4 pt-3">
+    <div v-for="(item, index) in this.tab" v-bind:key="index" className="pt-3">
 			<spectateBox :obj=item :index="index"/>
 		</div>
-    <ul>
-      <li v-for="match in tab" :key="match.id">
-        <div>[{{ match.gameCode }}] {{ match.playerOne.login }} vs {{ match.playerTwo.login }}</div>
-      </li>
-    </ul>
   </div>
-
   </div>
 </template>
   
@@ -83,8 +77,6 @@ export default defineComponent({
   },
 })
 </script>
-  
-  
 
 
 
