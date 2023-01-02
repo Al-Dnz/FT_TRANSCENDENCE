@@ -28,20 +28,13 @@
         </div>
         <div className=" h-3/5 w-full flex justify-center items-center">
           <div className="bg-slate-300 w-3/4 h-5/6 flex flex-col justify-start items-center overflow-auto rounded-2xl">
-            <!-- <div v-for="(item, index) in this.obj.matchHistory" v-bind:key="index" className="h-24 w-5/6 pt-3">
-            <history-box :obj=item :index="index"/>
-          </div> -->
-
-            <div v-if="matches.length != 0">
-              <li v-for="match in matches" :key="match.id">
-                <div>
-                  [{{ match.gameCode }}] <br>
-                  [{{ match.createdAt }}] <br>
-                  {{ match.playerOne.login }} [{{ match.score1 }}] vs [{{ match.score2 }}] {{ match.playerTwo.login }}
-                </div>
-              </li>
+            <div v-if="matches.length == 0" className="flex flex-col justify-start items-center w-full h-full overflow-hidden">
+              <img src="@/assets/nogame.gif" className="object-scale-down h-44 w-44 rounded-xl"/>
+              <span className="text-slate-500 text-2xl pt-4" >No game played yet</span>
             </div>
-
+            <div v-else v-for="(item, index) in this.matches" v-bind:key="index" className="h-24 w-5/6 pt-3">
+              <history-box :obj=item :index="index" :results="win(item)" />
+            </div>
           </div>
         </div>
       </div>
@@ -66,7 +59,7 @@ interface UserData {
   matches: any
 }
 
-//import historyBox from '../components/HistoryBox.vue'
+import historyBox from '../components/HistoryBox.vue'
 import { defineComponent } from "vue";
 
 export default defineComponent({
@@ -118,12 +111,32 @@ export default defineComponent({
         .catch(e => {
           this.$toast(e.message, { styles: { backgroundColor: "#FF0000", color: "#FFFFFF" } });
         })
+    },
+    win(matche: any) : boolean
+    {
+      if (matche.score1 === matche.score2)
+        return true
+      if (matche.playerOne.login === this.$route?.params.id)
+      {
+        if (matche.score1 > matche.score2)
+          return true;
+        else
+          return false;
+      }
+      else
+      {
+        if (matche.socre2 > matche.score1)
+          return true;
+        else
+          return false;
+      }
     }
   },
   components:
   {
     errorPage,
-    loadingPage
+    loadingPage,
+    historyBox
   },
   async mounted() {
     await this.fetchData()
