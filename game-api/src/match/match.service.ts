@@ -239,5 +239,27 @@ export class MatchService {
 			return true;
 		return false;
 	}
+
+	async isPlayerInGame(user: User): Promise<Match>
+	{
+		const matches = await this.matchesRepository.find(
+			{
+				relations: { playerOne: true, playerTwo: true },
+				where: [
+					{
+						playerOne: { id: user.id },
+						status: MatchStatus.live
+					},
+					{
+						playerTwo: { id: user.id },
+						status: MatchStatus.live
+					},
+				]
+			});
+		if (matches.length == 0)
+			throw new HttpException(`${user.login} is not in game`, HttpStatus.NOT_FOUND);
+
+		return matches[0];
+	}
 }
 
