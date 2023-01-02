@@ -63,7 +63,7 @@ export default defineComponent({
     this.socket.on('liveMatches', (payload : any) => {
       this.tab = [];
       this.tab = payload;
-      console.log(payload);
+      this.tab.sort(function (a: any, b: any) {return a.id - b.id });
     });
     this.socket.on('updateLiveMatches', async (payload : any) => {
       this.tab = [];
