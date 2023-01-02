@@ -43,13 +43,11 @@
                             class="h-36 w-36 border-4 bg-slate-200 rounded-xl border-green-600">
                     </div>
                 </div>
-
 				<div className="h-48 w-2/6 lg:w-1/5 flex justify-center items-center ">
 					<button @click="updateAvatar()"
 						className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
 						Sauvegarder</button>
             	</div>
-				
             </div>
         </div>
     </div>
@@ -57,7 +55,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import imageBox from '@/components/ImageBox.vue'
 import { AvatarsApi, UsersApi, Configuration, UserOutput } from '@/api';
 import { getCredentials } from "@/frontJS/cookies"
 import { ResponseError, ErrorOutput, UserOutputStatusEnum } from '@/api';
