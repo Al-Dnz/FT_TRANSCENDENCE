@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { Logger } from '@nestjs/common';
-import { Match, User } from 'db-interface/Core';
+import { Match, User, UserStats } from 'db-interface/Core';
 import { MatchStatus } from 'db-interface/Core';
 import { generateUUID } from 'src/game/utils';
 
@@ -15,6 +15,8 @@ export class MatchService {
 		private readonly matchesRepository: Repository<Match>,
 		@InjectRepository(User)
 		private readonly usersRepository: Repository<User>,
+		@InjectRepository(UserStats)
+		private readonly statsRepository: Repository<UserStats>,
 	) { }
 
 	private logger: Logger = new Logger('MacthService');
@@ -52,7 +54,33 @@ export class MatchService {
 		match.score2 = score2;
 		match.finishedAt = new Date(Date.now());
 		match.status = MatchStatus.finished;
+		this.updatePlayerStats(match.playerOne, score1, match.playerTwo, match.score2);
 		return this.matchesRepository.save(match);
+	}
+
+	async updatePlayerStats(playerOne: User, score1: number, playerTwo: User, score2: number)
+	{
+		let stats = playerOne.stats;
+		if (score1 > score2)
+			stats.victories++;
+		else
+			stats.defeats++;
+		await this.updateElo(playerOne);
+		this.statsRepository.save(stats);
+		stats = playerTwo.stats;
+		if (score2 > score1)
+			stats.victories++;
+		else
+			stats.defeats++;
+		await this.updateElo(playerTwo);	
+		await this.statsRepository.save(stats);
+	}
+
+	async updateElo(player: User)
+	{
+		let stats = player.stats;
+		stats.level = 3 * stats.victories - 2 * stats.defeats;
+		await this.statsRepository.save(stats);
 	}
 
 	async findAll(): Promise<Match[]> {
