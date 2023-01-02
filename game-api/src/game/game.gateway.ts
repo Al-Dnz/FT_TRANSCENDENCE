@@ -56,6 +56,17 @@ export class GameGateway
 		this.server.emit('userStatus', {login: user.login, status: user.status});
 	}
 
+	async sendLiveMatches()
+	{
+		const matches = await this.matchService.findLiveMatches();
+		await this.server.emit('liveMatches', matches);
+	}
+
+	updateLiveMatches()
+	{
+		this.server.emit('updateLiveMatches', {id: 0});
+	}
+
 	@SubscribeMessage('MovePaddleToServer')
 	async handlePaddle(client: Socket, instruction : string): Promise<void>
 	{
@@ -260,6 +271,7 @@ export class GameGateway
 				await this.matchService.updateMatchCreation(match, user);
 				await this.matchService.updateMatchStatus(match, MatchStatus.live)
 				this.updateStatus(user.login, UserStatus.in_game);
+				this.sendLiveMatches()
 
 				this.clientRooms[user.login] = gameCode;
 				this.state[gameCode].game_data.idPlayers.player2 = user.login;
@@ -271,7 +283,10 @@ export class GameGateway
 					this.startGameInterval(client, this.state[gameCode], gameCode, this.clientRooms);
 				}, 500);
 			} else {
+
+				//reconnect
 				gameCode = this.clientRooms[user.login];
+				this.updateStatus(user.login, UserStatus.in_game);
 				client.emit('test');
 				client.join(gameCode);
 				client.emit('gameCode', gameCode);
@@ -318,10 +333,12 @@ export class GameGateway
 				}
 				
 				this.matchService.updateFinishedGame(gameCode, state.game_data.score.player1, state.game_data.score.player2);
+				
 				const login1 = this.state[gameCode].game_data.idPlayers.player1;
 				const login2 = this.state[gameCode].game_data.idPlayers.player2;
 				this.updateStatus(login1, UserStatus.online);
 				this.updateStatus(login2, UserStatus.online);
+				
 				
 
 				if (this.state[gameCode]) {
@@ -330,7 +347,7 @@ export class GameGateway
 				delete this.state[gameCode].game_data.paddle2;
 				delete this.state[gameCode];
 				}
-
+				this.updateLiveMatches();
 				clearInterval(intervalID);
 				// return; 
 			}
