@@ -44,10 +44,10 @@ export class AppService {
 
     try 
     {
-      await this.createMatch(login1, login2, MatchStatus.live);
-      await this.createMatch(login3, login2, MatchStatus.live);
-      await this.createMatch(login1, login4, MatchStatus.live);
-      await this.createMatch(login2, login3, MatchStatus.live);
+      // await this.createMatch(login1, login2, MatchStatus.finished);
+      // await this.createMatch(login3, login2, MatchStatus.finished);
+      // await this.createMatch(login1, login4, MatchStatus.finished);
+      // await this.createMatch(login4, login3, MatchStatus.finished);
 
       this.logger.log(`Creation of seed macth`);
     } catch (error) {}
