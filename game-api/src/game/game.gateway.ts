@@ -372,11 +372,31 @@ export class GameGateway
 		}
 	}
 
-	@SubscribeMessage('leaveGame')
+	@SubscribeMessage('reconnectGame')
 	async handleLeaveGame(client: Socket): Promise<void>
 	{
-		client.emit('gameOver');
-		this.server.to(this.clientRooms[client.id]).emit(`gameOver`);
+		try
+		{
+			const token = client.handshake.auth.token;
+			this.userService.checkToken(token);
+			const user = await this.userService.getUserByToken(token);
+
+			if (this.clientRooms[user.login]) {
+				let gameCode = this.clientRooms[user.login];
+				this.updateStatus(user.login, UserStatus.in_game);
+				client.emit('test');
+				client.join(gameCode);
+				client.emit('gameCode', gameCode);
+				this.server.to(gameCode).emit('init', this.state[gameCode].game_data.idPlayers);
+				if (this.state[this.clientRooms[user.login]].game_data.gameState === 'on')
+					this.server.to(this.clientRooms[user.login]).emit(`startGame`);
+			}
+		}
+		catch (error)
+		{
+			this.server.to(client.id).emit('gameError', error.message);
+			client.disconnect();
+		}
 	}
 
 
