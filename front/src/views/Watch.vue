@@ -1,8 +1,5 @@
 <template>
-  <div v-if="loading">
-    <loadingPage />
-  </div>
-	<div v-else-if="error" className="flex items-center w-full h-full">
+	<div v-if="error" className="flex items-center w-full h-full">
 		<errorPage :str="error" />
 	</div>
   <div v-else className="absolute flex justify-center h-full w-full">
@@ -24,7 +21,7 @@
               <div id= "gameScreen" style="width: 100%;">
                   <!-- width and height SHOULD BE SET DYNAMICALLY -->
                   <div class = 'ui' style="position: relative; display: flex; width: 60%;">
-                    <div class='player_1_name'> <span>Joueur 1</span></div>
+                    <div class='player_1_name'> <span id ="NamePlayer1">Joueur 1</span></div>
 					            <!-- player 1 score -->
                       <div class='player_score' ><span id="score_1"> 0 </span></div>
                       <!-- codeRoom -->
@@ -32,7 +29,7 @@
                       <!-- player 2 score -->
                       <div class='player_score' ><span id="score_2"> 0 </span></div>
                       <!-- player 2 name -->
-                      <div class='player_2_name'> <span>Joueur 2 </span></div>
+                      <div class='player_2_name'> <span id ="NamePlayer2">Joueur 2 </span></div>
                   </div>
                   <div>
                       <canvas ref="convas"
@@ -49,11 +46,10 @@
   </template>
   
   <script>
-  //fix background color
   import io from 'socket.io-client';
   import {Sprite, ball, paddle } from "../frontJS/game.js";
   import errorPage from "@/components/Error.vue";
-  import loadingPage from "@/components/Loading.vue";
+  //import loadingPage from "@/components/Loading.vue";
 
   export default {
     name: 'gameComp',
@@ -84,6 +80,8 @@
         initialScreen: {},
         newGameBtn: {},
         joinGameBtn: {},
+        NamePlayer1: {},
+        NamePlayer2: {},
         specGameBtn: {},
         findGameBtn: {},
         findGameCustomBtn: {},
@@ -249,6 +247,8 @@
       //this.queueScreen = document.getElementById('queueScreen');
       //this.initialScreen = document.getElementById('initialScreen');
       this.gameScreen = document.getElementById('gameScreen');
+      this.NamePlayer1 = document.getElementById('NamePlayer1');
+      this.NamePlayer2 = document.getElementById('NamePlayer2');
       // this.newGameBtn = document.getElementById('newGameBtn');
       // this.specGameBtn = document.getElementById('specGameBtn');
       //this.findGameBtn = document.getElementById('findGameBtn');
@@ -267,13 +267,20 @@
       this.socket.on('gameCode', (gameCode) => {
         this.gameCodeDisplay.innerText = gameCode;
       });
-  
+
+      this.socket.on(`init`, (data) => {
+      this.NamePlayer1.innerText = data.player1;
+      this.NamePlayer2.innerText = data.player2;
+      });
+
       this.score1 = document.getElementById('score_1');
-      this.score2 = document.getElementById('score_2');
       this.score2 = document.getElementById('score_2');
       this.board = document.getElementById('board');
   
       var heightRatio = 0.75;
+      console.log(this.score1);
+      console.log(this.score2);
+      console.log(this.board);
       this.board.height = this.board.width * heightRatio;
       this.context = this.board.getContext('2d');
   
@@ -297,6 +304,7 @@
       this.socket.on('gameOver', (data) => {
         console.log('gameOver');
         this.reset();
+        this.$router.push('/spectate');
         // alert('you loose ?');
       });
   
@@ -395,14 +403,14 @@
     },
     components : {
         errorPage,
-        loadingPage
+        //loadingPage
     }
   };
 </script>
   
 <style>
-    @import "../assets/tailwind.css";
-    @import '../assets/css/style.css';
-    @import '../assets/css/boutton.css';
+  @import "../assets/tailwind.css";
+  @import '../assets/css/stylespectate.css';
+  @import '../assets/css/boutton.css';
 </style>
   

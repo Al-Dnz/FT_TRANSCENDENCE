@@ -22,11 +22,14 @@
       </ul>
     </div>
   </div>
+  <modalSend :ison="isInvite" :isactive=Invite />
 </template>
 
 <script lang="ts">
 import { Bars3Icon } from "@heroicons/vue/24/outline";
 import { defineComponent } from "vue";
+import modalSend from "@/components/modalSend.vue";
+import { decodePayload } from "engine.io-parser";
 
 interface DataI {
   showOptions: boolean;
@@ -37,6 +40,7 @@ interface DataI {
   canMute: boolean;
   canUnmute: boolean;
   canPromote: boolean;
+  isInvite: boolean;
 }
 
 export default defineComponent({
@@ -46,6 +50,7 @@ export default defineComponent({
     currentChan: Object,
     currentUser: Object,
     targetUser: Object,
+    userChannel: Object,
   },
   data(): DataI {
     return {
@@ -57,9 +62,17 @@ export default defineComponent({
       canMute: false,
       canUnmute: false,
       canPromote: false,
+      isInvite: false
     };
   },
+  components : {
+    modalSend
+  },
   methods: {
+    Invite()
+    {
+      this.isInvite = false
+    },
     toggleMenu() {
       this.showOptions = !this.showOptions;
       this.$emit('toggleOptMenu');
@@ -72,7 +85,13 @@ export default defineComponent({
       alert("going to " + this.targetUser?.name + "'s profile"); // placeholder
     },
     gameInvite() {
-      alert("a game invitation has been sent to " + this.targetUser?.name); // placeholder
+      // this.isInvite = true;
+      const payload = 
+      {
+        login: this.targetUser?.login,
+        gameCode: 'xxxxxxxrandom_uuidxxxxxxx'
+      }
+      this.$store.state.globalSocket.emit('emitInvitation', payload);
     },
     compareArrays(arr1: any[], arr2: any[]): boolean {
       let i = arr1?.length;
@@ -144,7 +163,7 @@ export default defineComponent({
     },
     setCanMute() {
 
-        this.canMute = !this.targetUser?.muted;
+        this.canMute = !this.userChannel?.muted;
 
       // if (!this.isUserMuted() && this.haveAuthorityOver())
       //   this.canMute = true;
@@ -152,8 +171,7 @@ export default defineComponent({
       //   this.canMute = false;
     },
     setCanUnmute() {
-      
-        this.canUnmute = this.targetUser?.muted;
+        this.canUnmute = this.userChannel?.muted;
     
       // if (this.isUserMuted() && this.haveAuthorityOver())
       //   this.canUnmute = true;
@@ -161,6 +179,8 @@ export default defineComponent({
       //   this.canUnmute = false;
     },
     setCanPromote() {
+
+      // this.canPromote = this.userChannel?.role == 'owner' || this.userChannel?.role == 'admin';
       if (this.isUserOwner() && !(this.isTargetOwner() || this.isTargetAdmin()))
         this.canPromote = true;
       else
