@@ -197,6 +197,11 @@ export default {
     {
       console.log(this.gamesecret);
       this.socket.emit('InvGame', this.gamesecret);
+    },
+    reconnectGame()
+    {
+      console.log("reconnect send")
+      this.socket.emit('reconnectGame');
     }
   },
   
@@ -375,10 +380,12 @@ export default {
       framesMax: 10,
     });
     if ( this.$route?.params.id )
-      {
-        console.log("hello param");
-        this.socket.emit('InvGame', this.$route?.params.id);
-      }
+    {
+      console.log("hello param");
+      this.socket.emit('InvGame', this.$route?.params.id);
+    }
+    else
+      this.reconnectGame();
   },
 };
 </script>

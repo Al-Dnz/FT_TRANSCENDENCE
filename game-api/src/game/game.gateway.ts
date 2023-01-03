@@ -373,7 +373,7 @@ export class GameGateway
 	}
 
 	@SubscribeMessage('reconnectGame')
-	async handleLeaveGame(client: Socket): Promise<void>
+	async handleReconnectGame(client: Socket): Promise<void>
 	{
 		try
 		{
