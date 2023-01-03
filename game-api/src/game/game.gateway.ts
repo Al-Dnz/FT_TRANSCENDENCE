@@ -271,7 +271,7 @@ export class GameGateway
 			if (!this.state[gameCode]) {
 				this.clientRooms[user.login] = gameCode;
 				client.emit('gameCode', gameCode);
-
+				client.emit('test');
 			// create match in db
 			// const match = await this.matchService.create(user, gameCode, false);
 			// this.updateStatus(user.login, UserStatus.in_game);
@@ -282,6 +282,7 @@ export class GameGateway
 				client.join(gameCode);
 				this.server.to(gameCode).emit('init', this.state[gameCode].game_data.idPlayers);
 			} else {
+				client.emit('test');
 				this.clientRooms[user.login] = gameCode;
 				client.join(gameCode);
 				this.state[gameCode].game_data.idPlayers.player2 = user.login;
@@ -289,11 +290,12 @@ export class GameGateway
 				client.emit('gameCode', gameCode);
 				this.server.to(gameCode).emit('init', this.state[gameCode].game_data.idPlayers);
 				// client.emit('startGame');
-				if (this.state[gameCode].game_data.idPlayers.player1 && this.state[gameCode].game_data.idPlayers.player2) {
-					setTimeout(() => {
-						this.startGameInterval(client, this.state[gameCode], gameCode, this.clientRooms);
-					}, 500);
-				}
+				this.server.to(gameCode).emit(`startGame`);
+			if (this.state[gameCode].game_data.idPlayers.player1 && this.state[gameCode].game_data.idPlayers.player2) {
+				setTimeout(() => {
+					this.startGameInterval(client, this.state[gameCode], gameCode, this.clientRooms);
+				}, 500);
+			}
 			}
 		}
 		catch (error)
