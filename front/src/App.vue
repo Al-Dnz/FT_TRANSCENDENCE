@@ -13,12 +13,13 @@
 			<router-view :key="$route.path" />
 		</div>
 	</div>
-	<modalReception :senderLogin="senderLogin" :ison="isInvite" :isactive=Invite :Accept=Accept :Decline=Decline />
+	<modalReception :senderLogin="senderLogin" :gameCode="code" :ison="isInvite" :isactive=Invite :Accept=Accept :Decline=Decline />
 </template>
 <script lang="ts">
 interface appData {
 	isInvite: boolean;
 	senderLogin: string,
+	code: string
 }
 import { defineComponent } from 'vue';
 import modalReception from "@/components/modalReception.vue";
@@ -53,12 +54,14 @@ export default defineComponent({
 		return {
 			isInvite: false,
 			senderLogin: '',
+			code:"",
 		};
 	},
 	methods: {
 		handleInvitation(payload: any) {
 			console.log("invitation received");
-			this.senderLogin = payload.sender
+			this.senderLogin = payload.sender;
+			this.code = payload.sentPaylod.gamecode;
 			this.Invited();
 		},
 		Invite() {

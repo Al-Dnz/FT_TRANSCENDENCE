@@ -54,10 +54,13 @@ import {Countdown} from 'vue3-flip-countdown'
         },
         Accepted() {
             this.Accept();
+            this.isactive();
+            this.$router.push('/home/' + this.gameCode);
         },
         Declined()
         {
             this.Decline();
+            this.isactive();
         },
         delay(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
