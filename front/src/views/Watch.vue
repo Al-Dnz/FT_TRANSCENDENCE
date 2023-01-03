@@ -5,7 +5,7 @@
   <div v-else className="absolute flex justify-center h-full w-full">
       <div id="background_game" style="width: 100%">
       <div id="app" class="container" style="width: 100%; justify-content: center;"></div>
-      <div id="initialScreen" style="display: flex;">
+      <!-- <div id="initialScreen" style="display: flex;">
           <div style="margin: 0%; width: 100%; justify-content: center; align-items: center; flex-direction: column; position: relative; display: flex;">
             <div style="margin: 2vh;">
               <button class="btn-1" id = "findGameBtn">Play Normal Mode  </button>
@@ -17,10 +17,12 @@
               </div>
               <div class="queueScreen" id="queueScreen" >
                   In Queue . . .
-              </div>
+              </div> -->
               <div id= "gameScreen" style="width: 100%;">
                   <!-- width and height SHOULD BE SET DYNAMICALLY -->
                   <div class = 'ui' style="position: relative; display: flex; width: 60%;">
+                    <div class='player_1_name'> <span>Joueur 1</span></div>
+					            <!-- player 1 score -->
                       <div class='player_score' ><span id="score_1"> 0 </span></div>
                       <!-- codeRoom -->
                       <div class="codeRoom"><span id="gameCodeDisplay"> xxx </span></div>
@@ -101,33 +103,42 @@
         },
       }
       await fetch(`http://${process.env.VUE_APP_IP}:3005/match/isingame/${this.$route?.params.id}`, requestOptions)
-        .then(res => res.json())
-        .then(match => this.gameCode = match.gameCode)
-        .catch(e => {
-          this.error = e.message;
-          console.log(e.message);
+        .then(async res => 
+        {
+          let toto = await res.json();
+          if (res.ok)
+            this.gameCode = toto.gameCode;
+          else
+          {
+            this.error = toto.message;
+          } 
         })
-        console.log(this.gameCode);
+        // .then(match => this.gameCode = match.gameCode)
+        // .catch(e => {
+        //   this.error = e.message;
+        //   console.log("c'est le msg " + e.message);
+        // })
+        //console.log(this.gameCode);
       },
-      newGame() {
-        console.log('NIK');
-        this.socket.emit('newGame');
-        this.startAnimating(30);
-      },
+      // newGame() {
+      //   console.log('NIK');
+      //   this.socket.emit('newGame');
+      //   this.startAnimating(30);
+      // },
       specGame(code) {
         console.log('Spec YEP');
         this.setScreen("game");
         this.socket.emit('specGame', code);
         this.startAnimating(30);
       },
-      findGame() {
-        this.socket.emit('findGame');
-        this.setScreen("queue");
-      },
-      findGameCustom() {
-        this.socket.emit('findGameCustom');
-        this.setScreen("queue");
-      },
+      // findGame() {
+      //   this.socket.emit('findGame');
+      //   this.setScreen("queue");
+      // },
+      // findGameCustom() {
+      //   this.socket.emit('findGameCustom');
+      //   this.setScreen("queue");
+      // },
       reset() {
         this.setScreen("initial");
       },
@@ -160,18 +171,18 @@
       setScreen(State) {
         switch (State) {
           case "initial":
-          this.initialScreen.style.display = 'block';
-          this.queueScreen.style.display = 'none';
-          this.gameScreen.style.display = 'none';
+          //this.initialScreen.style.display = 'block';
+          //this.queueScreen.style.display = 'none';
+          //this.gameScreen.style.display = 'none';
             break;
           case "queue":
-          this.initialScreen.style.display = 'none';
-          this.queueScreen.style.display = 'block';
-          this.gameScreen.style.display = 'none';
+          //this.initialScreen.style.display = 'none';
+          //this.queueScreen.style.display = 'block';
+          //this.gameScreen.style.display = 'none';
             break;
           case "game":
-          this.initialScreen.style.display = 'none';
-          this.queueScreen.style.display = 'none';
+          //this.initialScreen.style.display = 'none';
+          //this.queueScreen.style.display = 'none';
           this.gameScreen.style.display = 'block';
             break;
           default:
@@ -229,16 +240,16 @@
     },
     async mounted() {
       await this.fetchInGame();
-      this.queueScreen = document.getElementById('queueScreen');
-      this.initialScreen = document.getElementById('initialScreen');
+      //this.queueScreen = document.getElementById('queueScreen');
+      //this.initialScreen = document.getElementById('initialScreen');
       this.gameScreen = document.getElementById('gameScreen');
       // this.newGameBtn = document.getElementById('newGameBtn');
       // this.specGameBtn = document.getElementById('specGameBtn');
-      this.findGameBtn = document.getElementById('findGameBtn');
-      this.gameCodeDisplay = document.getElementById('gameCodeDisplay');
+      //this.findGameBtn = document.getElementById('findGameBtn');
+      //this.gameCodeDisplay = document.getElementById('gameCodeDisplay');
   
       // this.newGameBtn.addEventListener('click', this.newGame);
-      this.findGameBtn.addEventListener('click', this.specGame(this.gameCode));
+      //this.findGameBtn.addEventListener('click', this.specGame(this.gameCode));
       // ----------------------------------------------
       this.socket.on(`test`, (data) => {
         this.test();
@@ -321,7 +332,7 @@
         console.log('fullGame');
         this.reset();
         // alert('you loose ?');
-      });
+      });this.initialScreen.sty
   
       this.background = new Sprite({
         position: {
@@ -342,7 +353,7 @@
         imageSrc: require('../assets/game/Paddle1.png'),
         canvas: this.board,
       });
-  
+
       this.paddle2 = new paddle({
         position: {
           x: this.board.width - parseInt(this.board.width / 34, 10),
@@ -373,11 +384,8 @@
         speed: 4,
         framesMax: 10,
       });
-      if (this.gameCode != '')
-      {
-        console.log("code sent");
-        this.specGame(this.gameCode);
-      }
+      console.log(this.gameCode);
+      this.specGame(this.gameCode);
     },
     components : {
         errorPage
