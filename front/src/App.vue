@@ -34,9 +34,7 @@ export default defineComponent({
 			// 	this.$store.dispatch('setChatSocket', transAccessCookie);
 			// if (!this.$store.state.gameSocket.connected)
 			// 	this.$store.dispatch('setGameSocket', transAccessCookie);
-		}
-
-		this.$store.state.globalSocket.on
+		
 
 		this.$store.state.globalSocket.on('globalError', (error: any) => {
 			this.$toast(error, { styles: { backgroundColor: "#FF0000", color: "#FFFFFF" } });
@@ -45,6 +43,7 @@ export default defineComponent({
 		this.$store.state.globalSocket.on('receiveInvitation', (payload: any) => {
 			this.handleInvitation(payload);
 		})
+	}
 
 	},
 	components: {
