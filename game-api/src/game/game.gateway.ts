@@ -20,13 +20,11 @@ import { UserService } from 'src/user/user.service';
 import { MatchService } from 'src/match/match.service';
 import { MatchStatus, User, UserStatus } from 'db-interface/Core';
 
-@WebSocketGateway({
-	cors: {
-	  origin: '*',
-	},
-  })
+import { UsePipes } from '@nestjs/common';
+import { WSPipe } from 'src/exception/websockets/ws-exception-filter'
 
-@WebSocketGateway()
+@UsePipes(WSPipe)
+@WebSocketGateway({ cors: { origin: '*' } })
 export class GameGateway 
 	implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
