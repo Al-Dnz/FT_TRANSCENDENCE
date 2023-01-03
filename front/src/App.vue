@@ -13,9 +13,15 @@
 			<router-view :key="$route.path"/>
 		</div>
 	</div>
+	<modalReception :ison="isInvite" :isactive=Invite :Accept=Accept :Decline=Decline />
 </template>
 <script lang="ts">
+interface appData
+{
+	isInvite: boolean;
+}
 import { defineComponent } from 'vue';
+import modalReception from "@/components/modalSend.vue";
 export default defineComponent({
   name: 'App',
   created()
@@ -31,7 +37,34 @@ export default defineComponent({
 		// if (!this.$store.state.gameSocket.connected)
 		// 	this.$store.dispatch('setGameSocket', transAccessCookie);
 	}
-  }
+  },
+  components : {
+	modalReception
+  },
+	data(): appData
+	{
+		return{
+			isInvite: false
+		}
+	},
+	methods: {
+		Invite()
+		{
+			this.isInvite = false;
+		},
+		Invited()
+		{
+			this.isInvite = true;
+		},
+		Accept()
+		{
+			console.log("accepted");
+		},
+		Decline()
+		{
+			console.log("Declined");
+		}
+	}
 })
 </script>
 
