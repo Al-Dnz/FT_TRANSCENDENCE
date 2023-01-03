@@ -89,7 +89,7 @@ export default defineComponent({
       const payload = 
       {
         login: this.targetUser?.login,
-        gameCode: 'xxxxxxxrandom_uuidxxxxxxx'
+        gameCode: 'beuteu'
       }
       this.$store.state.globalSocket.emit('emitInvitation', payload);
     },
