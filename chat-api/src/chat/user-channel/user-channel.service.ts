@@ -148,11 +148,12 @@ export class UserChannelService {
 		return chansList
 	}
 
-	async update(id: number, role?: UserChannelRole) {
+	async update(id: number, role?: UserChannelRole, muted = false) {
 		const userChannel = await this.userChannelsRepository.findOneBy({ id: id })
 		if (!userChannel)
 			throw new HttpException('userChannel not found', HttpStatus.NOT_FOUND);
 		userChannel.role = role;
+		userChannel.muted = muted;
 		this.userChannelsRepository.save(userChannel);
 	}
 
