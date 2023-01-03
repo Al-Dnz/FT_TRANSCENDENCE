@@ -79,8 +79,6 @@ export default defineComponent({
 			.then(async response => 
 			{ 
 				const data = await response.json();
-				console.log("CREATE DM RESPONSE =>");	
-				console.log(data);
 				this.$router.push('/chat');
 			})
 			.catch(e => {

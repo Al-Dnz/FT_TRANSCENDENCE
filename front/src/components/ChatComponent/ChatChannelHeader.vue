@@ -56,7 +56,6 @@ export default defineComponent({
       this.$emit('quitChan');
     },
     setPassword() {
-      console.log('new password set'); //this is where we set a new password
       this.newPassword = '';
     },
     removePassword() {

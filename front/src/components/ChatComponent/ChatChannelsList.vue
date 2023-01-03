@@ -145,8 +145,6 @@ export default defineComponent({
       arr.sort(function (a: any, b: any) {
         return a.id - b.id;
       });
-      console.log(arr);
-
       arr.forEach((chan: any) => (chan.type == 'direct' ? this.dmChannels : this.regularChannels).push(chan));
 
     },

@@ -96,15 +96,12 @@ export default defineComponent({
       this.$emit("cancelForm");
     },
     goToChan() {
-      console.log('goToChan');
       this.$emit('goToChan');
     },
   },
   mounted() {
     this.socket?.on('currentChanToClient', (payload: any) => {
       this.changeChan(payload.channel);
-      console.log("NEW CURRENT CREATED CHAN =");
-      console.log(payload);
     })
   },
 });
