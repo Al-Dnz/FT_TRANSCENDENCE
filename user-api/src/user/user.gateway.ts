@@ -52,6 +52,23 @@ export class UserGateway
   async receiveInvitation(client: Socket, payload: ReceiveInvitationsDto): Promise<void>
   {
     try {
+      const token = client.handshake.auth.token;
+      this.userService.checkToken(token);
+      const emitter = await this.userService.getUserByToken(token);
+      
+    } catch (error)
+    {
+      this.server.to(client.id).emit('globalError', error.message);
+    }
+  }
+
+  @SubscribeMessage('receiveAcceptation')
+  async receiveAcceptation(client: Socket, payload: ReceiveInvitationsDto): Promise<void>
+  {
+    try {
+      const token = client.handshake.auth.token;
+      this.userService.checkToken(token);
+      const emitter = await this.userService.getUserByToken(token);
       
     } catch (error)
     {
