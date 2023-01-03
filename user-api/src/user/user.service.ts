@@ -268,4 +268,13 @@ export class UserService {
 	this.userRepository.save(user);
   }
 
+  //------------------------invitation
+
+  async getUserByLogin(login: string) {
+    const user = await this.userRepository.findOneBy({ login: login });
+    if (!user)
+      throw new HttpException(`User ${login} not found`, HttpStatus.NOT_FOUND);
+    return user
+  }
+
 }

@@ -401,8 +401,8 @@
 </script>
   
 <style>
-    @import "../assets/tailwind.css";
-    @import '../assets/css/style.css';
-    @import '../assets/css/boutton.css';
+  @import "../assets/tailwind.css";
+  @import '../assets/css/stylespectate.css';
+  @import '../assets/css/boutton.css';
 </style>
   
