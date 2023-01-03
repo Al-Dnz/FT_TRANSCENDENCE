@@ -101,7 +101,7 @@ export class MessageGateway
 
     }
     catch (error) {
-      this.server.to(client.id).emit('chatError', error);
+      this.server.to(client.id).emit('chatError', error.message);
     }
 
   }

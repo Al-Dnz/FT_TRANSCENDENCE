@@ -46,6 +46,7 @@ export default defineComponent({
     currentChan: Object,
     currentUser: Object,
     targetUser: Object,
+    userChannel: Object,
   },
   data(): DataI {
     return {
@@ -144,7 +145,7 @@ export default defineComponent({
     },
     setCanMute() {
 
-        this.canMute = !this.targetUser?.muted;
+        this.canMute = !this.userChannel?.muted;
 
       // if (!this.isUserMuted() && this.haveAuthorityOver())
       //   this.canMute = true;
@@ -152,8 +153,7 @@ export default defineComponent({
       //   this.canMute = false;
     },
     setCanUnmute() {
-      
-        this.canUnmute = this.targetUser?.muted;
+        this.canUnmute = this.userChannel?.muted;
     
       // if (this.isUserMuted() && this.haveAuthorityOver())
       //   this.canUnmute = true;
@@ -161,6 +161,8 @@ export default defineComponent({
       //   this.canUnmute = false;
     },
     setCanPromote() {
+
+      // this.canPromote = this.userChannel?.role == 'owner' || this.userChannel?.role == 'admin';
       if (this.isUserOwner() && !(this.isTargetOwner() || this.isTargetAdmin()))
         this.canPromote = true;
       else
