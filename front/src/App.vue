@@ -10,62 +10,74 @@
 			<router-view name="headbar" />
 		</div>
 		<div className="fixed bottom-0 right-0 w-11/12 h-content">
-			<router-view :key="$route.path"/>
+			<router-view :key="$route.path" />
 		</div>
 	</div>
-	<modalReception :ison="isInvite" :isactive=Invite :Accept=Accept :Decline=Decline />
+	<modalReception :senderLogin="senderLogin" :ison="isInvite" :isactive=Invite :Accept=Accept :Decline=Decline />
 </template>
 <script lang="ts">
-interface appData
-{
+interface appData {
 	isInvite: boolean;
+	senderLogin: string,
 }
 import { defineComponent } from 'vue';
-import modalReception from "@/components/modalSend.vue";
+import modalReception from "@/components/modalReception.vue";
 export default defineComponent({
-  name: 'App',
-  created()
-  {
-	const transAccessCookie = this.$cookies.get("trans_access");
-	// const refreshAccessCookie = this.$cookies.get("trans_refresh");
-	if (transAccessCookie)
-	{
-		if (!this.$store.state.globalSocket.connected)
-			this.$store.dispatch('setGlobalSocket', transAccessCookie);
-		// if (!this.$store.state.chatSocket.connected)
-		// 	this.$store.dispatch('setChatSocket', transAccessCookie);
-		// if (!this.$store.state.gameSocket.connected)
-		// 	this.$store.dispatch('setGameSocket', transAccessCookie);
-	}
-  },
-  components : {
-	modalReception
-  },
-	data(): appData
-	{
-		return{
-			isInvite: false
+	name: 'App',
+	created() {
+		const transAccessCookie = this.$cookies.get("trans_access");
+		// const refreshAccessCookie = this.$cookies.get("trans_refresh");
+		if (transAccessCookie) {
+			if (!this.$store.state.globalSocket.connected)
+				this.$store.dispatch('setGlobalSocket', transAccessCookie);
+			// if (!this.$store.state.chatSocket.connected)
+			// 	this.$store.dispatch('setChatSocket', transAccessCookie);
+			// if (!this.$store.state.gameSocket.connected)
+			// 	this.$store.dispatch('setGameSocket', transAccessCookie);
 		}
+
+		this.$store.state.globalSocket.on
+
+		this.$store.state.globalSocket.on('globalError', (error: any) => {
+			this.$toast(error, { styles: { backgroundColor: "#FF0000", color: "#FFFFFF" } });
+		})
+
+		this.$store.state.globalSocket.on('receiveInvitation', (payload: any) => {
+			this.handleInvitation(payload);
+		})
+
+	},
+	components: {
+		modalReception
+	},
+	data(): appData {
+		return {
+			isInvite: false,
+			senderLogin: '',
+		};
 	},
 	methods: {
-		Invite()
-		{
+		handleInvitation(payload: any) {
+			console.log("invitation received");
+			this.senderLogin = payload.sender
+			this.Invited();
+		},
+		Invite() {
 			this.isInvite = false;
 		},
-		Invited()
-		{
+		Invited() {
 			this.isInvite = true;
 		},
-		Accept()
-		{
+		Accept() {
 			console.log("accepted");
 		},
-		Decline()
-		{
+		Decline() {
 			console.log("Declined");
 		}
 	}
 })
 </script>
+
+
 
 <style src="./assets/tailwind.css" />

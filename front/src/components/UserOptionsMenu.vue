@@ -29,6 +29,7 @@
 import { Bars3Icon } from "@heroicons/vue/24/outline";
 import { defineComponent } from "vue";
 import modalSend from "@/components/modalSend.vue";
+import { decodePayload } from "engine.io-parser";
 
 interface DataI {
   showOptions: boolean;
@@ -84,8 +85,13 @@ export default defineComponent({
       alert("going to " + this.targetUser?.name + "'s profile"); // placeholder
     },
     gameInvite() {
-      this.isInvite = true;
-      // alert("a game invitation has been sent to " + this.targetUser?.name); // placeholder
+      // this.isInvite = true;
+      const payload = 
+      {
+        login: this.targetUser?.login,
+        gameCode: 'xxxxxxxrandom_uuidxxxxxxx'
+      }
+      this.$store.state.globalSocket.emit('emitInvitation', payload);
     },
     compareArrays(arr1: any[], arr2: any[]): boolean {
       let i = arr1?.length;
