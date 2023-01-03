@@ -1,0 +1,71 @@
+<template>
+<Teleport to="body">
+<div v-if="loading">
+<div v-show="ison" className=" fixed  w-full h-full bg-black bg-opacity-20">
+    <div className="flex justify-center pt-24">
+        <div className =" flex flex-col items-center bg-slate-100  shadow-xl w-1/2 pt-16 pl-16 pr-16 pb-8 rounded-xl">
+            <span className = "pb-4" >Boby veut se battre!</span>
+            <Countdown :deadlineDate="date" :showDays=false :showHours=false :showMinutes=false mainColor='#22C55E' />
+            <div className = "pt-16 flex flex-row justify-around items-end">
+                <button @click="activate()" className = "transition ease-in-out delay-100 text-white hover:scale-110 rounded-xl pr-8 pt-4 pl-8 pb-4 mr-16 bg-green-500">Accept</button>
+                <button @click="activate()" className = "transition ease-in-out delay-100 text-white hover:scale-110 rounded-xl pr-8 pt-4 pl-8 pb-4 ml-16 bg-red-600">Decline</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</Teleport>
+</template>
+  
+  <script>
+    import { delay } from 'q';
+    import {Countdown} from 'vue3-flip-countdown'
+  export default {
+	name: 'modalVue',
+    props : {
+        isactive: {type: Function},
+        ison: {
+            type : Boolean,
+            default: false
+        }
+    },
+    methods : {
+        activate() {
+            this.isactive();
+        },
+        async autovalidate () {
+            await delay(20000);
+            this.isactive();
+        }
+    },
+    data()
+    {
+        return{
+            date:Date,
+            loading : false
+        }
+    },
+    components: {
+        Countdown
+    },
+    watch: {
+        ison: async function(newVal, oldVal)
+        {
+            if (newVal == true)
+            {
+                let date = new Date();
+                date.setSeconds(date.getSeconds() + 20);
+                this.date = date;
+                this.loading = true;
+                this.autovalidate();
+            }
+            if (oldVal == true)
+            {
+                this.loading = false;
+            }
+        },
+    }
+}
+  </script>
+  
+  <style src="../assets/tailwind.css" />
