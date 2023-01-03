@@ -2,41 +2,38 @@ import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Channel, User, Avatar } from 'db-interface/Core';
+import { Channel, User, Avatar, UserSettings, UserStats } from 'db-interface/Core';
 
 import { Logger } from '@nestjs/common';
 
 @Injectable()
-export class AppService implements OnApplicationBootstrap
-{
+export class AppService implements OnApplicationBootstrap {
 	constructor(
 		@InjectRepository(Channel)
 		private readonly channelsRepository: Repository<Channel>,
 		@InjectRepository(User)
 		private readonly usersRepository: Repository<User>,
-	  ) {}
+	) { }
 
 	private logger: Logger = new Logger('onApplicationBootstrap');
 
 
-	async createFakeUser(name: string, avatar: string)
-	{
+	async createFakeUser(name: string, avatar: string) {
 		this.logger.log(`Creation of user ${name}`);
 		let user = await this.usersRepository.findOneBy({ login: name })
-		if (!user)
-		{
-		  let user = new User(name);
-		  user.avatar = new Avatar(avatar);
-		  this.usersRepository.save(user);			
+		if (!user) {
+			let user = new User(name);
+			user.avatar = new Avatar(avatar);
+			user.settings = new UserSettings;
+			user.stats = new UserStats;
+			this.usersRepository.save(user);
 		}
 	}
-	
-	async onApplicationBootstrap()
-	{
+
+	async onApplicationBootstrap() {
 		this.logger.log(`Creation of main_chan`);
-		let chan = await this.channelsRepository.findOne({ where: {name: "main_chan"} })
-		if (!chan)
-		{
+		let chan = await this.channelsRepository.findOne({ where: { name: "main_chan" } })
+		if (!chan) {
 			const channel = new Channel();
 			channel.id = 1;
 			channel.name = "main_chan";
@@ -53,11 +50,11 @@ export class AppService implements OnApplicationBootstrap
 
 	}
 
-  getHello(): string {
-    return 'Welcome on FT_TRANSCENDENCE 42 project: chat service';
-  }
+	getHello(): string {
+		return 'Welcome on FT_TRANSCENDENCE 42 project: chat service';
+	}
 
 
-  
-	
+
+
 }

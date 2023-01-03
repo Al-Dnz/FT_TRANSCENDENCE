@@ -30,6 +30,22 @@ const routes: Array<RouteRecordRaw> = [
       },
     },
   },
+
+  {
+    name: "watchPage",
+    path: "/watch/:id",
+    components: {
+      default: () => import("@/views/Watch.vue"),
+      navbar: () => import("@/components/Nav.vue"),
+      headbar: () => import("@/components/Header.vue"),
+    },
+    props: {
+      headbar: {
+        sectionTitle: "Watch",
+        type: String,
+      },
+    },
+  },
   {
     name: "accPage",
     path: "/user",

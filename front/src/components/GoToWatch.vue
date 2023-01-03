@@ -15,7 +15,7 @@ export default defineComponent({
     methods : {
         goToWatch() {
             if (this.accName)
-                this.$router.push('/spectate/' + this.accName);
+                this.$router.push('/watch/' + this.accName);
             else
                 this.$router.push('/spectate');
         }

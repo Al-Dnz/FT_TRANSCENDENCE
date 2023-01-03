@@ -107,6 +107,7 @@ export default defineComponent({
         .then(res => res.json())
         .then(data => {
           this.matches = data;
+          this.matches.sort(function (a: any, b: any) {return a.id - b.id });
         })
         .catch(e => {
           this.$toast(e.message, { styles: { backgroundColor: "#FF0000", color: "#FFFFFF" } });
@@ -125,7 +126,7 @@ export default defineComponent({
       }
       else
       {
-        if (matche.socre2 > matche.score1)
+        if (matche.score2 > matche.score1)
           return true;
         else
           return false;

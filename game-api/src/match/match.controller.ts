@@ -27,6 +27,22 @@ export class MatchController {
 		return await this.macthService.findByGameCode(gameCode);
 	}
 
+
+	@Get('/getGame')
+	async getGame(@Headers('token') token: string)
+	{
+		let user;
+		try {
+			this.userService.checkToken(token);
+			user = await this.userService.getUserByToken(token);
+		} catch (error) {
+			throw new HttpException(error.message, HttpStatus.FORBIDDEN);
+		}
+		const res = await this.macthService.getGame(user);
+		return res;
+	}
+
+
 	@Get('/isingame')
 	async isInGame(@Headers('token') token: string)
 	{
@@ -39,6 +55,19 @@ export class MatchController {
 		}
 		const res = await this.macthService.isInGame(user);
 		return { isInGame: res }; 
+	}
+
+	@Get('/isingame/:login')
+	async isUserInGame(@Param('login') login: string, @Headers('token') token: string)
+	{
+		try {
+			this.userService.checkToken(token);
+		} catch (error) {
+			throw new HttpException(error.message, HttpStatus.FORBIDDEN);
+		}
+		const player = await this.userService.getUserByLogin(login);
+		const res = await this.macthService.isPlayerInGame(player);
+		return res;
 	}
 
 	@Get('/history/:login')

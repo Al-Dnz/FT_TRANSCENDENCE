@@ -8,10 +8,11 @@
       {{ userChannel?.user.userName }}
       <span v-if="userChannel?.role==='owner'">♛</span>
       <span v-if="userChannel?.role==='admin'">☆</span>
+      <span v-if="userChannel?.muted">🔇</span>
       </h1>
       <div v-if="userChannel?.user.login !== currentUser?.login" v-show="isOptMenuButtonVisible">
         <UserOptionsMenu :socket="socket" :currentChan="getCurrentChan" :currentUser="getCurrentUser"
-        :targetUser="getUserChannel" @toggle-opt-menu="switchOptMenuState"
+        :targetUser="getUserChannel" :userChannel="userChannel" @toggle-opt-menu="switchOptMenuState"
         class="h-6 w-6 rounded-full bg-gray-400" />
       </div>
     </div>

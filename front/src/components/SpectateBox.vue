@@ -33,15 +33,12 @@ export default defineComponent({
 			required: true}
 	},
 	methods: {
-		watch() {
-            alert("Watch");
-		},
 		spec()
 		{
-			alert("we go spectate room number " + this.obj.room)
+			this.$router.push('/watch/' + this.obj?.playerOne.login);
 		}
 	},
   })
 </script>
   
-  <style src="../assets/tailwind.css" />
+<style src="../assets/tailwind.css" />
