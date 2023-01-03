@@ -1,5 +1,8 @@
 <template>
-	<div v-if="error" className="flex items-center w-full h-full">
+  <div v-if="loading">
+    <loadingPage />
+  </div>
+	<div v-else-if="error" className="flex items-center w-full h-full">
 		<errorPage :str="error" />
 	</div>
   <div v-else className="absolute flex justify-center h-full w-full">
@@ -50,7 +53,7 @@
   import io from 'socket.io-client';
   import {Sprite, ball, paddle } from "../frontJS/game.js";
   import errorPage from "@/components/Error.vue";
-  //import loadingPage from "@/components/Loading.vue";
+  import loadingPage from "@/components/Loading.vue";
 
   export default {
     name: 'gameComp',
@@ -87,6 +90,7 @@
         returnGameBtn: {},
         error : "",
         gameCode: "",
+        loading: true
       };
     },
     methods: {
@@ -103,22 +107,19 @@
         },
       }
       await fetch(`http://${process.env.VUE_APP_IP}:3005/match/isingame/${this.$route?.params.id}`, requestOptions)
-        .then(async res => 
+      .then(async res =>
+      {
+        const data = await res.json()
+        if (!res.ok) 
         {
-          let toto = await res.json();
-          if (res.ok)
-            this.gameCode = toto.gameCode;
-          else
-          {
-            this.error = toto.message;
-          } 
-        })
-        // .then(match => this.gameCode = match.gameCode)
-        // .catch(e => {
-        //   this.error = e.message;
-        //   console.log("c'est le msg " + e.message);
-        // })
-        //console.log(this.gameCode);
+          const error = (data && data.message) || res.statusText;
+          return Promise.reject(error);
+        }
+        this.gameCode = data.gameCode
+      })
+      .catch(error => {
+        this.error = error;
+      });
       },
       // newGame() {
       //   console.log('NIK');
@@ -240,6 +241,11 @@
     },
     async mounted() {
       await this.fetchInGame();
+      this.loading = false;
+      if (this.gameCode == "")
+      {
+        return;
+      }
       //this.queueScreen = document.getElementById('queueScreen');
       //this.initialScreen = document.getElementById('initialScreen');
       this.gameScreen = document.getElementById('gameScreen');
@@ -388,7 +394,8 @@
       this.specGame(this.gameCode);
     },
     components : {
-        errorPage
+        errorPage,
+        loadingPage
     }
   };
 </script>
