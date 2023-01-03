@@ -22,11 +22,13 @@
       </ul>
     </div>
   </div>
+  <modalSend :ison="isInvite" :isactive=Invite />
 </template>
 
 <script lang="ts">
 import { Bars3Icon } from "@heroicons/vue/24/outline";
 import { defineComponent } from "vue";
+import modalSend from "@/components/modalSend.vue";
 
 interface DataI {
   showOptions: boolean;
@@ -37,6 +39,7 @@ interface DataI {
   canMute: boolean;
   canUnmute: boolean;
   canPromote: boolean;
+  isInvite: boolean;
 }
 
 export default defineComponent({
@@ -58,9 +61,17 @@ export default defineComponent({
       canMute: false,
       canUnmute: false,
       canPromote: false,
+      isInvite: false
     };
   },
+  components : {
+    modalSend
+  },
   methods: {
+    Invite()
+    {
+      this.isInvite = false
+    },
     toggleMenu() {
       this.showOptions = !this.showOptions;
       this.$emit('toggleOptMenu');
@@ -73,7 +84,8 @@ export default defineComponent({
       alert("going to " + this.targetUser?.name + "'s profile"); // placeholder
     },
     gameInvite() {
-      alert("a game invitation has been sent to " + this.targetUser?.name); // placeholder
+      this.isInvite = true;
+      // alert("a game invitation has been sent to " + this.targetUser?.name); // placeholder
     },
     compareArrays(arr1: any[], arr2: any[]): boolean {
       let i = arr1?.length;

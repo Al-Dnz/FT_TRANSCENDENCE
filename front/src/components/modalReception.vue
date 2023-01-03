@@ -7,8 +7,8 @@
             <span className = "pb-4" >Boby veut se battre!</span>
             <Countdown :deadlineDate="date" :showDays=false :showHours=false :showMinutes=false mainColor='#22C55E' />
             <div className = "pt-16 flex flex-row justify-around items-end">
-                <button @click="activate()" className = "transition ease-in-out delay-100 text-white hover:scale-110 rounded-xl pr-8 pt-4 pl-8 pb-4 mr-16 bg-green-500">Accept</button>
-                <button @click="activate()" className = "transition ease-in-out delay-100 text-white hover:scale-110 rounded-xl pr-8 pt-4 pl-8 pb-4 ml-16 bg-red-600">Decline</button>
+                <button @click="Accepted()" className = "transition ease-in-out delay-100 text-white hover:scale-110 rounded-xl pr-8 pt-4 pl-8 pb-4 mr-16 bg-green-500">Accept</button>
+                <button @click="Declined()" className = "transition ease-in-out delay-100 text-white hover:scale-110 rounded-xl pr-8 pt-4 pl-8 pb-4 ml-16 bg-red-600">Decline</button>
             </div>
         </div>
     </div>
@@ -17,13 +17,20 @@
 </Teleport>
 </template>
   
-  <script>
-    import { delay } from 'q';
-    import {Countdown} from 'vue3-flip-countdown'
+<script>
+import {Countdown} from 'vue3-flip-countdown'
   export default {
 	name: 'modalVue',
     props : {
-        isactive: {type: Function},
+        isactive: {
+            type: Function,
+            required: true},
+        Accept: {
+            type: Function,
+            required: true},
+        Decline: {
+            type: Function,
+            required: true},
         ison: {
             type : Boolean,
             default: false
@@ -34,8 +41,18 @@
             this.isactive();
         },
         async autovalidate () {
-            await delay(20000);
+            await this.delay(20000);
             this.isactive();
+        },
+        Accepted() {
+            this.Accept();
+        },
+        Declined()
+        {
+            this.Decline();
+        }
+        delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
         }
     },
     data()
@@ -66,6 +83,5 @@
         },
     }
 }
-  </script>
-  
-  <style src="../assets/tailwind.css" />
+</script>
+<style src="../assets/tailwind.css" />
