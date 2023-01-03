@@ -1,4 +1,4 @@
-import { IsBoolean, IsEnum, IsOptional, ValidateNested, Length } from 'class-validator';
+import { IsBoolean, IsEnum, IsOptional, ValidateNested, Length, IsString } from 'class-validator';
 import { Type } from 'class-transformer';
 import { MapID, PaddleID } from 'db-interface/Core';
 
@@ -15,6 +15,7 @@ export class UpdateSettingsDto {
 
 export class UpdateUserDto {
     @IsOptional()
+    @IsString()
     @Length(1)
     username?: string;
 

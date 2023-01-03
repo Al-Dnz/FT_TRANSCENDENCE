@@ -12,6 +12,7 @@ import { Socket, Server } from 'socket.io';
 
 import { UserService } from './user.service';
 import { UserStatus } from 'db-interface/Core';
+import { EmitInvitationsDto, ReceiveInvitationsDto } from './dto/invitations.dto';
 
 
 @WebSocketGateway({cors: {origin: '*',}})
@@ -22,11 +23,47 @@ export class UserGateway
   @WebSocketServer() server: Server;
   private logger: Logger = new Logger('UserGateway');
 
+
+
+  @SubscribeMessage('emitInvitation')
+  async emitInvitation(client: Socket, payload: EmitInvitationsDto): Promise<void>
+  {
+    try {
+      const token = client.handshake.auth.token;
+      this.userService.checkToken(token);
+      const emitter = await this.userService.getUserByToken(token);
+      const receiver = await this.userService.getUserByLogin(payload.login);
+
+      const sentPaylod = 
+      {
+        sender: emitter.login,
+        gamecode: payload.gameCode
+      }
+      this.server.to(receiver.globalSocketId).emit('receiveInvitation', {sender: emitter.login, sentPaylod});
+      
+    } catch (error)
+    {
+      this.server.to(client.id).emit('globalError', error.message);
+    }
+  }
+
+
+  @SubscribeMessage('acceptInvitation')
+  async receiveInvitation(client: Socket, payload: ReceiveInvitationsDto): Promise<void>
+  {
+    try {
+      
+    } catch (error)
+    {
+      this.server.to(client.id).emit('globalError', error.message);
+    }
+  }
+
   async handleConnection(client: Socket, ...args: any[]) 
   {
     try {
       const token = client.handshake.auth.token;
-    //   this.userService.checkToken(token);
+      this.userService.checkToken(token);
       const user = await this.userService.getUserByToken(token);
       this.logger.log(`User ${user.login} is connected`);
       this.userService.updateUserStatus(user, UserStatus.online, client.id)

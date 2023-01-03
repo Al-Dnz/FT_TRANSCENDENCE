@@ -6,7 +6,8 @@ import { QueryFilterDto } from 'validation/query.dto';
 import { Equal } from 'typeorm';
 
 @Injectable()
-export class MatchService {
+export class MatchService 
+{
     constructor(
         @InjectRepository(Match)
         private matchRepository: Repository<Match>,
@@ -22,4 +23,7 @@ export class MatchService {
             },
         });
     }
+
+
+    
 }
