@@ -8,8 +8,12 @@
             <button class="btn-1" id = "findGameBtn">Play Normal Mode  </button>
           </div>
           <div style="margin: 2vh;">
-          <button class="btn-1" id = "findGameCustomBtn" style="top: 60%;" >Play Custom Mode</button>
-        </div>
+            <button class="btn-1" id = "findGameCustomBtn" style="top: 60%;" >Play Custom Mode</button>
+          </div>
+          <div style="margin: 2vh;">
+            <input type="text" v-model="gamesecret" placeholder="Enter game code" />
+            <button class="btn-1" id = "codeGameBtn" style="top: 60%;" >Validate code</button>
+          </div>
         </div>
 			</div>
 			<div class="queueScreen" id="queueScreen" >
@@ -81,6 +85,7 @@ export default {
       findGameBtn: {},
       findGameCustomBtn: {},
       returnGameBtn: {},
+      gamesecret: ""
     };
   },
   methods: {
