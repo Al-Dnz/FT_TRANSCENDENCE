@@ -287,6 +287,12 @@ export class GameGateway
 				client.join(gameCode);
 				this.state[gameCode].game_data.idPlayers.player2 = user.login;
 		
+				const match = await this.matchService.findByGameCode(gameCode);
+				await this.matchService.updateMatchCreation(match, user);
+				await this.matchService.updateMatchStatus(match, MatchStatus.live);
+				this.updateStatus(user.login, UserStatus.in_game);
+				this.sendLiveMatches();
+
 				client.emit('gameCode', gameCode);
 				this.server.to(gameCode).emit('init', this.state[gameCode].game_data.idPlayers);
 				// client.emit('startGame');
@@ -334,7 +340,7 @@ export class GameGateway
 				await this.matchService.updateMatchCreation(match, user);
 				await this.matchService.updateMatchStatus(match, MatchStatus.live)
 				this.updateStatus(user.login, UserStatus.in_game);
-				this.sendLiveMatches()
+				this.sendLiveMatches();
 
 				this.clientRooms[user.login] = gameCode;
 				this.state[gameCode].game_data.idPlayers.player2 = user.login;
