@@ -241,6 +241,7 @@ export class GameGateway
 
 	}
 
+
 	@SubscribeMessage('findGame')
 	async handleFindGame(client: Socket): Promise<void>
 	{
