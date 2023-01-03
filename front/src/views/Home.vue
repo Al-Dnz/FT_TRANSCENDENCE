@@ -233,6 +233,7 @@ export default {
     this.findGameCustomBtn = document.getElementById('findGameCustomBtn');
     this.gameCodeDisplay = document.getElementById('gameCodeDisplay');
 
+    this.setScreen("initial");
     // this.newGameBtn.addEventListener('click', this.newGame);
     
     this.findGameCustomBtn.addEventListener('click', this.findGameCustom);
