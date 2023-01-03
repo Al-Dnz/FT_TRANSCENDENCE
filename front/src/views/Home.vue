@@ -200,8 +200,8 @@ export default {
     },
     sendCode()
     {
-      console.log(this.gamesecret)
-      this.socket.emit('InvGame', this.gamesecret)
+      console.log(this.gamesecret);
+      this.socket.emit('InvGame', this.gamesecret);
     }
   },
   
