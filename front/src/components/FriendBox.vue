@@ -26,7 +26,7 @@
 			</div>
 			<div className="icon w-1/4 mt-1 mb-1 mx-2">
 				<div className="w-1/2">
-					<goToWatch :accName=obj?.username />
+					<goToWatch :accName=obj?.login />
 				</div>
 			</div>
 			<div className="icon w-1/4 mt-1 mb-1 mx-2">
