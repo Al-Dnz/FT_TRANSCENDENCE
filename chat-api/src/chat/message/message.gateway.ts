@@ -24,9 +24,11 @@ import { IMessage } from '../interface/message.interface';
 
 import { ChannelService } from '../channel/channel.service';
 
-import { ChannelType, User } from 'db-interface/Core';
+import { ChannelType, User, UserChannelRole } from 'db-interface/Core';
 import { UserChannelService } from '../user-channel/user-channel.service';
 import { BannedChanService } from '../banned-chan/banned-chan.service';
+import { HttpException, HttpStatus } from '@nestjs/common';
+
 
 @UsePipes(WSPipe)
 @WebSocketGateway({
@@ -58,10 +60,11 @@ export class MessageGateway
       const channel = await this.channelService.findOne(payload.channelId);
       const userchannels = await this.userChannelService.findByUserAndChan(sender.id, payload.channelId);
 
-      if (userchannels.length == 0) {
-        this.server.to(client.id).emit('chatError', `You are not connected to the channel ${channel.name}`);
-        return;
-      }
+      if (userchannels.length == 0)
+        throw new HttpException(`You are not connected to the channel ${channel.name}`, HttpStatus.FORBIDDEN);
+      if (userchannels[0].muted)
+        throw new HttpException(`You are muted in the channel ${channel.name}`, HttpStatus.FORBIDDEN);
+
 
       const msgData: IMessage =
       {
@@ -71,23 +74,20 @@ export class MessageGateway
       }
       const new_message = await this.messageService.create(msgData);
 
-      if (channel.type != ChannelType.direct)
-      {
+      if (channel.type != ChannelType.direct) {
         const usersOfChannel: User[] = await this.userChannelService.getAllUsersFromChan(channel.id);
-        for (let user of usersOfChannel) 
-        {
+        for (let user of usersOfChannel) {
           //  IF USER IS NOT MUTED BY CHANNEL
           //  IF SENDER IS NOT BLOCKED BY USER
-        
+
           this.server.to(user.chatSocketId).emit(`msgToChannel`, new_message);
         }
       }
-      else
-      {
+      else {
         this.server.to(channel.userOne.chatSocketId).emit(`msgToChannel`, new_message);
         this.server.to(channel.userTwo.chatSocketId).emit(`msgToChannel`, new_message);
       }
-      
+
 
       // if (channel.type = ChannelType.direct)
       // {
@@ -96,9 +96,9 @@ export class MessageGateway
       // }
       // else
       // {
-        // this.server.emit(`msgToChannel`, new_message);
+      // this.server.emit(`msgToChannel`, new_message);
       // }
-      
+
     }
     catch (error) {
       this.server.to(client.id).emit('chatError', error);

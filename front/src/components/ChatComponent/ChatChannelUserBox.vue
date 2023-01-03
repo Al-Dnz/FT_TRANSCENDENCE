@@ -8,6 +8,7 @@
       {{ userChannel?.user.userName }}
       <span v-if="userChannel?.role==='owner'">♛</span>
       <span v-if="userChannel?.role==='admin'">☆</span>
+      <span v-if="userChannel?.muted">🔇</span>
       </h1>
       <div v-if="userChannel?.user.login !== currentUser?.login" v-show="isOptMenuButtonVisible">
         <UserOptionsMenu :socket="socket" :currentChan="getCurrentChan" :currentUser="getCurrentUser"

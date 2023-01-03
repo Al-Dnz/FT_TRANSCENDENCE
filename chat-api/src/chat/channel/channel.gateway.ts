@@ -25,6 +25,7 @@ import { DirectMessageDto } from './dto/direct-message.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
 import { InviteUserDto } from './dto/invite-user.dto';
 import { UserChannelDto } from './dto/user-channel.dto';
+import { MuteUserDto } from './dto/mute-user.dto';
 
 @UsePipes(WSPipe)
 @WebSocketGateway({ cors: { origin: '*' } })
@@ -341,13 +342,38 @@ export class ChannelGateway {
 	}
 
 	@SubscribeMessage('muteUser')
-	async muteUser(client: Socket, payload: GrantUserDto) {
+	async muteUser(client: Socket, payload: MuteUserDto) 
+	{
 		try {
 			const token = client.handshake.auth.token;
 			this.userService.checkToken(token);
-		}
-		catch (error) {
+			const admin = await this.userService.getUserByToken(token);
+			const muted = await this.userService.getUserByLogin(payload.userLogin);
+			const channel = await this.channelService.findOne(payload.channelId);
 
+			if (admin == muted)
+				throw new HttpException(`You can't mute yourself`, HttpStatus.FORBIDDEN);
+
+			const requesterUserChannels = await this.userChannelService.findByUserAndChan(admin.id, channel.id);
+			if (requesterUserChannels.length == 0)
+				throw new HttpException(`You are not in the channel #${channel.name} to mute somebody`, HttpStatus.FORBIDDEN);
+
+			const mutedUserChannels = await this.userChannelService.findByUserAndChan(muted.id, channel.id);
+			if  (mutedUserChannels .length == 0)
+				throw new HttpException(`${muted.login} is not in channel ${channel.name} `, HttpStatus.FORBIDDEN);
+
+			if (requesterUserChannels[0].role == UserChannelRole.member)
+				throw new HttpException(`You have not enougth priviledge to (un)mute ${muted.login}`, HttpStatus.FORBIDDEN);
+			
+			if (requesterUserChannels[0].role == UserChannelRole.admin && (mutedUserChannels[0].role == UserChannelRole.owner || mutedUserChannels[0].role == UserChannelRole.admin ))
+				throw new HttpException(`You have not enougth priviledge to (un)mute ${muted.login}`, HttpStatus.FORBIDDEN);
+			
+			this.userChannelService.update(mutedUserChannels[0].id, mutedUserChannels[0].role, payload.muted);
+			this.sendChannelUsers(client, { id: payload.channelId });
+		}
+		catch (error)
+		{
+			this.server.to(client.id).emit('chatError', error.message);
 		}
 
 	}
@@ -361,9 +387,17 @@ export class ChannelGateway {
 
 			const invited = await this.userService.getUserByLogin(payload.userLogin);
 			const chan = await this.channelService.findOne(payload.channelId)
+
+			if (chan.type == ChannelType.direct)
+				throw new HttpException(`You can't invite someone else in a direct message channel`, HttpStatus.FORBIDDEN);
+
+			const requesterUserChannels = await this.userChannelService.findByUserAndChan(user.id, chan.id);
+			if (requesterUserChannels.length == 0)
+				throw new HttpException(`You are not in the channel #${chan.name} to invite somebody`, HttpStatus.FORBIDDEN);
+
 			const userChannels = await this.userChannelService.findByUserAndChan(invited.id, chan.id);
 			if (userChannels.length)
-				throw new HttpException(`${invited.login} is already in private channel #${chan.name}`, HttpStatus.FORBIDDEN);
+				throw new HttpException(`${invited.login} is already in the channel #${chan.name}`, HttpStatus.FORBIDDEN);
 
 			const userchannel = await this.userChannelService.create({userId: invited.id, channelId: chan.id});
 
