@@ -273,8 +273,8 @@ export class GameGateway
 				client.emit('gameCode', gameCode);
 				client.emit('test');
 			// create match in db
-			// const match = await this.matchService.create(user, gameCode, false);
-			// this.updateStatus(user.login, UserStatus.in_game);
+			    const match = await this.matchService.create(user, gameCode, false);
+			    this.updateStatus(user.login, UserStatus.in_game);
 
 				this.state[gameCode] = new GameService(this.matchService);
 
