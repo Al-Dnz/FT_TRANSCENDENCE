@@ -12,7 +12,7 @@
           </div>
           <div style="margin: 2vh;">
             <input type="text" v-model="gamesecret" placeholder="Enter game code" />
-            <button class="btn-1" id = "codeGameBtn" style="top: 60%;" >Validate code</button>
+            <button @click="sendCode" class="btn-1" id = "codeGameBtn" style="top: 60%;" >Validate code</button>
           </div>
         </div>
 			</div>
@@ -198,6 +198,11 @@ export default {
     getSizeToServe() {
       this.socket.emit('getSizeToServer');
     },
+    sendCode()
+    {
+      console.log(this.gamesecret)
+      this.socket.emit('InvGame', this.gamesecret)
+    }
   },
   
   unmounted() {
@@ -238,6 +243,7 @@ export default {
     this.findGameCustomBtn.addEventListener('click', this.findGameCustom);
     this.findGameBtn.addEventListener('click', this.findGame);
     // ----------------------------------------------
+
     this.socket.on(`test`, (data) => {
       this.test();
     });
