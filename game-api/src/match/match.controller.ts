@@ -22,15 +22,13 @@ export class MatchController {
 	) { }
 
 	@Get('/game/:gameCode')
-	async getOne(@Param('gameCode') gameCode: string)
-	{
+	async getOne(@Param('gameCode') gameCode: string) {
 		return await this.macthService.findByGameCode(gameCode);
 	}
 
 
 	@Get('/getGame')
-	async getGame(@Headers('token') token: string)
-	{
+	async getGame(@Headers('token') token: string) {
 		let user;
 		try {
 			this.userService.checkToken(token);
@@ -44,8 +42,7 @@ export class MatchController {
 
 
 	@Get('/isingame')
-	async isInGame(@Headers('token') token: string)
-	{
+	async isInGame(@Headers('token') token: string) {
 		let user;
 		try {
 			this.userService.checkToken(token);
@@ -54,12 +51,11 @@ export class MatchController {
 			throw new HttpException(error.message, HttpStatus.FORBIDDEN);
 		}
 		const res = await this.macthService.isInGame(user);
-		return { isInGame: res }; 
+		return { isInGame: res };
 	}
 
 	@Get('/isingame/:login')
-	async isUserInGame(@Param('login') login: string, @Headers('token') token: string)
-	{
+	async isUserInGame(@Param('login') login: string, @Headers('token') token: string) {
 		try {
 			this.userService.checkToken(token);
 		} catch (error) {
@@ -71,8 +67,8 @@ export class MatchController {
 	}
 
 	@Get('/history/:login')
-	async getMatchHistory(@Param('login') login: string,  @Headers('token') token: string) {
-		
+	async getMatchHistory(@Param('login') login: string, @Headers('token') token: string) {
+
 		try {
 			this.userService.checkToken(token);
 		} catch (error) {
@@ -102,15 +98,20 @@ export class MatchController {
 		} catch (error) {
 			throw new HttpException(error.message, HttpStatus.FORBIDDEN);
 		}
+		if (userOne.status == UserStatus.offline)
+			throw new HttpException(`You cannot create game if you are offline`, HttpStatus.FORBIDDEN);
+
 		const userTwo = await this.userService.getUserByLogin(body.login);
 		if (userTwo.status == UserStatus.offline)
 			throw new HttpException(`${userTwo.login} is offline`, HttpStatus.FORBIDDEN);
 
-		const currentMatches = await this.macthService.findCurrentMatches(userOne, userTwo);
+		let currentMatches = await this.macthService.findCurrentMatchesByUser(userOne);
 		if (currentMatches.length != 0)
-		{
-			throw new HttpException("At least one user is busy", HttpStatus.FORBIDDEN);
-		}
+			throw new HttpException(`${userOne.login} You already one match in live, pending or invited. Finish it bastard !`, HttpStatus.FORBIDDEN);
+
+		currentMatches = await this.macthService.findCurrentMatchesByUser(userTwo);
+		if (currentMatches.length != 0)
+			throw new HttpException(`${userTwo.login} have already one match in live, pending or invited`, HttpStatus.FORBIDDEN);
 
 		const gameCode = await this.macthService.generateGameCode();
 		const custom = body.custom;
@@ -132,19 +133,16 @@ export class MatchController {
 		}
 		let match = await this.macthService.findByGameCode(body.gameCode);
 
-		if (match.playerTwo != userTwo)
-		{
+		if (match.playerTwo != userTwo) {
 			await this.macthService.removeByGameCode(body.gameCode)
 			throw new HttpException(`${userTwo.login} is not invited at this match`, HttpStatus.FORBIDDEN);
 		}
 
-		if (userTwo.status == UserStatus.offline)
-		{
+		if (userTwo.status == UserStatus.offline) {
 			await this.macthService.removeByGameCode(body.gameCode)
 			throw new HttpException(`${userTwo.login} is offline`, HttpStatus.FORBIDDEN);
 		}
-		if (match.playerOne.status == UserStatus.offline)
-		{
+		if (match.playerOne.status == UserStatus.offline) {
 			await this.macthService.removeByGameCode(body.gameCode)
 			throw new HttpException(`${match.playerOne.login} is offline`, HttpStatus.FORBIDDEN);
 		}
