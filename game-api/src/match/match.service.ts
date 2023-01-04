@@ -219,6 +219,45 @@ export class MatchService {
 		return matches;
 	}
 
+
+	async findCurrentMatchesByUser(userOne: User) {
+		const matches = await this.matchesRepository.find(
+			{
+				relations: { playerOne: true, playerTwo: true },
+				where: [
+					//p1 =u1
+					{
+						playerOne: { id: userOne.id },
+						status: MatchStatus.pending
+					},
+					{
+						playerOne: { id: userOne.id },
+						status: MatchStatus.requested
+					},
+					{
+						playerOne: { id: userOne.id },
+						status: MatchStatus.live
+					},
+					//p2 = u1
+					{
+						// useless condition
+						playerTwo: { id: userOne.id },
+						status: MatchStatus.pending
+					},
+					{
+						playerTwo: { id: userOne.id },
+						status: MatchStatus.requested
+					},
+					{
+						playerTwo: { id: userOne.id },
+						status: MatchStatus.live
+					},
+				]
+			})
+		return matches;
+	}
+
+
 	async isInGame(user: User): Promise<boolean>
 	{
 		const matches = await this.matchesRepository.find(
