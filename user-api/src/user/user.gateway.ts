@@ -13,13 +13,15 @@ import { Socket, Server } from 'socket.io';
 import { UserService } from './user.service';
 import { UserStatus } from 'db-interface/Core';
 import { EmitInvitationsDto, ReceiveInvitationsDto } from './dto/invitations.dto';
+import { MatchService } from 'src/match/match.service';
 
 
 @WebSocketGateway({cors: {origin: '*',}})
 export class UserGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService,
+              private matchService: MatchService) {}
   @WebSocketServer() server: Server;
   private logger: Logger = new Logger('UserGateway');
 
@@ -111,7 +113,17 @@ export class UserGateway
         login: user.login,
         status: user.status
       }
-      this.server.emit('userStatus', payload);      
+      this.server.emit('userStatus', payload);
+
+      const matchesToRemove = await this.matchService.findCurrentUnfinishedMatchesByUser(user);
+      for (let match of matchesToRemove)
+      {
+        this.server.to(match.playerOne.globalSocketId).emit('globalError', `match ${match.gameCode} has been canceled`);
+        if (match.playerTwo)
+          this.server.to(match.playerTwo.globalSocketId).emit('globalError', `match ${match.gameCode} has been canceled`);
+        this.matchService.remove(match.id);
+      }
+
     } catch (error) 
     {
       client.disconnect();
