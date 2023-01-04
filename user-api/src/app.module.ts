@@ -12,7 +12,8 @@ import {
   Avatar,
   UserSettings,
   BannedChan,
-  BlockerBlocked
+  BlockerBlocked,
+  GlobalSocket
 } from 'db-interface/Core';
 import { AvatarModule } from './avatar/avatar.module';
 import { MatchModule } from './match/match.module';
@@ -45,7 +46,8 @@ import { StreamModule } from './stream/stream.module';
         User,
         UserSettings,
         BannedChan,
-        BlockerBlocked
+        BlockerBlocked,
+        GlobalSocket
       ],
       synchronize: true,
     }),

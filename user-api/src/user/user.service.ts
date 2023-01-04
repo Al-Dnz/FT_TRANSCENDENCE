@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException, } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User, Avatar, UserStatus, BlockerBlocked, UserSettings, UserStats } from 'db-interface/Core';
+import { User, Avatar, UserStatus, BlockerBlocked, UserSettings, UserStats, GlobalSocket } from 'db-interface/Core';
 import { DeleteResult, Like, Repository, UpdateResult } from 'typeorm';
 import { QueryFilterDto } from 'validation/query.dto';
 

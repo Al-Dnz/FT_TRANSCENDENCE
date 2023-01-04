@@ -91,6 +91,9 @@ export class Match extends Base {
     @Column({ unique: true, nullable: true, default: null })
     gameCode: string;
 
+    @Column({ default: false })
+    locked: boolean;
+
     @Column({ default: 0 })
     score1: number;
 
@@ -120,6 +123,20 @@ export class Match extends Base {
 
     @OneToOne(() => UserMatch, (userMatch: UserMatch) => userMatch.match)
     userMatch: Relation<UserMatch>;
+}
+
+
+@Entity()
+export class GlobalSocket extends Base {
+    @Column()
+    code: string;
+
+    @ManyToOne(() => User, (user: User) => user.globalSockets, {
+        onDelete: "CASCADE",
+        nullable: true,
+        eager: true,
+    })
+    user: Relation<User>;
 }
 
 @Entity()
@@ -296,6 +313,12 @@ export class User extends Base {
     })
     @JoinColumn()
     avatar: Avatar;
+
+
+    @OneToMany(() => GlobalSocket, (globalSocket: GlobalSocket) => globalSocket.user, {
+        cascade: true,
+    })
+    globalSockets: Relation<GlobalSocket>[];
 
     constructor(login: string) {
         super();

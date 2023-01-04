@@ -18,7 +18,8 @@ import {
   Avatar,
   UserSettings,
   BannedChan,
-  BlockerBlocked
+  BlockerBlocked,
+  GlobalSocket
 } from 'db-interface/Core';
 import { GameModule } from './game/game.module';
 import { UserModule } from './user/user.module';
@@ -45,7 +46,8 @@ import { MatchModule } from './match/match.module';
                 User,
                 UserSettings,
                 BannedChan,
-                BlockerBlocked
+                BlockerBlocked,
+                GlobalSocket
 	],
       autoLoadEntities: true,
       synchronize: true,

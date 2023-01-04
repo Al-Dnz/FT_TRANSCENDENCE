@@ -17,7 +17,8 @@ import {
     Avatar,
     UserSettings,
     BannedChan,
-    BlockerBlocked
+    BlockerBlocked,
+    GlobalSocket
 } from 'db-interface/Core';
 import { UserModule } from './chat/user/user.module';
 import { ChatGateway } from './chat/chat.gateway';
@@ -44,7 +45,8 @@ import { ChatGateway } from './chat/chat.gateway';
                 User,
                 UserSettings,
                 BannedChan,
-                BlockerBlocked
+                BlockerBlocked,
+                GlobalSocket
 	],
       autoLoadEntities: true,
       synchronize: true,
