@@ -287,6 +287,7 @@ export default {
     this.socket.on('gameOver', (data) => {
       console.log('gameOver');
       this.reset();
+      this.$router.push('/home');
       // alert('you loose ?');
     });
 
