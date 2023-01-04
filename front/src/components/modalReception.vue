@@ -55,12 +55,28 @@ import {Countdown} from 'vue3-flip-countdown'
         Accepted() {
             this.Accept();
             this.isactive();
+            const payload =
+            {
+                login: this.senderLogin,
+                gameCode: this.gameCode,
+                accepted: true
+
+            }
+            this.$store.state.globalSocket.emit('respondToInvitation', payload);
             this.$router.push('/home/' + this.gameCode);
         },
         Declined()
         {
             this.Decline();
             this.isactive();
+            const payload =
+            {
+                login: this.senderLogin,
+                gameCode: this.gameCode,
+                accepted: false
+
+            }
+            this.$store.state.globalSocket.emit('respondToInvitation', payload);
         },
         delay(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));

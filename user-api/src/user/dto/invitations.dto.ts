@@ -14,7 +14,7 @@ export class ReceiveInvitationsDto {
 }
 
 
-export class AcceptInvitationsDtoo {
+export class ResponseInvitationsDto {
     @IsString()
     @Length(1)
     login: string;

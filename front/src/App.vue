@@ -29,7 +29,7 @@ export default defineComponent({
 		const transAccessCookie = this.$cookies.get("trans_access");
 		// const refreshAccessCookie = this.$cookies.get("trans_refresh");
 		if (transAccessCookie) {
-			if (!this.$store.state.globalSocket.connected)
+			// if (!this.$store.state.globalSocket.connected)
 				this.$store.dispatch('setGlobalSocket', transAccessCookie);
 			// if (!this.$store.state.chatSocket.connected)
 			// 	this.$store.dispatch('setChatSocket', transAccessCookie);
@@ -41,8 +41,19 @@ export default defineComponent({
 			this.$toast(error, { styles: { backgroundColor: "#FF0000", color: "#FFFFFF" } });
 		})
 
+		this.$store.state.globalSocket.on('globalMsg', (msg: any) => {
+			this.$toast(msg, { styles: { backgroundColor: "#2E9AFE", color: "#FFFFFF" } });
+		})
+
 		this.$store.state.globalSocket.on('receiveInvitation', (payload: any) => {
+			console.log("MATCH INVITATION =>");
+			console.log(payload);
+			
 			this.handleInvitation(payload);
+		})
+
+		this.$store.state.globalSocket.on('receiveResponse', (payload: any) => {
+			this.handleResponse(payload);
 		})
 	}
 
@@ -58,6 +69,11 @@ export default defineComponent({
 		};
 	},
 	methods: {
+
+		handleResponse(payload: any) {
+			if (payload.accepted)
+				this.$router.push('/home/' + payload.gameCode);
+		},
 		handleInvitation(payload: any) {
 			console.log("invitation received");
 			this.senderLogin = payload.sender;
