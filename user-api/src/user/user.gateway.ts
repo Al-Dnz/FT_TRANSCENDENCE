@@ -25,8 +25,6 @@ export class UserGateway
   @WebSocketServer() server: Server;
   private logger: Logger = new Logger('UserGateway');
 
-
-
   @SubscribeMessage('emitInvitation')
   async emitInvitation(client: Socket, payload: EmitInvitationsDto): Promise<void>
   {
