@@ -8,8 +8,8 @@
             <button class="btn-1" id = "findGameBtn">Play Normal Mode  </button>
           </div>
           <div style="margin: 2vh;">
-          <button class="btn-1" id = "findGameCustomBtn" style="top: 60%;" >Play Custom Mode</button>
-        </div>
+            <button class="btn-1" id = "findGameCustomBtn" style="top: 60%;" >Play Custom Mode</button>
+          </div>
         </div>
 			</div>
 			<div class="queueScreen" id="queueScreen" >
@@ -87,13 +87,13 @@ export default {
     newGame() {
       console.log('NIK');
       this.socket.emit('newGame');
-      this.startAnimating(30);
+      this.startAnimating(60);
     },/*
     specGame() {
       const code = SpecGameCodeInput.value;
       console.log('Spec YEP');
       this.socket.emit('specGame', code);
-      this.startAnimating(30);
+      this.startAnimating(60);
     },*/
     findGame() {
       this.socket.emit('findGame');
@@ -165,7 +165,7 @@ export default {
         this.then = this.now - (this.elapsed % this.fpsInterval);
 
         // Put your drawing code here
-        this.getSizeToServe();
+        //this.getSizeToServe();
         this.context.clearRect(0, 0, this.board.width, this.board.height);
         this.context.fillStyle = '#000000';
         this.context.fillRect(0, 0, this.board.width, this.board.height);
@@ -193,6 +193,16 @@ export default {
     getSizeToServe() {
       this.socket.emit('getSizeToServer');
     },
+    sendCode()
+    {
+      console.log(this.gamesecret);
+      this.socket.emit('InvGame', this.gamesecret);
+    },
+    reconnectGame()
+    {
+      console.log("reconnect send")
+      this.socket.emit('reconnectGame');
+    }
   },
   
   unmounted() {
@@ -228,11 +238,13 @@ export default {
     this.findGameCustomBtn = document.getElementById('findGameCustomBtn');
     this.gameCodeDisplay = document.getElementById('gameCodeDisplay');
 
+    this.setScreen("initial");
     // this.newGameBtn.addEventListener('click', this.newGame);
     
     this.findGameCustomBtn.addEventListener('click', this.findGameCustom);
     this.findGameBtn.addEventListener('click', this.findGame);
     // ----------------------------------------------
+
     this.socket.on(`test`, (data) => {
       this.test();
     });
@@ -275,6 +287,7 @@ export default {
     this.socket.on('gameOver', (data) => {
       console.log('gameOver');
       this.reset();
+      this.$router.push('/home');
       // alert('you loose ?');
     });
 
@@ -285,10 +298,6 @@ export default {
       this.paddle2.height = data.paddle2.height;
       this.ball.width = data.ball.width;
       this.ball.height = data.ball.height;
-
-      this.paddle1.updateScale();
-      this.paddle2.updateScale();
-      this.ball.updateScale();
     });
 
     this.socket.on('unknownGame', (data) => {
@@ -301,13 +310,13 @@ export default {
     this.socket.on('startGame', (data) => {
       console.log("ISSOU");
       // this.setScreen("game");
-      this.startAnimating(30);
+      this.startAnimating(60);
     });
 
     this.socket.on('startGameCustom', (data) => {
       console.log("ISSOUCustm");
       // this.setScreen("game");
-      this.startAnimating(30);
+      this.startAnimating(60);
     });
 
     this.socket.on('fullGame', (data) => {
@@ -322,7 +331,6 @@ export default {
         x: 0,
         y: 0,
       },
-      imageSrc: require('../assets/game/SpaceBackground.png'),
       width: this.board.width,
       height: this.board.height,
       ctx: this.context,
@@ -333,7 +341,6 @@ export default {
         x: 0,
         y: 0,
       },
-      imageSrc: require('../assets/game/Paddle1.png'),
       canvas: this.board,
     });
 
@@ -342,7 +349,6 @@ export default {
         x: this.board.width - parseInt(this.board.width / 34, 10),
         y: 0,
       },
-      imageSrc: require('../assets/game/Paddle2.png'),
       canvas: this.board,
     });
 
@@ -363,10 +369,19 @@ export default {
       },
       width: parseInt(this.board.height / 19.2, 10),
       height: parseInt(this.board.height / 19.2, 10),
-      imageSrc: require('../assets/game/Balls.png'),
       speed: 4,
       framesMax: 10,
     });
+
+    this.getSizeToServe();
+    
+    if ( this.$route?.params.id )
+    {
+      console.log("hello param");
+      this.socket.emit('InvGame', this.$route?.params.id);
+    }
+    else
+      this.reconnectGame();
   },
 };
 </script>

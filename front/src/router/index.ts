@@ -30,6 +30,21 @@ const routes: Array<RouteRecordRaw> = [
       },
     },
   },
+  {
+    name: "homeInvite",
+    path: "/home/:id",
+    components: {
+      default: () => import("@/views/Home.vue"),
+      navbar: () => import("@/components/Nav.vue"),
+      headbar: () => import("@/components/Header.vue"),
+    },
+    props: {
+      headbar: {
+        sectionTitle: "Home",
+        type: String,
+      },
+    },
+  },
 
   {
     name: "watchPage",

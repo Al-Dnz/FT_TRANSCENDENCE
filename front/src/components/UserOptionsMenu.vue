@@ -43,7 +43,8 @@ interface DataI {
   isInvite: boolean;
 }
 
-export default defineComponent({
+export default defineComponent(
+{
   name: "UserOptionsMenu",
   props: {
     socket: Object,
@@ -65,12 +66,11 @@ export default defineComponent({
       isInvite: false
     };
   },
-  components : {
+  components: {
     modalSend
   },
   methods: {
-    Invite()
-    {
+    Invite() {
       this.isInvite = false
     },
     toggleMenu() {
@@ -85,189 +85,225 @@ export default defineComponent({
       alert("going to " + this.targetUser?.name + "'s profile"); // placeholder
     },
     gameInvite() {
+      this.createGame();
+    },
+    sendInvitation(gameCode: string) {
       // this.isInvite = true;
-      const payload = 
+      const payload =
       {
         login: this.targetUser?.login,
-        gameCode: 'xxxxxxxrandom_uuidxxxxxxx'
+        gameCode: gameCode
       }
       this.$store.state.globalSocket.emit('emitInvitation', payload);
     },
-    compareArrays(arr1: any[], arr2: any[]): boolean {
-      let i = arr1?.length;
-      if (i !== arr2?.length)
-        return (false);
-      while (i) {
-        if (arr1[i] !== arr2[i])
-          return (false);
-        --i;
+    async createGame()
+    {
+      const requestOptions =
+      {
+        method: "POST",
+        headers:
+        {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(
+          {
+            token: this.$cookies.get("trans_access"),
+            login: this.targetUser?.login,
+            custom: false
+          }
+        )
       }
-      return (true);
+      await fetch(`http://${process.env.VUE_APP_IP}:3005/match/create`, requestOptions)
+        .then(async res => {
+          const data = await res.json()
+          if (!res.ok) {
+            const error = (data && data.message) || res.statusText;
+            return Promise.reject(error);
+          }
+          this.sendInvitation(data.gameCode)
+          this.$toast(`Ivitation sent to ${this.targetUser?.login}`, { styles: { backgroundColor: "#16b918", color: "#FFFFFF" } });
+        })
+        .catch(error => {
+          this.$toast(error, { styles: { backgroundColor: "#FF0000", color: "#FFFFFF" } });
+        });
     },
-    compareUsers(user1: any, user2: any): boolean {
-      if (user1?.length !== user2?.length || user1?.id !== user2?.id
-        || user1?.login !== user2?.login)
-        return (false);
-      return (true);
-    },
-    isUserOwner(): boolean {
-      return (this.compareUsers(this.currentChan?.creator, this.currentUser));
-    },
-    isUserAdmin(): boolean {
-      return (this.currentChan?.adminList?.includes(this.currentUser));
-    },
-    isTargetOwner(): boolean {
-      return (this.compareUsers(this.currentChan?.creator, this.targetUser));
-    },
-    isTargetAdmin(): boolean {
-      return (this.currentChan?.adminList?.includes(this.targetUser));
-    },
-    haveAuthorityOver(): boolean {
-      if (this.isUserOwner() || (this.isUserAdmin()
-        && !(this.isTargetOwner() || this.isTargetAdmin())))
-        return (true);
+  compareArrays(arr1: any[], arr2: any[]): boolean {
+    let i = arr1?.length;
+    if (i !== arr2?.length)
       return (false);
-    },
-    isUserBlocked(): boolean {
-      return (this.currentUser?.blockList?.includes(this.targetUser));
-    },
-    isUserBanned(): boolean {
-      return (this.currentChan?.banList?.includes(this.targetUser));
-    },
-    isUserMuted(): boolean {
-      return (this.currentChan?.muteList?.includes(this.targetUser));
-    },
-    setCanBlock() {
-      if (!this.isUserBlocked())
-        this.canBlock = true;
-      else
-        this.canBlock = false;
-    },
-    setCanUnblock() {
-      if (this.isUserBlocked())
-        this.canUnblock = true;
-      else
-        this.canUnblock = false;
-    },
-    setCanBan() {
-      if (!this.isUserBanned() && this.haveAuthorityOver())
-        this.canBan = true;
-      else
-        this.canBan = false;
-    },
-    setCanUnban() {
-      if (this.isUserBanned() && this.haveAuthorityOver())
-        this.canUnban = true;
-      else
-        this.canUnban = false;
-    },
-    setCanMute() {
-
-        this.canMute = !this.userChannel?.muted;
-
-      // if (!this.isUserMuted() && this.haveAuthorityOver())
-      //   this.canMute = true;
-      // else
-      //   this.canMute = false;
-    },
-    setCanUnmute() {
-        this.canUnmute = this.userChannel?.muted;
-    
-      // if (this.isUserMuted() && this.haveAuthorityOver())
-      //   this.canUnmute = true;
-      // else
-      //   this.canUnmute = false;
-    },
-    setCanPromote() {
-
-      // this.canPromote = this.userChannel?.role == 'owner' || this.userChannel?.role == 'admin';
-      if (this.isUserOwner() && !(this.isTargetOwner() || this.isTargetAdmin()))
-        this.canPromote = true;
-      else
-        this.canPromote = false;
-    },
-    setAll() {
-      this.setCanBlock();
-      this.setCanUnblock();
-      this.setCanBan();
-      this.setCanUnban();
-      this.setCanMute();
-      this.setCanUnmute();
-      this.setCanPromote();
-    },
-    blockUser() {
-      if (!this.isUserBlocked())
-        alert('user has been blocked'); // here, targetUser should be added to currentUser's blockList
-      this.setCanBlock();
-      this.setCanUnblock();
-    },
-    unblockUser() {
-      if (this.isUserBlocked())
-        alert('user has been unblocked'); // here, targetUser should be removed from currentUser's blockList
-      this.setCanUnblock();
-      this.setCanBlock();
-    },
-    banUser() {
-      if (!this.isUserBanned() && this.haveAuthorityOver())
-        alert('user has been banned');  // here, targetUser should be added to currentChan's banList
-      this.setCanBan();
-      this.setCanUnban();
-    },
-    unbanUser() {
-      if (this.isUserBanned() && this.haveAuthorityOver())
-        alert('user has been unbanned');  // here, targetUser should be removed from currentChan's banList
-      this.setCanUnban();
-      this.setCanBan();
-    },
-    muteUser() {
-
-      console.log("mute user =>" + this.targetUser?.login);
-
-      const payload =
-      {
-        userLogin: this.targetUser?.login,
-        channelId: this.currentChan?.id,
-        muted: true
-      }
-      this.socket?.emit('muteUser', payload);
-
-
-      // if (!this.isUserMuted() && this.haveAuthorityOver())
-      //   alert('user has been muted'); // here, targetUser should be added to currentChan's muteList
-      // this.setCanMute();
-      // this.setCanUnmute();
-    },
-    unmuteUser() {
-
-      console.log("unmute user =>" + this.targetUser?.login);
-
-      const payload =
-      {
-        userLogin: this.targetUser?.login,
-        channelId: this.currentChan?.id,
-        muted: false
-      }
-      this.socket?.emit('muteUser', payload);
-
-      // if (this.isUserMuted() && this.haveAuthorityOver())
-      //   alert('user has been unmuted'); // here, targetUser should be removed from currentChan's muteList
-      // this.setCanUnmute();
-      // this.setCanMute();  
-    },
-    promoteUser() {
-      if (!this.isTargetOwner() && !this.isTargetAdmin() && this.haveAuthorityOver())
-        alert('user has been promoted');  // here, targetUser should be added to currentChan's adminList
-      this.setCanPromote();
-    },
+    while (i) {
+      if (arr1[i] !== arr2[i])
+        return (false);
+      --i;
+    }
+    return (true);
   },
-  mounted() {
-    this.setAll();
+  compareUsers(user1: any, user2: any): boolean {
+    if (user1?.length !== user2?.length || user1?.id !== user2?.id
+      || user1?.login !== user2?.login)
+      return (false);
+    return (true);
   },
-  updated() {
-    this.setAll();
+  isUserOwner(): boolean {
+    return (this.compareUsers(this.currentChan?.creator, this.currentUser));
   },
+  isUserAdmin(): boolean {
+    return (this.currentChan?.adminList?.includes(this.currentUser));
+  },
+  isTargetOwner(): boolean {
+    return (this.compareUsers(this.currentChan?.creator, this.targetUser));
+  },
+  isTargetAdmin(): boolean {
+    return (this.currentChan?.adminList?.includes(this.targetUser));
+  },
+  haveAuthorityOver(): boolean {
+    if (this.isUserOwner() || (this.isUserAdmin()
+      && !(this.isTargetOwner() || this.isTargetAdmin())))
+      return (true);
+    return (false);
+  },
+  isUserBlocked(): boolean {
+    return (this.currentUser?.blockList?.includes(this.targetUser));
+  },
+  isUserBanned(): boolean {
+    return (this.currentChan?.banList?.includes(this.targetUser));
+  },
+  isUserMuted(): boolean {
+    return (this.currentChan?.muteList?.includes(this.targetUser));
+  },
+  setCanBlock() {
+    if (!this.isUserBlocked())
+      this.canBlock = true;
+    else
+      this.canBlock = false;
+  },
+  setCanUnblock() {
+    if (this.isUserBlocked())
+      this.canUnblock = true;
+    else
+      this.canUnblock = false;
+  },
+  setCanBan() {
+    if (!this.isUserBanned() && this.haveAuthorityOver())
+      this.canBan = true;
+    else
+      this.canBan = false;
+  },
+  setCanUnban() {
+    if (this.isUserBanned() && this.haveAuthorityOver())
+      this.canUnban = true;
+    else
+      this.canUnban = false;
+  },
+  setCanMute() {
+
+    this.canMute = !this.userChannel?.muted;
+
+    // if (!this.isUserMuted() && this.haveAuthorityOver())
+    //   this.canMute = true;
+    // else
+    //   this.canMute = false;
+  },
+  setCanUnmute() {
+    this.canUnmute = this.userChannel?.muted;
+
+    // if (this.isUserMuted() && this.haveAuthorityOver())
+    //   this.canUnmute = true;
+    // else
+    //   this.canUnmute = false;
+  },
+  setCanPromote() {
+
+    // this.canPromote = this.userChannel?.role == 'owner' || this.userChannel?.role == 'admin';
+    if (this.isUserOwner() && !(this.isTargetOwner() || this.isTargetAdmin()))
+      this.canPromote = true;
+    else
+      this.canPromote = false;
+  },
+  setAll() {
+    this.setCanBlock();
+    this.setCanUnblock();
+    this.setCanBan();
+    this.setCanUnban();
+    this.setCanMute();
+    this.setCanUnmute();
+    this.setCanPromote();
+  },
+  blockUser() {
+    if (!this.isUserBlocked())
+      alert('user has been blocked'); // here, targetUser should be added to currentUser's blockList
+    this.setCanBlock();
+    this.setCanUnblock();
+  },
+  unblockUser() {
+    if (this.isUserBlocked())
+      alert('user has been unblocked'); // here, targetUser should be removed from currentUser's blockList
+    this.setCanUnblock();
+    this.setCanBlock();
+  },
+  banUser() {
+    if (!this.isUserBanned() && this.haveAuthorityOver())
+      alert('user has been banned');  // here, targetUser should be added to currentChan's banList
+    this.setCanBan();
+    this.setCanUnban();
+  },
+  unbanUser() {
+    if (this.isUserBanned() && this.haveAuthorityOver())
+      alert('user has been unbanned');  // here, targetUser should be removed from currentChan's banList
+    this.setCanUnban();
+    this.setCanBan();
+  },
+  muteUser() {
+
+    console.log("mute user =>" + this.targetUser?.login);
+
+    const payload =
+    {
+      userLogin: this.targetUser?.login,
+      channelId: this.currentChan?.id,
+      muted: true
+    }
+    this.socket?.emit('muteUser', payload);
+
+
+    // if (!this.isUserMuted() && this.haveAuthorityOver())
+    //   alert('user has been muted'); // here, targetUser should be added to currentChan's muteList
+    // this.setCanMute();
+    // this.setCanUnmute();
+  },
+  unmuteUser() {
+
+    console.log("unmute user =>" + this.targetUser?.login);
+
+    const payload =
+    {
+      userLogin: this.targetUser?.login,
+      channelId: this.currentChan?.id,
+      muted: false
+    }
+    this.socket?.emit('muteUser', payload);
+
+    // if (this.isUserMuted() && this.haveAuthorityOver())
+    //   alert('user has been unmuted'); // here, targetUser should be removed from currentChan's muteList
+    // this.setCanUnmute();
+    // this.setCanMute();  
+  },
+  promoteUser() {
+    if (!this.isTargetOwner() && !this.isTargetAdmin() && this.haveAuthorityOver())
+      alert('user has been promoted');  // here, targetUser should be added to currentChan's adminList
+    this.setCanPromote();
+  },
+},
+  mounted() {this.setAll()},
+  updated() {this.setAll()},
+
 });
 </script>
+
+
+
+
 
 
 

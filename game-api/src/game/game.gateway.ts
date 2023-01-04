@@ -229,16 +229,96 @@ export class GameGateway
 	@SubscribeMessage('specGame')
 	async handleSpecGame(client: Socket, gameCode: string): Promise<void>
 	{
-		// console.log("gameCode", gameCode);
-		if (!this.state[gameCode]) {
-			client.emit('unknownGame');
-			return;
+		try
+		{
+			const token = client.handshake.auth.token;
+			this.userService.checkToken(token);
+			const user = await this.userService.getUserByToken(token);
+		// 
+			if (!this.state[gameCode]) {
+				client.emit('unknownGame');
+				return;
+			}
+			this.clientRooms[user.login] = gameCode;
+			client.join(gameCode);
+			client.emit('gameCode', gameCode);
+			this.server.to(gameCode).emit('init', this.state[gameCode].game_data.idPlayers);
 		}
-		this.clientRooms[client.id] = gameCode;
-		client.join(gameCode);
-		client.emit('gameCode', gameCode);
-		this.server.to(gameCode).emit('init', this.state[gameCode].game_data.idPlayers);
+		catch (error)
+		{
+			this.server.to(client.id).emit('gameError', error.message);
+			client.disconnect();
+		}
+	}
 
+
+	@SubscribeMessage('InvGame')
+	async handleInvGame(client: Socket, gameCode: string): Promise<void>
+	{
+		try
+		{
+			const token = client.handshake.auth.token;
+			this.userService.checkToken(token);
+			const user = await this.userService.getUserByToken(token);
+			//----------------------//
+			if (!gameCode) {
+				client.emit('errFindGame');
+				return;
+			}
+			if (this.clientRooms[user.login]) {
+				return;
+			}
+
+			const match = await this.matchService.findByGameCode(gameCode);
+			await this.matchService.updateMatchStatus(match, MatchStatus.live);
+			this.sendLiveMatches();
+			this.updateStatus(user.login, UserStatus.in_game);
+
+			if (!this.state[gameCode]) 
+			{
+				this.clientRooms[user.login] = gameCode;
+				client.emit('gameCode', gameCode);
+				client.emit('test');
+
+			// create match in db
+			    // const match = await this.matchService.create(user, gameCode, false);
+			    // this.updateStatus(user.login, UserStatus.in_game);
+
+				this.state[gameCode] = new GameService(this.matchService);
+
+				this.state[gameCode].game_data.idPlayers.player1 = user.login;
+				client.join(gameCode);
+				this.server.to(gameCode).emit('init', this.state[gameCode].game_data.idPlayers);
+			} 
+			else 
+			{
+				client.emit('test');
+				this.clientRooms[user.login] = gameCode;
+				client.join(gameCode);
+				this.state[gameCode].game_data.idPlayers.player2 = user.login;
+		
+				// const match = await this.matchService.findByGameCode(gameCode);
+				// await this.matchService.updateMatchCreation(match, user);
+				// await this.matchService.updateMatchStatus(match, MatchStatus.live);
+				// this.updateStatus(user.login, UserStatus.in_game);
+				// this.sendLiveMatches();
+
+				client.emit('gameCode', gameCode);
+				this.server.to(gameCode).emit('init', this.state[gameCode].game_data.idPlayers);
+				// client.emit('startGame');
+				this.server.to(gameCode).emit(`startGame`);
+				if (this.state[gameCode].game_data.idPlayers.player1 && this.state[gameCode].game_data.idPlayers.player2) {
+					setTimeout(() => {
+						this.startGameInterval(client, this.state[gameCode], gameCode, this.clientRooms);
+					}, 500);
+				}
+			}
+		}
+		catch (error)
+		{
+			this.server.to(client.id).emit('gameError', error.message);
+			// client.disconnect();
+		}
 	}
 
 	@SubscribeMessage('findGame')
@@ -270,7 +350,7 @@ export class GameGateway
 				await this.matchService.updateMatchCreation(match, user);
 				await this.matchService.updateMatchStatus(match, MatchStatus.live)
 				this.updateStatus(user.login, UserStatus.in_game);
-				this.sendLiveMatches()
+				this.sendLiveMatches();
 
 				this.clientRooms[user.login] = gameCode;
 				this.state[gameCode].game_data.idPlayers.player2 = user.login;
@@ -302,11 +382,31 @@ export class GameGateway
 		}
 	}
 
-	@SubscribeMessage('leaveGame')
-	async handleLeaveGame(client: Socket): Promise<void>
+	@SubscribeMessage('reconnectGame')
+	async handleReconnectGame(client: Socket): Promise<void>
 	{
-		client.emit('gameOver');
-		this.server.to(this.clientRooms[client.id]).emit(`gameOver`);
+		try
+		{
+			const token = client.handshake.auth.token;
+			this.userService.checkToken(token);
+			const user = await this.userService.getUserByToken(token);
+
+			if (this.clientRooms[user.login]) {
+				let gameCode = this.clientRooms[user.login];
+				this.updateStatus(user.login, UserStatus.in_game);
+				client.emit('test');
+				client.join(gameCode);
+				client.emit('gameCode', gameCode);
+				this.server.to(gameCode).emit('init', this.state[gameCode].game_data.idPlayers);
+				if (this.state[this.clientRooms[user.login]].game_data.gameState === 'on')
+					this.server.to(this.clientRooms[user.login]).emit(`startGame`);
+			}
+		}
+		catch (error)
+		{
+			this.server.to(client.id).emit('gameError', error.message);
+			client.disconnect();
+		}
 	}
 
 
