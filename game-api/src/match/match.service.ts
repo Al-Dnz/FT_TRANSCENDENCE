@@ -22,6 +22,9 @@ export class MatchService {
 	private logger: Logger = new Logger('MacthService');
 
 	async create(playerOne: User, gameCode: string, custom?: boolean): Promise<Match> {
+		const found = await this.matchesRepository.findOneBy({ gameCode: gameCode })
+		if (found)
+			return;
 		let match = new Match();
 		match.playerOne = playerOne;
 		match.gameCode = gameCode;

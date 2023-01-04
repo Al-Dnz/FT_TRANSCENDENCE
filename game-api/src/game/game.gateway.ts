@@ -268,46 +268,56 @@ export class GameGateway
 			if (this.clientRooms[user.login]) {
 				return;
 			}
-			if (!this.state[gameCode]) {
+
+			const match = await this.matchService.findByGameCode(gameCode);
+			await this.matchService.updateMatchStatus(match, MatchStatus.live);
+			this.sendLiveMatches();
+			this.updateStatus(user.login, UserStatus.in_game);
+
+			if (!this.state[gameCode]) 
+			{
 				this.clientRooms[user.login] = gameCode;
 				client.emit('gameCode', gameCode);
 				client.emit('test');
+
 			// create match in db
-			    const match = await this.matchService.create(user, gameCode, false);
-			    this.updateStatus(user.login, UserStatus.in_game);
+			    // const match = await this.matchService.create(user, gameCode, false);
+			    // this.updateStatus(user.login, UserStatus.in_game);
 
 				this.state[gameCode] = new GameService(this.matchService);
 
 				this.state[gameCode].game_data.idPlayers.player1 = user.login;
 				client.join(gameCode);
 				this.server.to(gameCode).emit('init', this.state[gameCode].game_data.idPlayers);
-			} else {
+			} 
+			else 
+			{
 				client.emit('test');
 				this.clientRooms[user.login] = gameCode;
 				client.join(gameCode);
 				this.state[gameCode].game_data.idPlayers.player2 = user.login;
 		
-				const match = await this.matchService.findByGameCode(gameCode);
-				await this.matchService.updateMatchCreation(match, user);
-				await this.matchService.updateMatchStatus(match, MatchStatus.live);
-				this.updateStatus(user.login, UserStatus.in_game);
-				this.sendLiveMatches();
+				// const match = await this.matchService.findByGameCode(gameCode);
+				// await this.matchService.updateMatchCreation(match, user);
+				// await this.matchService.updateMatchStatus(match, MatchStatus.live);
+				// this.updateStatus(user.login, UserStatus.in_game);
+				// this.sendLiveMatches();
 
 				client.emit('gameCode', gameCode);
 				this.server.to(gameCode).emit('init', this.state[gameCode].game_data.idPlayers);
 				// client.emit('startGame');
 				this.server.to(gameCode).emit(`startGame`);
-			if (this.state[gameCode].game_data.idPlayers.player1 && this.state[gameCode].game_data.idPlayers.player2) {
-				setTimeout(() => {
-					this.startGameInterval(client, this.state[gameCode], gameCode, this.clientRooms);
-				}, 500);
-			}
+				if (this.state[gameCode].game_data.idPlayers.player1 && this.state[gameCode].game_data.idPlayers.player2) {
+					setTimeout(() => {
+						this.startGameInterval(client, this.state[gameCode], gameCode, this.clientRooms);
+					}, 500);
+				}
 			}
 		}
 		catch (error)
 		{
 			this.server.to(client.id).emit('gameError', error.message);
-			client.disconnect();
+			// client.disconnect();
 		}
 	}
 
