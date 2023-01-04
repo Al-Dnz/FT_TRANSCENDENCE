@@ -5,7 +5,13 @@
     <div className="flex justify-center pt-24">
         <div className =" flex flex-col items-center bg-slate-100  shadow-xl w-1/2 pt-16 pl-16 pr-16 pb-8 rounded-xl">
             <span className = "pb-4" >{{ this.senderLogin }} veut se battre!</span>
-            <Countdown :deadlineDate="date" :showDays=false :showHours=false :showMinutes=false mainColor='#22C55E' />
+            <RadialProgress 
+                :diameter="100"
+                :completed-steps="timerCount"
+                :total-steps="totalSteps"
+                :animate-speed="1000" startColor='#22C55E' >
+                {{ timerCount }}
+            </RadialProgress>
             <div className = "pt-16 flex flex-row justify-around items-end">
                 <button @click="Accepted()" className = "transition ease-in-out delay-100 text-white hover:scale-110 rounded-xl pr-8 pt-4 pl-8 pb-4 mr-16 bg-green-500">Accept</button>
                 <button @click="Declined()" className = "transition ease-in-out delay-100 text-white hover:scale-110 rounded-xl pr-8 pt-4 pl-8 pb-4 ml-16 bg-red-600">Decline</button>
@@ -18,7 +24,7 @@
 </template>
   
 <script>
-import {Countdown} from 'vue3-flip-countdown'
+import RadialProgress from "vue3-radial-progress";
   export default {
 	name: 'modalVue',
     props : {
@@ -46,10 +52,6 @@ import {Countdown} from 'vue3-flip-countdown'
     },
     methods : {
         activate() {
-            this.isactive();
-        },
-        async autovalidate () {
-            await this.delay(20000);
             this.isactive();
         },
         Accepted() {
@@ -86,28 +88,42 @@ import {Countdown} from 'vue3-flip-countdown'
     {
         return{
             date:Date,
-            loading : false
+            loading : false,
+            timerCount: 10,
+            totalSteps: 10
         }
     },
     components: {
-        Countdown
+        RadialProgress
     },
     watch: {
         ison: async function(newVal, oldVal)
         {
             if (newVal == true)
             {
-                let date = new Date();
-                date.setSeconds(date.getSeconds() + 20);
-                this.date = date;
+                this.timerCount = 10
                 this.loading = true;
-                this.autovalidate();
             }
             if (oldVal == true)
             {
                 this.loading = false;
+                this.timerCount = -1;
             }
         },
+        timerCount: {
+                handler(value) {
+                    if (value > 0) {
+                        setTimeout(() => {
+                            this.timerCount--;
+                        }, 1000);
+                    }
+                    else if (value == 0)
+                    {
+                        this.Declined();
+                    }
+                },
+                immediate: true // This ensures the watcher is triggered upon creation
+            }
     }
 }
 </script>
