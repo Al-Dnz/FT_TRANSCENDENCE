@@ -57,7 +57,7 @@ export class MatchService {
 		match.score2 = score2;
 		match.finishedAt = new Date(Date.now());
 		match.status = MatchStatus.finished;
-		this.updatePlayerStats(match.playerOne, score1, match.playerTwo, match.score2);
+		await this.updatePlayerStats(match.playerOne, score1, match.playerTwo, match.score2);
 		return this.matchesRepository.save(match);
 	}
 
@@ -69,7 +69,7 @@ export class MatchService {
 		else
 			stats.defeats++;
 		await this.updateElo(playerOne);
-		this.statsRepository.save(stats);
+		await this.statsRepository.save(stats);
 		stats = playerTwo.stats;
 		if (score2 > score1)
 			stats.victories++;

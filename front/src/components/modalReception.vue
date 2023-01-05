@@ -60,7 +60,6 @@ import {Countdown} from 'vue3-flip-countdown'
                 login: this.senderLogin,
                 gameCode: this.gameCode,
                 accepted: true
-
             }
             this.$store.state.globalSocket.emit('respondToInvitation', payload);
             this.$router.push('/home/' + this.gameCode);
@@ -76,7 +75,8 @@ import {Countdown} from 'vue3-flip-countdown'
                 accepted: false
 
             }
-            this.$store.state.globalSocket.emit('respondToInvitation', payload);
+            if(this.senderLogin.length != 0  && this.gameCode.length != 0)
+                this.$store.state.globalSocket.emit('respondToInvitation', payload);
         },
         delay(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));

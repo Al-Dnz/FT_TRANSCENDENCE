@@ -173,13 +173,7 @@ export class ChannelGateway {
 			this.userService.checkToken(token);
 			const user = await this.userService.getUserByToken(token);
 
-			const chanMessages = await this.channelService.findMessages(payload.id)
-			const sentPayload =
-			{
-				channelId: payload.id,
-				locked: false,
-				messages: chanMessages,
-			}
+			
 
 			const userchannels = await this.userChannelService.findByUserAndChan(user.id, payload.id);
 			if (userchannels.length == 0)
@@ -192,6 +186,14 @@ export class ChannelGateway {
 					channelId: payload.id
 				}
 				await this.userChannelService.create(userChannelData)
+			}
+
+			const chanMessages = await this.channelService.findMessages(payload.id)
+			const sentPayload =
+			{
+				channelId: payload.id,
+				locked: false,
+				messages: chanMessages,
 			}
 						
 			this.server.to(client.id).emit('allChanMessagesToClient', sentPayload);
@@ -209,10 +211,9 @@ export class ChannelGateway {
 			const token = client.handshake.auth.token;
 			this.userService.checkToken(token);
 			const user = await this.userService.getUserByToken(token);
-			if (user.id == payload.userId) {
-				this.server.to(client.id).emit('chatError', `you can't kick yourself`);
-				return;
-			}
+			if (user.id == payload.userId) 
+				throw new HttpException(`You can't kick yourself`, HttpStatus.FORBIDDEN);
+
 			const channel = await this.channelService.findOne(payload.channelId);
 			if (channel.type == ChannelType.direct)
 				return;
@@ -314,6 +315,9 @@ export class ChannelGateway {
 			const sender = await this.userService.getUserByToken(token);
 			const receiver = await this.userService.getUserByLogin(payload.login);
 
+			if (sender.login == receiver.login)
+				throw new HttpException(`You can't DM yourself`, HttpStatus.FORBIDDEN);
+
 			// check if channel exist as DMChannel
 			const DMChannels = await this.channelService.findDMChannel(sender.id, receiver.id);
 			if (DMChannels.length != 0)
@@ -351,7 +355,7 @@ export class ChannelGateway {
 			const muted = await this.userService.getUserByLogin(payload.userLogin);
 			const channel = await this.channelService.findOne(payload.channelId);
 
-			if (admin == muted)
+			if (admin.login == muted.login)
 				throw new HttpException(`You can't mute yourself`, HttpStatus.FORBIDDEN);
 
 			const requesterUserChannels = await this.userChannelService.findByUserAndChan(admin.id, channel.id);
@@ -387,6 +391,9 @@ export class ChannelGateway {
 
 			const invited = await this.userService.getUserByLogin(payload.userLogin);
 			const chan = await this.channelService.findOne(payload.channelId)
+
+			if (user.login == invited.login)
+				throw new HttpException(`You can't invite yourself`, HttpStatus.FORBIDDEN);
 
 			if (chan.type == ChannelType.direct)
 				throw new HttpException(`You can't invite someone else in a direct message channel`, HttpStatus.FORBIDDEN);

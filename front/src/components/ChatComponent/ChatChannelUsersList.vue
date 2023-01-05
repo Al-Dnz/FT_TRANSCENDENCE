@@ -3,7 +3,7 @@
     <h1 class="mt-3 font-bold">CHANNEL MEMBERS</h1>
     <div class="overflow-auto">
       <ul>
-        <li v-for="userChannel in currentChan?.userChannels" :key="userChannel.id">
+        <li v-for="userChannel in userchannels" :key="userChannel.id">
           <div class="hover:text-black">
             <ChatChannelUserBox :socket="socket" :currentUser="currentUser"
             :currentChan="currentChan" :userChannel="userChannel" />
@@ -64,8 +64,12 @@ export default defineComponent({
 	
 		if (payload.channelId != this.currentChan?.id)
 			return;
+
+    console.log("current chan=>");
+    console.log(this.currentChan);
     console.log("userChannels newly loaded")
     console.log(payload);
+  
 		this.userchannels = [];
 		this.userchannels = payload.userchannels;
 	}
