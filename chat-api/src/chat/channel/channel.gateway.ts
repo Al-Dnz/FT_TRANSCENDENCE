@@ -38,13 +38,6 @@ export class ChannelGateway {
 	@WebSocketServer() server: Server;
 	private logger: Logger = new Logger('ChannelGateway');
 
-	// private sendToNoBlockedUser(user: User, payload: any, event: string): void
-	// {
-	//   const userList = 
-	//   this.server.emit(event, payload);
-	// }
-
-
 	@SubscribeMessage('createChannel')
 	async createNewChan(client: any, payload: CreateChannelDto): Promise<void> {
 		try {
@@ -146,7 +139,6 @@ export class ChannelGateway {
 	}
 
 	@SubscribeMessage('getChannelUsers')
-	// async sendChannelUsers(client: Socket, payload: JoinChannelDto)
 	async sendChannelUsers(client: Socket, payload: UserChannelDto) {
 		try {
 			const token = client.handshake.auth.token;
@@ -173,19 +165,21 @@ export class ChannelGateway {
 			this.userService.checkToken(token);
 			const user = await this.userService.getUserByToken(token);
 
-			
-
 			const userchannels = await this.userChannelService.findByUserAndChan(user.id, payload.id);
 			if (userchannels.length == 0)
 			{
 				this.bannedChanService.bannedChanGuard(user.id, payload.id);
-				const chan = await this.channelService.checkChanValidity(payload);
+				await this.channelService.checkChanValidity(payload);
 				const userChannelData: CreateUserChannelDto =
 				{
 					userId: user.id,
 					channelId: payload.id
 				}
-				await this.userChannelService.create(userChannelData)
+				const channel = await this.channelService.findChanWithCreator(payload.id)
+				if (channel.creator && channel.creator.login == user.login)
+					await this.userChannelService.create(userChannelData, UserChannelRole.owner)
+				else
+					await this.userChannelService.create(userChannelData)
 			}
 
 			const chanMessages = await this.channelService.findMessages(payload.id)
