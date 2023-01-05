@@ -13,7 +13,9 @@
 			<router-view :key="$route.path" />
 		</div>
 	</div>
-	<modalReception :senderLogin="senderLogin" :gameCode="code" :ison="isInvite" :isactive=Invite :Accept=Accept :Decline=Decline />
+	<div v-if="isInvite">
+		<modalReception :senderLogin="senderLogin" :gameCode="code" :isactive=Invite />
+	</div>
 </template>
 <script lang="ts">
 interface appData {
@@ -69,7 +71,6 @@ export default defineComponent({
 		};
 	},
 	methods: {
-
 		handleResponse(payload: any) {
 			if (payload.accepted)
 				this.$router.push('/home/' + payload.gameCode);
@@ -86,12 +87,6 @@ export default defineComponent({
 		Invited() {
 			this.isInvite = true;
 		},
-		Accept() {
-			console.log("accepted");
-		},
-		Decline() {
-			console.log("Declined");
-		}
 	}
 })
 </script>
