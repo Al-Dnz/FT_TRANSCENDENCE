@@ -428,13 +428,13 @@ export class ChannelGateway {
 			this.userService.checkToken(token);
 
 			const user = await this.userService.getUserByToken(token);
-			this.channelService.update(payload);
 			const channel = await this.channelService.findOne(payload.id);
 
 			const userChannels = await this.userChannelService.findByUserAndChan(user.id, payload.id);
 			if (userChannels[0].role == UserChannelRole.member)
 				throw new HttpException(`You have not enougth privileges in channel #${channel.name} to update settings. Only owner and admin are authorized`, HttpStatus.FORBIDDEN);
 
+			this.channelService.update(payload);
 			this.server.to(client.id).emit('chatMsg', `channel ${channel.name} updated !`);
 		}
 		catch (error) {
