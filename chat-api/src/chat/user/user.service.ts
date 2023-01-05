@@ -42,7 +42,7 @@ export class UserService {
 		const decoded = this.jwtService.decode(token) as IToken;
 		const user = await this.usersRepository.findOneBy({ login: decoded.login });
 		if (!user)
-			throw new HttpException(`User ${decoded.login} not found`, HttpStatus.NOT_FOUND);
+			throw new HttpException(`User ${decoded.login} not found from this token`, HttpStatus.NOT_FOUND);
 		return user
 	}
 
@@ -50,7 +50,7 @@ export class UserService {
 	{ 
 		const user = await this.usersRepository.findOneBy({ id: id });
 		if (!user)
-			throw new HttpException(`User not found`, HttpStatus.NOT_FOUND);
+			throw new HttpException(`User not found by this id`, HttpStatus.NOT_FOUND);
 		return user
 	}
 
@@ -58,7 +58,7 @@ export class UserService {
 	{ 
 		const user = await this.usersRepository.findOneBy({ login: login });
 		if (!user)
-			throw new HttpException(`User not found`, HttpStatus.NOT_FOUND);
+			throw new HttpException(`User not found by this login`, HttpStatus.NOT_FOUND);
 		return user
 	}
 
