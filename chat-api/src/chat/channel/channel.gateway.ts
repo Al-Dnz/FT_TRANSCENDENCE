@@ -430,6 +430,7 @@ export class ChannelGateway {
 
 			this.channelService.update(payload);
 			this.server.to(client.id).emit('chatMsg', `channel ${channel.name} updated !`);
+			this.sendAllChan(client);
 		}
 		catch (error) {
 			this.server.to(client.id).emit('chatError', error.message);
