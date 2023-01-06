@@ -14,22 +14,27 @@
 			</div>
 		</div>
 		<div className="flex flex-row justify-around h-full w-1/3">
-			<div className="icon w-1/4 mt-1 mb-1 mx-2">
+			<div className="icon w-1/5 mt-1 mb-1 mx-2">
+				<div className="w-1/2">
+					<PlayIcon @click="gameInvite()"/>
+				</div>
+			</div>
+			<div className="icon w-1/5 mt-1 mb-1 mx-2">
 				<div className="w-1/2">
 					<goToAcc :accName=obj?.username />
 				</div>
 			</div>
-			<div className="icon w-1/4 mt-1 mb-1 mx-2">
+			<div className="icon w-1/5 mt-1 mb-1 mx-2">
 				<div className="w-1/2">
 					<goToChat  @click="createDM()" :accName=obj?.username />
 				</div>
 			</div>
-			<div className="icon w-1/4 mt-1 mb-1 mx-2">
+			<div className="icon w-1/5 mt-1 mb-1 mx-2">
 				<div className="w-1/2">
 					<goToWatch :accName=obj?.login />
 				</div>
 			</div>
-			<div className="icon w-1/4 mt-1 mb-1 mx-2">
+			<div className="icon w-1/5 mt-1 mb-1 mx-2">
 				<div className="w-1/2">
 				<TrashIcon @click="del()"/>
 			</div>
@@ -99,6 +104,50 @@ export default defineComponent({
 					.catch((msg :any) => {console.log(msg)})
 			})
 		},
+		gameInvite() {
+      		this.createGame();
+    	},
+		sendInvitation(gameCode: string) {
+      // this.isInvite = true;
+      	const payload =
+      	{
+        	login: this.obj?.login,
+        	gameCode: gameCode
+      	}
+      	this.$store.state.globalSocket.emit('emitInvitation', payload);
+    	},
+    	async createGame()
+    	{
+      	const requestOptions =
+      	{
+        	method: "POST",
+        	headers:
+        	{
+          		'Accept': 'application/json',
+          		'Content-Type': 'application/json',
+        	},
+        	body: JSON.stringify(
+          	{
+            	token: this.$cookies.get("trans_access"),
+            	login: this.obj?.login,
+            	custom: false
+          	}
+        	)
+      	}
+      	await fetch(`http://${process.env.VUE_APP_IP}:3005/match/create`, requestOptions)
+        	.then(async res => {
+          		const data = await res.json()
+          		if (!res.ok) {
+            		const error = (data && data.message) || res.statusText;
+            		return Promise.reject(error);
+          		}
+          		this.sendInvitation(data.gameCode)
+          		this.$toast(`Ivitation sent to ${this.obj?.login}`, { styles: { backgroundColor: "#16b918", color: "#FFFFFF" } });
+        	})
+        .catch(error => {
+          this.$toast(error, { styles: { backgroundColor: "#FF0000", color: "#FFFFFF" } });
+        });
+    	}
 	},
 })
 </script>

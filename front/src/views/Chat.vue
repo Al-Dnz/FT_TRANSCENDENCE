@@ -8,8 +8,9 @@
       :currentChan="currentChan" :creatingChan="creatingChan" :creatingDM="creatingDM"
       @selectedChannel="changeCurrentChannel" @showChanForm="showChanCreationForm" @showDMForm="showDMCreationForm" />
     </div>
-    <div v-if="(!currentChan && !creatingChan && !creatingDM)" class="mt-4 ml-2">
-      <p class="text-3xl">NO CHANNEL SELECTED</p>
+    <div v-if="(!currentChan && !creatingChan && !creatingDM)" className="flex flex-col pt-32  justify-start items-center w-full h-full overflow-hidden">
+      <img src="@/assets/nochan.gif" className="object-scale-down h-44 w-44 rounded-xl"/>
+      <span className="text-slate-500 text-2xl pt-4" >No channel selected</span>
     </div>
     <div v-else-if="creatingChan" class="h-full w-5/6">
       <ChatNewChannelForm :socket="socket" :changeChan="changeCurrentChannel"

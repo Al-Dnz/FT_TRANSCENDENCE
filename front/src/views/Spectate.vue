@@ -1,7 +1,8 @@
 <template>
   <div className="flex flex-col justify-start items-center w-full h-full overflow-auto">
     <div v-if="this.tab.length === 0" className="pt-32">
-      <span className ="text-slate-500 text-2xl"> No one is playing :/ </span>
+      <img src="@/assets/nospectate.gif" className="object-scale-down h-56 w-56 lg:h-80 lg:w-80"/>
+      <span className ="center-x text-slate-500 text-2xl"> No one is playing :/ </span>
     </div>
     <div v-else>
     <div v-for="(item, index) in this.tab" v-bind:key="index" className="pt-3">
