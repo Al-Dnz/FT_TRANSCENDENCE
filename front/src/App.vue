@@ -41,32 +41,32 @@ export default defineComponent({
 			// 	this.$store.dispatch('setGameSocket', transAccessCookie);
 
 
-			// this.$store.state.globalSocket.on('globalError', (error: any) => {
-			// 	this.$toast(error, { styles: { backgroundColor: "#FF0000", color: "#FFFFFF" } });
-			// })
-			// this.$store.state.globalSocket.on('globalMsg', (msg: any) => {
-			// 	this.$toast(msg, { styles: { backgroundColor: "#2E9AFE", color: "#FFFFFF" } });
-			// })
-			// this.$store.state.globalSocket.on('receiveInvitation', (payload: any) => {
-			// 	console.log("MATCH INVITATION =>");
-			// 	console.log(payload);
-			// 	this.handleInvitation(payload);
-			// })
-			// this.$store.state.globalSocket.on('receiveResponse', (payload: any) => {
-			// 	this.handleResponse(payload);
-			// })
+			this.$store.state.globalSocket.on('globalError', (error: any) => {
+				this.$toast(error, { styles: { backgroundColor: "#FF0000", color: "#FFFFFF" } });
+			})
+			this.$store.state.globalSocket.on('globalMsg', (msg: any) => {
+				this.$toast(msg, { styles: { backgroundColor: "#2E9AFE", color: "#FFFFFF" } });
+			})
+			this.$store.state.globalSocket.on('receiveInvitation', (payload: any) => {
+				console.log("MATCH INVITATION =>");
+				console.log(payload);
+				this.handleInvitation(payload);
+			})
+			this.$store.state.globalSocket.on('receiveResponse', (payload: any) => {
+				this.handleResponse(payload);
+			})
 		}
 
 	},
 	watch: {
-		'$store.state.globalSocket':
+		'$store.state.callbackWatcher':
 		{
 			immediate: true,
 			deep: true,
 			handler() {
 				console.log('$store.state.globalSocket changed');
-				// window.location.reload();
-				if (this.$store.state.globalSocket.connected) {
+				if (this.$store.state.callbackWatcher != 0)
+				{
 					this.$store.state.globalSocket.on('globalError', (error: any) => {
 						this.$toast(error, { styles: { backgroundColor: "#FF0000", color: "#FFFFFF" } });
 					})
@@ -82,6 +82,8 @@ export default defineComponent({
 						this.handleResponse(payload);
 					})
 				}
+					
+			
 			}
 		}
 	},
