@@ -316,9 +316,9 @@
         this.ball.width = data.ball.width;
         this.ball.height = data.ball.height;
   
-        this.paddle1.updateScale();
-        this.paddle2.updateScale();
-        this.ball.updateScale();
+        // this.paddle1.updateScale();
+        // this.paddle2.updateScale();
+        // this.ball.updateScale();
       });
   
       this.socket.on('unknownGame', (data) => {
