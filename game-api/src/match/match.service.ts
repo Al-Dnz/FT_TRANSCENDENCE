@@ -12,11 +12,11 @@ export class MatchService {
 
 	constructor(
 		@InjectRepository(Match)
-		private readonly matchesRepository: Repository<Match>,
+		private matchesRepository: Repository<Match>,
 		@InjectRepository(User)
-		private readonly usersRepository: Repository<User>,
+		private usersRepository: Repository<User>,
 		@InjectRepository(UserStats)
-		private readonly statsRepository: Repository<UserStats>,
+		private statsRepository: Repository<UserStats>,
 	) { }
 
 	private logger: Logger = new Logger('MacthService');

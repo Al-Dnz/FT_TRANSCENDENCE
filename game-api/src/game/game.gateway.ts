@@ -276,7 +276,7 @@ export class GameGateway
 
 			if (!this.state[gameCode]) 
 			{
-				this.clientRooms[user.login] = gameCode;
+				this.clientRooms[match.playerOne.login] = gameCode;
 				client.emit('gameCode', gameCode);
 				client.emit('test');
 
@@ -286,16 +286,16 @@ export class GameGateway
 
 				this.state[gameCode] = new GameService(this.matchService);
 
-				this.state[gameCode].game_data.idPlayers.player1 = user.login;
+				this.state[gameCode].game_data.idPlayers.player1 = match.playerOne.login;
 				client.join(gameCode);
 				this.server.to(gameCode).emit('init', this.state[gameCode].game_data.idPlayers);
 			} 
 			else 
 			{
 				client.emit('test');
-				this.clientRooms[user.login] = gameCode;
+				this.clientRooms[match.playerTwo.login] = gameCode;
 				client.join(gameCode);
-				this.state[gameCode].game_data.idPlayers.player2 = user.login;
+				this.state[gameCode].game_data.idPlayers.player2 = match.playerTwo.login;
 		
 				// const match = await this.matchService.findByGameCode(gameCode);
 				// await this.matchService.updateMatchCreation(match, user);
