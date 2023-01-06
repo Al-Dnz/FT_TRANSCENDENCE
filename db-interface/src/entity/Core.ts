@@ -151,7 +151,7 @@ export class UserChannel extends Base {
 @Entity()
 export class BannedChan extends Base 
 {
-    @Column({ type: 'date' })
+    @Column({ type: 'date', nullable: true, default: null })
     expirationDate: string;
 
     @ManyToOne(() => Channel, (channel: Channel) => channel.bannedChans, {

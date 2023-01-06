@@ -159,7 +159,7 @@ export class ChannelGateway {
 	}
 
 	@SubscribeMessage('joinChannel')
-	async sendChanMessages(client: Socket, payload: JoinChannelDto) {
+	async sendChanMessages(client: Socket, payload: JoinChannelDto, allowed: boolean = false) {
 		try {
 			const token = client.handshake.auth.token;
 			this.userService.checkToken(token);
@@ -168,7 +168,13 @@ export class ChannelGateway {
 			const userchannels = await this.userChannelService.findByUserAndChan(user.id, payload.id);
 			if (userchannels.length == 0)
 			{
-				this.bannedChanService.bannedChanGuard(user.id, payload.id);
+				try {
+					await this.bannedChanService.bannedChanGuard(user.id, payload.id, allowed);
+				} catch (error) {
+					this.server.to(client.id).emit('redirectChan', {channel: null});
+					throw new HttpException(error.message, HttpStatus.FORBIDDEN);
+				}
+				
 				await this.channelService.checkChanValidity(payload);
 				const userChannelData: CreateUserChannelDto =
 				{
@@ -232,6 +238,7 @@ export class ChannelGateway {
 				this.server.to(client.id).emit('chatError', `you can't ban ${kickedUser.login} in ${channel.name} `);
 				return;
 			}
+			await this.userChannelService.remove(kickedUserChannels[0].id)
 			const sentPayload =
 			{
 				channelId: channel.id,
@@ -239,15 +246,18 @@ export class ChannelGateway {
 				messages: [],
 			}
 
-			if (kickedUserChannels.length != 0) {
-				for (let kickedUserChan of kickedUserChannels) {
-					// this.userChannelService.update(kickedUserChan.id);
-					this.server.to(kickedUserChan.user.chatSocketId).emit('allChanMessagesToClient', sentPayload);
-				}
-			}
+			// if (kickedUserChannels.length != 0) {
+			// 	for (let kickedUserChan of kickedUserChannels) {
+			// 		// this.userChannelService.update(kickedUserChan.id);
+			// 		// this.server.to(kickedUserChan.user.chatSocketId).emit('redirectChan', {channel: null});
+			// 		this.server.to(kickedUserChan.user.chatSocketId).emit('allChanMessagesToClient', sentPayload);
+			// 	}
+			// }
 			this.bannedChanService.create(kickedUser.id, channel.id);
 		
 			// SEND USER CHANNEL
+			this.server.to(kickedUser.chatSocketId).emit('redirectChan', {channel: null});
+			this.server.to(kickedUser.chatSocketId).emit('chatError', `You have been banned from ${channel.name} by ${user.login}`);
 			await this.sendChannelUsers(client, { id: payload.channelId });
 			await this.sendAllChan(client);
 		}
@@ -395,6 +405,10 @@ export class ChannelGateway {
 			const requesterUserChannels = await this.userChannelService.findByUserAndChan(user.id, chan.id);
 			if (requesterUserChannels.length == 0)
 				throw new HttpException(`You are not in the channel #${chan.name} to invite somebody`, HttpStatus.FORBIDDEN);
+			
+			const bannedChannelsInvited = await this.bannedChanService.findByUserAndChan(invited.id, chan.id)
+			if(bannedChannelsInvited.length != 0)
+				await this.bannedChanService.remove(bannedChannelsInvited[0].id)
 
 			const userChannels = await this.userChannelService.findByUserAndChan(invited.id, chan.id);
 			if (userChannels.length)

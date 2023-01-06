@@ -1,12 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm';
-
 import { Logger } from '@nestjs/common';
 import { HttpException, HttpStatus } from '@nestjs/common';
-
 import { BannedChan, Channel, Message, User } from 'db-interface/Core';
-
 
 @Injectable()
 export class BannedChanService {
@@ -43,7 +40,7 @@ export class BannedChanService {
 					},
 				},
 			})
-		if(bannedChans.length != 0)
+		if (bannedChans.length != 0)
 			throw new HttpException(`user ${bannedChans[0].user.login} is already ban fron ${bannedChans[0].channel.name} until ${bannedChans[0].expirationDate}`
 				, HttpStatus.FORBIDDEN);
 		let bannedChan = new BannedChan;
@@ -120,22 +117,19 @@ export class BannedChanService {
 		return true;
 	}
 
-	async bannedChanGuard(userId: number, chanId: number) {
-		try {
-			const bannedChans = await this.findByUserAndChan(userId, chanId);
-			if (bannedChans.length == 0)
+	async bannedChanGuard(userId: number, chanId: number, allowed: boolean = false) 
+	{
+		const bannedChans = await this.findByUserAndChan(userId, chanId);
+		if (bannedChans.length == 0)
 			return;
-			const bannedChan = bannedChans[0];
-			if (!bannedChan.expirationDate)
-				return;
-			if (Date.parse(bannedChan.expirationDate) < Date.now())
-				throw new HttpException(`user ${bannedChan.user.login} is ban fron ${bannedChan.channel.name} until ${bannedChan.expirationDate}`
-					, HttpStatus.FORBIDDEN);
-			else
-				this.remove(bannedChan.id);
-		} catch (error) {
-			throw new HttpException(error, HttpStatus.FORBIDDEN);
-		}
+		const bannedChan = bannedChans[0];
+
+		if (!allowed && bannedChan.expirationDate == null)
+			throw new HttpException(`user ${bannedChan.user.login} is ban from ${bannedChan.channel.name}`, HttpStatus.FORBIDDEN);
+		if (!allowed && Date.parse(bannedChan.expirationDate) < Date.now())
+			throw new HttpException(`user ${bannedChan.user.login} is ban from ${bannedChan.channel.name} until ${bannedChan.expirationDate}`, HttpStatus.FORBIDDEN);
+		else
+			this.remove(bannedChan.id);
 	}
 
 	async remove(id: number) {
@@ -144,8 +138,4 @@ export class BannedChanService {
 			throw new HttpException('bannedChannel not found', HttpStatus.NOT_FOUND);
 		this.bannedChansRepository.delete(id);
 	}
-
-
-
-
 }
