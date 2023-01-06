@@ -95,6 +95,7 @@ export default defineComponent({
         .then(res => res.json())
         .then(data => {
           this.matches = data;
+          console.log(data);
           this.matches.sort(function (a: any, b: any) {return b.id - a.id });
         })
         .catch(e => {
