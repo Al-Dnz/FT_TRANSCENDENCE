@@ -1,6 +1,6 @@
 <template>
 <Teleport to="body">
-<div className=" fixed  w-full h-full bg-black bg-opacity-20">
+<div className=" fixed  w-full h-screen top-0 bg-black bg-opacity-20">
     <div className="flex justify-center pt-24">
         <div className =" flex flex-col items-center bg-slate-100  shadow-xl w-1/2 pt-16 pl-16 pr-16 pb-8 rounded-xl">
             <span className = "pb-4" >{{ this.senderLogin }} veut se battre!</span>

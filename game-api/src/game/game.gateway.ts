@@ -433,7 +433,7 @@ export class GameGateway
 					this.clientRooms[this.state[gameCode].game_data.idPlayers.player2] = null;
 				}
 				
-				this.matchService.updateFinishedGame(gameCode, state.game_data.score.player1, state.game_data.score.player2);
+				this.matchService.updateFinishedGame2(gameCode, state.game_data.idPlayers, state.game_data.score);
 				
 				const login1 = this.state[gameCode].game_data.idPlayers.player1;
 				const login2 = this.state[gameCode].game_data.idPlayers.player2;

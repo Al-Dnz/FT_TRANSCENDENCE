@@ -29,18 +29,9 @@ export default defineComponent({
 	name: 'App',
 	created() {
 		let transAccessCookie = this.$cookies.get("trans_access");
-		// const refreshAccessCookie = this.$cookies.get("trans_refresh");
-		// while (!transAccessCookie)
-		// 	transAccessCookie = this.$cookies.get("trans_access");
 		if (transAccessCookie) {
 			// if (!this.$store.state.globalSocket.connected)
 			this.$store.dispatch('setGlobalSocket', transAccessCookie);
-			// if (!this.$store.state.chatSocket.connected)
-			// 	this.$store.dispatch('setChatSocket', transAccessCookie);
-			// if (!this.$store.state.gameSocket.connected)
-			// 	this.$store.dispatch('setGameSocket', transAccessCookie);
-
-
 			this.$store.state.globalSocket.on('globalError', (error: any) => {
 				this.$toast(error, { styles: { backgroundColor: "#FF0000", color: "#FFFFFF" } });
 			})
@@ -82,8 +73,6 @@ export default defineComponent({
 						this.handleResponse(payload);
 					})
 				}
-					
-			
 			}
 		}
 	},
