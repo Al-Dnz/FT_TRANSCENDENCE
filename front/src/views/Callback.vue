@@ -122,6 +122,7 @@ export default defineComponent({
       setRefreshCookie(this.valr);
       this.$store.dispatch('setAllSockets', this.vala);
       this.$router.push("/param")
+      // window.location.reload();
     },
 	async verify(twoFaCode: string): Promise<boolean>
 	{

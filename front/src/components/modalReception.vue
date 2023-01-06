@@ -1,6 +1,6 @@
 <template>
 <Teleport to="body">
-<div v-show="ison" className=" fixed  w-full h-full bg-black bg-opacity-20">
+<div className=" fixed  w-full h-full bg-black bg-opacity-20">
     <div className="flex justify-center pt-24">
         <div className =" flex flex-col items-center bg-slate-100  shadow-xl w-1/2 pt-16 pl-16 pr-16 pb-8 rounded-xl">
             <span className = "pb-4" >{{ this.senderLogin }} veut se battre!</span>
@@ -74,7 +74,7 @@ import RadialProgress from "vue3-radial-progress";
             }
             if(this.senderLogin.length != 0  && this.gameCode.length != 0)
                 this.$store.state.globalSocket.emit('respondToInvitation', payload);
-            this.active();
+            this.activate();
         },
     },
     components: {
