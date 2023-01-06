@@ -93,7 +93,8 @@ export default defineComponent({
     creatingDM: Boolean,
     currentUser: { 
       type: Object,
-      required: true}
+      required: true
+    }
   },
   data(): DataI {
     return {
@@ -152,7 +153,7 @@ export default defineComponent({
       let channel = [];
       for (let i = 0; i < this.regularChannels.length; i++)
       {
-        if (this.isInChan(this.currentUser.login, this.regularChannels[i]))
+        if (this.isInChan(this.currentUser?.login, this.regularChannels[i]))
           channel.push(this.regularChannels[i]);
       }
       return (channel);
@@ -161,7 +162,7 @@ export default defineComponent({
       let channel = [];
       for (let i = 0; i < this.regularChannels.length; i++)
       {
-        if (!this.isInChan(this.currentUser.login, this.regularChannels[i]) && this.regularChannels[i].type === 'public')
+        if (!this.isInChan(this.currentUser?.login, this.regularChannels[i]) && this.regularChannels[i].type === 'public')
           channel.push(this.regularChannels[i]);
       }
       return (channel);
@@ -170,7 +171,7 @@ export default defineComponent({
       let channel = [];
       for (let i = 0; i < this.regularChannels.length; i++)
       {
-        if (!this.isInChan(this.currentUser.login, this.regularChannels[i]) && this.regularChannels[i].type === 'protected')
+        if (!this.isInChan(this.currentUser?.login, this.regularChannels[i]) && this.regularChannels[i].type === 'protected')
           channel.push(this.regularChannels[i]);
       }
       return (channel);

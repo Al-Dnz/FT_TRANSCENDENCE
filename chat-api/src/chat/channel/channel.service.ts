@@ -4,16 +4,9 @@ import { Repository, getRepository } from 'typeorm';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { JoinChannelDto } from './dto/join-channel.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
-
-import { Body } from '@nestjs/common';
-
 import * as bcrypt from 'bcrypt';
-
-
 import { Channel, ChannelType, Message, User } from 'db-interface/Core';
-
 import { Logger } from '@nestjs/common';
-
 import { HttpException, HttpStatus } from '@nestjs/common';
 
 @Injectable()
@@ -33,8 +26,8 @@ export class ChannelService {
 
   async create(createChannelDto: CreateChannelDto, user?: User) {
     const channel = new Channel();
-	if (createChannelDto.name[0] == '#')
-		throw new HttpException("Channel name can't begin with #", HttpStatus.FORBIDDEN);
+    if (createChannelDto.name[0] == '#')
+      throw new HttpException("Channel name can't begin with #", HttpStatus.FORBIDDEN);
     channel.name = createChannelDto.name;
     const same_named_channel = await this.channelsRepository.findOneBy({ name: channel.name });
     if (same_named_channel)
@@ -51,13 +44,11 @@ export class ChannelService {
 
   async findAll() {
     return await this.channelsRepository.find({
-        relations: { creator: true, userChannels: { user: true } }
-	});
+      relations: { creator: true, userChannels: { user: true } }
+    });
   }
 
-  getAllChannels() {
-
-  }
+  getAllChannels() { }
 
   async findOne(id: number) {
     const channel = await this.channelsRepository.findOneBy({ id: id });
@@ -65,6 +56,16 @@ export class ChannelService {
       throw new HttpException('Channel not found', HttpStatus.NOT_FOUND);
     else
       return channel;
+  }
+
+  async findChanWithCreator(id: number) {
+    const channel = await this.channelsRepository.find({
+      where: {id: id},
+      relations: { creator: true }
+    })
+    if (channel.length == 0)
+      throw new HttpException('Channel not found', HttpStatus.NOT_FOUND);
+    return channel[0];
   }
 
   async findMessages(id: number) {
@@ -93,14 +94,13 @@ export class ChannelService {
       .getOne();
     if (!channel)
       throw new HttpException('Channel not found', HttpStatus.NOT_FOUND);
-    if (channel.type === ChannelType.protected) 
-	{
-	  if (!payload.password)
-		throw new HttpException('Channel password is needed', HttpStatus.FORBIDDEN);
+    if (channel.type === ChannelType.protected) {
+      if (!payload.password)
+        throw new HttpException('Channel password is needed', HttpStatus.FORBIDDEN);
       const passwordMatch = bcrypt.compareSync(payload.password, channel.password);
       if (!passwordMatch)
         throw new HttpException('Channel password is wrong', HttpStatus.FORBIDDEN);
-   	}
+    }
     return channel
   }
 
@@ -144,23 +144,20 @@ export class ChannelService {
 
   async update(updateChannelDto: UpdateChannelDto) {
     const channel = await this.channelsRepository
-    .createQueryBuilder("channel")
-    .where("channel.id = :id", { id: updateChannelDto.id })
-    .addSelect("channel.password")
-    .getOne();
+      .createQueryBuilder("channel")
+      .where("channel.id = :id", { id: updateChannelDto.id })
+      .addSelect("channel.password")
+      .getOne();
     if (!channel)
       throw new HttpException('Channel not found', HttpStatus.NOT_FOUND);
-    if (updateChannelDto.type)
-    {
-      if (!updateChannelDto.password && updateChannelDto.type == ChannelType.protected)
-      {
+    if (updateChannelDto.type) {
+      if (!updateChannelDto.password && updateChannelDto.type == ChannelType.protected) {
         throw new HttpException('A password is needed to set protected channels', HttpStatus.FORBIDDEN);
         return;
       }
       channel.type = updateChannelDto.type;
     }
-    if (updateChannelDto.password)
-    {
+    if (updateChannelDto.password) {
       channel.type = ChannelType.protected;
       channel.password = await bcrypt.hash(updateChannelDto.password, this.saltOrRounds);
     }
@@ -206,11 +203,10 @@ export class ChannelService {
           },
         ]
       })
-      return chans;
+    return chans;
   }
 
-  async createDMChannel(userOne: User, userTwo: User)
-  {
+  async createDMChannel(userOne: User, userTwo: User) {
     const channel = new Channel();
     channel.name = `#${userOne.login}-${userTwo.login}`
     channel.type = ChannelType.direct

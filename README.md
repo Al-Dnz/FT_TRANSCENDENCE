@@ -42,8 +42,3 @@ EMAIL_PASSWORD=<your_SENDGRID_API_password>
 make db
 ```
 
-## TO DO
-
-[ ] check if mailing is connected
-
-[ ] erase adenhez redirection mailing

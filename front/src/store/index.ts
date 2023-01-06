@@ -9,14 +9,19 @@ export default createStore({
 	{
 		globalSocket: {},
 		chatSocket: {},
-		gameSocket: {}
+		gameSocket: {},
+		callbackWatcher: 0
 	},
 	mutations:
 	{
+		setCallbackWatcher(state) {
+			state.callbackWatcher++;
+		},
+
 		setGlobalSocket(state, authPayload) {
 			state.globalSocket = io(`http://${hostIp}:3003`, authPayload);
 		},
-
+		
 		setChatSocket(state, authPayload) {
 			state.chatSocket = io(`http://${hostIp}:3004`, authPayload);
 		},
@@ -28,6 +33,11 @@ export default createStore({
 	},
 	actions:
 	{
+		setCallbackWatcher({commit, state})
+		{
+			commit('setCallbackWatcher');
+		},
+
 		setAllSockets({commit, state}, authToken)
 		{
 			const authPayload = { auth: { token: authToken} };

@@ -13,7 +13,9 @@
 			<router-view :key="$route.path" />
 		</div>
 	</div>
-	<modalReception :senderLogin="senderLogin" :gameCode="code" :ison="isInvite" :isactive=Invite :Accept=Accept :Decline=Decline />
+	<div v-if="isInvite">
+		<modalReception :senderLogin="senderLogin" :gameCode="code" :isactive=Invite />
+	</div>
 </template>
 <script lang="ts">
 interface appData {
@@ -26,37 +28,53 @@ import modalReception from "@/components/modalReception.vue";
 export default defineComponent({
 	name: 'App',
 	created() {
-		const transAccessCookie = this.$cookies.get("trans_access");
-		// const refreshAccessCookie = this.$cookies.get("trans_refresh");
+		let transAccessCookie = this.$cookies.get("trans_access");
 		if (transAccessCookie) {
 			// if (!this.$store.state.globalSocket.connected)
-				this.$store.dispatch('setGlobalSocket', transAccessCookie);
-			// if (!this.$store.state.chatSocket.connected)
-			// 	this.$store.dispatch('setChatSocket', transAccessCookie);
-			// if (!this.$store.state.gameSocket.connected)
-			// 	this.$store.dispatch('setGameSocket', transAccessCookie);
-		
+			this.$store.dispatch('setGlobalSocket', transAccessCookie);
+			this.$store.state.globalSocket.on('globalError', (error: any) => {
+				this.$toast(error, { styles: { backgroundColor: "#FF0000", color: "#FFFFFF" } });
+			})
+			this.$store.state.globalSocket.on('globalMsg', (msg: any) => {
+				this.$toast(msg, { styles: { backgroundColor: "#2E9AFE", color: "#FFFFFF" } });
+			})
+			this.$store.state.globalSocket.on('receiveInvitation', (payload: any) => {
+				console.log("MATCH INVITATION =>");
+				console.log(payload);
+				this.handleInvitation(payload);
+			})
+			this.$store.state.globalSocket.on('receiveResponse', (payload: any) => {
+				this.handleResponse(payload);
+			})
+		}
 
-		this.$store.state.globalSocket.on('globalError', (error: any) => {
-			this.$toast(error, { styles: { backgroundColor: "#FF0000", color: "#FFFFFF" } });
-		})
-
-		this.$store.state.globalSocket.on('globalMsg', (msg: any) => {
-			this.$toast(msg, { styles: { backgroundColor: "#2E9AFE", color: "#FFFFFF" } });
-		})
-
-		this.$store.state.globalSocket.on('receiveInvitation', (payload: any) => {
-			console.log("MATCH INVITATION =>");
-			console.log(payload);
-			
-			this.handleInvitation(payload);
-		})
-
-		this.$store.state.globalSocket.on('receiveResponse', (payload: any) => {
-			this.handleResponse(payload);
-		})
-	}
-
+	},
+	watch: {
+		'$store.state.callbackWatcher':
+		{
+			immediate: true,
+			deep: true,
+			handler() {
+				console.log('$store.state.globalSocket changed');
+				if (this.$store.state.callbackWatcher != 0)
+				{
+					this.$store.state.globalSocket.on('globalError', (error: any) => {
+						this.$toast(error, { styles: { backgroundColor: "#FF0000", color: "#FFFFFF" } });
+					})
+					this.$store.state.globalSocket.on('globalMsg', (msg: any) => {
+						this.$toast(msg, { styles: { backgroundColor: "#2E9AFE", color: "#FFFFFF" } });
+					})
+					this.$store.state.globalSocket.on('receiveInvitation', (payload: any) => {
+						console.log("MATCH INVITATION from watch=>");
+						console.log(payload);
+						this.handleInvitation(payload);
+					})
+					this.$store.state.globalSocket.on('receiveResponse', (payload: any) => {
+						this.handleResponse(payload);
+					})
+				}
+			}
+		}
 	},
 	components: {
 		modalReception
@@ -65,11 +83,10 @@ export default defineComponent({
 		return {
 			isInvite: false,
 			senderLogin: '',
-			code:"",
+			code: "",
 		};
 	},
 	methods: {
-
 		handleResponse(payload: any) {
 			if (payload.accepted)
 				this.$router.push('/home/' + payload.gameCode);
@@ -86,15 +103,17 @@ export default defineComponent({
 		Invited() {
 			this.isInvite = true;
 		},
-		Accept() {
-			console.log("accepted");
-		},
-		Decline() {
-			console.log("Declined");
-		}
 	}
 })
 </script>
+
+
+
+
+
+
+
+
 
 
 

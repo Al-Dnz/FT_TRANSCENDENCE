@@ -120,8 +120,10 @@ export default defineComponent({
     {
       setAccessCookie(this.vala);
       setRefreshCookie(this.valr);
+      this.$store.dispatch('setCallbackWatcher');
       this.$store.dispatch('setAllSockets', this.vala);
       this.$router.push("/param")
+      // window.location.reload();
     },
 	async verify(twoFaCode: string): Promise<boolean>
 	{

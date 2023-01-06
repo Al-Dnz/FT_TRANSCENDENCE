@@ -27,6 +27,8 @@ services:
       - 5432:5432
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    # restart: always
+
 
   auth-api:
     container_name: auth-api
@@ -38,6 +40,8 @@ services:
     ports:
       - 3000:3000
     env_file: .env
+    # restart: always
+
 
   user-api:
     container_name: user-api
@@ -53,6 +57,8 @@ services:
       - "postgres"
     volumes:
       - ./upload:/app/dist/upload
+    # restart: always
+
 
   nginx:
     container_name: nginx
@@ -71,7 +77,8 @@ services:
       - "game-api"
       - "auth-api"
       - "user-api"
-      # - "swagger-ui"
+      # restart: always
+
 
   front-end:
     container_name: front-end
@@ -83,6 +90,8 @@ services:
     ports:
       - 3002:80
     env_file: .env
+    # restart: always
+
 
   chat-api:
     container_name: chat-api
@@ -96,6 +105,8 @@ services:
     depends_on:
       - "postgres"
     env_file: .env
+    # restart: always
+
 
   game-api:
     container_name: game-api
@@ -109,6 +120,7 @@ services:
     depends_on:
       - "postgres"
     env_file: .env
+    # restart: always
 
 volumes:
   postgres-data:
