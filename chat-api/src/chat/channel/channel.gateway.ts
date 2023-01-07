@@ -60,7 +60,8 @@ export class ChannelGateway {
 				messages: [],
 			}
 
-			this.server.to(client.id).emit('currentChanToClient', {channel: new_chan});
+			// this.server.to(client.id).emit('currentChanToClient', {channel: new_chan});
+			this.server.to(client.id).emit('redirectChan', {channel: new_chan})
 			this.server.to(client.id).emit('allChanMessagesToClient', sentPayload);
 
 			// if (new_chan.type != ChannelType.direct)
@@ -343,6 +344,7 @@ export class ChannelGateway {
 			userChannelData.userId = receiver.id;
 			await this.userChannelService.create(userChannelData, UserChannelRole.member);
 
+			this.server.to(client.id).emit('redirectChan', {channel: chan})
 			this.sendAllChan(client);
 		}
 		catch (error) 
