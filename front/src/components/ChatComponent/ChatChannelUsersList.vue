@@ -64,12 +64,12 @@ export default defineComponent({
 	
 		if (payload.channelId != this.currentChan?.id)
 			return;
-
     console.log("userChannels newly loaded of channel" + this.currentChan?.id)
     console.log(payload);
-  
 		this.userchannels = [];
-		this.userchannels = payload.userchannels;
+		this.userchannels = payload.userchannels.sort(function (a: any, b: any) {
+        return a.id - b.id;
+      });
 	}
   },
   created()

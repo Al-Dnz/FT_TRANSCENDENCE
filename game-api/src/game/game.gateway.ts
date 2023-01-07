@@ -262,12 +262,13 @@ export class GameGateway
 			const user = await this.userService.getUserByToken(token);
 			//----------------------//
 			if (!gameCode) {
-				client.emit('errFindGame');
+				// client.emit('errFindGame');
 				return;
 			}
-			if (this.clientRooms[user.login]) {
-				return;
-			}
+			// if (this.clientRooms[user.login]) {
+			// 	client.emit('errFindGame');
+			// 	return;
+			// }
 
 			const match = await this.matchService.findByGameCode(gameCode);
 			await this.matchService.updateMatchStatus(match, MatchStatus.live);
@@ -276,7 +277,7 @@ export class GameGateway
 
 			if (!this.state[gameCode]) 
 			{
-				this.clientRooms[match.playerOne.login] = gameCode;
+				this.clientRooms[user.login] = gameCode;
 				client.emit('gameCode', gameCode);
 				client.emit('test');
 
@@ -293,7 +294,7 @@ export class GameGateway
 			else 
 			{
 				client.emit('test');
-				this.clientRooms[match.playerTwo.login] = gameCode;
+				this.clientRooms[user.login] = gameCode;
 				client.join(gameCode);
 				this.state[gameCode].game_data.idPlayers.player2 = match.playerTwo.login;
 		

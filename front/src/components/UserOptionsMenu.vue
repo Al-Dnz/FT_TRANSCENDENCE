@@ -9,16 +9,24 @@
         aria-label=".form-select-sm example">
         <li @click="goProfile" class="hover:font-semibold cursor-pointer">Profile</li>
         <li @click="gameInvite" class="hover:font-semibold cursor-pointer">Invite</li>
+
+
+        <!-- <li v-if="canPromote" @click="promoteUser()" class="hover:font-semibold cursor-pointer">Promote</li> -->
+
+        <li @click="promoteUser()" class="hover:font-semibold cursor-pointer">Promote</li>
+        
         <li v-if="canMute" @click="muteUser()" class="hover:font-semibold cursor-pointer">Mute</li>
         <li v-if="canUnmute" @click="unmuteUser()" class="hover:font-semibold cursor-pointer">Unmute</li>
 
+        <li v-if="canBan" @click="banUser()" class="hover:font-semibold cursor-pointer">Ban</li>
+
         <li v-if="canBlock" @click="blockUser()" class="hover:font-semibold cursor-pointer">Block</li>
         <li v-else-if="canUnblock" @click="unblockUser()" class="hover:font-semibold cursor-pointer">Unblock</li>
-        <li v-if="canBan" @click="banUser()" class="hover:font-semibold cursor-pointer">Ban</li>
-        <li v-else-if="canUnban" @click="unbanUser()" class="hover:font-semibold cursor-pointer">Unban</li>
+        
+        <!-- <li v-else-if="canUnban" @click="unbanUser()" class="hover:font-semibold cursor-pointer">Unban</li> -->
         <!-- <li v-if="canMute" @click="muteUser()" class="hover:font-semibold cursor-pointer">Mute</li> -->
         <!-- <li v-else-if="canUnmute" @click="unmuteUser()" class="hover:font-semibold cursor-pointer">Unmute</li> -->
-        <li v-if="canPromote" @click="promoteUser()" class="hover:font-semibold cursor-pointer">Promote</li>
+        
       </ul>
     </div>
   </div>
@@ -170,7 +178,8 @@ export default defineComponent(
     return (this.currentChan?.banList?.includes(this.targetUser));
   },
   isUserMuted(): boolean {
-    return (this.currentChan?.muteList?.includes(this.targetUser));
+    // return (userIdmuteList?.includes(this.targetUser));
+    return true;
   },
   setCanBlock() {
     if (!this.isUserBlocked())
@@ -185,10 +194,10 @@ export default defineComponent(
       this.canUnblock = false;
   },
   setCanBan() {
-    if (!this.isUserBanned() && this.haveAuthorityOver())
+    // if (!this.isUserBanned() && this.haveAuthorityOver())
       this.canBan = true;
-    else
-      this.canBan = false;
+    // else
+    //   this.canBan = false;
   },
   setCanUnban() {
     if (this.isUserBanned() && this.haveAuthorityOver())
@@ -242,11 +251,18 @@ export default defineComponent(
     this.setCanUnblock();
     this.setCanBlock();
   },
-  banUser() {
-    if (!this.isUserBanned() && this.haveAuthorityOver())
-      alert('user has been banned');  // here, targetUser should be added to currentChan's banList
-    this.setCanBan();
-    this.setCanUnban();
+  banUser()
+  {
+    const payload =
+    {
+      userId: this.targetUser?.id,
+      channelId: this.currentChan?.id
+    }
+    this.socket?.emit('kickUser', payload);
+    // if (!this.isUserBanned() && this.haveAuthorityOver())
+    //   alert('user has been banned');  // here, targetUser should be added to currentChan's banList
+    // this.setCanBan();
+    // this.setCanUnban();
   },
   unbanUser() {
     if (this.isUserBanned() && this.haveAuthorityOver())
@@ -290,8 +306,15 @@ export default defineComponent(
     // this.setCanMute();  
   },
   promoteUser() {
-    if (!this.isTargetOwner() && !this.isTargetAdmin() && this.haveAuthorityOver())
-      alert('user has been promoted');  // here, targetUser should be added to currentChan's adminList
+  
+    const payload =
+    {
+      userId: this.targetUser?.id,
+      channelId: this.currentChan?.id,
+      role: "admin"
+    }
+    this.socket?.emit('grantUser', payload);
+
     this.setCanPromote();
   },
 },

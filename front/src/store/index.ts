@@ -10,10 +10,15 @@ export default createStore({
 		globalSocket: {},
 		chatSocket: {},
 		gameSocket: {},
-		callbackWatcher: 0
+		callbackWatcher: 0,
+		currentChannel: null
 	},
 	mutations:
 	{
+		setCurrentChannel(state, channel) {
+			state.currentChannel = channel;
+		},
+
 		setCallbackWatcher(state) {
 			state.callbackWatcher++;
 		},
@@ -33,6 +38,12 @@ export default createStore({
 	},
 	actions:
 	{
+
+		setCurrentChannel({commit, state}, channel)
+		{
+			commit('setCurrentChannel', channel);
+		},
+
 		setCallbackWatcher({commit, state})
 		{
 			commit('setCallbackWatcher');

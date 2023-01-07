@@ -248,6 +248,11 @@ export default {
     this.socket.on(`test`, (data) => {
       this.test();
     });
+
+    this.socket.on(`errFindGame`, (data) => {
+      console.log('error findgame');
+    });
+
     this.socket.on(`init`, (data) => {
       this.NamePlayer1.innerText = data.player1;
       this.NamePlayer2.innerText = data.player2;
@@ -377,7 +382,7 @@ export default {
     
     if ( this.$route?.params.id )
     {
-      console.log("hello param");
+      console.log("hello param=> " +  this.$route?.params.id);
       this.socket.emit('InvGame', this.$route?.params.id);
     }
     else
