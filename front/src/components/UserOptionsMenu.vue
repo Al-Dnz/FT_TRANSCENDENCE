@@ -9,6 +9,12 @@
         aria-label=".form-select-sm example">
         <li @click="goProfile" class="hover:font-semibold cursor-pointer">Profile</li>
         <li @click="gameInvite" class="hover:font-semibold cursor-pointer">Invite</li>
+
+
+        <!-- <li v-if="canPromote" @click="promoteUser()" class="hover:font-semibold cursor-pointer">Promote</li> -->
+
+        <li @click="promoteUser()" class="hover:font-semibold cursor-pointer">Promote</li>
+        
         <li v-if="canMute" @click="muteUser()" class="hover:font-semibold cursor-pointer">Mute</li>
         <li v-if="canUnmute" @click="unmuteUser()" class="hover:font-semibold cursor-pointer">Unmute</li>
 
@@ -20,7 +26,7 @@
         <!-- <li v-else-if="canUnban" @click="unbanUser()" class="hover:font-semibold cursor-pointer">Unban</li> -->
         <!-- <li v-if="canMute" @click="muteUser()" class="hover:font-semibold cursor-pointer">Mute</li> -->
         <!-- <li v-else-if="canUnmute" @click="unmuteUser()" class="hover:font-semibold cursor-pointer">Unmute</li> -->
-        <li v-if="canPromote" @click="promoteUser()" class="hover:font-semibold cursor-pointer">Promote</li>
+        
       </ul>
     </div>
   </div>
@@ -310,8 +316,15 @@ export default defineComponent(
     // this.setCanMute();  
   },
   promoteUser() {
-    if (!this.isTargetOwner() && !this.isTargetAdmin() && this.haveAuthorityOver())
-      alert('user has been promoted');  // here, targetUser should be added to currentChan's adminList
+  
+    const payload =
+    {
+      userId: this.targetUser?.id,
+      channelId: this.currentChan?.id,
+      role: "admin"
+    }
+    this.socket?.emit('grantUser', payload);
+
     this.setCanPromote();
   },
 },
