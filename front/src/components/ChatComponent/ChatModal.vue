@@ -37,10 +37,7 @@ created() {
 },
 methods : {
     activate(num) {
-        console.log(num);
-        let date =  new Date;
-        console.log(date.getTime());
-        this.ban();
+        this.ban(num);
         this.isactive();
     },
     desactivate(){

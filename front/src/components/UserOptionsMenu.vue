@@ -31,7 +31,7 @@
     </div>
   </div>
   <div v-if="isBan">
-		<chatModal :isactive=DesactivateBan :target=targetUser :ban=ban />
+		<chatModal :isactive=DesactivateBan :target=targetUser :ban=banUser />
 	</div>
 </template>
 
@@ -87,9 +87,6 @@ export default defineComponent(
     DesactivateBan()
     {
       this.isBan = false;
-    },
-    ban() {
-      this.banUser();
     },
     toggleMenu() {
       this.showOptions = !this.showOptions;
@@ -261,8 +258,9 @@ export default defineComponent(
     this.setCanUnblock();
     this.setCanBlock();
   },
-  banUser()
+  banUser(date : number)
   {
+    console.log(date);
     const payload =
     {
       userId: this.targetUser?.id,
