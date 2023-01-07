@@ -132,7 +132,6 @@ export class ChannelGateway {
 			this.userService.checkToken(token);
 			const all_chan = await this.channelService.findAll();
 			this.server.emit('allChansToClient', all_chan);
-
 		} catch (error) {
 			this.server.to(client.id).emit('chatError', error.message);
 		}
@@ -273,35 +272,37 @@ export class ChannelGateway {
 			const token = client.handshake.auth.token;
 			this.userService.checkToken(token);
 			const user = await this.userService.getUserByToken(token);
-			if (user.id == payload.userId) {
-				this.server.to(client.id).emit('chatError', `you can't grant yourself`);
-				return;
-			}
+
+			if (user.id == payload.userId) 
+				throw new HttpException( `you can't grant yourself`, HttpStatus.FORBIDDEN);
+
 			const channel = await this.channelService.findOne(payload.channelId);
 			if (channel.type == ChannelType.direct)
 				return;
+
 			let userChannels: UserChannel[] = await this.userChannelService.findByUserAndChan(user.id, payload.channelId);
-			if (userChannels.length == 0) {
-				this.server.to(client.id).emit('chatError', `you are not connected to channel ${channel.name} to use this privilege`);
-				return;
-			}
+			
+			if (userChannels.length == 0)
+				throw new HttpException( `you are not connected to channel ${channel.name} to use this privilege`, HttpStatus.FORBIDDEN);
+				
 			let userChannel = userChannels[0];
-			if (userChannel.role == UserChannelRole.member) {
-				this.server.to(client.id).emit('chatError', `you have not enough rights inside channel ${channel.name} to use this privilege`);
-				return;
-			}
+			if (userChannel.role == UserChannelRole.member)
+				throw new HttpException( `you have not enough rights inside channel ${channel.name} to use this privilege`, HttpStatus.FORBIDDEN);
+
 			const grantedUser = await this.userService.getUserById(payload.userId);
 			const grantedUserChannels = await this.userChannelService.findByUserAndChan(grantedUser.id, payload.channelId);
 			if  (grantedUserChannels.length == 0)
-			{
-				this.server.to(client.id).emit('chatError', `${grantedUser.login} is not in channel ${channel.name} `);
-				return;
-			}
+				throw new HttpException( `${grantedUser.login} is not in channel #${channel.name}`, HttpStatus.FORBIDDEN);
+			
+			if  (grantedUserChannels[0].role == UserChannelRole.owner || grantedUserChannels[0].role == UserChannelRole.admin )
+				throw new HttpException(`${grantedUserChannels[0].user.login} is already ${grantedUserChannels[0].role} of channel #${channel.name}`, HttpStatus.FORBIDDEN);
+	
 			for (let userchannel of grantedUserChannels) {
 				this.userChannelService.update(userchannel.id, payload.role)
 			}
 
-			// update user status in front
+			this.server.to(client.id).emit('chatMsg', `${grantedUserChannels[0].user.login} has been promoted ${grantedUserChannels[0].role} in channel #${channel.name}`);
+			this.server.to(grantedUserChannels[0].user.chatSocketId).emit('chatMsg', `You have been promoted ${grantedUserChannels[0].role} in channel #${channel.name}`);
 			this.sendChannelUsers(client, { id: payload.channelId });
 		}
 		catch (error) {

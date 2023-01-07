@@ -6,8 +6,8 @@
     <div class="flex flex-col ml-2">
       <h1 @click="goProfile" class="font-semibold cursor-pointer break-all">
       {{ userChannel?.user.userName }}
-      <span v-if="userChannel?.role==='owner'">♛</span>
-      <span v-if="userChannel?.role==='admin'">☆</span>
+      <span v-if="userChannel?.role==='owner'">👑</span>
+      <span v-if="userChannel?.role==='admin'">★</span>
       <span v-if="userChannel?.muted">🔇</span>
       </h1>
       <div v-if="userChannel?.user.login !== currentUser?.login" v-show="isOptMenuButtonVisible">
