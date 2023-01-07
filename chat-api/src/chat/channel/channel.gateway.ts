@@ -256,9 +256,10 @@ export class ChannelGateway {
 			this.bannedChanService.create(kickedUser.id, channel.id);
 		
 			// SEND USER CHANNEL
-			this.sendChannelUsers(client, { id: payload.channelId });
+			
 			this.server.to(kickedUser.chatSocketId).emit('redirectChan', {channel: null});
 			this.server.to(kickedUser.chatSocketId).emit('chatError', `You have been banned from ${channel.name} by ${user.login}`);
+			await this.sendChannelUsers(client, { id: payload.channelId });
 			this.sendAllChan(client);
 			
 		}
