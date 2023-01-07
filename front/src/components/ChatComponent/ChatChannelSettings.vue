@@ -61,38 +61,28 @@ export default defineComponent({
     };
   },
   methods: {
-    changePassword() {
-      if (this.newPassword.length > 0) {
-
+    changePassword(newPass : string) {
         const payload = 
         {
           id: this.currentChan?.id,
-          password: this.newPassword,
+          password: newPass,
         }
         this.socket?.emit('updateChannel', payload);
 
         console.log('password changed'); //here we change the password
-        this.newPassword = '';
-      }
     },
-    updateChan() {
-
-      if (this.newType.length > 0 && !(this.newType === 'protected' && (this.newPassword.length == 0))) {
-
-        const payload = this.newPassword.length > 0 ?
+    updateChan(newPass : string, newType: string) {
+        const payload = newPass.length > 0 ?
         {
           id: this.currentChan?.id,
-          password: this.newPassword, 
-          type: this.newType,
+          password: newPass, 
+          type: newType,
         }:
         {
           id: this.currentChan?.id,
-          type: this.newType,
+          type: newType,
         }
         this.socket?.emit('updateChannel', payload);
-        // this.newType = '';
-        this.newPassword = '';
-      }
     },
     cancelSettings() {
       this.newPassword = '';

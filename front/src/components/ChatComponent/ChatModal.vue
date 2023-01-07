@@ -3,10 +3,10 @@
 <Teleport to=".MainDiv">
 <div className="fixed bottom-0 w-11/12 h-content bg-black bg-opacity-20">
 <div className="flex justify-center pt-24">
-    <div className =" flex flex-col items-center bg-slate-100  shadow-xl lg:w-1/2 w-full pt-2 pl-16 pr-16 pb-8 rounded-xl">
-    <div class="h-12 w-12 bg-inherit text-slate-500 hover:text-red-500 cursor-pointer ml-auto mr-2">
-      <XCircleIcon @click="desactivate()" classname=""/>
-    </div>
+    <div className =" flex flex-col items-center bg-slate-100  shadow-xl lg:w-1/2 w-full pt-2 pl-16 pr-2 pb-8 rounded-xl">
+        <div class="h-12 w-12 text-slate-500 hover:text-red-500 cursor-pointer ml-auto mr-0">
+            <XCircleIcon @click="desactivate()" />
+        </div>
         <span className = "pb-4 pt-8" >Vous souhaitez ban {{target?.login}} pour : </span>
         <img src="@/assets/pepe-the-frog-ban.gif" className="object-scale-down lg:h-56 lg:w-56 h-20 w-20"/>
         <div className = "flex flex-row justify-around items-end">
