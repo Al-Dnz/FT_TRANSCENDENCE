@@ -24,8 +24,6 @@
                     <div class='player_1_name'> <span id ="NamePlayer1">Joueur 1</span></div>
 					            <!-- player 1 score -->
                       <div class='player_score' ><span id="score_1"> 0 </span></div>
-                      <!-- codeRoom -->
-                      <div class="codeRoom"><span id="gameCodeDisplay"> xxx </span></div>
                       <!-- player 2 score -->
                       <div class='player_score' ><span id="score_2"> 0 </span></div>
                       <!-- player 2 name -->

@@ -1,16 +1,17 @@
 @charset "UTF-8";
   .btn-1 {
     font-family: Hack, monospace;
-    background: #e8e8e8;
+    background: white;
     color: #16A34A;
     cursor: pointer;
     font-size: 2em;
     padding: 1.5rem;
-    border: 0;
     transition: all 0.5s;
     border-radius: 10px;
     width: auto;
     position: relative;
+    border-width: 1px;
+    border-color: black;
   }
   .btn-1::after {
     content: ">";

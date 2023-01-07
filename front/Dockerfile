@@ -3,7 +3,7 @@ WORKDIR /app
 
 ADD . /app
 WORKDIR /app
-RUN npm install && npm run build
+RUN npm install && npm config set fetch-retry-maxtimeout 120000 && npm run build
 
 # production stage
 FROM nginx:1.22.1-alpine
