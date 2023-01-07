@@ -2,7 +2,7 @@
   <div v-if="loading">
     <loadingPage />
   </div>
-  <div v-else class="h-full w-full flex flex-row">
+  <div v-else class="MainDiv h-full w-full flex flex-row">
     <div class="h-full w-1/6 text-slate-600 bg-gray-100">
       <ChatChannelsList :socket="socket" :currentUser="currentUser"
       :currentChan="currentChan" :creatingChan="creatingChan" :creatingDM="creatingDM"

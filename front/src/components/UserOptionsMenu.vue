@@ -12,7 +12,7 @@
         <li v-if="canMute" @click="muteUser()" class="hover:font-semibold cursor-pointer">Mute</li>
         <li v-if="canUnmute" @click="unmuteUser()" class="hover:font-semibold cursor-pointer">Unmute</li>
 
-        <li v-if="canBan" @click="banUser()" class="hover:font-semibold cursor-pointer">Ban</li>
+        <li v-if="canBan" @click="ActivateBan()" class="hover:font-semibold cursor-pointer">Ban</li>
 
         <li v-if="canBlock" @click="blockUser()" class="hover:font-semibold cursor-pointer">Block</li>
         <li v-else-if="canUnblock" @click="unblockUser()" class="hover:font-semibold cursor-pointer">Unblock</li>
@@ -24,14 +24,16 @@
       </ul>
     </div>
   </div>
-  <modalSend :ison="isInvite" :isactive=Invite />
+  <div v-if="isBan">
+		<chatModal :isactive=DesactivateBan :target=targetUser :ban=ban />
+	</div>
 </template>
 
 <script lang="ts">
 import { Bars3Icon } from "@heroicons/vue/24/outline";
 import { defineComponent } from "vue";
-import modalSend from "@/components/modalSend.vue";
 import { decodePayload } from "engine.io-parser";
+import  chatModal from "@/components/ChatComponent/ChatModal.vue"
 
 interface DataI {
   showOptions: boolean;
@@ -42,7 +44,7 @@ interface DataI {
   canMute: boolean;
   canUnmute: boolean;
   canPromote: boolean;
-  isInvite: boolean;
+  isBan: boolean;
 }
 
 export default defineComponent(
@@ -65,15 +67,23 @@ export default defineComponent(
       canMute: false,
       canUnmute: false,
       canPromote: false,
-      isInvite: false
+      isBan: false
     };
   },
   components: {
-    modalSend
+    chatModal
   },
   methods: {
-    Invite() {
-      this.isInvite = false
+    ActivateBan()
+    {
+      this.isBan = true;
+    },
+    DesactivateBan()
+    {
+      this.isBan = false;
+    },
+    ban() {
+      this.banUser();
     },
     toggleMenu() {
       this.showOptions = !this.showOptions;
