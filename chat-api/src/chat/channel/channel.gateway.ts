@@ -252,7 +252,7 @@ export class ChannelGateway {
 			// 		this.server.to(kickedUserChan.user.chatSocketId).emit('allChanMessagesToClient', sentPayload);
 			// 	}
 			// }
-			this.bannedChanService.create(kickedUser.id, channel.id);
+			this.bannedChanService.create(kickedUser.id, channel.id, payload.expirationDate);
 		
 			// SEND USER CHANNEL
 			this.sendChannelUsers(client, { id: payload.channelId });

@@ -16,7 +16,9 @@ export class BannedChanService {
 		private readonly usersRepository: Repository<User>,
 	) { }
 
-	async create(userId: number, channelId: number) {
+	private logger: Logger = new Logger('BannedChanService');
+
+	async create(userId: number, channelId: number, expirationDate: number = null) {
 
 		const channel = await this.channelsRepository.findOneBy({ id: channelId });
 		if (!channel)
@@ -46,6 +48,7 @@ export class BannedChanService {
 		let bannedChan = new BannedChan;
 		bannedChan.channel = channel;
 		bannedChan.user = user;
+		bannedChan.expirationDate = expirationDate;
 		this.bannedChansRepository.save(bannedChan);
 	}
 
@@ -103,7 +106,7 @@ export class BannedChanService {
 		const bannedChan = bannedChans[0];
 		if (bannedChan.expirationDate != null)
 			return false;
-		if (Date.parse(bannedChan.expirationDate) < Date.now())
+		if (bannedChan.expirationDate < Date.now())
 			return false;
 		return true;
 	}
@@ -112,7 +115,7 @@ export class BannedChanService {
 		const bannedChan = await this.bannedChansRepository.findOneBy({ id: bannedUserId });
 		if (!bannedChan)
 			return false;
-		if (Date.parse(bannedChan.expirationDate) < Date.now())
+		if (bannedChan.expirationDate < Date.now())
 			return false;
 		return true;
 	}
@@ -126,8 +129,18 @@ export class BannedChanService {
 
 		if (!allowed && bannedChan.expirationDate == null)
 			throw new HttpException(`user ${bannedChan.user.login} is ban from ${bannedChan.channel.name}`, HttpStatus.FORBIDDEN);
-		if (!allowed && Date.parse(bannedChan.expirationDate) < Date.now())
-			throw new HttpException(`user ${bannedChan.user.login} is ban from ${bannedChan.channel.name} until ${bannedChan.expirationDate}`, HttpStatus.FORBIDDEN);
+		if (!allowed && bannedChan.expirationDate > Date.now())
+		{
+			let delay = (bannedChan.expirationDate - Date.now()) / 60000;
+			let unit = 'minutes';
+			if (delay < 1)
+			{
+				delay *= 60;
+				unit = 'seconds'
+			}
+			delay = Math.trunc(delay);
+			throw new HttpException(`user ${bannedChan.user.login} is ban from ${bannedChan.channel.name} for ${delay} ${unit}`, HttpStatus.FORBIDDEN);
+		}
 		else
 			this.remove(bannedChan.id);
 	}

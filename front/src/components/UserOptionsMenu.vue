@@ -261,11 +261,17 @@ export default defineComponent(
   banUser(date : number)
   {
     console.log(date);
-    const payload =
+    const payload = date == 0 ?
     {
       userId: this.targetUser?.id,
       channelId: this.currentChan?.id
-    }
+    } :
+    {
+      userId: this.targetUser?.id,
+      channelId: this.currentChan?.id,
+      expirationDate: date
+    } 
+
     this.socket?.emit('kickUser', payload);
     // if (!this.isUserBanned() && this.haveAuthorityOver())
     //   alert('user has been banned');  // here, targetUser should be added to currentChan's banList
