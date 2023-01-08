@@ -149,6 +149,6 @@ export class BannedChanService {
 		const bannedChannel = await this.bannedChansRepository.findOneBy({ id: id })
 		if (!bannedChannel)
 			throw new HttpException('bannedChannel not found', HttpStatus.NOT_FOUND);
-		this.bannedChansRepository.delete(id);
+		await this.bannedChansRepository.delete(id);
 	}
 }

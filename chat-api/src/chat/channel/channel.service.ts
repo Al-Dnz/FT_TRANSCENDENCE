@@ -28,10 +28,12 @@ export class ChannelService {
     const channel = new Channel();
     if (createChannelDto.name[0] == '#')
       throw new HttpException("Channel name can't begin with #", HttpStatus.FORBIDDEN);
+    if (createChannelDto.name.length == 0)
+      throw new HttpException("Channel name can't be empty", HttpStatus.FORBIDDEN);
     channel.name = createChannelDto.name;
     const same_named_channel = await this.channelsRepository.findOneBy({ name: channel.name });
     if (same_named_channel)
-      throw new HttpException("another chan with this name still exists", HttpStatus.FAILED_DEPENDENCY);
+      throw new HttpException(`Another chan with the name ${createChannelDto.name} already exists`, HttpStatus.FAILED_DEPENDENCY);
     if (createChannelDto.password)
       channel.password = await bcrypt.hash(createChannelDto.password, this.saltOrRounds);
     if (createChannelDto.type)

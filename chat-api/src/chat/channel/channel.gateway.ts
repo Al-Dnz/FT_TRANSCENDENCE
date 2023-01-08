@@ -26,6 +26,8 @@ import { UpdateChannelDto } from './dto/update-channel.dto';
 import { InviteUserDto } from './dto/invite-user.dto';
 import { UserChannelDto } from './dto/user-channel.dto';
 import { MuteUserDto } from './dto/mute-user.dto';
+import { BlockerBlockedService } from '../blocker-blocked/blocker-blocked.service';
+import { BlockUserDto } from './dto/block-user.dto';
 
 @UsePipes(WSPipe)
 @WebSocketGateway({ cors: { origin: '*' } })
@@ -34,7 +36,9 @@ export class ChannelGateway {
 		private userService: UserService,
 		private userChannelService: UserChannelService,
 		private bannedChanService: BannedChanService,
-	) { }
+		private blockerBlockedService: BlockerBlockedService
+	) {}
+
 	@WebSocketServer() server: Server;
 	private logger: Logger = new Logger('ChannelGateway');
 
@@ -454,7 +458,44 @@ export class ChannelGateway {
 		catch (error) {
 			this.server.to(client.id).emit('chatError', error.message);
 		}
+	}
 
+
+	@SubscribeMessage('blockUser')
+	async blockUser(client: Socket, payload: BlockUserDto) {
+		try {
+			const token = client.handshake.auth.token;
+			this.userService.checkToken(token);
+			const blocker = await this.userService.getUserByToken(token);
+			const blocked =  await this.userService.getUserByLogin(payload.login);
+			await this.blockerBlockedService.create(blocker, blocked);
+			this.server.to(client.id).emit('chatMsg', `You have blocked ${blocked.login}`);
+
+
+			// TODO: envoyer les messages du channel
+		}
+		catch (error) {
+			this.server.to(client.id).emit('chatError', error.message);
+		}
+	}
+
+
+	@SubscribeMessage('unBlockUser')
+	async unBlockUser(client: Socket, payload: BlockUserDto) {
+		try {
+			const token = client.handshake.auth.token;
+			this.userService.checkToken(token);
+			const blocker = await this.userService.getUserByToken(token);
+			const blocked =  await this.userService.getUserByLogin(payload.login);
+			const blockerBlockeds = await this.blockerBlockedService.findByBlockerAndBlocked(blocker, blocked);
+			await this.blockerBlockedService.remove(blockerBlockeds[0].id);
+			this.server.to(client.id).emit('chatMsg', `You have unblocked ${blocked.login}`);
+
+			// TODO: envoyer les messages du channel
+		}
+		catch (error) {
+			this.server.to(client.id).emit('chatError', error.message);
+		}
 	}
 
 

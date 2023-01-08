@@ -1,14 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, getRepository } from 'typeorm';
-
-import { User } from 'db-interface/Core';
 import { JwtService } from '@nestjs/jwt';
 import { Logger } from '@nestjs/common';
 import { HttpException, HttpStatus } from '@nestjs/common';
-
 import { IToken } from '../interface/token.interface';
-
+import { User } from 'db-interface/Core';
 
 
 @Injectable()
