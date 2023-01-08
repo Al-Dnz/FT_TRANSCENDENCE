@@ -301,7 +301,7 @@ export class ChannelGateway {
 				throw new HttpException(`${grantedUserChannels[0].user.login} is already ${grantedUserChannels[0].role} of channel #${channel.name}`, HttpStatus.FORBIDDEN);
 	
 			for (let userchannel of grantedUserChannels) {
-				this.userChannelService.update(userchannel.id, payload.role)
+				await this.userChannelService.update(userchannel.id, payload.role)
 			}
 
 			this.server.to(client.id).emit('chatMsg', `${grantedUserChannels[0].user.login} has been promoted ${grantedUserChannels[0].role} in channel #${channel.name}`);
@@ -381,7 +381,7 @@ export class ChannelGateway {
 			if (requesterUserChannels[0].role == UserChannelRole.admin && (mutedUserChannels[0].role == UserChannelRole.owner || mutedUserChannels[0].role == UserChannelRole.admin ))
 				throw new HttpException(`You have not enougth priviledge to (un)mute ${muted.login}`, HttpStatus.FORBIDDEN);
 			
-			this.userChannelService.update(mutedUserChannels[0].id, mutedUserChannels[0].role, payload.muted);
+			await this.userChannelService.update(mutedUserChannels[0].id, mutedUserChannels[0].role, payload.muted);
 			this.sendChannelUsers(client, { id: payload.channelId });
 		}
 		catch (error)
@@ -447,7 +447,7 @@ export class ChannelGateway {
 			if (userChannels[0].role == UserChannelRole.member)
 				throw new HttpException(`You have not enougth privileges in channel #${channel.name} to update settings. Only owner and admin are authorized`, HttpStatus.FORBIDDEN);
 
-			this.channelService.update(payload);
+			await this.channelService.update(payload);
 			this.server.to(client.id).emit('chatMsg', `channel ${channel.name} updated !`);
 			this.sendAllChan(client);
 		}
