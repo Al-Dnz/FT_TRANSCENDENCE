@@ -1,7 +1,7 @@
 <template>
   <div @mouseleave="hideMenu" class="flex flex-row cursor-pointer">
     <Bars3Icon class="h-6 w-6 rounded-full" @click="toggleMenu" />
-    <div>
+    <div class="relative">
       <ul v-if="showOptions" class="form-select form-select-sm appearance-none block w-20 absolute
         px-2 py-1 text-sm font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat
         border border-solid border-gray-300 rounded transition ease-in-out m-0
