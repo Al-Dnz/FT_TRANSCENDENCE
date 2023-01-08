@@ -1,10 +1,10 @@
 <template>
   <div @mouseover="showOptMenuButton" @mouseleave="hideOptMenuButton"
   class="flex flex-row w-full mt-2 pt-2 pb-2 bg-inherit hover:bg-gray-300">
-    <img :src="userChannel?.user.avatar.path" @click="goProfile"
+    <img :src="userChannel?.user.avatar.path" @click="goProfile(userChannel?.user.login)"
     class="w-12 h-12 rounded-full cursor-pointer" />
     <div class="flex flex-col ml-2">
-      <h1 @click="goProfile" class="font-semibold cursor-pointer break-all">
+      <h1 @click="goProfile(userChannel?.user.login)" class="font-semibold cursor-pointer break-all">
       {{ userChannel?.user.userName }}
       <span v-if="userChannel?.role==='owner'">👑</span>
       <span v-if="userChannel?.role==='admin'">★</span>
@@ -68,9 +68,11 @@ export default defineComponent({
     switchOptMenuState() {
       this.isOptMenuVisible = !this.isOptMenuVisible;
     },
-    goProfile() {
-        alert("going to " + this.userChannel?.user.userName + "'s profile"); // placeholder
-    },
+    goProfile(login: string) {
+      if (login !== this.currentUser?.login)
+        this.$router.push('/user/' + login);
+      else
+        this.$router.push('/user/');    },
     isCurrentUser(user: any) {
       return(this.compareUsers(this.currentUser, user));
     },
