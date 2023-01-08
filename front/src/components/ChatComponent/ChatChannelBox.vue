@@ -9,7 +9,7 @@
         @toggleSettings="toggleSettings" @toggleInvite="toggleInvite" @quitChan="quitChan" />
       </div>
       <div class="flex h-8 grow flex-col ml-2 mr-2">
-        <div class="grow h-8 overflow-auto">
+        <div class="grow h-8">
           <ChatMessagesList :socket="socket" :currentUser="currentUser" :currentChan="currentChan"
           @isProtected="protect" @isValidated="validate" />
         </div>
@@ -71,7 +71,22 @@ export default defineComponent({
     quitChan() {
       this.$emit('quitChan');
     },
+    isUserMember() {
+      let i = this.currentChan?.userChannels.length;
+      i--;
+      while (i >= 0) {
+        if (this.currentChan?.userChannels[i].user.login === this.currentUser?.login)
+          return (true);
+        --i;
+      }
+      return (false);
+    },
   },
+  updated()
+  {
+    if(this.isUserMember())
+      this.protected = false;
+  }
 });
 </script>
 
