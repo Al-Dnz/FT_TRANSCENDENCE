@@ -60,7 +60,8 @@ export class ChannelGateway {
 				messages: [],
 			}
 
-			this.server.to(client.id).emit('currentChanToClient', {channel: new_chan});
+			// this.server.to(client.id).emit('currentChanToClient', {channel: new_chan});
+			this.server.to(client.id).emit('redirectChan', {channel: new_chan})
 			this.server.to(client.id).emit('allChanMessagesToClient', sentPayload);
 
 			// if (new_chan.type != ChannelType.direct)
@@ -252,12 +253,13 @@ export class ChannelGateway {
 			// 		this.server.to(kickedUserChan.user.chatSocketId).emit('allChanMessagesToClient', sentPayload);
 			// 	}
 			// }
-			this.bannedChanService.create(kickedUser.id, channel.id);
+			this.bannedChanService.create(kickedUser.id, channel.id, payload.expirationDate);
 		
 			// SEND USER CHANNEL
-			this.sendChannelUsers(client, { id: payload.channelId });
+			
 			this.server.to(kickedUser.chatSocketId).emit('redirectChan', {channel: null});
 			this.server.to(kickedUser.chatSocketId).emit('chatError', `You have been banned from ${channel.name} by ${user.login}`);
+			await this.sendChannelUsers(client, { id: payload.channelId });
 			this.sendAllChan(client);
 			
 		}
@@ -343,6 +345,7 @@ export class ChannelGateway {
 			userChannelData.userId = receiver.id;
 			await this.userChannelService.create(userChannelData, UserChannelRole.member);
 
+			this.server.to(client.id).emit('redirectChan', {channel: chan})
 			this.sendAllChan(client);
 		}
 		catch (error) 

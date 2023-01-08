@@ -11,7 +11,7 @@
 				className="flex flex-row justify-center w-full rounded-2xl h-full text-slate-500 focus-within:text-green-500 ">
 				<input type="text" v-model="newfriend" @keyup.enter="add()" name="search" placeholder="Add a friend !"
 					autocomplete="off" aria-label="Add a friend !"
-					className="rounded-2xl px-3 placeholder-slate-500 text-slate-500 focus-within:border-green-500 focus-within:outline-0 border-2 border-slate-500 w-1/2" />
+					className="rounded-2xl px-3 placeholder-slate-500 text-slate-500 focus-within:border-green-500 focus-within:outline-none border-2 border-slate-500 w-1/2" />
 				<PaperAirplaneIcon @click="add()" className="cursor-pointer" />
 			</div>
 		</div>

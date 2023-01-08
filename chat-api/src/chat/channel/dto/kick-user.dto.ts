@@ -12,5 +12,6 @@ export class KickUserDto
 	channelId: number
 
 	@IsOptional()
-	expirationDate: string
+	@IsInt()
+	expirationDate: number
 }
