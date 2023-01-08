@@ -8,7 +8,7 @@
 	<div className="absolute flex flex-col justify-start items-center w-full h-full overflow-auto">
 		<div className="w-3/4 pt-3 h-friendbox">
 			<div className="flex flex-row justify-center w-full rounded-2xl h-full text-slate-500 focus-within:text-green-500 focus-within:outline-none">
-				<input type="text" v-model="newblock" @keyup.enter="add()" name="search" placeholder="Bloquer un utilisateur" autocomplete="off" aria-label="Bloquer un utilisateur" className="rounded-2xl px-3 placeholder-slate-500 text-slate-500 focus-within:border-green-500 focus-within:outline-0 border-2 border-slate-500 w-1/2"/>
+				<input type="text" v-model="newblock" @keyup.enter="add()" name="search" placeholder="Bloquer un utilisateur" autocomplete="off" aria-label="Bloquer un utilisateur" className="rounded-2xl px-3 placeholder-slate-500 text-slate-500 focus-within:border-green-500 focus-within:outline-none border-2 border-slate-500 w-1/2"/>
 				<PaperAirplaneIcon @click="add()" />
 			</div>
 		</div>
