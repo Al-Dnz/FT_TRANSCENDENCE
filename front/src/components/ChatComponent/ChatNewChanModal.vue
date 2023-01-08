@@ -11,7 +11,7 @@
       <input type="text" v-model="newName" name="Name"
       placeholder="Choose a name" autocomplete="off"
       class="w-full rounded-2xl px-3 placeholder-slate-500 text-slate-500
-      focus-within:border-green-500 focus-within:outline-0 border-2 border-slate-500" />
+      focus-within:border-green-500 focus-within:outline-none border-2 border-slate-500" />
     </div>
     <div class="w-fit mt-4">
       <select v-model="newType">
@@ -25,7 +25,7 @@
       <input type="text" v-model="newPassword" name="Password"
       placeholder="Choose a password" autocomplete="off"
       class="w-full rounded-2xl px-3 placeholder-slate-500 text-slate-500
-      focus-within:border-green-500 focus-within:outline-0 border-2 border-slate-500" />
+      focus-within:border-green-500 focus-within:outline-none border-2 border-slate-500" @keyup.enter="createChannel()" />
     </div>
     <div class="mt-4">
       <button @click="createChannel()"

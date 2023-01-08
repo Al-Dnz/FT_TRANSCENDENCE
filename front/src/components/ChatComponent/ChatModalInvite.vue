@@ -49,6 +49,7 @@ methods : {
         {
             this.addUser(this.newUser);
         }
+        this.newUser = '';
     },
     desactivate(){
         this.$emit("toggleInvite");

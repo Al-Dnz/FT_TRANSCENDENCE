@@ -7,7 +7,7 @@
             className="flex flex-row justify-center w-full rounded-2xl h-4/6 text-slate-500 focus-within:text-green-500 cursor-pointer">
             <input type="text" v-model="newSearch" @keyup.enter="search()" name="search"
               placeholder="Search an other player !" autocomplete="off" aria-label="Search an other player !"
-              className="rounded-2xl px-3 placeholder-slate-500 text-slate-500 focus-within:border-green-500 focus-within:outline-0 border-2 border-slate-500 w-1/2" />
+              className="rounded-2xl px-3 placeholder-slate-500 text-slate-500 focus-within:border-green-500 focus-within:outline-none border-2 border-slate-500 w-1/2" />
             <MagnifyingGlassCircleIcon @click="search()" className="" />
           </div>
         </div>
