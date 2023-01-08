@@ -470,6 +470,7 @@ export class ChannelGateway {
 			const blocked =  await this.userService.getUserByLogin(payload.login);
 			await this.blockerBlockedService.create(blocker, blocked);
 			this.server.to(client.id).emit('chatMsg', `You have blocked ${blocked.login}`);
+			this.server.to(client.id).emit('updateUser', {user: blocker});
 
 
 			// TODO: envoyer les messages du channel
@@ -490,6 +491,7 @@ export class ChannelGateway {
 			const blockerBlockeds = await this.blockerBlockedService.findByBlockerAndBlocked(blocker, blocked);
 			await this.blockerBlockedService.remove(blockerBlockeds[0].id);
 			this.server.to(client.id).emit('chatMsg', `You have unblocked ${blocked.login}`);
+			this.server.to(client.id).emit('updateUser', {user: blocker});
 
 			// TODO: envoyer les messages du channel
 		}

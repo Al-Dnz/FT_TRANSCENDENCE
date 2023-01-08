@@ -179,6 +179,13 @@ export default defineComponent({
       this.socket.on('redirectChan', (payload: any) => {
         this.currentChan = payload.channel;
       })
+      this.socket.on('updateUser', (payload: any) => {
+        this.currentUser = payload.user;
+        console.log("currentUser =>");
+        console.log(this.currentUser);
+        
+        
+      })
     })
     await this.fetchData();
     this.loading = false;
