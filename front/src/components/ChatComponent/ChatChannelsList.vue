@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!creatingChan && !creatingDM" class="h-full w-full pl-2 pr-2 divide-y-2 overflow-auto">
+  <div class="h-full w-full pl-2 pr-2 divide-y-2 overflow-auto">
     <div>
       <h1 class="mt-3 font-semibold">DIRECT MESSAGES</h1>
       <div class="h-12 w-full mt-3">
@@ -89,8 +89,6 @@ export default defineComponent({
   props: {
     socket: Object,
     currentChan: Object,
-    creatingChan: Boolean,
-    creatingDM: Boolean,
     currentUser: { 
       type: Object,
       required: true

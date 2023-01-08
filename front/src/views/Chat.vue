@@ -5,25 +5,12 @@
   <div v-else class="MainDiv h-full w-full flex flex-row">
     <div class="h-full w-1/6 text-slate-600 bg-gray-100">
       <ChatChannelsList :socket="socket" :currentUser="currentUser" :currentChan="currentChan"
-        :creatingChan="creatingChan" :creatingDM="creatingDM" @selectedChannel="changeCurrentChannel"
-        @showChanForm="showChanCreationForm" @showDMForm="showDMCreationForm" />
+      @selectedChannel="changeCurrentChannel" @showChanForm="showChanCreationForm" @showDMForm="showDMCreationForm" />
     </div>
-    <div v-if="(!currentChan && !creatingChan && !creatingDM)"
+    <div v-if="!currentChan"
       className="flex flex-col pt-32  justify-start items-center w-full h-full overflow-hidden">
       <img src="@/assets/nochan.gif" className="object-scale-down h-44 w-44 rounded-xl" />
       <span className="text-slate-500 text-2xl pt-4">No channel selected</span>
-    </div>
-    <div v-else-if="creatingChan" class="h-full w-5/6">
-      <ChatNewChannelForm :socket="socket" :changeChan="changeCurrentChannel" @cancelForm="showChanCreationForm" />
-    </div>
-    <div v-else-if="creatingDM" class="h-full w-5/6">
-      <ChatNewDirectMessageForm :socket="socket" @cancelForm="showDMCreationForm" />
-    </div>
-    <div v-else-if="currentChan && changingSett" class="h-full w-5/6 bg-gray-50">
-      <ChatChannelSettings :socket="socket" :currentChan="currentChan" @toggleSettings="showChannelSettings" />
-    </div>
-    <div v-else-if="currentChan && changingInvite" class="h-full w-5/6 bg-gray-50">
-      <ChatChannelInvite :socket="socket" :currentChan="currentChan" @toggleInvite="showChannelInvite" />
     </div>
     <div v-else-if="currentChan?.type === 'direct_message'" class="h-full w-5/6 bg-gray-50">
       <ChatDirectMessageBox :socket="socket" :currentChan="currentChan" @quitChan="quitChan" />
@@ -33,6 +20,18 @@
         @toggleSettings="showChannelSettings" @quitChan="quitChan" @toggleInvite="showChannelInvite" />
     </div>
   </div>
+  <div v-if="currentChan && changingSett">
+      <ChatSettingsModal :currentChan="currentChan" :updateChannel=updateChan @toggleSettings="showChannelSettings" />
+  </div>
+  <div v-if="currentChan && changingInvite">
+    <ChatModalInvite :addUser="addUser" @toggleInvite="showChannelInvite"/>
+  </div>
+  <div v-if="creatingChan">
+    <ChatNewChanModal :newChan="createChannel" @cancelForm="showChanCreationForm" />
+  </div>
+  <div v-if="creatingDM">
+    <ChatNewDmModal :newDm="createDM" @cancelForm="showDMCreationForm"/>
+  </div>
 </template>
 
 <script lang="ts">
@@ -40,14 +39,18 @@ import io from 'socket.io-client';
 import ChatChannelsList from "../components/ChatComponent/ChatChannelsList.vue";
 import ChatChannelBox from "../components/ChatComponent/ChatChannelBox.vue";
 import ChatDirectMessageBox from "../components/ChatComponent/ChatDirectMessageBox.vue";
-import ChatNewChannelForm from "../components/ChatComponent/ChatNewChannelForm.vue";
+//import ChatNewChannelForm from "../components/ChatComponent/ChatNewChannelForm.vue";
 import ChatNewDirectMessageForm from "../components/ChatComponent/ChatNewDirectMessageForm.vue";
-import ChatChannelSettings from "../components/ChatComponent/ChatChannelSettings.vue";
-import ChatChannelInvite from '@/components/ChatComponent/ChatChannelInvite.vue';
+//import ChatChannelSettings from "../components/ChatComponent/ChatChannelSettings.vue";
+//import ChatChannelInvite from '@/components/ChatComponent/ChatChannelInvite.vue';
 import { defineComponent } from "vue";
 import { UsersApi, Configuration, UserOutput } from '@/api';
-import { getCredentials } from "@/frontJS/cookies"
-import loadingPage from "@/components/Loading.vue"
+import { getCredentials } from "@/frontJS/cookies";
+import loadingPage from "@/components/Loading.vue";
+import ChatSettingsModal from "@/components/ChatComponent/ChatSettingsModal.vue";
+import ChatModalInvite from "@/components/ChatComponent/ChatModalInvite.vue";
+import ChatNewChanModal from "@/components/ChatComponent/ChatNewChanModal.vue";
+import ChatNewDmModal from "@/components/ChatComponent/ChatNewDmModal.vue";
 
 interface DataI {
   creatingChan: boolean,
@@ -65,11 +68,15 @@ export default defineComponent({
     ChatChannelsList,
     ChatChannelBox,
     ChatDirectMessageBox,
-    ChatNewChannelForm,
-    ChatNewDirectMessageForm,
-    ChatChannelSettings,
+    //ChatNewChannelForm,
+    //ChatNewDirectMessageForm,
+    //ChatChannelSettings,
     loadingPage,
-    ChatChannelInvite
+    //ChatChannelInvite,
+    ChatSettingsModal,
+    ChatModalInvite,
+    ChatNewChanModal,
+    ChatNewDmModal
   },
   data(): DataI {
     return {
@@ -112,6 +119,51 @@ export default defineComponent({
           this.currentUser = user
         })
       })
+    },
+    /* Channel Settings Functions */
+    updateChan(newPass : string, newType: string) {
+        const payload = newPass.length > 0 ?
+        {
+          id: this.currentChan?.id,
+          password: newPass, 
+          type: newType,
+        }:
+        {
+          id: this.currentChan?.id,
+          type: newType,
+        }
+        this.socket?.emit('updateChannel', payload);
+    },
+    /* Channel Invite */
+    addUser(newUser : string) {
+      const payload = 
+      {
+        userLogin: newUser,
+        channelId: this.currentChan?.id
+      }
+      this.socket?.emit('inviteUser', payload);
+    },
+    /* Create Channel*/
+    createChannel(newName : string, newType : string, newPassword: string) {
+      const payload = newType != 'protected' ?
+        {
+          name: newName,
+          type: newType,
+        } :
+        {
+          name: newName,
+          type: newType,
+          password: newPassword
+        };
+      this.socket?.emit('createChannel', payload);
+    },
+    /* Create DM*/
+    createDM(newUser : string) {
+		  const payload =
+		  {
+			  login: newUser
+		  }
+      this.socket?.emit('directMessage', payload)
     }
   },
   async created() {
