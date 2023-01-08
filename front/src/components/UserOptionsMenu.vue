@@ -249,16 +249,28 @@ export default defineComponent(
     this.setCanPromote();
   },
   blockUser() {
-    if (!this.isUserBlocked())
-      alert('user has been blocked'); // here, targetUser should be added to currentUser's blockList
-    this.setCanBlock();
-    this.setCanUnblock();
+    const payload =
+    {
+      login: this.targetUser?.login,
+      channelId: this.currentChan?.id
+    }
+    this.socket?.emit('blockUser', payload);
+    // if (!this.isUserBlocked())
+    //   alert('user has been blocked'); // here, targetUser should be added to currentUser's blockList
+    // this.setCanBlock();
+    // this.setCanUnblock();
   },
   unblockUser() {
-    if (this.isUserBlocked())
-      alert('user has been unblocked'); // here, targetUser should be removed from currentUser's blockList
-    this.setCanUnblock();
-    this.setCanBlock();
+    const payload =
+    {
+      login: this.targetUser?.login,
+      channelId: this.currentChan?.id
+    }
+    this.socket?.emit('unBlockUser', payload);
+    // if (this.isUserBlocked())
+    //   alert('user has been unblocked'); // here, targetUser should be removed from currentUser's blockList
+    // this.setCanUnblock();
+    // this.setCanBlock();
   },
   banUser(date : number)
   {
