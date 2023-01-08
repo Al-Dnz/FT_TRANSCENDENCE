@@ -139,7 +139,7 @@ export default defineComponent(
             return Promise.reject(error);
           }
           this.sendInvitation(data.gameCode)
-          this.$toast(`Ivitation sent to ${this.targetUser?.login}`, { styles: { backgroundColor: "#16b918", color: "#FFFFFF" } });
+          this.$toast(`Invitation to play sent to ${this.targetUser?.login}`, { styles: { backgroundColor: "#16b918", color: "#FFFFFF" } });
         })
         .catch(error => {
           this.$toast(error, { styles: { backgroundColor: "#FF0000", color: "#FFFFFF" } });
