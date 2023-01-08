@@ -18,7 +18,7 @@
         </div>
       </div>
     </div>
-    <div class="h-full w-1/5 text-slate-600 bg-gray-100">
+    <div class="h-full w-1/5 text-slate-600 bg-gray-100 hidden lg:block">
       <ChatChannelUsersList :socket="socket" :currentUser="currentUser" :currentChan="currentChan" />
     </div>
   </div>

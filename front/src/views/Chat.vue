@@ -3,7 +3,7 @@
     <loadingPage />
   </div>
   <div v-else class="MainDiv h-full w-full flex flex-row">
-    <div class="h-full w-1/6 text-slate-600 bg-gray-100">
+    <div class="h-full w-1/6 text-slate-600 bg-gray-100 hidden lg:block">
       <ChatChannelsList :socket="socket" :currentUser="currentUser" :currentChan="currentChan"
       @selectedChannel="changeCurrentChannel" @showChanForm="showChanCreationForm" @showDMForm="showDMCreationForm" />
     </div>
@@ -12,16 +12,16 @@
       <img src="@/assets/nochan.gif" className="object-scale-down h-44 w-44 rounded-xl" />
       <span className="text-slate-500 text-2xl pt-4">No channel selected</span>
     </div>
-    <div v-else-if="currentChan?.type === 'direct_message'" class="h-full w-5/6 bg-gray-50">
+    <!-- <div v-else-if="currentChan?.type === 'direct_message'" class="h-full w-5/6 bg-gray-50">
       <ChatDirectMessageBox :socket="socket" :currentChan="currentChan" @quitChan="quitChan" />
-    </div>
-    <div v-else-if="currentChan?.type !== 'direct_message'" class="h-full w-5/6 bg-gray-50">
+    </div> -->
+    <div v-else class="h-full lg:w-5/6 w-full bg-gray-50">
       <ChatChannelBox :socket="socket" :currentUser="currentUser" :currentChan="currentChan"
         @toggleSettings="showChannelSettings" @quitChan="quitChan" @toggleInvite="showChannelInvite" />
     </div>
   </div>
   <div v-if="currentChan && changingSett">
-      <ChatSettingsModal :currentChan="currentChan" :updateChannel=updateChan @toggleSettings="showChannelSettings" />
+    <ChatSettingsModal :currentChan="currentChan" :updateChannel=updateChan @toggleSettings="showChannelSettings" />
   </div>
   <div v-if="currentChan && changingInvite">
     <ChatModalInvite :addUser="addUser" @toggleInvite="showChannelInvite"/>
@@ -38,9 +38,9 @@
 import io from 'socket.io-client';
 import ChatChannelsList from "../components/ChatComponent/ChatChannelsList.vue";
 import ChatChannelBox from "../components/ChatComponent/ChatChannelBox.vue";
-import ChatDirectMessageBox from "../components/ChatComponent/ChatDirectMessageBox.vue";
+//import ChatDirectMessageBox from "../components/ChatComponent/ChatDirectMessageBox.vue";
 //import ChatNewChannelForm from "../components/ChatComponent/ChatNewChannelForm.vue";
-import ChatNewDirectMessageForm from "../components/ChatComponent/ChatNewDirectMessageForm.vue";
+//import ChatNewDirectMessageForm from "../components/ChatComponent/ChatNewDirectMessageForm.vue";
 //import ChatChannelSettings from "../components/ChatComponent/ChatChannelSettings.vue";
 //import ChatChannelInvite from '@/components/ChatComponent/ChatChannelInvite.vue';
 import { defineComponent } from "vue";
@@ -67,7 +67,7 @@ export default defineComponent({
   components: {
     ChatChannelsList,
     ChatChannelBox,
-    ChatDirectMessageBox,
+    //ChatDirectMessageBox,
     //ChatNewChannelForm,
     //ChatNewDirectMessageForm,
     //ChatChannelSettings,
