@@ -1,14 +1,10 @@
 DOCKER_COMPOSE_FILE = docker-compose.yml
 FRONT_FOLDER= ./front
-MAKEFILE_FOLDER= ./make_src
-NGINX_FOLDER= ./nginx
 
 LOCAL_IP := $(shell ipconfig getifaddr en1)
-GLOBAL_IP := $(shell curl ifconfig.me)
 
 ENV_FILE = ./.env
 ENV_MULTI = ./.env_multi
-NGINX_CONF = nginx/nginx.conf
 
 # all: local init up
 all: init up
@@ -36,7 +32,6 @@ stop:
 
 restart:
 	@-docker-compose -f ${DOCKER_COMPOSE_FILE} restart
-
 
 
 nuke:
