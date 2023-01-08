@@ -1,16 +1,11 @@
 <template>
-  <div class="h-full w-full overflow-y-auto pt-3">
-    <div v-if="currentChan">
-      <div id="messages" class="">
-        <ul>
-          <li v-for="message in messages" :key="message.id">
-            <ChatMessageBox :socket="socket" :currentChan="currentChan"
-            :currentUser="currentUser" :message="message" />
-          </li>
-        </ul>
-      </div>
-    </div>
-    <div v-else>NO CHANNEL SELECTED</div>
+  <div id="messagesList" class="h-full w-full overflow-auto pt-3">
+    <ul>
+      <li v-for="message in messages" :key="message.id">
+        <ChatMessageBox :socket="socket" :currentChan="currentChan"
+        :currentUser="currentUser" :message="message" />
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -57,7 +52,7 @@ export default defineComponent({
         return;
       if (message.channel.id == this.currentChan?.id)
         this.messages.push(message);
-        var objDiv = document.getElementById("messages");
+        var objDiv = document.getElementById("messagesList");
         if (objDiv)
           objDiv.scrollTop = objDiv.scrollHeight;
     },
