@@ -154,14 +154,14 @@ export class UserChannelService {
 			throw new HttpException('userChannel not found', HttpStatus.NOT_FOUND);
 		userChannel.role = role;
 		userChannel.muted = muted;
-		this.userChannelsRepository.save(userChannel);
+		await this.userChannelsRepository.save(userChannel);
 	}
 
 	async remove(id: number) {
 		const userChannel = await this.userChannelsRepository.findOneBy({ id: id })
 		if (!userChannel)
 			throw new HttpException('userChannel not found', HttpStatus.NOT_FOUND);
-		this.userChannelsRepository.delete(id);
+		await this.userChannelsRepository.delete(id);
 	}
 
 }
