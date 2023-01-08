@@ -15,12 +15,11 @@ export class UserService {
 		@InjectRepository(User)
 		private readonly usersRepository: Repository<User>,
 		private readonly jwtService: JwtService
-	  ) {}
-	
+	) { }
+
 	private logger: Logger = new Logger('UserService(Chat)');
 
-	checkToken(token: any)
-	{
+	checkToken(token: any) {
 		if (typeof token != "string")
 			throw new HttpException(`Invalid token type`, HttpStatus.FORBIDDEN);
 		let validated;
@@ -34,33 +33,29 @@ export class UserService {
 		return validated;
 	}
 
-	async getUserByToken(token: string)
-	{ 
+	async getUserByToken(token: string) {
 		const decoded = this.jwtService.decode(token) as IToken;
 		const user = await this.usersRepository.findOneBy({ login: decoded.login });
 		if (!user)
 			throw new HttpException(`User ${decoded.login} not found from this token`, HttpStatus.NOT_FOUND);
-		return user
+		return user;
 	}
 
-	async getUserById(id: number)
-	{ 
+	async getUserById(id: number) {
 		const user = await this.usersRepository.findOneBy({ id: id });
 		if (!user)
 			throw new HttpException(`User not found`, HttpStatus.NOT_FOUND);
 		return user
 	}
 
-	async getUserByLogin(login: string)
-	{ 
+	async getUserByLogin(login: string) {
 		const user = await this.usersRepository.findOneBy({ login: login });
 		if (!user)
 			throw new HttpException(`User ${login} not found`, HttpStatus.NOT_FOUND);
 		return user
 	}
 
-	async updateUserSocket(user: User, socketId: string)
-	{
+	async updateUserSocket(user: User, socketId: string) {
 		user.chatSocketId = socketId;
 		this.usersRepository.save(user);
 	}

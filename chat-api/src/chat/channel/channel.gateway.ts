@@ -466,11 +466,15 @@ export class ChannelGateway {
 		try {
 			const token = client.handshake.auth.token;
 			this.userService.checkToken(token);
-			const blocker = await this.userService.getUserByToken(token);
+			let blocker = await this.userService.getUserByToken(token);
 			const blocked =  await this.userService.getUserByLogin(payload.login);
 			await this.blockerBlockedService.create(blocker, blocked);
 			this.server.to(client.id).emit('chatMsg', `You have blocked ${blocked.login}`);
-			this.server.to(client.id).emit('updateUser', {user: blocker});
+			// blocker = await this.userService.getUserByToken(token);
+			// this.server.to(client.id).emit('updateUser', {user: blocker});
+
+			const userBlockList = await this.blockerBlockedService.userBlockList(blocker);
+			this.server.to(client.id).emit('updateBlockList', {blockList: userBlockList});
 
 
 			// TODO: envoyer les messages du channel
@@ -486,12 +490,17 @@ export class ChannelGateway {
 		try {
 			const token = client.handshake.auth.token;
 			this.userService.checkToken(token);
-			const blocker = await this.userService.getUserByToken(token);
+			let blocker = await this.userService.getUserByToken(token);
 			const blocked =  await this.userService.getUserByLogin(payload.login);
 			const blockerBlockeds = await this.blockerBlockedService.findByBlockerAndBlocked(blocker, blocked);
 			await this.blockerBlockedService.remove(blockerBlockeds[0].id);
 			this.server.to(client.id).emit('chatMsg', `You have unblocked ${blocked.login}`);
-			this.server.to(client.id).emit('updateUser', {user: blocker});
+
+			// blocker = await this.userService.getUserByToken(token);
+			// this.server.to(client.id).emit('updateUser', {user: blocker});
+
+			const userBlockList = await this.blockerBlockedService.userBlockList(blocker);
+			this.server.to(client.id).emit('updateBlockList', {blockList: userBlockList});
 
 			// TODO: envoyer les messages du channel
 		}

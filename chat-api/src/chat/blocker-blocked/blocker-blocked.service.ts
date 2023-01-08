@@ -86,6 +86,23 @@ export class BlockerBlockedService {
 		return (found.length > 0)
 	}
 
+	async userBlockList(user: User)
+	{
+		const found = await this.blockerBlockedRepository.find(
+			{
+				relations: {
+					blocked: true,
+				},
+				where: {
+					blocker: {
+						id: user.id,
+					},
+				},
+			}
+		)
+		return found;
+	}
+
 	async remove(id: number) {
 		const bannedChannel = await this.blockerBlockedRepository.findOneBy({ id: id })
 		if (!bannedChannel)
