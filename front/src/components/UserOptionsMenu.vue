@@ -7,7 +7,7 @@
         border border-solid border-gray-300 rounded transition ease-in-out m-0
       focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
         aria-label=".form-select-sm example">
-        <li @click="goProfile" class="hover:font-semibold cursor-pointer">Profile</li>
+        <li @click="goProfile(targetUser?.login)" class="hover:font-semibold cursor-pointer">Profile</li>
         <li @click="gameInvite" class="hover:font-semibold cursor-pointer">Invite</li>
 
 
@@ -96,9 +96,11 @@ export default defineComponent(
       this.showOptions = false;
       this.$emit('hideMenu');
     },
-    goProfile() {
-      alert("going to " + this.targetUser?.name + "'s profile"); // placeholder
-    },
+    goProfile(login: string) {
+      if (login !== this.currentUser?.login)
+        this.$router.push('/user/' + login);
+      else
+        this.$router.push('/user/');    },
     gameInvite() {
       this.createGame();
     },
