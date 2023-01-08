@@ -1,6 +1,6 @@
 <template>
   <div class="h-full w-full flex flex-row">
-    <div class="h-full w-1/2 flex flex-col pt-2 pl-4 pr-4">
+    <div class="h-full w-full flex flex-col pt-2 pl-4 pr-4">
       <div class="h-16 w-16">
         <img :src="getImgUrl('Hashtag.png')" class="rounded-full" />
       </div>
@@ -14,7 +14,7 @@
         cursor-pointer shadow-lg">
           <Cog8ToothIcon @click="toggleSettings()" />
         </div>
-        <div class="w-10 h-10 ml-16
+        <div v-if="currentChan?.type != 'direct'" class="w-10 h-10 ml-16
         rounded-3xl bg-gray-100 text-gray-500 hover:text-black
         cursor-pointer shadow-lg">
           <PlusIcon @click="toggleInvite()" />

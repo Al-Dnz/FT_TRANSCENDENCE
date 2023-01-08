@@ -1,5 +1,5 @@
 <template>
-  <div id="messagesList" class="h-full w-full overflow-auto pt-3">
+  <div class="h-full w-full pt-3">
     <ul>
       <li v-for="message in messages" :key="message.id">
         <ChatMessageBox :socket="socket" :currentChan="currentChan"

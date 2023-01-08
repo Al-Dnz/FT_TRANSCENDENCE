@@ -4,21 +4,21 @@
   </div>
   <div v-show="!protected" class="h-full w-full flex flex-row">
     <div class="h-full w-full flex flex-col divide-y-2">
-      <div class="h-[22%]">
+      <div class="h-56 grow-0">
         <ChatChannelHeader :socket="socket" :currentUser="currentUser" :currentChan="currentChan"
         @toggleSettings="toggleSettings" @toggleInvite="toggleInvite" @quitChan="quitChan" />
       </div>
-      <div class="flex flex-col h-[78%] ml-2 mr-2">
-        <div class="h-[90%]">
+      <div class="flex h-8 grow flex-col ml-2 mr-2">
+        <div class="grow h-8 overflow-auto">
           <ChatMessagesList :socket="socket" :currentUser="currentUser" :currentChan="currentChan"
           @isProtected="protect" @isValidated="validate" />
         </div>
-        <div class="h-[10%] mb-8">
+        <div class="grow-0 h-12 mb-2">
           <ChatMessageInput :socket="socket" :currentChan="currentChan" />
         </div>
       </div>
     </div>
-    <div class="h-full w-1/5 text-slate-600 bg-gray-100">
+    <div class="h-full w-1/5 text-slate-600 bg-gray-100 hidden lg:block">
       <ChatChannelUsersList :socket="socket" :currentUser="currentUser" :currentChan="currentChan" />
     </div>
   </div>
