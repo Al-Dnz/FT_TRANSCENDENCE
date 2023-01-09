@@ -13,12 +13,14 @@
 
         <!-- <li v-if="canPromote" @click="promoteUser()" class="hover:font-semibold cursor-pointer">Promote</li> -->
 
-        <li @click="promoteUser()" class="hover:font-semibold cursor-pointer">Promote</li>
+        <li v-if="CanPromote()" @click="promoteUser()" class="hover:font-semibold cursor-pointer">Promote</li>
         
-        <li v-if="canMute" @click="muteUser()" class="hover:font-semibold cursor-pointer">Mute</li>
-        <li v-if="canUnmute" @click="unmuteUser()" class="hover:font-semibold cursor-pointer">Unmute</li>
+        <!-- <li v-if="canPromote" @click="promoteUser()" class="hover:font-semibold cursor-pointer">Demote</li> -->
 
-        <li v-if="canBan" @click="ActivateBan()" class="hover:font-semibold cursor-pointer">Ban</li>
+        <li v-if="canMute && hasAuthorityOver()" @click="muteUser()" class="hover:font-semibold cursor-pointer">Mute</li>
+        <li v-if="canUnmute && hasAuthorityOver()" @click="unmuteUser()" class="hover:font-semibold cursor-pointer">Unmute</li>
+
+        <li v-if="hasAuthorityOver()" @click="ActivateBan()" class="hover:font-semibold cursor-pointer">Ban</li>
 
         <li v-if="canBlock" @click="blockUser()" class="hover:font-semibold cursor-pointer">Block</li>
         <li v-else-if="canUnblock" @click="unblockUser()" class="hover:font-semibold cursor-pointer">Unblock</li>
@@ -80,6 +82,13 @@ export default defineComponent(
     chatModal
   },
   methods: {
+    CanPromote()
+    {
+      console.log(this.userChannel)
+      if (this.getRole(this.currentUser?.login, this.currentChan) === "owner" &&  !(this.userChannel?.role === "admin" ))
+        return true;
+      return false;
+    },
     ActivateBan()
     {
       this.isBan = true;
@@ -154,27 +163,22 @@ export default defineComponent(
     }
     return (true);
   },
+  getRole(login: string, chan: any): string {
+      for (let j = 0; j < chan["userChannels"].length; j++) {
+        if (chan["userChannels"][j].user.login == login)
+          return chan["userChannels"][j].role;
+      }
+      return "undefined";
+  },
   compareUsers(user1: any, user2: any): boolean {
     if (user1?.length !== user2?.length || user1?.id !== user2?.id
       || user1?.login !== user2?.login)
       return (false);
     return (true);
   },
-  isUserOwner(): boolean {
-    return (this.compareUsers(this.currentChan?.creator, this.currentUser));
-  },
-  isUserAdmin(): boolean {
-    return (this.currentChan?.adminList?.includes(this.currentUser));
-  },
-  isTargetOwner(): boolean {
-    return (this.compareUsers(this.currentChan?.creator, this.targetUser));
-  },
-  isTargetAdmin(): boolean {
-    return (this.currentChan?.adminList?.includes(this.targetUser));
-  },
-  haveAuthorityOver(): boolean {
-    if (this.isUserOwner() || (this.isUserAdmin()
-      && !(this.isTargetOwner() || this.isTargetAdmin())))
+
+  hasAuthorityOver(): boolean {
+    if (this.getRole(this.currentUser?.login, this.currentChan) === "owner"|| (this.getRole(this.currentUser?.login, this.currentChan) === "admin"  && !(this.getRole(this.targetUser?.login, this.currentChan) === "owner" ) || this.getRole(this.targetUser?.login, this.currentChan) === "admin" ))
       return (true);
     return (false);
   },
@@ -200,20 +204,8 @@ export default defineComponent(
     else
       this.canUnblock = false;
   },
-  setCanBan() {
-    // if (!this.isUserBanned() && this.haveAuthorityOver())
-      this.canBan = true;
-    // else
-    //   this.canBan = false;
-  },
-  setCanUnban() {
-    if (this.isUserBanned() && this.haveAuthorityOver())
-      this.canUnban = true;
-    else
-      this.canUnban = false;
-  },
   setCanMute() {
-
+    if (this.getRole(this.currentUser?.login, this.currentChan) === "owner" &&  !(this.userChannel?.role === "admin" ))
     this.canMute = !this.userChannel?.muted;
 
     // if (!this.isUserMuted() && this.haveAuthorityOver())
@@ -231,8 +223,7 @@ export default defineComponent(
   },
   setCanPromote() {
 
-    // this.canPromote = this.userChannel?.role == 'owner' || this.userChannel?.role == 'admin';
-    if (this.isUserOwner() && !(this.isTargetOwner() || this.isTargetAdmin()))
+    if (this.getRole(this.currentUser?.login, this.currentChan) === "owner" &&  !(this.userChannel?.role === "admin" ))
       this.canPromote = true;
     else
       this.canPromote = false;
@@ -240,8 +231,6 @@ export default defineComponent(
   setAll() {
     this.setCanBlock();
     this.setCanUnblock();
-    this.setCanBan();
-    this.setCanUnban();
     this.setCanMute();
     this.setCanUnmute();
     this.setCanPromote();
@@ -277,12 +266,6 @@ export default defineComponent(
     //   alert('user has been banned');  // here, targetUser should be added to currentChan's banList
     // this.setCanBan();
     // this.setCanUnban();
-  },
-  unbanUser() {
-    if (this.isUserBanned() && this.haveAuthorityOver())
-      alert('user has been unbanned');  // here, targetUser should be removed from currentChan's banList
-    this.setCanUnban();
-    this.setCanBan();
   },
   muteUser() {
 
