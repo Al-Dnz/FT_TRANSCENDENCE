@@ -145,6 +145,8 @@ export class ball extends Sprite {
 			this.position.y < 0
 		) {
 			this.velocity.y = -this.velocity.y;
+			if(this.position.y < 0)
+				this.position.y = 0 + this.velocity.y;
 		}
 
 		let paddle =
