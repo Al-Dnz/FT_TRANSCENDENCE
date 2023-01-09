@@ -61,7 +61,7 @@ export default defineComponent({
 				  const Fapi = new BlockedsApi(new Configuration({accessToken: accessToken}))
 				  Fapi.createBlockedship({login: this.newblock})
 					  .then( () => { this.newblock = '' })
-					  .then (() => { window.location.reload() })
+					  .then (() => { this.fetchData() })
 					  .catch((msg:ResponseError) => { msg.response.json().then((str: ErrorOutput) =>
 						  this.$toast(str.message, {
 							styles: { backgroundColor: "#FF0000", color: "#FFFFFF" },
@@ -75,11 +75,12 @@ export default defineComponent({
 		  getCredentials().then((accessToken: string ) => {
 			  const Fapi = new BlockedsApi(new Configuration({accessToken: accessToken}))
 			  Fapi.listUsersBlockeds().then((user: Array<UserOutput> ) => {
-				  this.tab = user
+				this.loading = false;  
+				this.tab = user;
 			  })
 			  .catch((msg : ResponseError) => { msg.response.json().then((str : ErrorOutput) => {this.error = str.message;});}
 			  )})
-		  this.loading = false;
+		  
 		}
 	  }
 	})

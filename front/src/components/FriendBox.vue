@@ -55,7 +55,8 @@ export default defineComponent({
 	props: {
 		obj: { type: Object as PropType<UserOutput> },
 		index: Number,
-		refresh: { type: Function }
+		refresh: { type: Function,
+		required:true }
 	},
 	components: {
 		GoToAcc,
@@ -95,7 +96,7 @@ export default defineComponent({
 				const Fapi = new FriendsApi(new Configuration({ accessToken: accessToken }))
 				Fapi.deleteFriendship({ login: this.obj!.login })
 					.then(() => { this.obj!.login = ''; })
-					.then(() => { window.location.reload(); })
+					.then(() => { this.refresh() })
 					.catch((msg: ResponseError) => {
 						msg.response.json().then((str: ErrorOutput) =>
 							this.$toast(str.message, {
