@@ -10,7 +10,7 @@
         <div v-if="message?.sender.login !== currentUser?.login" v-show="isOptMenuButtonVisible"
         class="ml-1">
           <UserOptionsMenu :socket="socket" :currentChan="getCurrentChan" :currentUser="getCurrentUser"
-          :targetUser="getMessageAuthor" :blockList="blockList" @toggle-opt-menu="switchOptMenuState" @hideMenu="hideMenu"
+          :targetUser="getMessageAuthor" @toggle-opt-menu="switchOptMenuState" @hideMenu="hideMenu" :blockList="blockList"
           class="rounded-full bg-gray-300" />
         </div>
       </div>
@@ -35,7 +35,7 @@ export default defineComponent({
     currentUser: Object,
     currentChan: Object,
     message: Object,
-    blockList: Object,
+    blockList: Object
   },
   components: {
     UserOptionsMenu,

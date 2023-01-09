@@ -3,7 +3,7 @@
     <ul>
       <li v-for="message in messages" :key="message.id">
         <ChatMessageBox :socket="socket" :currentChan="currentChan"
-        :currentUser="currentUser" :message="message" :blockList="blockList" />
+        :currentUser="currentUser" :blockList="blockList" :message="message" />
       </li>
     </ul>
   </div>

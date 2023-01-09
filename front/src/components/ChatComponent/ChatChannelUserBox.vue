@@ -30,7 +30,7 @@ export default defineComponent({
     currentUser: Object,
     currentChan: Object,
     userChannel: Object,
-    blockList: Object,
+    blockList: Object
   },
   components: {
     UserOptionsMenu,

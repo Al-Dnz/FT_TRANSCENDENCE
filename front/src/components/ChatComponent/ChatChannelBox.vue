@@ -10,8 +10,8 @@
       </div>
       <div class="flex h-8 grow flex-col ml-2 mr-2">
         <div class="grow h-8">
-          <ChatMessagesList :socket="socket" :currentUser="currentUser" :currentChan="currentChan" :blockList="blockList"
-          @isProtected="protect" @isValidated="validate" />
+          <ChatMessagesList :socket="socket" :currentUser="currentUser" :currentChan="currentChan"
+          @isProtected="protect" @isValidated="validate" :blockList="blockList"/>
         </div>
         <div class="grow-0 h-12 mb-2">
           <ChatMessageInput :socket="socket" :currentChan="currentChan" />
@@ -19,7 +19,7 @@
       </div>
     </div>
     <div class="h-full w-1/5 text-slate-600 bg-gray-100 hidden lg:block">
-      <ChatChannelUsersList :socket="socket" :currentUser="currentUser" :currentChan="currentChan" :blockList="blockList" />
+      <ChatChannelUsersList :socket="socket" :currentUser="currentUser" :blockList="blockList" :currentChan="currentChan" />r
     </div>
   </div>
 </template>
@@ -38,7 +38,7 @@ export default defineComponent({
     socket: Object,
     currentUser: Object,
     currentChan: Object,
-    blockList: Object,
+    blockList: Object
   },
   components: {
     ChatMessagesList,
