@@ -62,6 +62,7 @@ export default defineComponent(
     currentUser: Object,
     targetUser: Object,
     userChannel: Object,
+    blockList: Object,
   },
   data(): DataI {
     return {
