@@ -21,14 +21,15 @@ export default defineComponent({
 	props : {
 		obj: {type: Object as PropType<UserOutput>},
 		index: Number,
-		refresh: {type: Function}
+		refresh: {type: Function,
+		required: true}
 	},
 	methods: {
 		async del() {
 			getCredentials().then((accessToken: string) => {
 				const Fapi = new BlockedsApi(new Configuration({accessToken: accessToken}))
 				Fapi.deleteBlockedship({login:this.obj!.login})
-					.then(() => {this.obj!.login = ''; window.location.reload()})
+					.then(() => {this.obj!.login = ''; this.refresh()})
 					.catch((msg:ResponseError) => { msg.response.json().then((str: ErrorOutput) =>
 						this.$toast(str.message, {
               			styles: { backgroundColor: "#FF0000", color: "#FFFFFF" },
