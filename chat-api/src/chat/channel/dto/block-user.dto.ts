@@ -8,4 +8,8 @@ export class BlockUserDto
 	@Length(1)
 	login: string
 
+	@IsInt()
+	@Min(1)
+	channelId: number
+
 }

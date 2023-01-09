@@ -20,8 +20,8 @@ export class CreateMessageDto
 	channelId: number;
 
 	//to remove
-	// @IsInt()
-  	// @Min(1)
-	// @IsOptional()
-	// senderId: number;
+	@IsInt()
+  	@Min(1)
+	@IsOptional()
+	senderId: number;
 }
