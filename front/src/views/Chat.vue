@@ -180,7 +180,7 @@ export default defineComponent({
         this.$toast(error, { styles: { backgroundColor: "#16b918", color: "#FFFFFF" } });
       })
       this.socket.on('redirectChan', (payload: any) => {
-        this.currentChan = payload.channel;
+        this.changeCurrentChannel(payload.channel);
       })
       this.socket.on('updateUser', (payload: any) => {
         this.currentUser = payload.user;

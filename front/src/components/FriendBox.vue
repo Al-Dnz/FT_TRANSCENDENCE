@@ -83,11 +83,15 @@ export default defineComponent({
 			await fetch(`http://${process.env.VUE_APP_IP}:3004/channel/direct_message`, requestOptions)
 				.then(async response => {
 					const data = await response.json();
+					if (!response.ok) {
+						const error = (data && data.message) || response.statusText;
+						return Promise.reject(error);
+					}
 					this.$store.dispatch('setCurrentChannel', data);
 					this.$router.push('/chat');
 				})
 				.catch(e => {
-					this.$toast(e.message, { styles: { backgroundColor: "#FF0000", color: "#FFFFFF" } });
+					this.$toast(e, { styles: { backgroundColor: "#FF0000", color: "#FFFFFF" } });
 					return 0;
 				})
 		},
