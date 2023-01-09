@@ -335,6 +335,10 @@ export class ChannelGateway {
 			if (sender.login == receiver.login)
 				throw new HttpException(`You can't DM yourself`, HttpStatus.FORBIDDEN);
 
+			const isblocked: boolean = await this.blockerBlockedService.isBlockedBy(sender, receiver);
+			if (isblocked)
+				throw new HttpException(`You can't send a direct-message to ${receiver.login} because you are blocked by him.`, HttpStatus.FORBIDDEN);
+
 			// check if channel exist as DMChannel
 			const DMChannels = await this.channelService.findDMChannel(sender.id, receiver.id);
 			if (DMChannels.length != 0)
