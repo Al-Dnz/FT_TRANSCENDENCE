@@ -60,7 +60,8 @@ interface DataI {
   socket: any,
   currentChan: any,
   currentUser?: UserOutput,
-  loading: boolean
+  loading: boolean,
+  blockList: any
 }
 export default defineComponent({
   name: "ChatPage",
@@ -87,7 +88,8 @@ export default defineComponent({
       socket: null as any,
       currentChan: null as any,
       currentUser: undefined,
-      loading: true
+      loading: true,
+      blockList: null as any
     };
   },
   methods: {
@@ -178,6 +180,18 @@ export default defineComponent({
       })
       this.socket.on('redirectChan', (payload: any) => {
         this.currentChan = payload.channel;
+      })
+      this.socket.on('updateUser', (payload: any) => {
+        this.currentUser = payload.user;
+        console.log("currentUser =>");
+        console.log(this.currentUser);
+        
+        
+      })
+      this.socket.on('updateBlockList', (payload: any) => {
+        this.blockList = payload.blockList;
+        console.log("blockList =>");
+        console.log(this.blockList);
       })
     })
     await this.fetchData();
