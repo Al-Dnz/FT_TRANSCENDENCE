@@ -21,7 +21,7 @@ export default defineComponent({
     socket: Object,
     currentUser: Object,
     currentChan: Object,
-    blockList: Object
+    blockList: Object,
   },
   components: {
     ChatMessageBox,

@@ -19,7 +19,7 @@
       </div>
     </div>
     <div class="h-full w-1/5 text-slate-600 bg-gray-100 hidden lg:block">
-      <ChatChannelUsersList :socket="socket" :currentUser="currentUser" :blockList="blockList" :currentChan="currentChan" />
+      <ChatChannelUsersList :socket="socket" :currentUser="currentUser" :blockList="blockList" :currentChan="currentChan" />r
     </div>
   </div>
 </template>
