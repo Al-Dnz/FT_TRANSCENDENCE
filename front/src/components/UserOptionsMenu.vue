@@ -282,12 +282,6 @@ export default defineComponent(
     // this.setCanBan();
     // this.setCanUnban();
   },
-  unbanUser() {
-    if (this.isUserBanned() && this.haveAuthorityOver())
-      alert('user has been unbanned');  // here, targetUser should be removed from currentChan's blockList
-    this.setCanUnban();
-    this.setCanBan();
-  },
   muteUser() {
 
     console.log("mute user =>" + this.targetUser?.login);
