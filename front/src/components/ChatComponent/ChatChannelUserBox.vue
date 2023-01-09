@@ -9,6 +9,7 @@
       <span v-if="userChannel?.role==='owner'">👑</span>
       <span v-if="userChannel?.role==='admin'">★</span>
       <span v-if="userChannel?.muted">🔇</span>
+      <span v-if="isBlocked(userChannel?.user.login)">🚫</span>
       </h1>
       <div v-if="userChannel?.user.login !== currentUser?.login" v-show="isOptMenuButtonVisible">
         <UserOptionsMenu :socket="socket" :currentChan="getCurrentChan" :currentUser="getCurrentUser"
@@ -42,6 +43,16 @@ export default defineComponent({
     };
   },
   methods: {
+    isBlocked(login: string)
+    {
+      if (this.blockList == null)
+        return false;
+      for (let j = 0; j < this.blockList.length; j++) {
+        if (this.blockList[j]["blocked"].login == login)
+          return true
+      }
+      return false;
+    },
     compareArrays(arr1: any[], arr2: any[]): boolean {
       let i = arr1?.length;
       if (i !== arr2?.length)
