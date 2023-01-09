@@ -84,6 +84,10 @@ export default defineComponent({
     })
     this.scrollToEnd();
   },
+  beforeUnmount() {
+    this.socket?.off('allChanMessagesToClient');
+    this.socket?.off('msgToChannel');
+  },
   watch: {
     currentChan: {
         immediate: true, 
