@@ -16,7 +16,7 @@
       <ChatDirectMessageBox :socket="socket" :currentChan="currentChan" @quitChan="quitChan" />
     </div> -->
     <div v-else class="h-full lg:w-5/6 w-full bg-gray-50">
-      <ChatChannelBox :socket="socket" :currentUser="currentUser" :currentChan="currentChan"
+      <ChatChannelBox :socket="socket" :currentUser="currentUser" :currentChan="currentChan" :blockList="blockList"
         @toggleSettings="showChannelSettings" @quitChan="quitChan" @toggleInvite="showChannelInvite" />
     </div>
   </div>

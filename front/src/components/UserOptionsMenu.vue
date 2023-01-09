@@ -62,6 +62,7 @@ export default defineComponent(
     currentUser: Object,
     targetUser: Object,
     userChannel: Object,
+    blockList: Object
   },
   data(): DataI {
     return {
@@ -184,7 +185,7 @@ export default defineComponent(
     return (this.currentUser?.blockList?.includes(this.targetUser));
   },
   isUserBanned(): boolean {
-    return (this.currentChan?.banList?.includes(this.targetUser));
+    return (this.currentChan?.blockList?.includes(this.targetUser));
   },
   isUserMuted(): boolean {
     // return (userIdmuteList?.includes(this.targetUser));
@@ -288,13 +289,13 @@ export default defineComponent(
 
     this.socket?.emit('kickUser', payload);
     // if (!this.isUserBanned() && this.haveAuthorityOver())
-    //   alert('user has been banned');  // here, targetUser should be added to currentChan's banList
+    //   alert('user has been banned');  // here, targetUser should be added to currentChan's blockList
     // this.setCanBan();
     // this.setCanUnban();
   },
   unbanUser() {
     if (this.isUserBanned() && this.haveAuthorityOver())
-      alert('user has been unbanned');  // here, targetUser should be removed from currentChan's banList
+      alert('user has been unbanned');  // here, targetUser should be removed from currentChan's blockList
     this.setCanUnban();
     this.setCanBan();
   },

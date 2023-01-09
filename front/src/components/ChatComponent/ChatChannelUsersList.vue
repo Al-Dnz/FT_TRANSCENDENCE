@@ -6,7 +6,7 @@
         <li v-for="userChannel in userchannels" :key="userChannel.id">
           <div class="hover:text-black">
             <ChatChannelUserBox :socket="socket" :currentUser="currentUser"
-            :currentChan="currentChan" :userChannel="userChannel" />
+            :currentChan="currentChan" :userChannel="userChannel" :blockList="blockList" />
           </div>
         </li>
 
@@ -32,6 +32,7 @@ export default defineComponent({
     socket: Object,
     currentUser: Object,
     currentChan: Object,
+    blockList: Object
   },
   components: {
     ChatChannelUserBox,
