@@ -17,13 +17,13 @@
         
         <!-- <li v-if="canPromote" @click="promoteUser()" class="hover:font-semibold cursor-pointer">Demote</li> -->
 
-        <li v-if="canMute && hasAuthorityOver()" @click="muteUser()" class="hover:font-semibold cursor-pointer">Mute</li>
-        <li v-if="canUnmute && hasAuthorityOver()" @click="unmuteUser()" class="hover:font-semibold cursor-pointer">Unmute</li>
+        <li v-if="CanMute()" @click="muteUser()" class="hover:font-semibold cursor-pointer">Mute</li>
+        <li v-if="CanUnMute()" @click="unmuteUser()" class="hover:font-semibold cursor-pointer">Unmute</li>
 
         <li v-if="hasAuthorityOver()" @click="ActivateBan()" class="hover:font-semibold cursor-pointer">Ban</li>
 
-        <li v-if="canBlock" @click="blockUser()" class="hover:font-semibold cursor-pointer">Block</li>
-        <li v-else-if="canUnblock" @click="unblockUser()" class="hover:font-semibold cursor-pointer">Unblock</li>
+        <li v-if="!isBlocked(targetUser?.login)" @click="blockUser()" class="hover:font-semibold cursor-pointer">Block</li>
+        <li v-else-if="isBlocked(targetUser?.login)" @click="unblockUser()" class="hover:font-semibold cursor-pointer">Unblock</li>
         
         <!-- <li v-else-if="canUnban" @click="unbanUser()" class="hover:font-semibold cursor-pointer">Unban</li> -->
         <!-- <li v-if="canMute" @click="muteUser()" class="hover:font-semibold cursor-pointer">Mute</li> -->
@@ -89,6 +89,22 @@ export default defineComponent(
       if (this.getRole(this.currentUser?.login, this.currentChan) === "owner" &&  !(this.userChannel?.role === "admin" ))
         return true;
       return false;
+    },
+    CanMute()
+    {
+      console.log("mute");
+      console.log(this.targetUser?.muted);
+      if( !this.userChannel?.muted && this.hasAuthorityOver())
+        return(true)
+      return(false)
+    },
+    CanUnMute()
+    {
+      console.log("mute");
+      console.log(this.targetUser?.muted);
+      if( this.userChannel?.muted && this.hasAuthorityOver())
+        return(true)
+      return(false)
     },
     ActivateBan()
     {
@@ -181,7 +197,7 @@ export default defineComponent(
   },
 
   hasAuthorityOver(): boolean {
-    if (this.getRole(this.currentUser?.login, this.currentChan) === "owner"|| (this.getRole(this.currentUser?.login, this.currentChan) === "admin"  && !(this.getRole(this.targetUser?.login, this.currentChan) === "owner" ) || this.getRole(this.targetUser?.login, this.currentChan) === "admin" ))
+    if (this.getRole(this.currentUser?.login, this.currentChan) === "owner" || (this.getRole(this.currentUser?.login, this.currentChan) === "admin"  && (!(this.getRole(this.targetUser?.login, this.currentChan) === "owner" ) || this.getRole(this.targetUser?.login, this.currentChan) === "admin" )))
       return (true);
     return (false);
   },
@@ -316,6 +332,16 @@ export default defineComponent(
     //   alert('user has been unmuted'); // here, targetUser should be removed from currentChan's muteList
     // this.setCanUnmute();
     // this.setCanMute();  
+  },
+  isBlocked(login: string)
+  {
+    if (this.blockList == null)
+      return false;
+    for (let j = 0; j < this.blockList.length; j++) {
+      if (this.blockList[j]["blocked"].login == login)
+        return true
+    }
+    return false;
   },
   promoteUser() {
   

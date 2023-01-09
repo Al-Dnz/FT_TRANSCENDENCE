@@ -81,7 +81,7 @@ export default defineComponent({
 				const Fapi = new FriendsApi(new Configuration({ accessToken: accessToken }))
 				Fapi.createFriendship({ login: this.newfriend })
 					.then(() => { this.newfriend = ''; })
-					.then(()=> { window.location.reload(); })
+					.then(()=> { this.fetchData(); })
 					.catch((msg: ResponseError) => {
 						msg.response.json().then((str: ErrorOutput) =>
 							this.$toast(str.message, {
@@ -97,11 +97,11 @@ export default defineComponent({
 				const Fapi = new FriendsApi(new Configuration({ accessToken: accessToken }))
 				Fapi.listUsersFriends().then((user: Array<UserOutput>) => {
 					this.tab = user
+					this.loading = false;
 				})
 					.catch((msg: ResponseError) => { msg.response.json().then((str: ErrorOutput) => { this.error = str.message; }); }
 					)
 			})
-			this.loading = false;
 		},
 		updateFriendStatus(payload: Payload) {
 			for (let user of this.tab) {
