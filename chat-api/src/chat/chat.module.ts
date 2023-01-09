@@ -10,9 +10,10 @@ import { ChatGateway } from './chat.gateway';
 import {User } from 'db-interface/Core';
 import { BannedChanService } from './banned-chan/banned-chan.service';
 import { BannedChanModule } from './banned-chan/banned-chan.module';
+import { BlockerBlockedModule } from './blocker-blocked/blocker-blocked.module';
 
 @Module({
-	imports: [BannedChanModule, MessageModule, ChannelModule, UserChannelModule, UserModule, TypeOrmModule.forFeature([User])],
+	imports: [BlockerBlockedModule, BannedChanModule, MessageModule, ChannelModule, UserChannelModule, UserModule, TypeOrmModule.forFeature([User])],
 	providers: [ChatGateway]
 })
 export class ChatModule {}
