@@ -77,16 +77,11 @@ export class paddle extends Sprite {
 		this.speed = 9;
 	}
 	move() {
-		// console.log("QWEQWE" , this.canvasDim);
-		// console.log("height :" , this.height, "| width :", this.width);
-		// console.log("position" , this.position);
 		if (
 			!(this.position.y + this.velocity.y + this.height > this.canvasDim.height) &&
 			this.position.y + this.velocity.y >= 0
 		)
 			this.position.y += this.velocity.y;
-
-		// this.velocity.y = 0;
 	}
 }
 

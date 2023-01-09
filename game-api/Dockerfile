@@ -8,7 +8,7 @@ RUN npm install
 
 ADD game-api/ /app/game
 WORKDIR /app/game
-RUN npm install && npm run build
+RUN npm install && npm config set fetch-retry-maxtimeout 120000 && npm run build
 
 FROM gcr.io/distroless/nodejs:18
 COPY --from=builder /app/game /app

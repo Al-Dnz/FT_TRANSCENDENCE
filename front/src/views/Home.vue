@@ -2,7 +2,7 @@
   <div className="absolute flex justify-center h-full w-full">
     <div id="background_game" style="width: 100%">
     <div id="app" class="container" style="width: 100%; justify-content: center;"></div>
-    <div id="initialScreen" style="display: flex;">
+    <div id="initialScreen" style="display: none;">
         <div style="margin: 0%; width: 100%; justify-content: center; align-items: center; flex-direction: column; position: relative; display: flex;">
           <div style="margin: 2vh;">
             <button class="btn-1" id = "findGameBtn">Play Normal Mode  </button>
@@ -18,15 +18,15 @@
 			<div id= "gameScreen" style="width: 100%;">
 				<!-- width and height SHOULD BE SET DYNAMICALLY -->
 				<div class = 'ui' style="position: relative; display: flex; width: 60%;">
-					<div class='player_1_name'> <span id ="NamePlayer1">Joueur 1</span></div>
+					<div class='player_1_name'> <span id ="NamePlayer1" class='textInBox'>Joueur 1</span></div>
 					<!-- player 1 score -->
-					<div class='player_score' ><span id="score_1"> 0 </span></div>
-					<!-- codeRoom -->
-					<div class="codeRoom"><span id="gameCodeDisplay"> xxx </span></div>
+					<div class='player_score' style="border-top-right-radius: 5px;border-bottom-right-radius: 5px;border-left-width: 0px;"><span id="score_1" class='textInBox'> 0 </span></div>
+          <!-- blank space -->
+          <div style="width: 5%;"></div>
 					<!-- player 2 score -->
-					<div class='player_score' ><span id="score_2"> 0 </span></div>
+					<div class='player_score' style="border-top-left-radius: 5px;border-bottom-left-radius: 5px;border-right-width: 0px;"><span id="score_2" class='textInBox'> 0 </span></div>
 					<!-- player 2 name -->
-					<div class='player_2_name'> <span id ="NamePlayer2">Joueur 2 </span></div>
+					<div class='player_2_name'> <span id ="NamePlayer2" class='textInBox'>Joueur 2 </span></div>
 				</div>
 				<div>
 					<canvas ref="convas"
@@ -186,10 +186,10 @@ export default {
     sendPaddleMove(instruction) {
       this.socket.emit('MovePaddleToServer', instruction);
     },
-    getInfo() {
-      console.log('getInfo');
-      this.socket.emit('getInfoToServer');
-    },
+    // getInfo() {
+    //   console.log('getInfo');
+    //   this.socket.emit('getInfoToServer');
+    // },
     getSizeToServe() {
       this.socket.emit('getSizeToServer');
     },
@@ -236,15 +236,12 @@ export default {
     this.NamePlayer2 = document.getElementById('NamePlayer2');
     this.findGameBtn = document.getElementById('findGameBtn');
     this.findGameCustomBtn = document.getElementById('findGameCustomBtn');
-    this.gameCodeDisplay = document.getElementById('gameCodeDisplay');
 
     this.setScreen("initial");
     // this.newGameBtn.addEventListener('click', this.newGame);
     
-    this.findGameCustomBtn.addEventListener('click', this.findGameCustom);
-    this.findGameBtn.addEventListener('click', this.findGame);
-    // ----------------------------------------------
 
+    // ----------------------------------------------
     this.socket.on(`test`, (data) => {
       this.test();
     });
@@ -275,15 +272,17 @@ export default {
     this.socket.on(`paddle1ToClient`, (data) => {
       console.log('check');
     });
-    this.socket.on(`getInfoToClient`, (data) => {
-      this.paddle1.position = data.paddle1.position;
-      this.paddle2.position = data.paddle2.position;
-      this.ball.position = data.ball.position;
-    });
+    // this.socket.on(`getInfoToClient`, (data) => {
+    //   this.paddle1.position = data.paddle1.position;
+    //   this.paddle2.position = data.paddle2.position;
+    //   this.ball.position = data.ball.position;
+    // });
 
     this.socket.on(`gameState`, (data) => {
       this.paddle1.position = data.paddle1.position;
       this.paddle2.position = data.paddle2.position;
+      this.paddle1.height = data.paddle1.height;
+      this.paddle2.height = data.paddle2.height;
       this.ball.position = data.ball.position;
       this.score1.innerText = data.score.player1;
       this.score2.innerText = data.score.player2;
@@ -387,6 +386,9 @@ export default {
     }
     else
       this.reconnectGame();
+
+    this.findGameCustomBtn.addEventListener('click', this.findGameCustom);
+    this.findGameBtn.addEventListener('click', this.findGame);
   },
 };
 </script>
