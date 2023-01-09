@@ -8,6 +8,7 @@ import * as bcrypt from 'bcrypt';
 import { Channel, ChannelType, Message, User } from 'db-interface/Core';
 import { Logger } from '@nestjs/common';
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { BlockerBlockedService } from '../blocker-blocked/blocker-blocked.service';
 
 @Injectable()
 export class ChannelService {
@@ -16,7 +17,8 @@ export class ChannelService {
     @InjectRepository(Channel)
     private readonly channelsRepository: Repository<Channel>,
     @InjectRepository(Message)
-    private readonly messagesRepository: Repository<Message>
+    private readonly messagesRepository: Repository<Message>,
+    private blockerBlockedService: BlockerBlockedService
 
   ) { }
 
@@ -62,7 +64,7 @@ export class ChannelService {
 
   async findChanWithCreator(id: number) {
     const channel = await this.channelsRepository.find({
-      where: {id: id},
+      where: { id: id },
       relations: { creator: true }
     })
     if (channel.length == 0)
@@ -86,6 +88,17 @@ export class ChannelService {
           },
         },
       })
+  }
+
+  async selectMessagesForUser(id: number, user: User) {
+    const messages = await this.findMessages(id);
+    let ret = [];
+    for (let msg of messages) {
+      const isblocked: boolean = await this.blockerBlockedService.isBlockedBy(msg.sender, user);
+      if (!isblocked)
+        ret.push(msg);
+    }
+    return ret;
   }
 
   async checkChanValidity(payload: JoinChannelDto) {
