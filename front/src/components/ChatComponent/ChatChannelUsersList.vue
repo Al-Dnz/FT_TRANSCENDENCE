@@ -1,5 +1,5 @@
 <template>
-  <div class="h-3/4 w-full pl-2 pr-2">
+  <div class="h-full w-full pl-2 pr-2">
     <h1 class="mt-3 font-bold">CHANNEL MEMBERS</h1>
     <div class="h-full overflow-auto">
       <ul>
