@@ -74,9 +74,9 @@ export default defineComponent({
 		  this.loading = true;   
 		  getCredentials().then((accessToken: string ) => {
 			  const Fapi = new BlockedsApi(new Configuration({accessToken: accessToken}))
-			  Fapi.listUsersBlockeds().then((user: Array<UserOutput> ) => {
-				this.loading = false;  
+			  Fapi.listUsersBlockeds().then((user: Array<UserOutput> ) => { 
 				this.tab = user;
+				this.loading = false; 
 			  })
 			  .catch((msg : ResponseError) => { msg.response.json().then((str : ErrorOutput) => {this.error = str.message;});}
 			  )})
