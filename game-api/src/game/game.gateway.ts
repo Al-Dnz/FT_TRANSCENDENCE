@@ -240,7 +240,9 @@ export class GameGateway
 			this.userService.checkToken(token);
 			const user = await this.userService.getUserByToken(token);
 
-			if (!this.state[gameCode] && this.stateCustom[gameCode]) {
+			console.log("this.state",this.state);
+			console.log("this.stateCUSTOM",this.stateCustom);
+			if (!this.state[gameCode] && !this.stateCustom[gameCode]) {
 				client.emit('unknownGame');
 				return;
 			}

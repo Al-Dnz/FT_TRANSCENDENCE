@@ -240,8 +240,7 @@ export default {
     this.setScreen("initial");
     // this.newGameBtn.addEventListener('click', this.newGame);
     
-    this.findGameCustomBtn.addEventListener('click', this.findGameCustom);
-    this.findGameBtn.addEventListener('click', this.findGame);
+
     // ----------------------------------------------
     this.socket.on(`test`, (data) => {
       this.test();
@@ -387,6 +386,9 @@ export default {
     }
     else
       this.reconnectGame();
+
+    this.findGameCustomBtn.addEventListener('click', this.findGameCustom);
+    this.findGameBtn.addEventListener('click', this.findGame);
   },
 };
 </script>

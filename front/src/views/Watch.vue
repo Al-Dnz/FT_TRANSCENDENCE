@@ -21,13 +21,15 @@
               <div id= "gameScreen" style="width: 100%;">
                   <!-- width and height SHOULD BE SET DYNAMICALLY -->
                   <div class = 'ui' style="position: relative; display: flex; width: 60%;">
-                    <div class='player_1_name'> <span id ="NamePlayer1">Joueur 1</span></div>
-					            <!-- player 1 score -->
-                      <div class='player_score' ><span id="score_1"> 0 </span></div>
-                      <!-- player 2 score -->
-                      <div class='player_score' ><span id="score_2"> 0 </span></div>
-                      <!-- player 2 name -->
-                      <div class='player_2_name'> <span id ="NamePlayer2">Joueur 2 </span></div>
+                    <div class='player_1_name'> <span id ="NamePlayer1" class='textInBox'>Joueur 1</span></div>
+                    <!-- player 1 score -->
+                    <div class='player_score' style="border-top-right-radius: 5px;border-bottom-right-radius: 5px;border-left-width: 0px;"><span id="score_1" class='textInBox'> 0 </span></div>
+                    <!-- blank space -->
+                    <div style="width: 5%;"></div>
+                    <!-- player 2 score -->
+                    <div class='player_score' style="border-top-left-radius: 5px;border-bottom-left-radius: 5px;border-right-width: 0px;"><span id="score_2" class='textInBox'> 0 </span></div>
+                    <!-- player 2 name -->
+                    <div class='player_2_name'> <span id ="NamePlayer2" class='textInBox'>Joueur 2 </span></div>
                   </div>
                   <div>
                       <canvas ref="convas"
@@ -123,7 +125,6 @@
       //   this.startAnimating(30);
       // },
       specGame(code) {
-        console.log('Spec YEP');
         this.setScreen("game");
         this.socket.emit('specGame', code);
         this.startAnimating(30);
@@ -408,7 +409,7 @@
   
 <style>
   @import "../assets/tailwind.css";
-  @import '../assets/css/stylespectate.css';
+  @import '../assets/css/style.css';
   @import '../assets/css/boutton.css';
 </style>
   
