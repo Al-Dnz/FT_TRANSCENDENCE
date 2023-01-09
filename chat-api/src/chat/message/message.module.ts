@@ -11,9 +11,10 @@ import { UserModule } from '../user/user.module';
 import { ChannelModule } from '../channel/channel.module';
 import { UserChannelModule } from '../user-channel/user-channel.module';
 import { BannedChanModule } from '../banned-chan/banned-chan.module';
+import { BlockerBlockedModule } from '../blocker-blocked/blocker-blocked.module';
 
 @Module({
-  imports: [BannedChanModule, UserChannelModule, ChannelModule, UserModule, TypeOrmModule.forFeature([Message, Channel, User])],
+  imports: [BlockerBlockedModule, BannedChanModule, UserChannelModule, ChannelModule, UserModule, TypeOrmModule.forFeature([Message, Channel, User])],
   controllers: [MessageController],
   providers: [MessageService, MessageGateway]
 })

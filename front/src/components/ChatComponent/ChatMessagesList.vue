@@ -3,7 +3,7 @@
     <ul>
       <li v-for="message in messages" :key="message.id">
         <ChatMessageBox :socket="socket" :currentChan="currentChan"
-        :currentUser="currentUser" :message="message" />
+        :currentUser="currentUser" :blockList="blockList" :message="message" />
       </li>
     </ul>
   </div>
@@ -21,6 +21,7 @@ export default defineComponent({
     socket: Object,
     currentUser: Object,
     currentChan: Object,
+    blockList: Object,
   },
   components: {
     ChatMessageBox,

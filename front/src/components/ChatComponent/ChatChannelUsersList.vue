@@ -1,12 +1,12 @@
 <template>
-  <div class="h-full w-full pl-2 pr-2">
+  <div class="h-3/4 w-full pl-2 pr-2">
     <h1 class="mt-3 font-bold">CHANNEL MEMBERS</h1>
-    <div class="overflow-auto">
+    <div class="h-full overflow-auto">
       <ul>
         <li v-for="userChannel in userchannels" :key="userChannel.id">
           <div class="hover:text-black">
             <ChatChannelUserBox :socket="socket" :currentUser="currentUser"
-            :currentChan="currentChan" :userChannel="userChannel" />
+            :currentChan="currentChan" :userChannel="userChannel" :blockList="blockList" />
           </div>
         </li>
 
@@ -32,6 +32,7 @@ export default defineComponent({
     socket: Object,
     currentUser: Object,
     currentChan: Object,
+    blockList: Object
   },
   components: {
     ChatChannelUserBox,
@@ -64,8 +65,8 @@ export default defineComponent({
 	
 		if (payload.channelId != this.currentChan?.id)
 			return;
-    console.log("userChannels newly loaded of channel" + this.currentChan?.id)
-    console.log(payload);
+    // console.log("userChannels newly loaded of channel" + this.currentChan?.id)
+    // console.log(payload);
 		this.userchannels = [];
 		this.userchannels = payload.userchannels
     this.userchannels = this.userchannels.sort(function (a: any, b: any) {

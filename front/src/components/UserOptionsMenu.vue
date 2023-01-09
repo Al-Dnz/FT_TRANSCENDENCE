@@ -1,13 +1,13 @@
 <template>
   <div @mouseleave="hideMenu" class="flex flex-row cursor-pointer">
     <Bars3Icon class="h-6 w-6 rounded-full" @click="toggleMenu" />
-    <div>
+    <div class="relative">
       <ul v-if="showOptions" class="form-select form-select-sm appearance-none block w-20 absolute
         px-2 py-1 text-sm font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat
         border border-solid border-gray-300 rounded transition ease-in-out m-0
       focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
         aria-label=".form-select-sm example">
-        <li @click="goProfile" class="hover:font-semibold cursor-pointer">Profile</li>
+        <li @click="goProfile(targetUser?.login)" class="hover:font-semibold cursor-pointer">Profile</li>
         <li @click="gameInvite" class="hover:font-semibold cursor-pointer">Invite</li>
 
 
@@ -64,6 +64,7 @@ export default defineComponent(
     currentUser: Object,
     targetUser: Object,
     userChannel: Object,
+    blockList: Object
   },
   data(): DataI {
     return {
@@ -105,9 +106,11 @@ export default defineComponent(
       this.showOptions = false;
       this.$emit('hideMenu');
     },
-    goProfile() {
-      alert("going to " + this.targetUser?.name + "'s profile"); // placeholder
-    },
+    goProfile(login: string) {
+      if (login !== this.currentUser?.login)
+        this.$router.push('/user/' + login);
+      else
+        this.$router.push('/user/');    },
     gameInvite() {
       this.createGame();
     },
@@ -146,7 +149,7 @@ export default defineComponent(
             return Promise.reject(error);
           }
           this.sendInvitation(data.gameCode)
-          this.$toast(`Ivitation sent to ${this.targetUser?.login}`, { styles: { backgroundColor: "#16b918", color: "#FFFFFF" } });
+          this.$toast(`Invitation to play sent to ${this.targetUser?.login}`, { styles: { backgroundColor: "#16b918", color: "#FFFFFF" } });
         })
         .catch(error => {
           this.$toast(error, { styles: { backgroundColor: "#FF0000", color: "#FFFFFF" } });
@@ -186,7 +189,7 @@ export default defineComponent(
     return (this.currentUser?.blockList?.includes(this.targetUser));
   },
   isUserBanned(): boolean {
-    return (this.currentChan?.banList?.includes(this.targetUser));
+    return (this.currentChan?.blockList?.includes(this.targetUser));
   },
   isUserMuted(): boolean {
     // return (userIdmuteList?.includes(this.targetUser));
@@ -236,16 +239,28 @@ export default defineComponent(
     this.setCanPromote();
   },
   blockUser() {
-    if (!this.isUserBlocked())
-      alert('user has been blocked'); // here, targetUser should be added to currentUser's blockList
-    this.setCanBlock();
-    this.setCanUnblock();
+    const payload =
+    {
+      login: this.targetUser?.login,
+      channelId: this.currentChan?.id
+    }
+    this.socket?.emit('blockUser', payload);
+    // if (!this.isUserBlocked())
+    //   alert('user has been blocked'); // here, targetUser should be added to currentUser's blockList
+    // this.setCanBlock();
+    // this.setCanUnblock();
   },
   unblockUser() {
-    if (this.isUserBlocked())
-      alert('user has been unblocked'); // here, targetUser should be removed from currentUser's blockList
-    this.setCanUnblock();
-    this.setCanBlock();
+    const payload =
+    {
+      login: this.targetUser?.login,
+      channelId: this.currentChan?.id
+    }
+    this.socket?.emit('unBlockUser', payload);
+    // if (this.isUserBlocked())
+    //   alert('user has been unblocked'); // here, targetUser should be removed from currentUser's blockList
+    // this.setCanUnblock();
+    // this.setCanBlock();
   },
   banUser(date : number)
   {
@@ -263,9 +278,15 @@ export default defineComponent(
 
     this.socket?.emit('kickUser', payload);
     // if (!this.isUserBanned() && this.haveAuthorityOver())
-    //   alert('user has been banned');  // here, targetUser should be added to currentChan's banList
+    //   alert('user has been banned');  // here, targetUser should be added to currentChan's blockList
     // this.setCanBan();
     // this.setCanUnban();
+  },
+  unbanUser() {
+    if (this.isUserBanned() && this.haveAuthorityOver())
+      alert('user has been unbanned');  // here, targetUser should be removed from currentChan's blockList
+    this.setCanUnban();
+    this.setCanBan();
   },
   muteUser() {
 

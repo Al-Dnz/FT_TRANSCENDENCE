@@ -26,6 +26,8 @@ import { UpdateChannelDto } from './dto/update-channel.dto';
 import { InviteUserDto } from './dto/invite-user.dto';
 import { UserChannelDto } from './dto/user-channel.dto';
 import { MuteUserDto } from './dto/mute-user.dto';
+import { BlockerBlockedService } from '../blocker-blocked/blocker-blocked.service';
+import { BlockUserDto } from './dto/block-user.dto';
 
 @UsePipes(WSPipe)
 @WebSocketGateway({ cors: { origin: '*' } })
@@ -34,7 +36,9 @@ export class ChannelGateway {
 		private userService: UserService,
 		private userChannelService: UserChannelService,
 		private bannedChanService: BannedChanService,
-	) { }
+		private blockerBlockedService: BlockerBlockedService
+	) {}
+
 	@WebSocketServer() server: Server;
 	private logger: Logger = new Logger('ChannelGateway');
 
@@ -158,6 +162,11 @@ export class ChannelGateway {
 		}
 	}
 
+	async selectAndSendChannelMessages(client: Socket, channelId: number, user: User)
+	{
+		
+	}
+
 	@SubscribeMessage('joinChannel')
 	async sendChanMessages(client: Socket, payload: JoinChannelDto, allowed: boolean = false) {
 		try {
@@ -188,7 +197,7 @@ export class ChannelGateway {
 					await this.userChannelService.create(userChannelData)
 			}
 
-			const chanMessages = await this.channelService.findMessages(payload.id)
+			const chanMessages = await this.channelService.selectMessagesForUser(payload.id, user)
 			const sentPayload =
 			{
 				channelId: payload.id,
@@ -301,7 +310,7 @@ export class ChannelGateway {
 				throw new HttpException(`${grantedUserChannels[0].user.login} is already ${grantedUserChannels[0].role} of channel #${channel.name}`, HttpStatus.FORBIDDEN);
 	
 			for (let userchannel of grantedUserChannels) {
-				this.userChannelService.update(userchannel.id, payload.role)
+				await this.userChannelService.update(userchannel.id, payload.role)
 			}
 
 			this.server.to(client.id).emit('chatMsg', `${grantedUserChannels[0].user.login} has been promoted ${grantedUserChannels[0].role} in channel #${channel.name}`);
@@ -381,7 +390,7 @@ export class ChannelGateway {
 			if (requesterUserChannels[0].role == UserChannelRole.admin && (mutedUserChannels[0].role == UserChannelRole.owner || mutedUserChannels[0].role == UserChannelRole.admin ))
 				throw new HttpException(`You have not enougth priviledge to (un)mute ${muted.login}`, HttpStatus.FORBIDDEN);
 			
-			this.userChannelService.update(mutedUserChannels[0].id, mutedUserChannels[0].role, payload.muted);
+			await this.userChannelService.update(mutedUserChannels[0].id, mutedUserChannels[0].role, payload.muted);
 			this.sendChannelUsers(client, { id: payload.channelId });
 		}
 		catch (error)
@@ -447,14 +456,63 @@ export class ChannelGateway {
 			if (userChannels[0].role == UserChannelRole.member)
 				throw new HttpException(`You have not enougth privileges in channel #${channel.name} to update settings. Only owner and admin are authorized`, HttpStatus.FORBIDDEN);
 
-			this.channelService.update(payload);
+			await this.channelService.update(payload);
 			this.server.to(client.id).emit('chatMsg', `channel ${channel.name} updated !`);
 			this.sendAllChan(client);
 		}
 		catch (error) {
 			this.server.to(client.id).emit('chatError', error.message);
 		}
+	}
 
+
+	@SubscribeMessage('blockUser')
+	async blockUser(client: Socket, payload: BlockUserDto) {
+		try {
+			const token = client.handshake.auth.token;
+			this.userService.checkToken(token);
+			let blocker = await this.userService.getUserByToken(token);
+			const blocked =  await this.userService.getUserByLogin(payload.login);
+			await this.blockerBlockedService.create(blocker, blocked);
+			this.server.to(client.id).emit('chatMsg', `You have blocked ${blocked.login}`);
+			// blocker = await this.userService.getUserByToken(token);
+			// this.server.to(client.id).emit('updateUser', {user: blocker});
+
+			const userBlockList = await this.blockerBlockedService.userBlockList(blocker);
+			this.server.to(client.id).emit('updateBlockList', {blockList: userBlockList});
+			await this.sendChanMessages(client, {id: payload.channelId, password: null});
+
+			// TODO: envoyer les messages du channel
+		}
+		catch (error) {
+			this.server.to(client.id).emit('chatError', error.message);
+		}
+	}
+
+
+	@SubscribeMessage('unBlockUser')
+	async unBlockUser(client: Socket, payload: BlockUserDto) {
+		try {
+			const token = client.handshake.auth.token;
+			this.userService.checkToken(token);
+			let blocker = await this.userService.getUserByToken(token);
+			const blocked =  await this.userService.getUserByLogin(payload.login);
+			const blockerBlockeds = await this.blockerBlockedService.findByBlockerAndBlocked(blocker, blocked);
+			await this.blockerBlockedService.remove(blockerBlockeds[0].id);
+			this.server.to(client.id).emit('chatMsg', `You have unblocked ${blocked.login}`);
+
+			// blocker = await this.userService.getUserByToken(token);
+			// this.server.to(client.id).emit('updateUser', {user: blocker});
+
+			const userBlockList = await this.blockerBlockedService.userBlockList(blocker);
+			this.server.to(client.id).emit('updateBlockList', {blockList: userBlockList});
+			await this.sendChanMessages(client, {id: payload.channelId, password: null});
+
+			// TODO: envoyer les messages du channel
+		}
+		catch (error) {
+			this.server.to(client.id).emit('chatError', error.message);
+		}
 	}
 
 

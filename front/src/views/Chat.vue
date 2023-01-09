@@ -16,7 +16,7 @@
       <ChatDirectMessageBox :socket="socket" :currentChan="currentChan" @quitChan="quitChan" />
     </div> -->
     <div v-else class="h-full lg:w-5/6 w-full bg-gray-50">
-      <ChatChannelBox :socket="socket" :currentUser="currentUser" :currentChan="currentChan"
+      <ChatChannelBox :socket="socket" :currentUser="currentUser" :currentChan="currentChan" :blockList="blockList"
         @toggleSettings="showChannelSettings" @quitChan="quitChan" @toggleInvite="showChannelInvite" />
     </div>
   </div>
@@ -60,7 +60,8 @@ interface DataI {
   socket: any,
   currentChan: any,
   currentUser?: UserOutput,
-  loading: boolean
+  loading: boolean,
+  blockList: any
 }
 export default defineComponent({
   name: "ChatPage",
@@ -87,7 +88,8 @@ export default defineComponent({
       socket: null as any,
       currentChan: null as any,
       currentUser: undefined,
-      loading: true
+      loading: true,
+      blockList: null as any
     };
   },
   methods: {
@@ -179,7 +181,19 @@ export default defineComponent({
       })
       this.socket.on('redirectChan', (payload: any) => {
         this.currentChan = payload.channel;
-      });
+      })
+      this.socket.on('updateUser', (payload: any) => {
+        this.currentUser = payload.user;
+        console.log("currentUser =>");
+        console.log(this.currentUser);
+        
+        
+      })
+      this.socket.on('updateBlockList', (payload: any) => {
+        this.blockList = payload.blockList;
+        console.log("blockList =>");
+        console.log(this.blockList);
+      })
     })
     this.currentChan = this.$store.state.currentChannel;
     this.fetchData();

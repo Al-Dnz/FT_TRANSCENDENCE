@@ -10,16 +10,15 @@ export class CreateChannelDto
 	@IsString()
 	@Length(1)
 	@Transform(({ value }) => trim(value))
-	@NotContains(" ", { message: "No spaces allowed" } )
+	// @NotContains(" ", { message: "No spaces allowed" } )
 	name: string;
+
+	@IsEnum(ChannelType)
+	type: ChannelType;
 
 	@IsOptional()
 	@IsString()
 	@Length(1)
 	password: string;
-
-	@IsOptional()
-	@IsEnum(ChannelType)
-	type: ChannelType;
 
 }

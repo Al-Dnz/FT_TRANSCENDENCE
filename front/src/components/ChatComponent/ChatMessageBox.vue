@@ -1,16 +1,16 @@
 <template>
   <div @mouseover="showOptMenuButton" @mouseleave="hideOptMenuButton"
   class="flex flex-row w-full mt-2 pt-2 pb-2 pl-4 pr-4 bg-gray-50 hover:bg-gray-200">
-    <img :src="message?.sender.avatar.path" @click="goProfile"
+    <img :src="message?.sender.avatar.path" @click="goProfile(message?.sender.login)"
     class="w-12 h-12 rounded-full cursor-pointer" />
     <div class="flex flex-col w-fit ml-2">
       <div class="flex flex-row w-full">
-        <h1 @click="goProfile" class="max-w-[95%] mr-3 font-semibold cursor-pointer break-all">
+        <h1 @click="goProfile(message?.sender.login)" class="max-w-[95%] mr-3 font-semibold cursor-pointer break-all">
         {{ message?.sender?.userName }}</h1>
         <div v-if="message?.sender.login !== currentUser?.login" v-show="isOptMenuButtonVisible"
         class="ml-1">
           <UserOptionsMenu :socket="socket" :currentChan="getCurrentChan" :currentUser="getCurrentUser"
-          :targetUser="getMessageAuthor" @toggle-opt-menu="switchOptMenuState" @hideMenu="hideMenu"
+          :targetUser="getMessageAuthor" @toggle-opt-menu="switchOptMenuState" @hideMenu="hideMenu" :blockList="blockList"
           class="rounded-full bg-gray-300" />
         </div>
       </div>
@@ -35,6 +35,7 @@ export default defineComponent({
     currentUser: Object,
     currentChan: Object,
     message: Object,
+    blockList: Object
   },
   components: {
     UserOptionsMenu,
@@ -77,8 +78,11 @@ export default defineComponent({
       this.isOptMenuButtonVisible = false;
       this.isOptMenuVisible = false;
     },
-    goProfile() {
-        alert("going to " + this.message?.sender?.userName + "'s profile"); // placeholder
+    goProfile(login: string) {
+      if (login !== this.currentUser?.login)
+        this.$router.push('/user/' + login);
+      else
+        this.$router.push('/user/');
     },
     isCurrentUser(user: any) {
       return(this.compareUsers(this.currentUser, user));

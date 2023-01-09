@@ -16,6 +16,7 @@ import { ChannelType, User, UserChannelRole } from 'db-interface/Core';
 import { UserChannelService } from '../user-channel/user-channel.service';
 import { BannedChanService } from '../banned-chan/banned-chan.service';
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { BlockerBlockedService } from '../blocker-blocked/blocker-blocked.service';
 
 
 @UsePipes(WSPipe)
@@ -31,6 +32,7 @@ export class MessageGateway {
     private channelService: ChannelService,
     private userChannelService: UserChannelService,
     private bannedChanService: BannedChanService,
+    private blockerBlockedService: BlockerBlockedService
   ) { }
 
   @WebSocketServer() server: Server;
@@ -42,17 +44,16 @@ export class MessageGateway {
     try {
       const token = client.handshake.auth.token;
       this.userService.checkToken(token);
-
       const sender = await this.userService.getUserByToken(token);
       const channel = await this.channelService.findOne(payload.channelId);
       const userchannels = await this.userChannelService.findByUserAndChan(sender.id, payload.channelId);
 
       if (userchannels.length == 0)
-        throw new HttpException(`You are not connected to the channel ${channel.name}`, HttpStatus.FORBIDDEN);
+        throw new HttpException(`You are not connected to the channel #${channel.name}`, HttpStatus.FORBIDDEN);
 
       //MUTED EXPIRATION CHANNEL GUARD
       if (userchannels[0].muted)
-        throw new HttpException(`You are muted in the channel ${channel.name}`, HttpStatus.FORBIDDEN);
+        throw new HttpException(`You are muted in the channel #${channel.name}`, HttpStatus.FORBIDDEN);
 
       const msgData: IMessage =
       {
@@ -65,9 +66,9 @@ export class MessageGateway {
       if (channel.type != ChannelType.direct) {
         const usersOfChannel: User[] = await this.userChannelService.getAllUsersFromChan(channel.id);
         for (let user of usersOfChannel) {
-          //  IF SENDER IS NOT BLOCKED BY USER
-
-          this.server.to(user.chatSocketId).emit(`msgToChannel`, new_message);
+          let isBlocked: boolean = await this.blockerBlockedService.isBlockedBy(sender, user)
+          if (!isBlocked)
+            this.server.to(user.chatSocketId).emit(`msgToChannel`, new_message);
         }
       }
       else {
