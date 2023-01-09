@@ -112,13 +112,14 @@ export default defineComponent({
     },
     quitChan() {
       this.currentChan = null;
-      window.location.reload();
+      //window.location.reload();
     },
     async fetchData() {
       getCredentials().then((accessToken: string) => {
         const userAPI = new UsersApi(new Configuration({ accessToken: accessToken }))
         userAPI.getUserMe().then((user: UserOutput) => {
-          this.currentUser = user
+          this.currentUser = user;
+          this.loading = false;
         })
       })
     },
@@ -194,9 +195,8 @@ export default defineComponent({
         console.log(this.blockList);
       })
     })
-    await this.fetchData();
-    this.loading = false;
     this.currentChan = this.$store.state.currentChannel;
+    this.fetchData();
   },
   unmounted() {
     this.socket.disconnect();

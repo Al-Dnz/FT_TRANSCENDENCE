@@ -71,22 +71,7 @@ export default defineComponent({
     },
     quitChan() {
       this.$emit('quitChan');
-    },
-    isUserMember() {
-      let i = this.currentChan?.userChannels.length;
-      i--;
-      while (i >= 0) {
-        if (this.currentChan?.userChannels[i].user.login === this.currentUser?.login)
-          return (true);
-        --i;
-      }
-      return (false);
-    },
-  },
-  updated()
-  {
-    if(this.isUserMember())
-      this.protected = false;
+    }
   }
 });
 </script>
