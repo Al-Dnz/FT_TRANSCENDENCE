@@ -162,6 +162,11 @@ export class ChannelGateway {
 		}
 	}
 
+	async selectAndSendChannelMessages(client: Socket, channelId: number, user: User)
+	{
+		
+	}
+
 	@SubscribeMessage('joinChannel')
 	async sendChanMessages(client: Socket, payload: JoinChannelDto, allowed: boolean = false) {
 		try {
@@ -192,7 +197,7 @@ export class ChannelGateway {
 					await this.userChannelService.create(userChannelData)
 			}
 
-			const chanMessages = await this.channelService.findMessages(payload.id)
+			const chanMessages = await this.channelService.selectMessagesForUser(payload.id, user)
 			const sentPayload =
 			{
 				channelId: payload.id,
@@ -475,7 +480,7 @@ export class ChannelGateway {
 
 			const userBlockList = await this.blockerBlockedService.userBlockList(blocker);
 			this.server.to(client.id).emit('updateBlockList', {blockList: userBlockList});
-
+			await this.sendChanMessages(client, {id: payload.channelId, password: null});
 
 			// TODO: envoyer les messages du channel
 		}
@@ -501,6 +506,7 @@ export class ChannelGateway {
 
 			const userBlockList = await this.blockerBlockedService.userBlockList(blocker);
 			this.server.to(client.id).emit('updateBlockList', {blockList: userBlockList});
+			await this.sendChanMessages(client, {id: payload.channelId, password: null});
 
 			// TODO: envoyer les messages du channel
 		}

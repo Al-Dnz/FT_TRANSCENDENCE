@@ -33,13 +33,13 @@ export class MessageService {
 	else
 		throw new HttpException("message text is empty", HttpStatus.FAILED_DEPENDENCY);
 
-	// if (data.senderId)
-	// {
-	// 	const sender = await this.usersRepository.findOneBy({id: data.senderId});
-	// 	if (!sender)
-	// 		throw new HttpException("this user sender doesn't exist", HttpStatus.FAILED_DEPENDENCY);
-	// 	message.sender = sender;
-	// }
+	if (data.senderId)
+	{
+		const sender = await this.usersRepository.findOneBy({id: data.senderId});
+		if (!sender)
+			throw new HttpException("this user sender doesn't exist", HttpStatus.FAILED_DEPENDENCY);
+		message.sender = sender;
+	}
 
 	if (data.channelId)
 	{
