@@ -113,6 +113,10 @@ export class ChannelGateway {
 				}
 				this.server.to(userOne.chatSocketId).emit('channelUsersToClient', userchandatas);
 				this.server.to(userTwo.chatSocketId).emit('channelUsersToClient', userchandatas);
+				
+				this.server.to(userOne.chatSocketId).emit('redirectChan', {channel: null})
+				this.server.to(userTwo.chatSocketId).emit('redirectChan', {channel: null})
+
 
 				await this.channelService.remove(payload.id);
 				await this.sendAllChan(client);
