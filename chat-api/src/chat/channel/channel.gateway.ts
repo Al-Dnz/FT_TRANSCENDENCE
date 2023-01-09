@@ -317,8 +317,8 @@ export class ChannelGateway {
 				await this.userChannelService.update(userchannel.id, payload.role)
 			}
 
-			this.server.to(client.id).emit('chatMsg', `${grantedUserChannels[0].user.login} has been promoted ${grantedUserChannels[0].role} in channel #${channel.name}`);
-			this.server.to(grantedUserChannels[0].user.chatSocketId).emit('chatMsg', `You have been promoted ${grantedUserChannels[0].role} in channel #${channel.name}`);
+			this.server.to(client.id).emit('chatMsg', `${grantedUserChannels[0].user.login} has been promoted ${payload.role} in channel #${channel.name}`);
+			this.server.to(grantedUserChannels[0].user.chatSocketId).emit('chatMsg', `You have been promoted ${payload.role} in channel #${channel.name}`);
 			this.sendChannelUsers(client, { id: payload.channelId });
 		}
 		catch (error) {
