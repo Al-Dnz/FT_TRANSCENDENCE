@@ -53,9 +53,6 @@ export default defineComponent({
         return;
       if (message.channel.id == this.currentChan?.id)
         this.messages.push(message);
-        var objDiv = document.getElementById("messagesList");
-        if (objDiv)
-          objDiv.scrollTop = objDiv.scrollHeight;
     },
     isUserMember() {
       let i = this.currentChan?.userChannels.length;
@@ -67,6 +64,14 @@ export default defineComponent({
       }
       return (false);
     },
+    scrollToEnd() {
+      var objDiv = document.getElementById("messagesList");
+        if (objDiv)
+          objDiv.scrollTop = objDiv.scrollHeight;
+    },
+  },
+  updated() {
+    this.scrollToEnd();
   },
   mounted()
   {
@@ -77,6 +82,7 @@ export default defineComponent({
     this.socket?.on('msgToChannel', (message: any) => {
         this.receiveMessage(message)
     })
+    this.scrollToEnd();
   },
   watch: {
     currentChan: {
