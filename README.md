@@ -42,3 +42,15 @@ EMAIL_PASSWORD=<your_SENDGRID_API_password>
 make db
 ```
 
+## MODIFY DB
+
+```
+SELECT * FROM "user";
+
+INSERT INTO channel(name) VALUES ('polo_chan');
+
+UPDATE user_channel SET role= 'member' WHERE id = 130;
+
+DELETE FROM channel WHERE unremovable = 'false';
+
+```
