@@ -58,7 +58,7 @@ export class MatchService {
 		match.finishedAt = new Date(Date.now());
 		match.status = MatchStatus.finished;
 		await this.updatePlayerStats(match.playerOne, score1, match.playerTwo, match.score2);
-		return this.matchesRepository.save(match);
+		return await this.matchesRepository.save(match);
 	}
 
 
@@ -79,18 +79,18 @@ export class MatchService {
 		match.finishedAt = new Date(Date.now());
 		match.status = MatchStatus.finished;
 		await this.updatePlayerStats(match.playerOne, match.score1, match.playerTwo, match.score2);
-		return this.matchesRepository.save(match);
+		return await this.matchesRepository.save(match);
 	}
 
 	async updatePlayerStats(playerOne: User, score1: number, playerTwo: User, score2: number)
 	{
-		const stats = playerOne.stats;
+		const stats = await this.statsRepository.findOneBy({ id: playerOne.stats.id });
 		if (score1 > score2)
 			stats.victories++;
 		else
 			stats.defeats++;
 		
-		const stats2 = playerTwo.stats;
+		const stats2 = await this.statsRepository.findOneBy({ id:playerTwo.stats.id });
 		if (score2 > score1)
 			stats2.victories++;
 		else
@@ -105,8 +105,8 @@ export class MatchService {
 
 	async updateElo(player: User)
 	{
-		const stats = player.stats;
-		stats.level = 3 * stats.victories - 2 * stats.defeats;
+		const stats = await this.statsRepository.findOneBy({ id: player.stats.id });
+		stats.level = (3 * stats.victories) - (2 * stats.defeats);
 		await this.statsRepository.save(stats);
 	}
 
