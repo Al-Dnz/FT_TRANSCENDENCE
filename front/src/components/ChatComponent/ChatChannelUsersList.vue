@@ -69,9 +69,12 @@ export default defineComponent({
     // console.log(payload);
 		this.userchannels = [];
 		this.userchannels = payload.userchannels
-    this.userchannels = this.userchannels.sort(function (a: any, b: any) {
+    if(this.userchannels.length > 0)
+    {
+      this.userchannels = this.userchannels.sort(function (a: any, b: any) {
         return a.id - b.id;
       });
+    }
 	}
   },
   created()
