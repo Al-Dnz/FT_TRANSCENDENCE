@@ -60,8 +60,6 @@ export class ChannelService {
     return found[0];
   }
 
-  getAllChannels() { }
-
   async findOne(id: number) {
     const channel = await this.channelsRepository.findOneBy({ id: id });
     if (!channel)
@@ -128,9 +126,6 @@ export class ChannelService {
   }
 
   async findMessagesWithPassword(body: JoinChannelDto) {
-    this.logger.log("BODY ->");
-    this.logger.log(body.password);
-    // const channel = await this.channelsRepository.findOneBy({ id: body.id });
 
     const channel = await this.channelsRepository
       .createQueryBuilder("channel")
@@ -140,9 +135,6 @@ export class ChannelService {
 
     if (!channel)
       throw new HttpException('Channel not found', HttpStatus.NOT_FOUND);
-    this.logger.log("chan ->");
-    this.logger.log(channel.name);
-    this.logger.log(channel.password);
     if (channel.password) {
       if (!body.password)
         throw new HttpException('Channel password is needed', HttpStatus.FORBIDDEN);

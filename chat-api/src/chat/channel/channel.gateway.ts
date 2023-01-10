@@ -37,7 +37,7 @@ export class ChannelGateway {
 		private userChannelService: UserChannelService,
 		private bannedChanService: BannedChanService,
 		private blockerBlockedService: BlockerBlockedService
-	) {}
+	) { }
 
 	@WebSocketServer() server: Server;
 	private logger: Logger = new Logger('ChannelGateway');
@@ -64,12 +64,10 @@ export class ChannelGateway {
 				messages: [],
 			}
 
-			// this.server.to(client.id).emit('currentChanToClient', {channel: new_chan});
 			new_chan = await this.channelService.findWithUserChan(new_chan.id);
-			this.server.to(client.id).emit('redirectChan', {channel: new_chan})
+			this.server.to(client.id).emit('redirectChan', { channel: new_chan })
 			this.server.to(client.id).emit('allChanMessagesToClient', sentPayload);
 
-			// if (new_chan.type != ChannelType.direct)
 			this.sendAllChan(client)
 		} catch (error) {
 			this.server.to(client.id).emit('chatError', error.message);
@@ -95,10 +93,10 @@ export class ChannelGateway {
 				messages: [],
 			}
 
-			// case for DM
 			const channel = await this.channelService.findOne(payload.id);
-			if (channel.type == ChannelType.direct)
-			{
+			
+			// case for DM
+			if (channel.type == ChannelType.direct) {
 				userchannels = await this.userChannelService.findByChanId(channel.id)
 				for (let userchannel of userchannels) {
 					await this.userChannelService.remove(userchannel.id);
@@ -114,16 +112,16 @@ export class ChannelGateway {
 				}
 				this.server.to(userOne.chatSocketId).emit('channelUsersToClient', userchandatas);
 				this.server.to(userTwo.chatSocketId).emit('channelUsersToClient', userchandatas);
-				
-				this.server.to(userOne.chatSocketId).emit('redirectChan', {channel: null})
-				this.server.to(userTwo.chatSocketId).emit('redirectChan', {channel: null})
+
+				this.server.to(userOne.chatSocketId).emit('redirectChan', { channel: null })
+				this.server.to(userTwo.chatSocketId).emit('redirectChan', { channel: null })
 
 
 				await this.channelService.remove(payload.id);
 				await this.sendAllChan(client);
 				return;
 			}
-			
+
 			this.server.to(client.id).emit('allChanMessagesToClient', sentPayload);
 			await this.sendAllChan(client);
 			await this.sendChannelUsers(client, payload);
@@ -167,11 +165,6 @@ export class ChannelGateway {
 		}
 	}
 
-	async selectAndSendChannelMessages(client: Socket, channelId: number, user: User)
-	{
-		
-	}
-
 	@SubscribeMessage('joinChannel')
 	async sendChanMessages(client: Socket, payload: JoinChannelDto, allowed: boolean = false) {
 		try {
@@ -180,15 +173,14 @@ export class ChannelGateway {
 			const user = await this.userService.getUserByToken(token);
 
 			const userchannels = await this.userChannelService.findByUserAndChan(user.id, payload.id);
-			if (userchannels.length == 0)
-			{
+			if (userchannels.length == 0) {
 				try {
 					await this.bannedChanService.bannedChanGuard(user.id, payload.id, allowed);
 				} catch (error) {
-					this.server.to(client.id).emit('redirectChan', {channel: null});
+					this.server.to(client.id).emit('redirectChan', { channel: null });
 					throw new HttpException(error.message, HttpStatus.FORBIDDEN);
 				}
-				
+
 				await this.channelService.checkChanValidity(payload);
 				const userChannelData: CreateUserChannelDto =
 				{
@@ -209,7 +201,7 @@ export class ChannelGateway {
 				locked: false,
 				messages: chanMessages,
 			}
-						
+
 			this.server.to(client.id).emit('allChanMessagesToClient', sentPayload);
 			await this.sendChannelUsers(client, payload);
 			await this.sendAllChan(client);
@@ -225,7 +217,7 @@ export class ChannelGateway {
 			const token = client.handshake.auth.token;
 			this.userService.checkToken(token);
 			const user = await this.userService.getUserByToken(token);
-			if (user.id == payload.userId) 
+			if (user.id == payload.userId)
 				throw new HttpException(`You can't kick yourself`, HttpStatus.FORBIDDEN);
 
 			const channel = await this.channelService.findOne(payload.channelId);
@@ -243,8 +235,7 @@ export class ChannelGateway {
 			}
 			const kickedUser = await this.userService.getUserById(payload.userId);
 			const kickedUserChannels = await this.userChannelService.findByUserAndChan(kickedUser.id, payload.channelId);
-			if  (kickedUserChannels.length == 0)
-			{
+			if (kickedUserChannels.length == 0) {
 				this.server.to(client.id).emit('chatError', `${kickedUser.login} is not in channel ${channel.name} `);
 				return;
 			}
@@ -260,22 +251,11 @@ export class ChannelGateway {
 				messages: [],
 			}
 
-			// if (kickedUserChannels.length != 0) {
-			// 	for (let kickedUserChan of kickedUserChannels) {
-			// 		// this.userChannelService.update(kickedUserChan.id);
-			// 		// this.server.to(kickedUserChan.user.chatSocketId).emit('redirectChan', {channel: null});
-			// 		this.server.to(kickedUserChan.user.chatSocketId).emit('allChanMessagesToClient', sentPayload);
-			// 	}
-			// }
 			this.bannedChanService.create(kickedUser.id, channel.id, payload.expirationDate);
-		
-			// SEND USER CHANNEL
-			
-			this.server.to(kickedUser.chatSocketId).emit('redirectChan', {channel: null});
+			this.server.to(kickedUser.chatSocketId).emit('redirectChan', { channel: null });
 			this.server.to(kickedUser.chatSocketId).emit('chatError', `You have been banned from ${channel.name} by ${user.login}`);
 			await this.sendChannelUsers(client, { id: payload.channelId });
 			this.sendAllChan(client);
-			
 		}
 		catch (error) {
 			this.server.to(client.id).emit('chatError', error.message);
@@ -290,30 +270,30 @@ export class ChannelGateway {
 			this.userService.checkToken(token);
 			const user = await this.userService.getUserByToken(token);
 
-			if (user.id == payload.userId) 
-				throw new HttpException( `you can't grant yourself`, HttpStatus.FORBIDDEN);
+			if (user.id == payload.userId)
+				throw new HttpException(`you can't grant yourself`, HttpStatus.FORBIDDEN);
 
 			const channel = await this.channelService.findOne(payload.channelId);
 			if (channel.type == ChannelType.direct)
 				return;
 
 			let userChannels: UserChannel[] = await this.userChannelService.findByUserAndChan(user.id, payload.channelId);
-			
+
 			if (userChannels.length == 0)
-				throw new HttpException( `you are not connected to channel ${channel.name} to use this privilege`, HttpStatus.FORBIDDEN);
-				
+				throw new HttpException(`you are not connected to channel ${channel.name} to use this privilege`, HttpStatus.FORBIDDEN);
+
 			let userChannel = userChannels[0];
 			if (userChannel.role == UserChannelRole.member)
-				throw new HttpException( `you have not enough rights inside channel ${channel.name} to use this privilege`, HttpStatus.FORBIDDEN);
+				throw new HttpException(`you have not enough rights inside channel ${channel.name} to use this privilege`, HttpStatus.FORBIDDEN);
 
 			const grantedUser = await this.userService.getUserById(payload.userId);
 			const grantedUserChannels = await this.userChannelService.findByUserAndChan(grantedUser.id, payload.channelId);
-			if  (grantedUserChannels.length == 0)
-				throw new HttpException( `${grantedUser.login} is not in channel #${channel.name}`, HttpStatus.FORBIDDEN);
-			
-			if  (grantedUserChannels[0].role == UserChannelRole.owner || grantedUserChannels[0].role == UserChannelRole.admin )
+			if (grantedUserChannels.length == 0)
+				throw new HttpException(`${grantedUser.login} is not in channel #${channel.name}`, HttpStatus.FORBIDDEN);
+
+			if (grantedUserChannels[0].role == UserChannelRole.owner || grantedUserChannels[0].role == UserChannelRole.admin)
 				throw new HttpException(`${grantedUserChannels[0].user.login} is already ${grantedUserChannels[0].role} of channel #${channel.name}`, HttpStatus.FORBIDDEN);
-	
+
 			for (let userchannel of grantedUserChannels) {
 				await this.userChannelService.update(userchannel.id, payload.role)
 			}
@@ -328,10 +308,8 @@ export class ChannelGateway {
 	}
 
 	@SubscribeMessage('directMessage')
-	async createDirectMessage(client: Socket, payload: DirectMessageDto) 
-	{
-		try
-		{
+	async createDirectMessage(client: Socket, payload: DirectMessageDto) {
+		try {
 			const token = client.handshake.auth.token;
 			this.userService.checkToken(token);
 			const sender = await this.userService.getUserByToken(token);
@@ -344,16 +322,13 @@ export class ChannelGateway {
 			if (isblocked)
 				throw new HttpException(`You can't send a direct-message to ${receiver.login} because you are blocked by him.`, HttpStatus.FORBIDDEN);
 
-			// check if channel exist as DMChannel
 			const DMChannels = await this.channelService.findDMChannel(sender.id, receiver.id);
-			if (DMChannels.length != 0)
-			{
+			if (DMChannels.length != 0) {
 				this.server.to(client.id).emit('chatError', `There is already a conversation between ${sender.login} and ${receiver.login}`);
 				return;
 			}
-			// if no create it			
+
 			let chan = await this.channelService.createDMChannel(sender, receiver);
-			// join 2 participant
 			const userChannelData: CreateUserChannelDto =
 			{
 				userId: sender.id,
@@ -364,18 +339,16 @@ export class ChannelGateway {
 			await this.userChannelService.create(userChannelData, UserChannelRole.member);
 
 			chan = await this.channelService.findWithUserChan(chan.id);
-			this.server.to(client.id).emit('redirectChan', {channel: chan})
+			this.server.to(client.id).emit('redirectChan', { channel: chan })
 			this.sendAllChan(client);
 		}
-		catch (error) 
-		{
+		catch (error) {
 			this.server.to(client.id).emit('chatError', error.message);
 		}
 	}
 
 	@SubscribeMessage('muteUser')
-	async muteUser(client: Socket, payload: MuteUserDto) 
-	{
+	async muteUser(client: Socket, payload: MuteUserDto) {
 		try {
 			const token = client.handshake.auth.token;
 			this.userService.checkToken(token);
@@ -391,20 +364,19 @@ export class ChannelGateway {
 				throw new HttpException(`You are not in the channel #${channel.name} to mute somebody`, HttpStatus.FORBIDDEN);
 
 			const mutedUserChannels = await this.userChannelService.findByUserAndChan(muted.id, channel.id);
-			if  (mutedUserChannels .length == 0)
+			if (mutedUserChannels.length == 0)
 				throw new HttpException(`${muted.login} is not in channel ${channel.name} `, HttpStatus.FORBIDDEN);
 
 			if (requesterUserChannels[0].role == UserChannelRole.member)
 				throw new HttpException(`You have not enougth priviledge to (un)mute ${muted.login}`, HttpStatus.FORBIDDEN);
-			
-			if (requesterUserChannels[0].role == UserChannelRole.admin && (mutedUserChannels[0].role == UserChannelRole.owner || mutedUserChannels[0].role == UserChannelRole.admin ))
+
+			if (requesterUserChannels[0].role == UserChannelRole.admin && (mutedUserChannels[0].role == UserChannelRole.owner || mutedUserChannels[0].role == UserChannelRole.admin))
 				throw new HttpException(`You have not enougth priviledge to (un)mute ${muted.login}`, HttpStatus.FORBIDDEN);
-			
+
 			await this.userChannelService.update(mutedUserChannels[0].id, mutedUserChannels[0].role, payload.muted);
 			this.sendChannelUsers(client, { id: payload.channelId });
 		}
-		catch (error)
-		{
+		catch (error) {
 			this.server.to(client.id).emit('chatError', error.message);
 		}
 
@@ -429,23 +401,23 @@ export class ChannelGateway {
 			const requesterUserChannels = await this.userChannelService.findByUserAndChan(user.id, chan.id);
 			if (requesterUserChannels.length == 0)
 				throw new HttpException(`You are not in the channel #${chan.name} to invite somebody`, HttpStatus.FORBIDDEN);
-			
+
 			const bannedChannelsInvited = await this.bannedChanService.findByUserAndChan(invited.id, chan.id)
-			if(bannedChannelsInvited.length != 0)
+			if (bannedChannelsInvited.length != 0)
 				await this.bannedChanService.remove(bannedChannelsInvited[0].id)
 
 			const userChannels = await this.userChannelService.findByUserAndChan(invited.id, chan.id);
 			if (userChannels.length)
 				throw new HttpException(`${invited.login} is already in the channel #${chan.name}`, HttpStatus.FORBIDDEN);
 
-			const userchannel = await this.userChannelService.create({userId: invited.id, channelId: chan.id});
+			const userchannel = await this.userChannelService.create({ userId: invited.id, channelId: chan.id });
 
 			this.sendChannelUsers(client, { id: chan.id })
 			this.sendAllChan(client)
 			this.server.to(client.id).emit('chatMsg', `Invitation in channel #${chan.name} sent to ${invited.login} `);
 			this.server.to(invited.chatSocketId).emit('chatMsg', `You have been invited by ${user.login} in channel #${chan.name}`);
 
-			
+
 		}
 		catch (error) {
 			this.server.to(client.id).emit('chatError', error.message);
@@ -475,30 +447,24 @@ export class ChannelGateway {
 		}
 	}
 
-
 	@SubscribeMessage('blockUser')
 	async blockUser(client: Socket, payload: BlockUserDto) {
 		try {
 			const token = client.handshake.auth.token;
 			this.userService.checkToken(token);
 			let blocker = await this.userService.getUserByToken(token);
-			const blocked =  await this.userService.getUserByLogin(payload.login);
+			const blocked = await this.userService.getUserByLogin(payload.login);
 			await this.blockerBlockedService.create(blocker, blocked);
 			this.server.to(client.id).emit('chatMsg', `You have blocked ${blocked.login}`);
-			// blocker = await this.userService.getUserByToken(token);
-			// this.server.to(client.id).emit('updateUser', {user: blocker});
 
 			const userBlockList = await this.blockerBlockedService.userBlockList(blocker);
-			this.server.to(client.id).emit('updateBlockList', {blockList: userBlockList});
-			await this.sendChanMessages(client, {id: payload.channelId, password: null});
-
-			// TODO: envoyer les messages du channel
+			this.server.to(client.id).emit('updateBlockList', { blockList: userBlockList });
+			await this.sendChanMessages(client, { id: payload.channelId, password: null });
 		}
 		catch (error) {
 			this.server.to(client.id).emit('chatError', error.message);
 		}
 	}
-
 
 	@SubscribeMessage('unBlockUser')
 	async unBlockUser(client: Socket, payload: BlockUserDto) {
@@ -506,25 +472,18 @@ export class ChannelGateway {
 			const token = client.handshake.auth.token;
 			this.userService.checkToken(token);
 			let blocker = await this.userService.getUserByToken(token);
-			const blocked =  await this.userService.getUserByLogin(payload.login);
+			const blocked = await this.userService.getUserByLogin(payload.login);
 			const blockerBlockeds = await this.blockerBlockedService.findByBlockerAndBlocked(blocker, blocked);
 			await this.blockerBlockedService.remove(blockerBlockeds[0].id);
 			this.server.to(client.id).emit('chatMsg', `You have unblocked ${blocked.login}`);
 
-			// blocker = await this.userService.getUserByToken(token);
-			// this.server.to(client.id).emit('updateUser', {user: blocker});
-
 			const userBlockList = await this.blockerBlockedService.userBlockList(blocker);
-			this.server.to(client.id).emit('updateBlockList', {blockList: userBlockList});
-			await this.sendChanMessages(client, {id: payload.channelId, password: null});
-
-			// TODO: envoyer les messages du channel
+			this.server.to(client.id).emit('updateBlockList', { blockList: userBlockList });
+			await this.sendChanMessages(client, { id: payload.channelId, password: null });
 		}
 		catch (error) {
 			this.server.to(client.id).emit('chatError', error.message);
 		}
 	}
-
-
-
+s
 }
