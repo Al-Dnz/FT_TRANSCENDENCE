@@ -89,16 +89,12 @@ export default defineComponent(
     },
     CanMute()
     {
-      console.log("mute");
-      console.log(this.targetUser?.muted);
       if( !this.userChannel?.muted && this.hasAuthorityOver())
         return(true)
       return(false)
     },
     CanUnMute()
     {
-      console.log("mute");
-      console.log(this.targetUser?.muted);
       if( this.userChannel?.muted && this.hasAuthorityOver())
         return(true)
       return(false)
@@ -182,6 +178,10 @@ export default defineComponent(
   getRole(login: string, chan: any): string {
     if(chan["userChannels"])
     {
+      console.log("GET ROLE");
+      console.log(chan);
+      if (chan["creator"].login === login)
+        return "owner";
       for (let j = 0; j < chan["userChannels"].length; j++) {
         if (chan["userChannels"][j].user.login == login)
           return chan["userChannels"][j].role;
@@ -248,8 +248,10 @@ export default defineComponent(
       this.canPromote = false;
   },
   setAll() {
-    console.log("hey");
-    console.log(this.userChannel)
+    console.log("userChannel");
+    console.log(this.userChannel);
+    console.log("Current CHannel");
+    console.log(this.currentChan);
     this.setCanBlock();
     this.setCanUnblock();
     this.setCanMute();
