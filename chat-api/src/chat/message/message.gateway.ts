@@ -72,8 +72,12 @@ export class MessageGateway {
         }
       }
       else {
-        this.server.to(channel.userOne.chatSocketId).emit(`msgToChannel`, new_message);
-        this.server.to(channel.userTwo.chatSocketId).emit(`msgToChannel`, new_message);
+        let isBlocked: boolean = await this.blockerBlockedService.isBlockedBy(channel.userOne, channel.userTwo)
+        if (!isBlocked || sender.login == channel.userTwo.login)
+          this.server.to(channel.userTwo.chatSocketId).emit(`msgToChannel`, new_message);
+        isBlocked = await this.blockerBlockedService.isBlockedBy(channel.userTwo, channel.userOne)
+        if (!isBlocked || sender.login == channel.userOne.login)
+          this.server.to(channel.userOne.chatSocketId).emit(`msgToChannel`, new_message);
       }
     }
     catch (error) {
