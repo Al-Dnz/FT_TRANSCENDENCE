@@ -68,13 +68,11 @@ export default defineComponent({
       }
       return "undefined";
   },
-  },
-  computed: {
-    isAdmin() {
+  isAdmin() {
       if (this.getRole(this.currentUser?.login, this.currentChan) == 'owner' || this.getRole(this.currentUser?.login, this.currentChan) == 'admin' )
         return (true);
       return (false);
-    },
+    }
   },
 });
 </script>
