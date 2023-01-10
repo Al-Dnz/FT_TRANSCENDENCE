@@ -9,21 +9,16 @@
         aria-label=".form-select-sm example">
         <li @click="goProfile(targetUser?.login)" class="hover:font-semibold cursor-pointer">Profile</li>
         <li @click="gameInvite" class="hover:font-semibold cursor-pointer">Invite</li>
-
-
-        <!-- <li v-if="canPromote" @click="promoteUser()" class="hover:font-semibold cursor-pointer">Promote</li> -->
-
-        <li v-if="CanPromote()" @click="promoteUser()" class="hover:font-semibold cursor-pointer">Promote</li>
-        
-        <!-- <li v-if="canPromote" @click="promoteUser()" class="hover:font-semibold cursor-pointer">Demote</li> -->
-
-        <li v-if="CanMute()" @click="muteUser()" class="hover:font-semibold cursor-pointer">Mute</li>
-        <li v-if="CanUnMute()" @click="unmuteUser()" class="hover:font-semibold cursor-pointer">Unmute</li>
-
-        <li v-if="hasAuthorityOver()" @click="ActivateBan()" class="hover:font-semibold cursor-pointer">Ban</li>
-
         <li v-if="!isBlocked(targetUser?.login)" @click="blockUser()" class="hover:font-semibold cursor-pointer">Block</li>
         <li v-else-if="isBlocked(targetUser?.login)" @click="unblockUser()" class="hover:font-semibold cursor-pointer">Unblock</li>
+
+        <!-- <li v-if="canPromote" @click="promoteUser()" class="hover:font-semibold cursor-pointer">Promote</li> -->
+        <li v-if="currentChan?.type != 'direct' && userChannel != undefined && CanMute()" @click="muteUser()" class="hover:font-semibold cursor-pointer">Mute</li>
+        <li v-if="currentChan?.type != 'direct' && userChannel != undefined && CanUnMute()" @click="unmuteUser()" class="hover:font-semibold cursor-pointer">Unmute</li>
+        <li v-if="currentChan?.type != 'direct' && userChannel != undefined && CanPromote()" @click="promoteUser()" class="hover:font-semibold cursor-pointer">Promote</li>
+        <li v-if="currentChan?.type != 'direct' && userChannel != undefined && hasAuthorityOver()" @click="ActivateBan()" class="hover:font-semibold cursor-pointer">Ban</li>
+        
+        <!-- <li v-if="canPromote" @click="promoteUser()" class="hover:font-semibold cursor-pointer">Demote</li> -->
         
         <!-- <li v-else-if="canUnban" @click="unbanUser()" class="hover:font-semibold cursor-pointer">Unban</li> -->
         <!-- <li v-if="canMute" @click="muteUser()" class="hover:font-semibold cursor-pointer">Mute</li> -->
@@ -63,7 +58,9 @@ export default defineComponent(
     currentChan: Object,
     currentUser: Object,
     targetUser: Object,
-    userChannel: Object,
+    userChannel: {
+      type: Object,
+      default: undefined},
     blockList: Object
   },
   data(): DataI {
@@ -92,16 +89,12 @@ export default defineComponent(
     },
     CanMute()
     {
-      console.log("mute");
-      console.log(this.targetUser?.muted);
       if( !this.userChannel?.muted && this.hasAuthorityOver())
         return(true)
       return(false)
     },
     CanUnMute()
     {
-      console.log("mute");
-      console.log(this.targetUser?.muted);
       if( this.userChannel?.muted && this.hasAuthorityOver())
         return(true)
       return(false)
@@ -183,11 +176,18 @@ export default defineComponent(
     return (true);
   },
   getRole(login: string, chan: any): string {
+    if(chan["userChannels"])
+    {
+      console.log("GET ROLE");
+      console.log(chan);
+      if (chan["creator"].login === login)
+        return "owner";
       for (let j = 0; j < chan["userChannels"].length; j++) {
         if (chan["userChannels"][j].user.login == login)
           return chan["userChannels"][j].role;
-      }
-      return "undefined";
+    }
+    }
+    return "undefined";
   },
   compareUsers(user1: any, user2: any): boolean {
     if (user1?.length !== user2?.length || user1?.id !== user2?.id
@@ -248,6 +248,10 @@ export default defineComponent(
       this.canPromote = false;
   },
   setAll() {
+    console.log("userChannel");
+    console.log(this.userChannel);
+    console.log("Current CHannel");
+    console.log(this.currentChan);
     this.setCanBlock();
     this.setCanUnblock();
     this.setCanMute();

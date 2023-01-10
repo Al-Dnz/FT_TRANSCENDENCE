@@ -52,6 +52,14 @@ export class ChannelService {
     });
   }
 
+  async findWithUserChan(id: number) {
+    const found = await this.channelsRepository.find({
+      where: { id: id },
+      relations: { userChannels: { user: true } }
+    });
+    return found[0];
+  }
+
   getAllChannels() { }
 
   async findOne(id: number) {

@@ -48,7 +48,7 @@ export class ChannelGateway {
 			const token = client.handshake.auth.token;
 			this.userService.checkToken(token);
 			const user = await this.userService.getUserByToken(token);
-			const new_chan = await this.channelService.create(payload, user);
+			let new_chan = await this.channelService.create(payload, user);
 
 			const userChannelData: CreateUserChannelDto =
 			{
@@ -65,6 +65,7 @@ export class ChannelGateway {
 			}
 
 			// this.server.to(client.id).emit('currentChanToClient', {channel: new_chan});
+			new_chan = await this.channelService.findWithUserChan(new_chan.id);
 			this.server.to(client.id).emit('redirectChan', {channel: new_chan})
 			this.server.to(client.id).emit('allChanMessagesToClient', sentPayload);
 
@@ -113,6 +114,10 @@ export class ChannelGateway {
 				}
 				this.server.to(userOne.chatSocketId).emit('channelUsersToClient', userchandatas);
 				this.server.to(userTwo.chatSocketId).emit('channelUsersToClient', userchandatas);
+				
+				this.server.to(userOne.chatSocketId).emit('redirectChan', {channel: null})
+				this.server.to(userTwo.chatSocketId).emit('redirectChan', {channel: null})
+
 
 				await this.channelService.remove(payload.id);
 				await this.sendAllChan(client);
@@ -313,8 +318,8 @@ export class ChannelGateway {
 				await this.userChannelService.update(userchannel.id, payload.role)
 			}
 
-			this.server.to(client.id).emit('chatMsg', `${grantedUserChannels[0].user.login} has been promoted ${grantedUserChannels[0].role} in channel #${channel.name}`);
-			this.server.to(grantedUserChannels[0].user.chatSocketId).emit('chatMsg', `You have been promoted ${grantedUserChannels[0].role} in channel #${channel.name}`);
+			this.server.to(client.id).emit('chatMsg', `${grantedUserChannels[0].user.login} has been promoted ${payload.role} in channel #${channel.name}`);
+			this.server.to(grantedUserChannels[0].user.chatSocketId).emit('chatMsg', `You have been promoted ${payload.role} in channel #${channel.name}`);
 			this.sendChannelUsers(client, { id: payload.channelId });
 		}
 		catch (error) {
@@ -347,7 +352,7 @@ export class ChannelGateway {
 				return;
 			}
 			// if no create it			
-			const chan = await this.channelService.createDMChannel(sender, receiver);
+			let chan = await this.channelService.createDMChannel(sender, receiver);
 			// join 2 participant
 			const userChannelData: CreateUserChannelDto =
 			{
@@ -358,6 +363,7 @@ export class ChannelGateway {
 			userChannelData.userId = receiver.id;
 			await this.userChannelService.create(userChannelData, UserChannelRole.member);
 
+			chan = await this.channelService.findWithUserChan(chan.id);
 			this.server.to(client.id).emit('redirectChan', {channel: chan})
 			this.sendAllChan(client);
 		}
