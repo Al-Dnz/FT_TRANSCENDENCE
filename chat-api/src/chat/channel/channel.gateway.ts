@@ -171,6 +171,13 @@ export class ChannelGateway {
 			const token = client.handshake.auth.token;
 			this.userService.checkToken(token);
 			const user = await this.userService.getUserByToken(token);
+			const channel = await this.channelService.findChanWithCreator(payload.id)
+
+			if (channel.type == ChannelType.direct && (channel.userOne.login != user.login && channel.userTwo.login != user.login))
+			{
+				this.server.to(client.id).emit('redirectChan', { channel: null });
+				throw new HttpException(`You are not authorized to join direct_channel #${channel.name}`, HttpStatus.FORBIDDEN);
+			}
 
 			const userchannels = await this.userChannelService.findByUserAndChan(user.id, payload.id);
 			if (userchannels.length == 0) {
@@ -187,7 +194,7 @@ export class ChannelGateway {
 					userId: user.id,
 					channelId: payload.id
 				}
-				const channel = await this.channelService.findChanWithCreator(payload.id)
+				
 				if (channel.creator && channel.creator.login == user.login)
 					await this.userChannelService.create(userChannelData, UserChannelRole.owner)
 				else
