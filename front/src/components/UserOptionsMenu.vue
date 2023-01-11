@@ -180,10 +180,11 @@ export default defineComponent(
     {
       console.log("GET ROLE");
       console.log(chan);
-      if (chan["creator"].login === login)
+
+      if (chan["creator"] && chan["creator"].login === login)
         return "owner";
       for (let j = 0; j < chan["userChannels"].length; j++) {
-        if (chan["userChannels"][j].user.login == login)
+        if (chan["userChannels"] && chan["userChannels"][j].user.login == login)
           return chan["userChannels"][j].role;
     }
     }
