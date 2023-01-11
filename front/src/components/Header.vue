@@ -19,10 +19,13 @@ methods : {
 	{
 		this.$cookies.remove("trans_access")
 		this.$cookies.remove("trans_refresh")
-		
+		console.log("On déco")
 		if(this.$store.state.globalSocket != null)
+		{
+			console.log("On déco 3")
 			this.$store.state.globalSocket.disconnect();
-			
+			console.log("On débranche")
+		}
 		// this.$store.state.chatSocket.disconnect();
 		// this.$store.state.gameSocket.disconnect();
 		this.$router.push('/');
