@@ -6,20 +6,11 @@ export class CreateMessageDto
 	@IsNotEmpty()
 	text: string;
 
-	// @IsBoolean()
-	// @IsOptional()
-	// private: boolean;
-
-	// @IsString()
-	// @IsNotEmpty()
-	// token: string;
-
 	@IsInt()
   	@Min(1)
 	@IsOptional()
 	channelId: number;
 
-	//to remove
 	@IsInt()
   	@Min(1)
 	@IsOptional()

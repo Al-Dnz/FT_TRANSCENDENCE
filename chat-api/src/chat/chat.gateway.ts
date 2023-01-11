@@ -6,13 +6,10 @@ import {
   OnGatewayConnection,
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
-
 import { Logger } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
-
 import { UsePipes } from '@nestjs/common';
 import { WSPipe } from 'src/exception/websockets/ws-exception-filter'
-
 import { UserService } from './user/user.service';
 import { BlockerBlockedService } from './blocker-blocked/blocker-blocked.service';
 
@@ -23,7 +20,7 @@ export class ChatGateway
 
   constructor(private userService: UserService,
     private blockerBlockedService: BlockerBlockedService
-  ) { }
+  ) {}
 
   private logger: Logger = new Logger('MainChatGateway');
   @WebSocketServer() server: Server;
