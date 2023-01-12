@@ -201,11 +201,11 @@ export class UserController {
     }
 
     @Put('me/blockeds/:login')
-    @HttpCode(204)
+    // @HttpCode(204)
     async addMeBlockeds(
         @Identity() user: Identity,
         @Param('login') login: string,
-    ): Promise<void> {
+    ): Promise<UserOutputDto> {
 
         if (user.login == login) { throw new ForbiddenException(`User can't block himself`); }
         const userOne: User | undefined = await this.userService.findOne(user.login,);
@@ -220,6 +220,8 @@ export class UserController {
         this.userService.addBlockeds(user.login, login).catch((error: Error) => {
             throw new InternalServerErrorException(error.message);
         });
+
+        return new UserOutputDto(userTwo);
     }
 
     @Delete('me/blockeds/:login')
