@@ -410,7 +410,9 @@ export class GameGateway
 
 					if (this.clientRooms[this.state[gameCode].game_data.idPlayers.player1] || this.clientRooms[this.state[gameCode].game_data.idPlayers.player2]) {
 						this.clientRooms[this.state[gameCode].game_data.idPlayers.player1] = null;
+						delete this.clientRooms[this.state[gameCode].game_data.idPlayers.player1];
 						this.clientRooms[this.state[gameCode].game_data.idPlayers.player2] = null;
+						delete this.clientRooms[this.state[gameCode].game_data.idPlayers.player2];
 					}
 
 					this.matchService.updateFinishedGame2(gameCode, state.game_data.idPlayers, state.game_data.score);
@@ -631,6 +633,8 @@ export class GameGateway
 					if (this.clientRoomsCustom[this.stateCustom[gameCode].game_data.idPlayers.player1] || this.clientRoomsCustom[this.stateCustom[gameCode].game_data.idPlayers.player2]) {
 						this.clientRoomsCustom[this.stateCustom[gameCode].game_data.idPlayers.player1] = null;
 						this.clientRoomsCustom[this.stateCustom[gameCode].game_data.idPlayers.player2] = null;
+						delete this.clientRoomsCustom[this.stateCustom[gameCode].game_data.idPlayers.player1];
+						delete this.clientRoomsCustom[this.stateCustom[gameCode].game_data.idPlayers.player2];
 					}
 
 					this.matchService.updateFinishedGame2(gameCode, state.game_data.idPlayers, state.game_data.score);
