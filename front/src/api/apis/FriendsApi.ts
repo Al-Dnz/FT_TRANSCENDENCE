@@ -47,7 +47,7 @@ export class FriendsApi extends runtime.BaseAPI {
     /**
      * Add a user to the friends list of the connected user
      */
-    async createFriendshipRaw(requestParameters: CreateFriendshipRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async createFriendshipRaw(requestParameters: CreateFriendshipRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction):  Promise<runtime.ApiResponse<UserOutput>> {
         if (requestParameters.login === null || requestParameters.login === undefined) {
             throw new runtime.RequiredError('login','Required parameter requestParameters.login was null or undefined when calling createFriendship.');
         }
@@ -71,14 +71,16 @@ export class FriendsApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.VoidApiResponse(response);
+        return new runtime.JSONApiResponse(response, (jsonValue) => UserOutputFromJSON(jsonValue));
     }
 
     /**
      * Add a user to the friends list of the connected user
      */
-    async createFriendship(requestParameters: CreateFriendshipRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.createFriendshipRaw(requestParameters, initOverrides);
+    async createFriendship(requestParameters: CreateFriendshipRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UserOutput> {
+
+        const response = await this.createFriendshipRaw(requestParameters, initOverrides);
+        return await response.value();
     }
 
     /**

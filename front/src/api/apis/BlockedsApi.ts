@@ -47,7 +47,7 @@ export class BlockedsApi extends runtime.BaseAPI {
     /**
      * Add a user to the blockeds list of the connected user
      */
-    async createBlockedshipRaw(requestParameters: CreateBlockedshipRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async createBlockedshipRaw(requestParameters: CreateBlockedshipRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UserOutput>> {
         if (requestParameters.login === null || requestParameters.login === undefined) {
             throw new runtime.RequiredError('login','Required parameter requestParameters.login was null or undefined when calling createBlockedship.');
         }
@@ -71,14 +71,16 @@ export class BlockedsApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.VoidApiResponse(response);
+        return new runtime.JSONApiResponse(response, (jsonValue) => UserOutputFromJSON(jsonValue));
+
     }
 
     /**
      * Add a user to the blockeds list of the connected user
      */
-    async createBlockedship(requestParameters: CreateBlockedshipRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.createBlockedshipRaw(requestParameters, initOverrides);
+    async createBlockedship(requestParameters: CreateBlockedshipRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UserOutput> {
+        const response = await this.createBlockedshipRaw(requestParameters, initOverrides);
+        return await response.value();
     }
 
     /**

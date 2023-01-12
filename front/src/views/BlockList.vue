@@ -13,7 +13,9 @@
 			</div>
 		</div>
 		<div v-for="(item, index) in sortedTab()" v-bind:key="index" className="lg:h-friendbox h-12 w-3/4 pt-3">
-			<blockBox :obj=item :index="index" :refresh="fetchData"/>
+			<!-- <blockBox :obj=item :index="index" :refresh="fetchData"/> -->
+			<blockBox @delBlock="deleteBlock" :obj=item :index="index" />
+
 		</div>
 	</div>
   </template>
@@ -53,6 +55,11 @@ export default defineComponent({
 	  loadingPage
 	},
 	methods : {
+		deleteBlock(login: string)
+		{
+			let index = this.tab.findIndex((e) => e.login == login);
+			this.tab.splice(index, 1);
+		},
 		sortedTab() : Array<UserOutput>{
 		  return this.tab.sort((a : UserOutput, b : UserOutput) =>  a.login.localeCompare(b.login)) // Number(a.friend) - Number(b.friend) ||
 		  },
@@ -60,8 +67,8 @@ export default defineComponent({
 			  getCredentials().then((accessToken: string) => {
 				  const Fapi = new BlockedsApi(new Configuration({accessToken: accessToken}))
 				  Fapi.createBlockedship({login: this.newblock})
+				  	  .then ((user: UserOutput) => { this.tab.push(user) })
 					  .then( () => { this.newblock = '' })
-					  .then (() => { this.fetchData() })
 					  .catch((msg:ResponseError) => { msg.response.json().then((str: ErrorOutput) =>
 						  this.$toast(str.message, {
 							styles: { backgroundColor: "#FF0000", color: "#FFFFFF" },
