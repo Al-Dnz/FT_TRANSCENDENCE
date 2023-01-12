@@ -9,7 +9,7 @@
       <div class="w-full flex mt-2 mb-2">
         <button @click="quitChannel()" class="pl-1 pr-1 rounded-lg border-2 border-slate-600 hover:text-red-500
         hover:border-red-500">Quit channel</button>
-        <div v-if="isAdmin" class="w-10 h-10 ml-16
+        <div v-if="isAdmin()" class="w-10 h-10 ml-16
         rounded-3xl bg-gray-100 text-gray-500 hover:text-black
         cursor-pointer shadow-lg">
           <Cog8ToothIcon @click="toggleSettings()" />

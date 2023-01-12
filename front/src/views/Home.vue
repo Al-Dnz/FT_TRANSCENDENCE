@@ -251,8 +251,8 @@ export default {
     });
 
     this.socket.on(`init`, (data) => {
-      this.NamePlayer1.innerText = data.player1;
-      this.NamePlayer2.innerText = data.player2;
+      this.NamePlayer1.innerText = data.userName1;
+      this.NamePlayer2.innerText = data.userName2;
     });
     this.socket.on(`gameData`, (data) => {
       this.canvas = data.canvas;
