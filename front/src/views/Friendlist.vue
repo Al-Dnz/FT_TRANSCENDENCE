@@ -24,7 +24,8 @@
 		<div v-else className="flex flex-col justify-start items-center w-full h-full overflow-auto">
 			<div v-for="(item, index) in sortedTab()" v-bind:key="index"
 			className="lg:h-friendbox lg:w-3/4 w-11/12 h-16 pt-3">
-			<friendBox :obj=item :index="index" :refresh="fetchData" />
+			<!-- <friendBox :obj=item :index="index" :refresh="fetchData" /> -->
+			<friendBox @delFriend="deleteFriend" :obj=item :index="index" />
 		</div>
 		</div>
 	</div>
@@ -73,6 +74,11 @@ export default defineComponent({
 		loadingPage
 	},
 	methods: {
+		deleteFriend(login: string)
+		{
+			let index = this.tab.findIndex((e) => e.login == login);
+			this.tab.splice(index, 1);
+		},
 		sortedTab(): Array<UserOutput> {
 			return this.tab.sort((a: UserOutput, b: UserOutput) => a.login.localeCompare(b.login)) // Number(a.friend) - Number(b.friend) ||
 		},
