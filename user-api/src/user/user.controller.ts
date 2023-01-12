@@ -123,11 +123,11 @@ export class UserController {
     }
 
     @Put('me/friends/:login')
-    @HttpCode(204)
+    // @HttpCode(204)
     async addMeFriends(
         @Identity() user: Identity,
         @Param('login') login: string,
-    ): Promise<void> {
+    ): Promise<UserOutputDto> {
 
         if (user.login == login) {
             throw new ForbiddenException(`User can't be friend with himself`);
@@ -149,10 +149,10 @@ export class UserController {
         if (friends.length)
             throw new ForbiddenException(`${login} and ${user.login} are already friends`);
 
-
-        this.userService.addFriends(user.login, login).catch((error: Error) => {
+        await this.userService.addFriends(user.login, login).catch((error: Error) => {
             throw new InternalServerErrorException(error.message);
         });
+        return new UserOutputDto(userTwo);
     }
 
     @Delete('me/friends/:login')
