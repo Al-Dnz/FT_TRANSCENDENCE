@@ -144,7 +144,7 @@ export class GameGateway
 			this.state[roomName] = new GameService(this.matchService);
 
 			this.state[roomName].game_data.idPlayers.player1 = user.login;
-			this.state[roomName].game_data.idPlayers.userName1 = user.username;
+			this.state[roomName].game_data.idPlayers.userName1 = user.userName;
 			client.join(roomName);
 			console.log('client.rooms.size', client.rooms);
 			this.server.to(roomName).emit('init', this.state[roomName].game_data.idPlayers);
@@ -198,7 +198,7 @@ export class GameGateway
 			this.clientRooms[user.login] = gameCode;
 			client.join(gameCode);
 			this.state[gameCode].game_data.idPlayers.player2 = user.login;
-			this.state[gameCode].game_data.idPlayers.userName2 = user.username;
+			this.state[gameCode].game_data.idPlayers.userName2 = user.userName;
 
 			this.server.to(gameCode).emit('init', this.state[gameCode].game_data.idPlayers);
 			// client.emit('startGame');
@@ -275,7 +275,7 @@ export class GameGateway
 				this.state[gameCode] = new GameService(this.matchService);
 
 				this.state[gameCode].game_data.idPlayers.player1 = match.playerOne.login;
-				this.state[gameCode].game_data.idPlayers.userName1 = match.playerOne.username;
+				this.state[gameCode].game_data.idPlayers.userName1 = match.playerOne.userName;
 				client.join(gameCode);
 				this.server.to(gameCode).emit('init', this.state[gameCode].game_data.idPlayers);
 			}
@@ -284,7 +284,7 @@ export class GameGateway
 				this.clientRooms[user.login] = gameCode;
 				client.join(gameCode);
 				this.state[gameCode].game_data.idPlayers.player2 = match.playerTwo.login;
-				this.state[gameCode].game_data.idPlayers.userName2 = match.playerTwo.username;
+				this.state[gameCode].game_data.idPlayers.userName2 = match.playerTwo.userName;
 
 				// const match = await this.matchService.findByGameCode(gameCode);
 				// await this.matchService.updateMatchCreation(match, user);
@@ -339,7 +339,7 @@ export class GameGateway
 
 				this.clientRooms[user.login] = gameCode;
 				this.state[gameCode].game_data.idPlayers.player2 = user.login;
-				this.state[gameCode].game_data.idPlayers.userName2 = user.username;
+				this.state[gameCode].game_data.idPlayers.userName2 = user.userName;
 				this.openRooms.shift();
 				client.join(gameCode);
 				this.server.to(gameCode).emit('init', this.state[gameCode].game_data.idPlayers);
@@ -504,7 +504,7 @@ export class GameGateway
 
 			this.stateCustom[roomName].game_data.mode = "custom";
 			this.stateCustom[roomName].game_data.idPlayers.player1 = user.login;
-			this.stateCustom[roomName].game_data.idPlayers.userName1 = user.username;
+			this.stateCustom[roomName].game_data.idPlayers.userName1 = user.userName;
 			client.join(roomName);
 			console.log('client.rooms.size', client.rooms);
 			this.server.to(roomName).emit('init', this.stateCustom[roomName].game_data.idPlayers);
@@ -569,7 +569,7 @@ export class GameGateway
 				console.log("bite");
 				this.clientRoomsCustom[user.login] = gameCode;
 				this.stateCustom[gameCode].game_data.idPlayers.player2 = user.login;
-				this.stateCustom[gameCode].game_data.idPlayers.userName2 = user.username;
+				this.stateCustom[gameCode].game_data.idPlayers.userName2 = user.userName;
 				this.openRoomsCustom.shift();
 				client.join(gameCode);
 				this.server.to(gameCode).emit('init', this.stateCustom[gameCode].game_data.idPlayers);

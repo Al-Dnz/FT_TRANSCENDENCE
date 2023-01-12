@@ -4,14 +4,14 @@
 			<img :src="obj?.playerOne.avatar.path" className ="h-36 w-36 rounded-xl hidden lg:block"/>
 		</div>
 		<div className="flex flex-col justify-center overflow-hidden w-24 lg:w-64">
-			<span className="center-x w-auto">{{obj?.playerOne.login}} </span>
+			<span className="center-x w-auto">{{obj?.playerOne.username}} </span>
 			<span className="center-x">Elo: {{obj?.playerOne.stats.level}} </span>
 		</div>
 		<div className="flex flex-col justify-center overflow-hidden w-24 lg:w-64">
 			<span className="center-x">VS</span>
 		</div>	
 		<div className="flex flex-col justify-center overflow-hidden w-24 lg:w-64">
-			<span className="center-x w-auto">{{obj?.playerTwo.login}} </span>
+			<span className="center-x w-auto">{{obj?.playerTwo.username}} </span>
 			<span className="center-x">Elo: {{obj?.playerTwo.stats.level}} </span>
 		</div>
 		<div className="pr-4 flex flex-col justify-center ">

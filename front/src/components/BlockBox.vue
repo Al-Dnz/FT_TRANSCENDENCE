@@ -4,7 +4,7 @@
 			<img :src="obj?.actualAvatar.path" className ="h-5/6 rounded-xl bg-slate-300"/>
 		</div>
 		<div className="flex flex-col justify-center w-1/3">
-			<span> {{obj?.login}} </span>
+			<span> {{obj?.username}} </span>
 		</div>
 		<div className="flex flex-row justify-end w-1/3">
 			<XMarkIcon @click="del()" class = "text-red-400 cursor-pointer"/>

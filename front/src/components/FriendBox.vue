@@ -5,7 +5,7 @@
 		</div>
 		<div className="w-1/3 flex flex-row justify-between h-full">
 			<div className="flex flex-col justify-center w-1/2">
-				<span> {{ obj?.login }} </span>
+				<span> {{ obj?.username }} </span>
 			</div>
 			<div className="flex flex-col justify-center w-1/2">
 				<span v-if="(obj?.status === 'online')" className="text-green-500">En ligne</span>
@@ -21,12 +21,12 @@
 			</div>
 			<div className="icon w-1/5 mt-1 mb-1 mx-2">
 				<div className="w-1/2">
-					<goToAcc :accName=obj?.username />
+					<goToAcc :accName=obj?.login />
 				</div>
 			</div>
 			<div className="icon w-1/5 mt-1 mb-1 mx-2">
 				<div className="w-1/2">
-					<goToChat @click="createDM()" :accName=obj?.username />
+					<goToChat @click="createDM()" :accName=obj?.login />
 				</div>
 			</div>
 			<div className="icon w-1/5 mt-1 mb-1 mx-2">
