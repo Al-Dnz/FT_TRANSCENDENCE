@@ -42,8 +42,6 @@ export class GameGateway
 	clientRoomsCustom = {};
 	openRoomsCustom: string[] = [];
 
-	// io = require('socket.io')();
-	// -----------
 
 
 	async updateStatus(userLogin: string, status: UserStatus) {
@@ -80,7 +78,6 @@ export class GameGateway
 					this.server.to(this.clientRoomsCustom[user.login]).emit(`paddle1ToClient`, this.stateCustom[this.clientRoomsCustom[user.login]].game_data);
 					this.stateCustom[this.clientRoomsCustom[user.login]].movementPaddle(this.stateCustom[this.clientRoomsCustom[user.login]].game_data.paddle1, instruction);
 				} else if (user.login === this.stateCustom[this.clientRoomsCustom[user.login]].game_data.idPlayers.player2) {
-					console.log("p2 move");
 					this.server.to(this.clientRoomsCustom[user.login]).emit(`paddle2ToClient`, this.stateCustom[this.clientRoomsCustom[user.login]].game_data);
 					this.stateCustom[this.clientRoomsCustom[user.login]].movementPaddle(this.stateCustom[this.clientRoomsCustom[user.login]].game_data.paddle2, instruction);
 				}
@@ -102,15 +99,11 @@ export class GameGateway
 			const user = await this.userService.getUserByToken(token);
 
 			if (this.clientRooms[user.login]) {
-				console.log("getInfoToServer A");
 				if (this.state[this.clientRooms[user.login]]) {
-					console.log(user.login, this.state[this.clientRooms[user.login]].game_data.paddle1.position);
 					this.server.to(this.clientRooms[user.login]).emit(`getInfoToClient`, this.state[this.clientRooms[user.login]].game_data);
 				}
 			} else if (this.clientRoomsCustom[user.login]) {
-				console.log("getInfoToServer B");
 				if (this.stateCustom[this.clientRoomsCustom[user.login]]) {
-					console.log(user.login, this.stateCustom[this.clientRoomsCustom[user.login]].game_data.paddle1.position);
 					this.server.to(this.clientRoomsCustom[user.login]).emit(`getInfoToClient`, this.stateCustom[this.clientRoomsCustom[user.login]].game_data);
 				}
 			}
@@ -128,7 +121,6 @@ export class GameGateway
 			this.userService.checkToken(token);
 			const user = await this.userService.getUserByToken(token);
 
-			console.log('handleNewGame');
 			if (this.clientRooms[user.login]) {
 				return;
 			}
@@ -146,7 +138,6 @@ export class GameGateway
 			this.state[roomName].game_data.idPlayers.player1 = user.login;
 			this.state[roomName].game_data.idPlayers.userName1 = user.userName;
 			client.join(roomName);
-			console.log('client.rooms.size', client.rooms);
 			this.server.to(roomName).emit('init', this.state[roomName].game_data.idPlayers);
 			this.openRooms.push(roomName);
 		}
@@ -221,8 +212,6 @@ export class GameGateway
 			this.userService.checkToken(token);
 			const user = await this.userService.getUserByToken(token);
 
-			console.log("this.state", this.state);
-			console.log("this.stateCUSTOM", this.stateCustom);
 			if (!this.state[gameCode] && !this.stateCustom[gameCode]) {
 				client.emit('unknownGame');
 				return;
@@ -252,13 +241,8 @@ export class GameGateway
 			const user = await this.userService.getUserByToken(token);
 			//----------------------//
 			if (!gameCode) {
-				// client.emit('errFindGame');
 				return;
 			}
-			// if (this.clientRooms[user.login]) {
-			// 	client.emit('errFindGame');
-			// 	return;
-			// }
 
 			const match = await this.matchService.findByGameCode(gameCode);
 			await this.matchService.updateMatchStatus(match, MatchStatus.live);
@@ -268,9 +252,6 @@ export class GameGateway
 			if (!this.state[gameCode]) {
 				this.clientRooms[user.login] = gameCode;
 
-				// create match in db
-				// const match = await this.matchService.create(user, gameCode, false);
-				// this.updateStatus(user.login, UserStatus.in_game);
 
 				this.state[gameCode] = new GameService(this.matchService);
 
@@ -280,20 +261,13 @@ export class GameGateway
 				this.server.to(gameCode).emit('init', this.state[gameCode].game_data.idPlayers);
 			}
 			else {
-				client.emit('test');
 				this.clientRooms[user.login] = gameCode;
 				client.join(gameCode);
 				this.state[gameCode].game_data.idPlayers.player2 = match.playerTwo.login;
 				this.state[gameCode].game_data.idPlayers.userName2 = match.playerTwo.userName;
 
-				// const match = await this.matchService.findByGameCode(gameCode);
-				// await this.matchService.updateMatchCreation(match, user);
-				// await this.matchService.updateMatchStatus(match, MatchStatus.live);
-				// this.updateStatus(user.login, UserStatus.in_game);
-				// this.sendLiveMatches();
 
 				this.server.to(gameCode).emit('init', this.state[gameCode].game_data.idPlayers);
-				// client.emit('startGame');
 				this.server.to(gameCode).emit(`startGame`);
 				if (this.state[gameCode].game_data.idPlayers.player1 && this.state[gameCode].game_data.idPlayers.player2) {
 					setTimeout(() => {
@@ -304,14 +278,12 @@ export class GameGateway
 		}
 		catch (error) {
 			this.server.to(client.id).emit('gameError', error.message);
-			// client.disconnect();
+			client.disconnect();
 		}
 	}
 
 	@SubscribeMessage('findGame')
 	async handleFindGame(client: Socket): Promise<void> {
-		console.log("handleFindGame 1 :", this.state);
-		console.log("handleFindGame 2 :", this.clientRooms);
 		try {
 			const token = client.handshake.auth.token;
 			this.userService.checkToken(token);
@@ -319,9 +291,7 @@ export class GameGateway
 
 			let gameCode = "";
 			if (!this.clientRooms[user.login]) {
-				console.log(this.openRooms);
 				if (!this.openRooms.length) {
-					console.log("void", this.openRooms.length);
 					this.handleNewGame(client);
 					return;
 				}
@@ -370,11 +340,9 @@ export class GameGateway
 			const token = client.handshake.auth.token;
 			this.userService.checkToken(token);
 			const user = await this.userService.getUserByToken(token);
-			console.log("handleReconnectGame");
 			if (this.clientRooms[user.login]) {
 				let gameCode = this.clientRooms[user.login];
 				this.updateStatus(user.login, UserStatus.in_game);
-				client.emit('test');
 				client.join(gameCode);
 				this.server.to(gameCode).emit('init', this.state[gameCode].game_data.idPlayers);
 				if (this.state[this.clientRooms[user.login]].game_data.gameState === 'on')
@@ -382,7 +350,6 @@ export class GameGateway
 			} else if (this.clientRoomsCustom[user.login]) {
 				let gameCode = this.clientRoomsCustom[user.login];
 				this.updateStatus(user.login, UserStatus.in_game);
-				client.emit('test');
 				client.join(gameCode);
 				this.server.to(gameCode).emit('init', this.stateCustom[gameCode].game_data.idPlayers);
 				if (this.stateCustom[this.clientRoomsCustom[user.login]].game_data.gameState === 'on')
@@ -410,7 +377,6 @@ export class GameGateway
 					this.server.to(clientRooms[user.login]).emit('gameState', state.game_data);
 				}
 				else {
-					console.log("1 ", this.clientRooms);
 					this.server.to(clientRooms[user.login]).emit('gameOver');
 
 					if (this.clientRooms[this.state[gameCode].game_data.idPlayers.player1] || this.clientRooms[this.state[gameCode].game_data.idPlayers.player2]) {
@@ -437,7 +403,6 @@ export class GameGateway
 					}
 					this.updateLiveMatches();
 					clearInterval(intervalID);
-					// return; 
 				}
 			}, 1000 / 60);
 		}
@@ -449,36 +414,6 @@ export class GameGateway
 
 	//---------------------------------------------------------------------------
 
-	// @SubscribeMessage('getInfoCustomToServer')
-	// async GetInfosCustom(client: Socket): Promise<void>
-	// {
-	// 	try
-	// 	{
-	// 		const token = client.handshake.auth.token;
-	// 		this.userService.checkToken(token);
-	// 		const user = await this.userService.getUserByToken(token);
-
-	// 		if (this.stateCustom[this.clientRoomsCustom[user.login]]) {
-	// 		console.log(user.login , this.stateCustom[this.clientRoomsCustom[user.login]].game_data.paddle1.position);
-	// 			this.server.to(this.clientRoomsCustom[user.login]).emit(`getInfoToClient`, this.stateCustom[this.clientRoomsCustom[user.login]].game_data);
-	// 		}
-	// 	} 
-	// 	catch (error)
-	// 	{
-	// 		this.server.to(client.id).emit('gameError', error.message);
-	// 		client.disconnect();
-	// 	}
-	// }
-
-	// @SubscribeMessage('getInfoCustomToServer')
-	// async GetInfosCustom(client: Socket): Promise<void>
-	// {
-	// 	if (this.stateCustom[this.clientRoomsCustom[client.id]]) {
-	// 	console.log(client.id , this.state[this.clientRoomsCustom[client.id]].game_data.paddle1.position);
-	// 		this.server.to(this.clientRoomsCustom[client.id]).emit(`getInfoToClient`, this.stateCustom[this.clientRoomsCustom[client.id]].game_data);
-	// 	}
-	// }
-
 	@SubscribeMessage('newGameCustom')
 	async handleNewGameCustom(client: Socket): Promise<void> {
 		try {
@@ -486,9 +421,7 @@ export class GameGateway
 			this.userService.checkToken(token);
 			const user = await this.userService.getUserByToken(token);
 
-			console.log('handleNewGameCSTM');
 			if (this.clientRoomsCustom[user.login]) {
-				console.log("handleNewGameCustom left");
 				return;
 			}
 
@@ -506,7 +439,6 @@ export class GameGateway
 			this.stateCustom[roomName].game_data.idPlayers.player1 = user.login;
 			this.stateCustom[roomName].game_data.idPlayers.userName1 = user.userName;
 			client.join(roomName);
-			console.log('client.rooms.size', client.rooms);
 			this.server.to(roomName).emit('init', this.stateCustom[roomName].game_data.idPlayers);
 			this.openRoomsCustom.push(roomName);
 		}
@@ -516,32 +448,8 @@ export class GameGateway
 		}
 	}
 
-	// @SubscribeMessage('newGameCustom')
-	// async handleNewGameCustom(client: Socket): Promise<void>
-	// {
-	// 	console.log('handleNewGame');
-	// 	// let roomName = makeid(5);
-	// 	let roomName = await this.matchService.generateGameCode();
-
-	// 	this.clientRoomsCustom[client.id] = roomName;
-	// 	client.emit('gameCode', roomName);
-
-	// 	this.stateCustom[roomName] = new GameService(this.matchService);
-
-	// 	// const match = await this.matchService.create(user, roomName, true);
-
-	// 	this.stateCustom[roomName].game_data.idPlayers.player1 = client.id;
-	// 	this.stateCustom[roomName].game_data.mode = "custom";
-	// 	client.join(roomName);
-	// 	console.log('client.rooms.size', client.rooms);
-	// 	this.server.to(roomName).emit('init', this.state[roomName].game_data.idPlayers);
-	// 	this.openRoomsCustom.push(roomName);
-	// }
-
 	@SubscribeMessage('findGameCustom')
 	async handleFindGameCustom(client: Socket): Promise<void> {
-		console.log("handleFindGame A :", this.stateCustom);
-		console.log("handleFindGame B :", this.clientRoomsCustom);
 		try {
 			const token = client.handshake.auth.token;
 			this.userService.checkToken(token);
@@ -549,7 +457,6 @@ export class GameGateway
 
 			let gameCode = "";
 			if (!this.clientRoomsCustom[user.login]) {
-				console.log("this.openRoomsCustom", this.openRoomsCustom);
 				if (!this.openRoomsCustom.length) {
 					this.handleNewGameCustom(client);
 					return;
@@ -566,7 +473,6 @@ export class GameGateway
 				this.updateStatus(user.login, UserStatus.in_game);
 				this.sendLiveMatches();
 
-				console.log("bite");
 				this.clientRoomsCustom[user.login] = gameCode;
 				this.stateCustom[gameCode].game_data.idPlayers.player2 = user.login;
 				this.stateCustom[gameCode].game_data.idPlayers.userName2 = user.userName;
@@ -582,7 +488,6 @@ export class GameGateway
 				//reconnect
 				gameCode = this.clientRoomsCustom[user.login];
 				this.updateStatus(user.login, UserStatus.in_game);
-				client.emit('test');
 				client.join(gameCode);
 				this.server.to(gameCode).emit('init', this.stateCustom[gameCode].game_data.idPlayers);
 				if (this.stateCustom[this.clientRoomsCustom[user.login]].game_data.gameState === 'on')
@@ -594,33 +499,6 @@ export class GameGateway
 			client.disconnect();
 		}
 	}
-
-	// @SubscribeMessage('findGameCustom')
-	// async handleFindGameCustom(client: Socket): Promise<void>
-	// {
-	// 	let gameCode = "";
-	// 	console.log(this.openRoomsCustom);
-	// 	if (!this.openRoomsCustom.length) {
-	// 		console.log("void", this.openRoomsCustom.length);
-	// 		this.handleNewGameCustom(client);
-	// 		return;
-	// 	}
-	// 	if (!this.openRoomsCustom[0]) {
-	// 		client.emit("errFindGame");
-	// 		return;
-	// 	}
-	// 	gameCode = this.openRoomsCustom[0];
-	// 	this.clientRoomsCustom[client.id] = gameCode;
-	// 	client.join(gameCode);
-	// 	this.stateCustom[gameCode].game_data.idPlayers.player2 = client.id;
-	// 	client.emit('gameCode', gameCode);
-	// 	client.emit('init', this.state[gameCode].game_data.idPlayers);
-	// 	this.openRoomsCustom.shift();
-	// 	this.server.to(this.clientRoomsCustom[client.id]).emit(`startGameCustom`);
-	// 	setTimeout(() => {
-	// 		this.startGameInterval(client, this.stateCustom[gameCode], gameCode, this.clientRoomsCustom);
-	// 	}, 500);
-	// }
 
 	async startGameIntervalCustom(client, state, gameCode, clientRooms) {
 		try {
@@ -634,7 +512,6 @@ export class GameGateway
 					this.server.to(clientRooms[user.login]).emit('gameState', state.game_data);
 				}
 				else {
-					console.log("1 -b", this.clientRoomsCustom);
 					this.server.to(clientRooms[user.login]).emit('gameOver');
 
 					if (this.clientRoomsCustom[this.stateCustom[gameCode].game_data.idPlayers.player1] || this.clientRoomsCustom[this.stateCustom[gameCode].game_data.idPlayers.player2]) {
@@ -661,7 +538,6 @@ export class GameGateway
 					}
 					this.updateLiveMatches();
 					clearInterval(intervalID);
-					// return; 
 				}
 			}, 1000 / 60);
 		}
@@ -676,16 +552,11 @@ export class GameGateway
 
 	async handleConnection(client: Socket, ...args: any[]) {
 		try {
-			console.log("handleConnection");
 			const token = client.handshake.auth.token;
 			this.userService.checkToken(token);
 			const user = await this.userService.getUserByToken(token);
 			this.userService.updateUserSocket(user, client.id);
 			this.logger.log(`User: ${user.login} is connected to game with socket ${client.id}`);
-			console.log("this.state", this.state);
-			console.log("this.clientRooms", this.clientRooms);
-			console.log("this.stateCustom", this.stateCustom);
-			console.log("this.clientRoomsCustom", this.clientRoomsCustom);
 		}
 		catch (error) {
 			this.server.to(client.id).emit('gameError', error.message);
@@ -698,7 +569,6 @@ export class GameGateway
 
 	async handleDisconnect(client: Socket, ...args: any[]) {
 		try {
-			console.log("handleDisconnect", this.clientRooms);
 			const token = client.handshake.auth.token;
 			this.userService.checkToken(token);
 			const user = await this.userService.getUserByToken(token);
@@ -745,7 +615,6 @@ export class GameGateway
 			this.server.to(client.id).emit('gameError', error.message);
 			client.disconnect();
 		}
-		this.server.to(this.clientRooms[client.id]).emit('test');
 	}
 
 	afterInit(server: Server) { }
