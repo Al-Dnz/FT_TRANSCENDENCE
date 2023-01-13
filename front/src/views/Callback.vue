@@ -112,8 +112,7 @@ export default defineComponent({
 		await fetch(`http://${process.env.VUE_APP_IP}:3003/2fa/mail`, requestOptions)
 		.catch(e => {
 			this.$toast(e.message, {styles: { backgroundColor: "#FF0000", color: "#FFFFFF" }});
-			console.log(e);
-        	this.$router.push("/");
+      this.$router.push("/");
 		})
 	},
     set_and_go : function()

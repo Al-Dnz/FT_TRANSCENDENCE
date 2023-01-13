@@ -34,7 +34,6 @@ export default defineComponent({
 						this.$toast(str.message, {
               			styles: { backgroundColor: "#FF0000", color: "#FFFFFF" },
             			}));})
-					.catch((msg :any) => {console.log(msg)})
 				this.$emit('delBlock', this.obj?.login);
 			})
 		},

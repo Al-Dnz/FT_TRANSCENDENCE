@@ -106,7 +106,6 @@ export default defineComponent({
 								styles: { backgroundColor: "#FF0000", color: "#FFFFFF" },
 							}));
 					})
-					.catch((msg: any) => { console.log(msg) })
 				this.$emit('delFriend', this.obj?.login);
 			})
 		},

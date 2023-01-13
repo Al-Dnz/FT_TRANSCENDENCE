@@ -85,13 +85,11 @@ export default {
   },
   methods: {
     newGame() {
-      console.log('NIK');
       this.socket.emit('newGame');
       this.startAnimating(60);
     },/*
     specGame() {
       const code = SpecGameCodeInput.value;
-      console.log('Spec YEP');
       this.socket.emit('specGame', code);
       this.startAnimating(60);
     },*/
@@ -107,12 +105,8 @@ export default {
       this.setScreen("initial");
     },
     leaveGame() {
-      console.log("FUCK LA VIE");
       this.setScreen("initial");
       this.socket.emit('leaveGame');
-    },
-    test() {
-      console.log('test');
     },
     startAnimating(fps) {
       this.setScreen("game");
@@ -128,8 +122,6 @@ export default {
 
       // this.background.imageSrc = require('../assets/game/SpaceBackground.png');
       // this.background.update(this.context);
-      // console.log('this.context', this.context);
-      // console.log('this.background.imageSrc', this.background.imageSrc);
       this.game();
     },
     setScreen(State) {
@@ -180,14 +172,12 @@ export default {
       }
     },
     sendInstruction(instruction) {
-      console.log('getInfoToClient');
       this.socket.emit('positionToServer', instruction);
     },
     sendPaddleMove(instruction) {
       this.socket.emit('MovePaddleToServer', instruction);
     },
     // getInfo() {
-    //   console.log('getInfo');
     //   this.socket.emit('getInfoToServer');
     // },
     getSizeToServe() {
@@ -195,12 +185,10 @@ export default {
     },
     sendCode()
     {
-      console.log(this.gamesecret);
       this.socket.emit('InvGame', this.gamesecret);
     },
     reconnectGame()
     {
-      console.log("reconnect send")
       this.socket.emit('reconnectGame');
     }
   },
@@ -246,9 +234,8 @@ export default {
       this.test();
     });
 
-    this.socket.on(`errFindGame`, (data) => {
-      console.log('error findgame');
-    });
+    // this.socket.on(`errFindGame`, (data) => {
+    // });
 
     this.socket.on(`init`, (data) => {
       this.NamePlayer1.innerText = data.userName1;
@@ -269,9 +256,8 @@ export default {
     this.board.height = this.board.width * heightRatio;
     this.context = this.board.getContext('2d');
 
-    this.socket.on(`paddle1ToClient`, (data) => {
-      console.log('check');
-    });
+    // this.socket.on(`paddle1ToClient`, (data) => {
+    // });
     // this.socket.on(`getInfoToClient`, (data) => {
     //   this.paddle1.position = data.paddle1.position;
     //   this.paddle2.position = data.paddle2.position;
@@ -289,7 +275,6 @@ export default {
     });
 
     this.socket.on('gameOver', (data) => {
-      console.log('gameOver');
       this.reset();
       this.$router.push('/home');
       // alert('you loose ?');
@@ -305,27 +290,21 @@ export default {
     });
 
     this.socket.on('unknownGame', (data) => {
-      // this.returnGameBtn.style.display = 'block';
-      console.log('unknownGame');
       this.reset();
-      // alert('you loose ?');
     });
 
     this.socket.on('startGame', (data) => {
-      console.log("ISSOU");
       // this.setScreen("game");
       this.startAnimating(60);
     });
 
     this.socket.on('startGameCustom', (data) => {
-      console.log("ISSOUCustm");
       // this.setScreen("game");
       this.startAnimating(60);
     });
 
     this.socket.on('fullGame', (data) => {
       // this.returnGameBtn.style.display = 'block';
-      console.log('fullGame');
       this.reset();
       // alert('you loose ?');
     });
@@ -381,7 +360,6 @@ export default {
     
     if ( this.$route?.params.id )
     {
-      console.log("hello param=> " +  this.$route?.params.id);
       this.socket.emit('InvGame', this.$route?.params.id);
     }
     else

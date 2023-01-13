@@ -99,7 +99,6 @@ export default defineComponent({
                                 styles: { backgroundColor: "#FF0000", color: "#FFFFFF" },
                             }));
                     })
-                    .catch((msg: any) => { console.log(msg) })
             });    
         },
 		async updateAvatar() {
@@ -114,7 +113,6 @@ export default defineComponent({
                                 styles: { backgroundColor: "#FF0000", color: "#FFFFFF" },
                             }));
                     })
-                    .catch((msg: any) => { console.log(msg) })
             });
         },
 		

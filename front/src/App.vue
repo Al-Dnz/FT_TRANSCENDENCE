@@ -39,8 +39,6 @@ export default defineComponent({
 				this.$toast(msg, { styles: { backgroundColor: "#2E9AFE", color: "#FFFFFF" } });
 			})
 			this.$store.state.globalSocket.on('receiveInvitation', (payload: any) => {
-				console.log("MATCH INVITATION =>");
-				console.log(payload);
 				this.handleInvitation(payload);
 			})
 			this.$store.state.globalSocket.on('receiveResponse', (payload: any) => {
@@ -55,7 +53,6 @@ export default defineComponent({
 			immediate: true,
 			deep: true,
 			handler() {
-				console.log('$store.state.globalSocket changed');
 				if (this.$store.state.callbackWatcher != 0)
 				{
 					this.$store.state.globalSocket.on('globalError', (error: any) => {
@@ -65,8 +62,6 @@ export default defineComponent({
 						this.$toast(msg, { styles: { backgroundColor: "#2E9AFE", color: "#FFFFFF" } });
 					})
 					this.$store.state.globalSocket.on('receiveInvitation', (payload: any) => {
-						console.log("MATCH INVITATION from watch=>");
-						console.log(payload);
 						this.handleInvitation(payload);
 					})
 					this.$store.state.globalSocket.on('receiveResponse', (payload: any) => {
@@ -92,7 +87,6 @@ export default defineComponent({
 				this.$router.push('/home/' + payload.gameCode);
 		},
 		handleInvitation(payload: any) {
-			console.log("invitation received");
 			this.senderLogin = payload.sender;
 			this.code = payload.sentPaylod.gamecode;
 			this.Invited();

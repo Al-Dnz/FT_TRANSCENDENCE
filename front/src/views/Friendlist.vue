@@ -94,7 +94,6 @@ export default defineComponent({
 								styles: { backgroundColor: "#FF0000", color: "#FFFFFF" },
 							}));
 					})
-					.catch((msg: any) => { console.log(msg) })
 			})
 		},
 		async fetchData() {
@@ -102,8 +101,6 @@ export default defineComponent({
 			getCredentials().then((accessToken: string) => {
 				const Fapi = new FriendsApi(new Configuration({ accessToken: accessToken }))
 				Fapi.listUsersFriends().then((user: Array<UserOutput>) => {
-					console.log("user of data fetch=>");
-					console.log(user);
 					this.tab = user
 					this.loading = false;
 				})

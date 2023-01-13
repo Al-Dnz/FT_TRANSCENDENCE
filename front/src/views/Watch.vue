@@ -120,7 +120,6 @@
       });
       },
       // newGame() {
-      //   console.log('NIK');
       //   this.socket.emit('newGame');
       //   this.startAnimating(30);
       // },
@@ -141,12 +140,8 @@
         this.setScreen("initial");
       },
       leaveGame() {
-        console.log("FUCK LA VIE");
         this.setScreen("initial");
         this.socket.emit('leaveGame');
-      },
-      test() {
-        console.log('test');
       },
       startAnimating(fps) {
         this.setScreen("game");
@@ -162,8 +157,6 @@
   
         // this.background.imageSrc = require('../assets/game/SpaceBackground.png');
         // this.background.update(this.context);
-        // console.log('this.context', this.context);
-        // console.log('this.background.imageSrc', this.background.imageSrc);
         this.game();
       },
       setScreen(State) {
@@ -214,14 +207,12 @@
         }
       },
       sendInstruction(instruction) {
-        console.log('getInfoToClient');
         this.socket.emit('positionToServer', instruction);
       },
       sendPaddleMove(instruction) {
         this.socket.emit('MovePaddleToServer', instruction);
       },
       getInfo() {
-        console.log('getInfo');
         this.socket.emit('getInfoToServer');
       },
       getSizeToServe() {
@@ -277,15 +268,11 @@
       this.board = document.getElementById('board');
   
       var heightRatio = 0.75;
-      console.log(this.score1);
-      console.log(this.score2);
-      console.log(this.board);
       this.board.height = this.board.width * heightRatio;
       this.context = this.board.getContext('2d');
   
-      this.socket.on(`paddle1ToClient`, (data) => {
-        console.log('check');
-      });
+      // this.socket.on(`paddle1ToClient`, (data) => {
+      // });
       this.socket.on(`getInfoToClient`, (data) => {
         this.paddle1.position = data.paddle1.position;
         this.paddle2.position = data.paddle2.position;
@@ -301,7 +288,6 @@
       });
   
       this.socket.on('gameOver', (data) => {
-        console.log('gameOver');
         this.reset();
         this.$router.push('/spectate');
         // alert('you loose ?');
@@ -322,27 +308,22 @@
   
       this.socket.on('unknownGame', (data) => {
         // this.returnGameBtn.style.display = 'block';
-        console.log('unknownGame');
-        console.log(data);
         this.reset();
         // alert('you loose ?');
       });
   
       this.socket.on('startGame', (data) => {
-        console.log("ISSOU");
         // this.setScreen("game");
         this.startAnimating(30);
       });
   
       this.socket.on('startGameCustom', (data) => {
-        console.log("ISSOUCustm");
         // this.setScreen("game");
         this.startAnimating(30);
       });
   
       this.socket.on('fullGame', (data) => {
         // this.returnGameBtn.style.display = 'block';
-        console.log('fullGame');
         this.reset();
         // alert('you loose ?');
       });this.initialScreen.sty
@@ -397,7 +378,6 @@
         speed: 4,
         framesMax: 10,
       });
-      console.log(this.gameCode);
       this.specGame(this.gameCode);
     },
     components : {

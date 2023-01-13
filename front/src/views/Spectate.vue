@@ -52,7 +52,6 @@ export default defineComponent({
         .then(data => this.tab = data)
         .catch(e => {
           this.$toast(e.message, { styles: { backgroundColor: "#FF0000", color: "#FFFFFF" } });
-          console.log(e);
           this.$router.push("/");
         })
     }
@@ -70,7 +69,6 @@ export default defineComponent({
       this.tab = [];
       // await this.getLiveMatches();
       setTimeout(() => {this.getLiveMatches()}, 1000)
-      console.log("finito game");
     })
   },
   unmounted() {
