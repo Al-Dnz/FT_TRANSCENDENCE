@@ -83,6 +83,8 @@ export default defineComponent({
 			return this.tab.sort((a: UserOutput, b: UserOutput) => a.login.localeCompare(b.login)) // Number(a.friend) - Number(b.friend) ||
 		},
 		async add() {
+			if (this.newfriend.length > 0)
+			{
 			getCredentials().then((accessToken: string) => {
 				const Fapi = new FriendsApi(new Configuration({ accessToken: accessToken }))
 				Fapi.createFriendship({ login: this.newfriend })
@@ -94,7 +96,7 @@ export default defineComponent({
 								styles: { backgroundColor: "#FF0000", color: "#FFFFFF" },
 							}));
 					})
-			})
+			})}
 		},
 		async fetchData() {
 			this.loading = true;

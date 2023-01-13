@@ -64,7 +64,8 @@ export default defineComponent({
 		  return this.tab.sort((a : UserOutput, b : UserOutput) =>  a.login.localeCompare(b.login)) // Number(a.friend) - Number(b.friend) ||
 		  },
 		  async add() {
-			  getCredentials().then((accessToken: string) => {
+			if (this.newblock.length > 0)
+			{getCredentials().then((accessToken: string) => {
 				  const Fapi = new BlockedsApi(new Configuration({accessToken: accessToken}))
 				  Fapi.createBlockedship({login: this.newblock})
 				  	  .then ((user: UserOutput) => { this.tab.push(user) })
@@ -73,7 +74,7 @@ export default defineComponent({
 						  this.$toast(str.message, {
 							styles: { backgroundColor: "#FF0000", color: "#FFFFFF" },
 						  }));})
-			  })
+			  })}
 		},
 		async fetchData()
 		{
