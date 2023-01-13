@@ -21,7 +21,9 @@ export class GameService
 		idPlayers:
 		{
 			player1: 0,
+			userName1: 0,
 			player2: 0,
+			userName2: 0,
 		},
 		canvas:
 		{
