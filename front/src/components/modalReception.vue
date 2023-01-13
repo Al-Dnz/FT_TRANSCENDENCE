@@ -38,9 +38,6 @@ import RadialProgress from "vue3-radial-progress";
             required: true
         }
     },
-    created() {
-        console.log("Modal created")
-    },
     data()
     {
         return{
