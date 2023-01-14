@@ -347,6 +347,7 @@ export class ChannelGateway {
 
 			chan = await this.channelService.findWithUserChan(chan.id);
 			this.server.to(client.id).emit('redirectChan', { channel: chan })
+			this.server.to(receiver.chatSocketId).emit('chatMsg', `${sender.login} wants to talk to you in a direct_message channel`);
 			this.sendAllChan(client);
 		}
 		catch (error) {
