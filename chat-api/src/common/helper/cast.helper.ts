@@ -3,6 +3,11 @@ interface ToNumberOptions {
 	min?: number;
 	max?: number;
   }
+
+  
+  export function replaceSpace(value: string): string {
+	return value.replace(/ /g, "_");
+  }
   
   export function toLowerCase(value: string): string {
 	return value.toLowerCase();
