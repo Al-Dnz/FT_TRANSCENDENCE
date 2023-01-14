@@ -118,12 +118,12 @@ export class ChannelGateway {
 
 
 				await this.channelService.remove(payload.id);
-				this.server.to(client.id).emit('redirectChan', { channel: null })
 				await this.sendAllChan(client);
 				return;
 			}
-
+			
 			this.server.to(client.id).emit('allChanMessagesToClient', sentPayload);
+			this.server.to(client.id).emit('redirectChan', { channel: null })
 			await this.sendAllChan(client);
 			await this.sendChannelUsers(client, payload);
 
