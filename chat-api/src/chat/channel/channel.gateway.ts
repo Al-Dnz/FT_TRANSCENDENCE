@@ -213,7 +213,6 @@ export class ChannelGateway {
 			this.server.to(client.id).emit('allChanMessagesToClient', sentPayload);
 			await this.sendChannelUsers(client, payload);
 			await this.sendAllChan(client);
-			this.server.to(client.id).emit('redirectChan', { channel: channel });
 		} catch (error) {
 			this.server.to(client.id).emit('allChanMessagesToClient', { channelId: payload.id, locked: true, messages: {} });
 			this.server.to(client.id).emit('chatError', error.message);
