@@ -71,7 +71,7 @@ export class ChannelService {
   async findChanWithCreator(id: number) {
     const channel = await this.channelsRepository.find({
       where: { id: id },
-      relations: { creator: true }
+      relations: { creator: true, userChannels: { user: true } }
     })
     if (channel.length == 0)
       throw new HttpException('Channel not found', HttpStatus.NOT_FOUND);

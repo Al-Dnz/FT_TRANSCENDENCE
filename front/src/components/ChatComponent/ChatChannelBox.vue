@@ -60,7 +60,7 @@ export default defineComponent({
       this.protected = false;
     },
     joinChannel(password: string) {
-      this.socket?.emit('joinChannel', {id: this.currentChan?.id, password: password}); 
+      this.socket?.emit('joinChannel', {id: this.currentChan?.id, password: password});
     },
     toggleSettings() {
       this.$emit('toggleSettings');
@@ -72,6 +72,16 @@ export default defineComponent({
     quitChan() {
       this.$emit('quitChan');
     }
+  },
+  created()
+  {
+    this.socket?.on('getCurrentChannel', (payload: any) => {
+      this.$store.dispatch('setCurrentChannel', payload.channel);
+      console.log("DISPATCH CHAN");
+      console.log(this.currentChan);
+      
+      
+    })
   }
 });
 </script>
