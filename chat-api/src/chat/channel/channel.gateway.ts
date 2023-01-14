@@ -498,5 +498,5 @@ export class ChannelGateway {
 			this.server.to(client.id).emit('chatError', error.message);
 		}
 	}
-s
+
 }
