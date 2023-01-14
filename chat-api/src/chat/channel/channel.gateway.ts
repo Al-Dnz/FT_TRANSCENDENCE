@@ -172,7 +172,7 @@ export class ChannelGateway {
 			const token = client.handshake.auth.token;
 			this.userService.checkToken(token);
 			const user = await this.userService.getUserByToken(token);
-			const channel = await this.channelService.findChanWithCreator(payload.id)
+			let channel = await this.channelService.findChanWithCreator(payload.id)
 
 			if (channel.type == ChannelType.direct && (channel.userOne.login != user.login && channel.userTwo.login != user.login))
 			{
@@ -211,6 +211,9 @@ export class ChannelGateway {
 			}
 
 			this.server.to(client.id).emit('allChanMessagesToClient', sentPayload);
+			channel = await this.channelService.findChanWithCreator(payload.id)
+			this.server.to(client.id).emit('getCurrentChannel', {channel: channel});
+
 			await this.sendChannelUsers(client, payload);
 			await this.sendAllChan(client);
 		} catch (error) {
