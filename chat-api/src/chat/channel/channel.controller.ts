@@ -2,7 +2,6 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, ValidationPipe } fro
 import { ChannelService } from './channel.service';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { JoinChannelDto } from './dto/join-channel.dto';
-
 import { HttpException } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common';
 import { DirectMessageDtoControllerVersion } from './dto/direct-message.dto';
@@ -11,8 +10,6 @@ import { UserChannelService } from '../user-channel/user-channel.service';
 import { CreateUserChannelDto } from '../user-channel/dto/create-user-channel.dto';
 import { UserChannelRole } from 'db-interface/Core';
 import { BlockerBlockedService } from '../blocker-blocked/blocker-blocked.service';
-
-// import * as bcrypt from 'bcrypt';
 
 @Controller('channel')
 export class ChannelController {
@@ -23,10 +20,10 @@ export class ChannelController {
 
   ) { }
 
-  @Post()
-  create(@Body() createChannelDto: CreateChannelDto) {
-    return this.channelService.create(createChannelDto);
-  }
+  // @Post()
+  // create(@Body() createChannelDto: CreateChannelDto) {
+  //   return this.channelService.create(createChannelDto);
+  // }
 
   // @Get()
   // async getMessageWithBody(@Body() body: JoinChannelDto) 
@@ -34,36 +31,35 @@ export class ChannelController {
   //   return this.channelService.findMessagesWithPassword(body);
   // }
 
-  @Get()
-  async getAllChannels() {
-    // return this.channelService.findMessagesWithPassword(body);
-    return this.channelService.findAll();
-  }
+  // @Get()
+  // async getAllChannels() {
+  //   // return this.channelService.findMessagesWithPassword(body);
+  //   return this.channelService.findAll();
+  // }
 
-  @Get(':id')
-  async findOne(@Param('id') id: string) {
-    const chan = this.channelService.findOne(+id);
-    if (chan)
-      return chan
-  }
+  // @Get(':id')
+  // async findOne(@Param('id') id: string) {
+  //   const chan = this.channelService.findOne(+id);
+  //   if (chan)
+  //     return chan
+  // }
 
-  @Get(':id/messages')
-  async getMessages(@Param('id') id: string) {
-
-    return this.channelService.findMessages(+id);
-  }
+  // @Get(':id/messages')
+  // async getMessages(@Param('id') id: string) {
+  //   return this.channelService.findMessages(+id);
+  // }
 
   // @Patch(':id')
   // update(@Param('id') id: string, @Body() updateChannelDto: UpdateChannelDto) {
   //   return this.channelService.update(+id, updateChannelDto);
   // }
 
-  @Delete(':id')
-  async remove(@Param('id') id: string) {
-    const chan = this.channelService.findOne(+id);
-    if (chan)
-      return this.channelService.remove(+id);
-  }
+  // @Delete(':id')
+  // async remove(@Param('id') id: string) {
+  //   const chan = this.channelService.findOne(+id);
+  //   if (chan)
+  //     return this.channelService.remove(+id);
+  // }
 
 
   @Post('direct_message')

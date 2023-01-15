@@ -243,6 +243,11 @@ export class GameGateway
 			if (!gameCode) {
 				return;
 			}
+			if (this.clientRooms[user.login] || this.clientRoomsCustom[user.login]) {
+				//ici
+				this.matchService.removeByGameCode(gameCode);
+				return;
+			}
 
 			const match = await this.matchService.findByGameCode(gameCode);
 			await this.matchService.updateMatchStatus(match, MatchStatus.live);
@@ -434,7 +439,7 @@ export class GameGateway
 			client.emit('gameCode', roomName);
 
 			// create match in db
-			const match = await this.matchService.create(user, roomName, false);
+			const match = await this.matchService.create(user, roomName, true);
 			this.updateStatus(user.login, UserStatus.in_game);
 
 			this.stateCustom[roomName] = new GameService(this.matchService);
