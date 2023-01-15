@@ -3,7 +3,7 @@
   <body class="bg-gray-900 text-white flex flex-col h-screen">
     <header class="border-b border-gray-800 shadow">
       <div class="p-4 mx-6 flex flex-1 flex-row items-center justify-center">
-        <span class="text-sm font-bold self-center mt-2">PONG</span>
+        <span class="text-sm font-bold self-center mt-2">FT_TRANSCENDENCE</span>
       </div>
     </header>
     <div class="grid place-items-center h-screen">
@@ -11,9 +11,8 @@
         <div class="max-w-screen-xl w-full xl:w-2/3 min-w-full md:min-w-0">
           <div class="mt-8 flex justify-center">
             <div class="w-full md:w-2/4 p-4">
-              <div class="text-center">
-                <h1 class="text-lg font-bold">Welcome to the amazing PONGEU</h1>
-                <h1 class="text-sm">CLICKEZ</h1>
+              <div class="flex justify-center mt-4">
+                <h1 class="font-bold">Welcome</h1>
               </div>
               <div class="flex justify-center mt-4">
                 <a
