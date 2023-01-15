@@ -1,6 +1,6 @@
 <template>
-  <div className="absolute flex justify-center h-full w-full">
-    <div id="background_game" style="width: 100%">
+  <div id="background_game" className="absolute flex justify-center h-full w-full overflow-auto">
+    <div style="width: 100%; height: 100%">
     <div id="app" class="container" style="width: 100%; justify-content: center;"></div>
     <div id="initialScreen" style="display: none;">
         <div style="margin: 0%; width: 100%; justify-content: center; align-items: center; flex-direction: column; position: relative; display: flex;">

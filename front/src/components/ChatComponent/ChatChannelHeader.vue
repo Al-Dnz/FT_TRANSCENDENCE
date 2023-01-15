@@ -5,7 +5,7 @@
         <img :src="getImgUrl('Hashtag.png')" class="rounded-full" />
       </div>
       <h1 class="text-3xl font-bold">{{ currentChan?.name }}</h1>
-      <p class="mt-3">This is the start of the #{{ currentChan?.name }} channel.</p>
+      <p class="mt-3">Channel type: {{ getType }}</p>
       <div class="w-full flex mt-2 mb-2">
         <button @click="quitChannel()" class="pl-1 pr-1 rounded-lg border-2 border-slate-600 hover:text-red-500
         hover:border-red-500">Quit channel</button>
@@ -75,6 +75,11 @@ export default defineComponent({
       return (true);
     return (false);
     }
+  },
+  computed: {
+    getType() {
+      return (this.currentChan?.type);
+    },
   },
 });
 </script>
