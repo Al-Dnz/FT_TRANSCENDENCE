@@ -3,7 +3,7 @@
         <div className="flex flex-col justify-end pb-5 pt-5 overflow-hidden">
                 <img src="@/assets/crying.gif" className="object-scale-down h-44 w-44 rounded-xl">
         </div>
-        <p>Oh no! An error as occured :</p>
+        <p>Oh no!</p>
         <p>{{str}}</p>
     </div>
 </template>
