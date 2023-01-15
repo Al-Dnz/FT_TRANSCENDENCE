@@ -65,7 +65,8 @@ export class MatchService {
 	async updateFinishedGame2(gameCode: string, idPlayers: any, score: any): Promise<Match> {
 		const match = await this.matchesRepository.findOneBy({ gameCode: gameCode })
 		if (!match)
-			throw new HttpException('Match not found', HttpStatus.NOT_FOUND);
+			return;
+			// throw new HttpException('Match not found', HttpStatus.NOT_FOUND);
 		if (idPlayers.player1 == match.playerOne.login)
 		{
 			match.score1 = score.player1;
