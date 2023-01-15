@@ -290,6 +290,10 @@ export class GameGateway
 			const user = await this.userService.getUserByToken(token);
 
 			let gameCode = "";
+			if (this.clientRooms[user.login] || this.clientRoomsCustom[user.login]) {
+				this.handleReconnectGame(client);
+				return;
+			}
 			if (!this.clientRooms[user.login]) {
 				if (!this.openRooms.length) {
 					this.handleNewGame(client);
@@ -456,6 +460,10 @@ export class GameGateway
 			const user = await this.userService.getUserByToken(token);
 
 			let gameCode = "";
+			if (this.clientRooms[user.login] || this.clientRoomsCustom[user.login]) {
+				this.handleReconnectGame(client);
+				return;
+			}
 			if (!this.clientRoomsCustom[user.login]) {
 				if (!this.openRoomsCustom.length) {
 					this.handleNewGameCustom(client);
