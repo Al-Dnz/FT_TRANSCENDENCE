@@ -92,7 +92,7 @@ export class UserService {
     let friends: User[] = user.friends.slice(query.onset, query.length);
     if (query.search) {
       return friends.filter((value: User) =>
-        value.userName.includes(query.search) ? value : undefined,
+        value.login.includes(query.search) ? value : undefined,
       );
     }
     return friends;

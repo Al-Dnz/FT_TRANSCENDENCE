@@ -37,6 +37,8 @@ export default defineComponent({
   {
     handleChanConnection(payload: any)
     {
+      if (payload.channelId != this.currentChan?.id)
+        return;
       this.locked =  payload.locked;
       if (this.locked === false)
         this.$emit('isValidated');
