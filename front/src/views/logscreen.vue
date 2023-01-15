@@ -12,7 +12,7 @@
           <div class="mt-8 flex justify-center">
             <div class="w-full md:w-2/4 p-4">
               <div class="flex justify-center mt-4">
-                <h1 class=" font-bold">Welcome</h1>
+                <h1 class="font-bold">Welcome</h1>
               </div>
               <div class="flex justify-center mt-4">
                 <a
