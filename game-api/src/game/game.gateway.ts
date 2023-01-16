@@ -586,6 +586,8 @@ export class GameGateway
 			this.userService.checkToken(token);
 			const user = await this.userService.getUserByToken(token);
 
+			let tmp = this.clientRooms[user.login];
+			let tmpCustom = this.clientRoomsCustom[user.login];
 			if (this.clientRooms[user.login]) {
 				if (this.state[this.clientRooms[user.login]].game_data.idPlayers.player1 != user.login && this.state[this.clientRooms[user.login]].game_data.idPlayers.player2 != user.login) {
 					delete this.clientRooms[user.login];
@@ -596,8 +598,7 @@ export class GameGateway
 				}
 			}
 
-			if (this.state[this.clientRooms[user.login]] && this.state[this.clientRooms[user.login]].game_data.gameState === 'off') {
-				let tmp = this.clientRooms[user.login]; // tmp = gamecode;
+			if (this.state[this.clientRooms[user.login]] && this.state[this.clientRooms[user.login]].game_data.gameState === 'off' && tmp) {
 				this.clientRooms[this.state[tmp].game_data.idPlayers.player1] = null;
 				delete this.clientRooms[this.state[tmp].game_data.idPlayers.player1];
 				this.state[tmp] = null;
@@ -609,8 +610,7 @@ export class GameGateway
 				// remove empty deleted match
 				this.matchService.removeByGameCode(tmp);
 				this.updateStatus(user.login, UserStatus.online);
-			} else if (this.stateCustom[this.clientRoomsCustom[user.login]] && this.stateCustom[this.clientRoomsCustom[user.login]].game_data.gameState === 'off') {
-				let tmp = this.clientRoomsCustom[user.login]; // tmp = gamecode;
+			} else if (this.stateCustom[this.clientRoomsCustom[user.login]] && this.stateCustom[this.clientRoomsCustom[user.login]].game_data.gameState === 'off' && tmpCustom) {
 				this.clientRoomsCustom[this.stateCustom[tmp].game_data.idPlayers.player1] = null;
 				delete this.clientRoomsCustom[this.stateCustom[tmp].game_data.idPlayers.player1];
 				this.stateCustom[tmp] = null;
