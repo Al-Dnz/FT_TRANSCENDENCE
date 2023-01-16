@@ -573,11 +573,11 @@ export class GameGateway
 			const user = await this.userService.getUserByToken(token);
 			this.userService.updateUserSocket(user, client.id);
 			if (this.clientRooms[user.login]) {
-				if (this.state[this.clientRooms[user.login]].idPlayers.player1 == user.login || this.state[this.clientRooms[user.login]].idPlayers.player2 == user.login) {
+				if (!this.state[this.clientRooms[user.login]] || (this.state[this.clientRooms[user.login]].idPlayers.player1 != user.login && this.state[this.clientRooms[user.login]].idPlayers.player2 != user.login)) {
 					delete	this.clientRooms[user.login];
 				}
 			} else if (this.clientRoomsCustom[user.login]) {
-				if (this.stateCustom[this.clientRoomsCustom[user.login]].idPlayers.player1 == user.login || this.stateCustom[this.clientRoomsCustom[user.login]].idPlayers.player2 == user.login) {
+				if (!this.stateCustom[this.clientRoomsCustom[user.login]] || (this.stateCustom[this.clientRoomsCustom[user.login]].idPlayers.player1 != user.login && this.stateCustom[this.clientRoomsCustom[user.login]].idPlayers.player2 != user.login)) {
 					delete	this.clientRoomsCustom[user.login];
 				}
 			}
