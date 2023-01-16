@@ -466,6 +466,7 @@ export class GameGateway
 
 			let gameCode = "";
 			if (this.clientRooms[user.login] || this.clientRoomsCustom[user.login]) {
+				client.emit('gameOver');
 				this.handleReconnectGame(client);
 				return;
 			}
@@ -571,6 +572,15 @@ export class GameGateway
 			this.userService.checkToken(token);
 			const user = await this.userService.getUserByToken(token);
 			this.userService.updateUserSocket(user, client.id);
+			if (this.clientRooms[user.login]) {
+				if (this.state[this.clientRooms[user.login]].idPlayers.player1 == user.login || this.state[this.clientRooms[user.login]].idPlayers.player2 == user.login) {
+					delete	this.clientRooms[user.login];
+				}
+			} else if (this.clientRoomsCustom[user.login]) {
+				if (this.stateCustom[this.clientRoomsCustom[user.login]].idPlayers.player1 == user.login || this.stateCustom[this.clientRoomsCustom[user.login]].idPlayers.player2 == user.login) {
+					delete	this.clientRoomsCustom[user.login];
+				}
+			}
 			this.logger.log(`User: ${user.login} is connected to game with socket ${client.id}`);
 		}
 		catch (error) {
