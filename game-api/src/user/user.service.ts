@@ -60,6 +60,6 @@ export class UserService {
 	async updateUserStatus(user: User, status: UserStatus)
 	{
 		user.status = status;
-		this.usersRepository.save(user);
+		await this.usersRepository.save(user);
 	}
 }

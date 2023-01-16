@@ -564,6 +564,8 @@ export class GameGateway
 	///-------------------connection----------------------------------------------------
 
 	async handleConnection(client: Socket, ...args: any[]) {
+		console.log(this.clientRooms);
+		console.log(this.clientRoomsCustom);
 		try {
 			const token = client.handshake.auth.token;
 			this.userService.checkToken(token);
@@ -581,6 +583,8 @@ export class GameGateway
 	}
 
 	async handleDisconnect(client: Socket, ...args: any[]) {
+		console.log(this.clientRooms);
+		console.log(this.clientRoomsCustom);
 		try {
 			const token = client.handshake.auth.token;
 			this.userService.checkToken(token);
