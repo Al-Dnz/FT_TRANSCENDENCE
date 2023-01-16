@@ -296,6 +296,7 @@ export class GameGateway
 
 			let gameCode = "";
 			if (this.clientRooms[user.login] || this.clientRoomsCustom[user.login]) {
+				client.emit('gameOver');
 				this.handleReconnectGame(client);
 				return;
 			}
@@ -396,6 +397,12 @@ export class GameGateway
 					if (this.clientRooms[this.state[gameCode].game_data.idPlayers.player2]) {
 						this.clientRooms[this.state[gameCode].game_data.idPlayers.player2] = null;
 						delete this.clientRooms[this.state[gameCode].game_data.idPlayers.player2];
+					}
+
+					for (let login in this.clientRooms)
+					{
+						if (this.clientRooms[login] === gameCode)
+							delete this.clientRooms[login];
 					}
 
 					this.matchService.updateFinishedGame2(gameCode, state.game_data.idPlayers, state.game_data.score);
@@ -540,6 +547,12 @@ export class GameGateway
 						delete this.clientRoomsCustom[this.stateCustom[gameCode].game_data.idPlayers.player2];
 					}
 
+					for (let login in this.clientRoomsCustom)
+					{
+						if (this.clientRoomsCustom[login] === gameCode)
+							delete this.clientRoomsCustom[login];
+					}
+
 					this.matchService.updateFinishedGame2(gameCode, state.game_data.idPlayers, state.game_data.score);
 
 					const login1 = this.stateCustom[gameCode].game_data.idPlayers.player1;
@@ -570,8 +583,6 @@ export class GameGateway
 	///-------------------connection----------------------------------------------------
 
 	async handleConnection(client: Socket, ...args: any[]) {
-		console.log(this.clientRooms);
-		console.log(this.clientRoomsCustom);
 		try {
 			const token = client.handshake.auth.token;
 			this.userService.checkToken(token);
@@ -589,17 +600,25 @@ export class GameGateway
 	}
 
 	async handleDisconnect(client: Socket, ...args: any[]) {
-		console.log(this.clientRooms);
-		console.log(this.clientRoomsCustom);
+		
+		
+		// console.log("[clientRoom]",this.clientRooms);
+		// console.log("[clientRoomCustom]",this.clientRoomsCustom);
+		// console.log("[state]",this.state)
+		// console.log("[stateCustom]", this.stateCustom)
 		try {
 			const token = client.handshake.auth.token;
 			this.userService.checkToken(token);
 			const user = await this.userService.getUserByToken(token);
 
-			let tmp = this.clientRooms[user.login];
-			let tmpCustom = this.clientRoomsCustom[user.login];
+			if (this.clientRoomsCustom[user.login])
+				var tmpCustom = this.clientRoomsCustom[user.login];
+			if (this.clientRooms[user.login])
+				var tmp = this.clientRooms[user.login];
+						
 
-			if (this.state[tmp] && this.state[tmp].game_data.gameState === 'off' && tmp) {
+			
+			if (tmp && this.state[tmp] && this.state[tmp].game_data.gameState === 'off') {
 				this.clientRooms[this.state[tmp].game_data.idPlayers.player1] = null;
 				delete this.clientRooms[this.state[tmp].game_data.idPlayers.player1];
 				this.state[tmp] = null;
@@ -611,19 +630,22 @@ export class GameGateway
 				// remove empty deleted match
 				this.matchService.removeByGameCode(tmp);
 				this.updateStatus(user.login, UserStatus.online);
-			} else if (this.stateCustom[tmpCustom] && this.stateCustom[tmpCustom].game_data.gameState === 'off' && tmpCustom) {
-				this.clientRoomsCustom[this.stateCustom[tmp].game_data.idPlayers.player1] = null;
-				delete this.clientRoomsCustom[this.stateCustom[tmp].game_data.idPlayers.player1];
-				this.stateCustom[tmp] = null;
-				delete this.stateCustom[tmp];
-				const index = this.openRoomsCustom.indexOf(tmp);
+			}
+			else if (tmpCustom && this.stateCustom[tmpCustom] && this.stateCustom[tmpCustom].game_data.gameState === 'off' ) {
+				
+				this.clientRoomsCustom[this.stateCustom[tmpCustom].game_data.idPlayers.player1] = null;
+				delete this.clientRoomsCustom[this.stateCustom[tmpCustom].game_data.idPlayers.player1];
+				this.stateCustom[tmpCustom] = null;
+				delete this.stateCustom[tmpCustom];
+				const index = this.openRoomsCustom.indexOf(tmpCustom);
 				if (index > -1) { // only splice array when item is found
 					this.openRoomsCustom.splice(index, 1); // 2nd parameter means remove one item only
 				}
 				// remove empty deleted match
-				this.matchService.removeByGameCode(tmp);
+				this.matchService.removeByGameCode(tmpCustom);
 				this.updateStatus(user.login, UserStatus.online);
 			}
+			
 			if (this.clientRooms[user.login]) {
 				if (this.state[this.clientRooms[user.login]].game_data.idPlayers.player1 != user.login && this.state[this.clientRooms[user.login]].game_data.idPlayers.player2 != user.login) {
 					delete this.clientRooms[user.login];
