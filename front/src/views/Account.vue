@@ -1,6 +1,6 @@
 <template>
-  <div v-if="finished" className="flex flex-row justify-center w-full h-full ">
-    <div className="flex flex-col justify-between w-full h-full bg-slate-200 lg:w-3/4 rounded-2xl">
+  <div v-if="finished" className="flex flex-row justify-center object-center items-center w-full h-full ">
+    <div className="flex flex-col justify-between object-center items-center w-full h-full bg-slate-200 lg:w-3/4 rounded-2xl">
       <div className="w-full h-friendbox">
         <div className="w-full h-full flex flex-col justify-center">
           <div
@@ -12,10 +12,10 @@
           </div>
         </div>
       </div>
-      <div className="center-x h-2/6">
+      <div className="w-44 h-44 mb-4 hidden lg:block">
         <img :src="obj?.actualAvatar.path" className="h-44 w-44 rounded-xl" />
       </div>
-      <div className="  w-full flex justify-center items-center ">
+      <div className="w-full flex justify-center items-center ">
         <div className="bg-slate-300 w-3/4 flex flex-col justify-start items-center overflow-auto rounded-2xl">
           <span className="center-x">{{ obj?.username }}</span>
           <span className="center-x">Elo: {{ obj?.stats.level }}</span>
