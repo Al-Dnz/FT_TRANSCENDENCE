@@ -216,6 +216,10 @@ export class GameGateway
 				client.emit('unknownGame');
 				return;
 			}
+			if (this.clientRooms[user.login] || this.clientRoomsCustom[user.login]) {
+				client.emit('alreadyingame');
+				return;
+			}
 			if (this.state[gameCode]) {
 				this.clientRooms[user.login] = gameCode;
 				client.join(gameCode);

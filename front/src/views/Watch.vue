@@ -292,6 +292,12 @@
         this.$router.push('/spectate');
         // alert('you loose ?');
       });
+      this.socket.on('alreadyingame', (data) => {
+        this.$toast("You are already in a game", {styles: { backgroundColor: "#FF0000", color: "#FFFFFF" },});
+        this.reset();
+        this.$router.push('/spectate');
+        // alert('you loose ?');
+      });
   
       this.socket.on('getSizeToClient', (data) => {
         this.paddle1.width = data.paddle1.width;
