@@ -86,6 +86,7 @@ export default defineComponent({
 						const error = (data && data.message) || response.statusText;
 						return Promise.reject(error);
 					}
+					this.$store.state.globalSocket.emit('preventUser', {msg: null, login: this.obj?.login});
 					this.$store.dispatch('setCurrentChannel', data);
 					this.$router.push('/chat');
 				})
