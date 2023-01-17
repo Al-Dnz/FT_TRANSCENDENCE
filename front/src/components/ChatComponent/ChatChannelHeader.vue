@@ -1,12 +1,14 @@
 <template>
   <div class="h-full w-full flex flex-row">
     <div class="h-full w-full flex flex-col pt-2 pl-4 pr-4">
-      <div class="h-16 w-16">
-        <img :src="getImgUrl('Hashtag.png')" class="rounded-full" />
+      <div class="mt-12 flex flex-row">
+        <div class="h-12 w-12">
+          <img :src="getImgUrl('Hashtag.png')" class="rounded-full" />
+        </div>
+        <h1 v-if="currentChan?.type === 'direct'" class="mt-2 text-3xl font-bold">{{ currentChan?.name.substring(1, currentChan?.name.length) }}</h1>
+        <h1 v-else class="mt-2 text-3xl font-bold">{{ currentChan?.name }}</h1>
       </div>
-      <h1 class="text-3xl font-bold">{{ currentChan?.name }}</h1>
-      <p class="mt-3">Channel type: {{ getType }}</p>
-      <div class="w-full flex mt-2 mb-2">
+      <div class="w-full flex mt-12 mb-2">
         <button @click="quitChannel()" class="pl-1 pr-1 rounded-lg border-2 border-slate-600 hover:text-red-500
         hover:border-red-500">Quit channel</button>
         <div v-if="isAdmin()" class="w-10 h-10 ml-16
@@ -75,11 +77,6 @@ export default defineComponent({
       return (true);
     return (false);
     }
-  },
-  computed: {
-    getType() {
-      return (this.currentChan?.type);
-    },
   },
 });
 </script>
