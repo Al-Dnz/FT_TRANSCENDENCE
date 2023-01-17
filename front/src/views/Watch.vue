@@ -293,9 +293,9 @@
         // alert('you loose ?');
       });
       this.socket.on('alreadyingame', (data) => {
-        this.$toast("You are already in a game", {styles: { backgroundColor: "#FF0000", color: "#FFFFFF" },});
+        this.$toast("Finish your match if you want to watch others", {styles: { backgroundColor: "#FF0000", color: "#FFFFFF" },});
         this.reset();
-        this.$router.push('/spectate');
+        this.$router.push('/home');
         // alert('you loose ?');
       });
   
