@@ -9,7 +9,8 @@
 		</div>
 		<div className='flex flex-col justify-center overflow-hidden w-1/3 lg:w-1/5'>
 			<span className="center-x"> {{ displayDate(obj.createdAt) }} </span>
-			<span className="font-bold center-x">{{ obj.score1 }} - {{ obj.score2 }}</span>
+			<span className="font-bold center-x" v-if="obj.custom">🧨{{ obj.score1 }} - {{ obj.score2 }}🧨</span>
+			<span className="font-bold center-x" v-else>{{ obj.score1 }} - {{ obj.score2 }}</span>
 		</div>
 		<div className="flex flex-col justify-center overflow-hidden w-1/3 lg:w-1/5">
 			<span className="font-bold center-x">{{ obj.playerTwo.userName }} </span>
