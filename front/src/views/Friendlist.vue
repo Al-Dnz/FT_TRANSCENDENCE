@@ -77,7 +77,8 @@ export default defineComponent({
 		deleteFriend(login: string)
 		{
 			let index = this.tab.findIndex((e) => e.login == login);
-			this.tab.splice(index, 1);
+			if (index != -1)
+				this.tab.splice(index, 1);
 		},
 		sortedTab(): Array<UserOutput> {
 			return this.tab.sort((a: UserOutput, b: UserOutput) => a.login.localeCompare(b.login)) // Number(a.friend) - Number(b.friend) ||
