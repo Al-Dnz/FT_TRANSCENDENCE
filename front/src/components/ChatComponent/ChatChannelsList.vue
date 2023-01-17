@@ -1,15 +1,17 @@
 <template>
   <div class="h-full w-full pl-2 pr-2 divide-y-2 overflow-auto">
     <div>
-      <h1 class="mt-3 font-semibold">DIRECT MESSAGES</h1>
-      <div class="h-12 w-full mt-3">
-        <div class="w-10 h-10
-        bg-slate-50 border-4 hover:bg-green-600
-        text-gray-500 hover:text-white
-        hover:rounded-xl rounded-3xl
-        transition-all duration-300 ease-linear
-        cursor-pointer shadow-lg">
-          <PlusIcon @click="showDMForm()" />
+      <div class="flex flex-row">
+        <h1 class="mt-5 font-semibold">DIRECT MESSAGES</h1>
+        <div class="h-12 mt-3 ml-2">
+          <div class="w-10 h-10
+          bg-slate-50 border-4 hover:bg-green-600
+          text-gray-500 hover:text-white
+          hover:rounded-xl rounded-3xl
+          transition-all duration-300 ease-linear
+          cursor-pointer shadow-lg">
+            <PlusIcon @click="showDMForm()" />
+          </div>
         </div>
       </div>
       <div class="mt-1 mb-1">
@@ -26,17 +28,19 @@
       </div>
     </div>
     <div>
-      <h1 class="mt-3 font-semibold">CHANNELS</h1>
-      <div class="h-12 w-full mt-3">
-        <div class="w-10 h-10
-        bg-slate-50 border-4 hover:bg-green-600
-        text-gray-500 hover:text-white
-        hover:rounded-xl rounded-3xl
-        transition-all duration-300 ease-linear
-        cursor-pointer shadow-lg">
-          <PlusIcon @click="showChanForm()" />
+      <div class="flex flex-row">
+        <h1 class="mt-5 font-semibold">CHANNELS</h1>
+        <div class="h-12 mt-3 ml-2">
+          <div class="w-10 h-10
+          bg-slate-50 border-4 hover:bg-green-600
+          text-gray-500 hover:text-white
+          hover:rounded-xl rounded-3xl
+          transition-all duration-300 ease-linear
+          cursor-pointer shadow-lg">
+            <PlusIcon @click="showChanForm()" />
+          </div>
         </div>
-      </div>
+      </div>  
       <h1 class="mt-3 font-semibold">MY CHANNELS</h1>
       <div class="mt-1">
         <ul class="list-none">
