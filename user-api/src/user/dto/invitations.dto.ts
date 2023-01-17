@@ -1,6 +1,5 @@
 import { IsBoolean, IsEnum, IsOptional, ValidateNested, Length, IsString } from 'class-validator';
 import { Type } from 'class-transformer';
-import { MapID, PaddleID } from 'db-interface/Core';
 
 export class ReceiveInvitationsDto {
     @IsString()
@@ -12,7 +11,6 @@ export class ReceiveInvitationsDto {
     gameCode: string;
 
 }
-
 
 export class ResponseInvitationsDto {
     @IsString()
