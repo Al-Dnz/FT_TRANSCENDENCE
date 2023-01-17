@@ -9,6 +9,11 @@
               placeholder="Search an other player !" autocomplete="off" aria-label="Search an other player !"
               className="rounded-2xl px-3 placeholder-slate-500 text-slate-500 focus-within:border-green-500 focus-within:outline-none border-2 border-slate-500 w-1/2" />
             <MagnifyingGlassCircleIcon @click="search()" className="" />
+            <div v-if="!error && me?.login !== obj?.login" className="icon w-12 mt-1 mb-1 mx-2">
+				      <div className="w-1/2">
+					      <UserPlusIcon @click="add()"/>
+				      </div>
+			      </div>
           </div>
         </div>
       </div>
@@ -16,9 +21,10 @@
         <loadingPage />
       </div>
       <div v-else-if="obj" className="flex flex-col justify-center items-center w-full h-full ">
-        <div className="center-x h-2/6">
+        <div className="w-44 h-44 mb-4 hidden lg:block">
           <img :src="obj?.actualAvatar.path" className="h-44 w-44 rounded-xl" />
         </div>
+        <div className="bg-slate-300 w-3/4 flex flex-col justify-start items-center overflow-auto rounded-2xl">
         <span className="center-x">{{ obj?.username }}</span>
         <span className="center-x">Elo :{{ obj?.stats.level }}</span>
         <div className="flex flex-row justify-center w-full">
@@ -26,11 +32,12 @@
           <div className="w-1/4"> </div>
           <span>Looses : {{ obj?.stats.defeats }} </span>
         </div>
+      </div>
         <div className=" h-3/5 w-full flex justify-center items-center">
           <div className="bg-slate-300 w-3/4 h-5/6 flex flex-col justify-start items-center overflow-auto rounded-2xl">
             <div v-if="matches.length == 0" className="flex flex-col justify-start items-center w-full h-full overflow-hidden">
               <img src="@/assets/nogame.gif" className="object-scale-down h-44 w-44 rounded-xl"/>
-              <span className="text-slate-500 text-2xl pt-4" >No game played yet</span>
+              <span className="text-slate-500 text-2xl pt-4 pb-4" >No game played yet</span>
             </div>
             <div v-else v-for="(item, index) in this.matches" v-bind:key="index" className="h-24 w-5/6 pt-3">
               <history-box :obj=item :index="index" :results="win(item)" />
@@ -46,13 +53,14 @@
 </template>
   
 <script lang="ts">
-import { UsersApi, Configuration, UserOutput, ErrorOutput, ResponseError } from '@/api';
+import { UsersApi,FriendsApi, Configuration, UserOutput, ErrorOutput, ResponseError } from '@/api';
 import { getCredentials } from "@/frontJS/cookies";
 import errorPage from "@/components/Error.vue";
 import loadingPage from "@/components/Loading.vue"
 
 interface UserData {
   obj?: UserOutput;
+  me?: UserOutput;
   loading: boolean;
   newSearch: string;
   error: string;
@@ -67,6 +75,7 @@ export default defineComponent({
   data(): UserData {
     return {
       obj: undefined,
+      me: undefined,
       loading: false,
       newSearch: '',
       error: '',
@@ -89,6 +98,9 @@ export default defineComponent({
             .then(() => this.getMatchesHistory(this.obj?.login))
             .catch((msg: ResponseError) => { msg.response.json().then((str: ErrorOutput) => { this.error = str.message; }); }
             )
+          userAPI.getUserMe().then((user: UserOutput) => {
+            this.me = user
+          })
         })
       this.loading = false;
     },
@@ -131,7 +143,21 @@ export default defineComponent({
         else
           return false;
       }
-    }
+    },
+    async add() {
+			getCredentials().then((accessToken: string) => {
+				const Fapi = new FriendsApi(new Configuration({ accessToken: accessToken }))
+				Fapi.createFriendship({ login: this.$route?.params.id as string })
+          .then(()=>{this.$toast("+1 Friend !", {
+             styles: { backgroundColor: "#16b918", color: "#FFFFFF" }, 
+							})})
+					.catch((msg: ResponseError) => {
+						msg.response.json().then((str: ErrorOutput) =>
+							this.$toast(str.message, {
+								styles: { backgroundColor: "#FF0000", color: "#FFFFFF" },
+							}));
+					})
+			})}
   },
   components:
   {
