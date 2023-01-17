@@ -8,6 +8,7 @@
 			<span className="center-x">Elo: {{obj?.playerOne.stats.level}} </span>
 		</div>
 		<div className="flex flex-col justify-center overflow-hidden w-24 lg:w-64">
+			<span className="center-x" v-if="obj?.custom">🧨 [CUSTOM] 🧨</span>
 			<span className="center-x">VS</span>
 		</div>	
 		<div className="flex flex-col justify-center overflow-hidden w-24 lg:w-64">
