@@ -9,7 +9,7 @@
         <h1 class="mt-4 text-3xl font-semibold">New Direct Message</h1>
     <div class="w-fit mt-4">
       <input type="text" v-model="newUser" name="User"
-      placeholder="Choose a user" autocomplete="off"
+      placeholder="Choose a user" autocomplete="off" maxlength="16"
       class="w-full rounded-2xl px-3 placeholder-slate-500 text-slate-500
       focus-within:border-green-500 focus-within:outline-none border-2 border-slate-500" @keyup.enter="createChannel()" />
     </div>
