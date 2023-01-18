@@ -77,10 +77,6 @@ export default defineComponent({
   {
     this.socket?.on('getCurrentChannel', (payload: any) => {
       this.$store.dispatch('setCurrentChannel', payload.channel);
-      console.log("DISPATCH CHAN");
-      console.log(this.currentChan);
-      
-      
     })
   }
 });

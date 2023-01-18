@@ -59,9 +59,6 @@ data() {
       formInvalid: false,
     };
   },
-created() {
-    console.log("Created")
-},
 methods : {
     createChannel() {
       if (this.validateInput()) {
