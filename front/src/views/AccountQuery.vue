@@ -25,18 +25,22 @@
           <img :src="obj?.actualAvatar.path" className="h-44 w-44 rounded-xl" />
         </div>
         <div className="bg-slate-300 w-3/4 flex flex-col justify-start items-center overflow-auto rounded-2xl h-40">
+        <div className="h-full w-full flex flex-col justify-center">
+        <div>
           <p className="text-3xl font-bold center-x">{{ obj?.username }}</p>
           <span v-if="obj?.username != obj?.login" className="center-x">({{ obj?.login }})</span>
           <br>
-        <span className="center-x">Elo :{{ obj?.stats.level }}</span>
-        <div className="flex flex-row justify-center w-full">
-          <span>Win : {{ obj?.stats.victories }} </span>
-          <div className="w-1/4"> </div>
-          <span>Looses : {{ obj?.stats.defeats }} </span>
+          <span className="center-x">Elo :{{ obj?.stats.level }}</span>
+          <div className="flex flex-row justify-center w-full">
+            <span>Win : {{ obj?.stats.victories }} </span>
+            <div className="w-1/4"> </div>
+            <span>Looses : {{ obj?.stats.defeats }} </span>
+          </div>
+        </div>
         </div>
       </div>
-        <div className=" h-3/5 w-full flex justify-center items-center">
-          <div className="bg-slate-300 w-3/4 h-5/6 flex flex-col justify-start items-center overflow-auto rounded-2xl">
+        <div className="h-3/5 w-full flex justify-center">
+          <div className="top-0 mt-4 bg-slate-300 w-3/4 h-5/6 flex flex-col justify-start items-center overflow-auto rounded-2xl">
             <div v-if="matches.length == 0" className="flex flex-col justify-start items-center w-full h-full overflow-hidden">
               <img src="@/assets/nogame.gif" className="object-scale-down h-44 w-44 rounded-xl"/>
               <span className="text-slate-500 text-2xl pt-4 pb-4" >No game played yet</span>
