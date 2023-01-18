@@ -6,7 +6,6 @@ import { Logger } from '@nestjs/common';
 import { UserService } from './user/user.service';
 import { MatchService } from './match/match.service';
 
-
 @Injectable()
 export class AppService {
 
@@ -14,54 +13,49 @@ export class AppService {
     private userService: UserService,
     @InjectRepository(Match)
     private readonly matchesRepository: Repository<Match>,
-    private matchService: MatchService) { }
+    private matchService: MatchService) {}
 
   private logger: Logger = new Logger('onApplicationBootstrap');
 
-  async createMatch(login1: string, login2: string, status: MatchStatus) {
-    const playerOne = await this.userService.getUserByLogin(login1);
-    const playerTwo = await this.userService.getUserByLogin(login2);
-    const gameCode = await this.matchService.generateGameCode();
+  async createMatch(status: MatchStatus) {
 
-    let match = await this.matchesRepository.findOneBy({ gameCode: gameCode })
-
-    if (!match) {
-      const match = new Match();
-      match.playerOne = playerOne;
-      match.playerTwo = playerTwo;
-      match.gameCode = gameCode;
-      match.finishedAt = new Date(Date.now());
-      match.status = status;
-      this.matchesRepository.save(match);
-    }
-
+      const logins = ['myoyo', 'pmartinezi', 'gbaltring', 'malik'];
+      let login1 = logins[Math.floor(Math.random() * logins.length)];
+      let login2 = logins[Math.floor(Math.random() * logins.length)];
+      while (login2 == login1)
+        login2 = logins[Math.floor(Math.random() * logins.length)];
+      const playerOne = await this.userService.getUserByLogin(login1);
+      const playerTwo = await this.userService.getUserByLogin(login2);
+      const gameCode = await this.matchService.generateGameCode();
+      let match = await this.matchesRepository.findOneBy({ gameCode: gameCode })
+      if (!match) {
+        const match = new Match();
+        match.playerOne = playerOne;
+        match.playerTwo = playerTwo;
+        match.gameCode = gameCode;
+        match.finishedAt = new Date(Date.now());
+        match.status = status;
+        this.matchesRepository.save(match);
+        this.logger.log(`Creation of seed macth ${match.gameCode}`);
+      }
   }
 
-  async removeUnfinishedMatches()
-  {
-    const allUnfinishedMatches =  await this.matchService.findAllUnfinieshedMatches()
-    for (let match of allUnfinishedMatches)
-    {
+  async removeUnfinishedMatches() {
+    const allUnfinishedMatches = await this.matchService.findAllUnfinieshedMatches()
+    for (let match of allUnfinishedMatches) {
       this.matchService.remove(match.id);
     }
   }
 
   async onApplicationBootstrap() {
-    const login1 = 'myoyo';
-    const login2 = 'pmartinezi';
-    const login3 = 'gbaltring';
-    const login4 = 'malik';
-
-    try 
-    {
+    
+    try {
       this.removeUnfinishedMatches();
-      // await this.createMatch(login1, login2, MatchStatus.finished);
-      // await this.createMatch(login3, login2, MatchStatus.finished);
-      // await this.createMatch(login1, login4, MatchStatus.finished);
-      // await this.createMatch(login4, login3, MatchStatus.finished);
 
-      this.logger.log(`Creation of seed macth`);
-    } catch (error) {}
+      // for (let i =0 ; i <= 10; i++)
+      //   await this.createMatch(MatchStatus.live);
+    
+    } catch (error) { }
   }
 
 }

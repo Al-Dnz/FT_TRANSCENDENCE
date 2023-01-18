@@ -49,17 +49,17 @@ export class MatchService {
 		return await this.matchesRepository.save(match);
 	}
 
-	async updateFinishedGame(gameCode: string, score1?: number, score2?: number): Promise<Match> {
-		const match = await this.matchesRepository.findOneBy({ gameCode: gameCode })
-		if (!match)
-			throw new HttpException('Match not found', HttpStatus.NOT_FOUND);
-		match.score1 = score1;
-		match.score2 = score2;
-		match.finishedAt = new Date(Date.now());
-		match.status = MatchStatus.finished;
-		await this.updatePlayerStats(match.playerOne, score1, match.playerTwo, match.score2);
-		return await this.matchesRepository.save(match);
-	}
+	// async updateFinishedGame(gameCode: string, score1?: number, score2?: number): Promise<Match> {
+	// 	const match = await this.matchesRepository.findOneBy({ gameCode: gameCode })
+	// 	if (!match)
+	// 		throw new HttpException('Match not found', HttpStatus.NOT_FOUND);
+	// 	match.score1 = score1;
+	// 	match.score2 = score2;
+	// 	match.finishedAt = new Date(Date.now());
+	// 	match.status = MatchStatus.finished;
+	// 	await this.updatePlayerStats(match.playerOne, score1, match.playerTwo, match.score2);
+	// 	return await this.matchesRepository.save(match);
+	// }
 
 
 	async updateFinishedGame2(gameCode: string, idPlayers: any, score: any): Promise<Match> {
@@ -79,27 +79,26 @@ export class MatchService {
 		}
 		match.finishedAt = new Date(Date.now());
 		match.status = MatchStatus.finished;
+		await this.matchesRepository.save(match);
 		await this.updatePlayerStats(match.playerOne, match.score1, match.playerTwo, match.score2);
-		return await this.matchesRepository.save(match);
+		
 	}
 
 	async updatePlayerStats(playerOne: User, score1: number, playerTwo: User, score2: number)
 	{
-		const stats = await this.statsRepository.findOneBy({ id: playerOne.stats.id });
+		let stats = await this.statsRepository.findOneBy({ id: playerOne.stats.id });
 		if (score1 > score2)
 			stats.victories++;
 		else
 			stats.defeats++;
+		await this.statsRepository.save(stats);
+		await this.updateElo(playerOne);
 		
-		const stats2 = await this.statsRepository.findOneBy({ id:playerTwo.stats.id });
+		let stats2 = await this.statsRepository.findOneBy({ id: playerTwo.stats.id });
 		if (score2 > score1)
 			stats2.victories++;
 		else
-			stats2.defeats++;
-		
-		await this.statsRepository.save(stats);
-		await this.updateElo(playerOne);
-			
+			stats2.defeats++;	
 		await this.statsRepository.save(stats2);
 		await this.updateElo(playerTwo);
 	}

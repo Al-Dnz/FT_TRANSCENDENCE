@@ -60,7 +60,13 @@ export class GameGateway
 	}
 
 	@SubscribeMessage('MovePaddleToServer')
-	async handlePaddle(client: Socket, instruction: string): Promise<void> {
+	async handlePaddle(client: Socket, instruction: any): Promise<void> {
+
+		if (typeof instruction != 'string')
+			return;
+		// if (instruction != 'up' && instruction != 'down')
+		// 	return;
+
 		try {
 			const token = client.handshake.auth.token;
 			this.userService.checkToken(token);
@@ -167,7 +173,10 @@ export class GameGateway
 	}
 
 	@SubscribeMessage('joinGame')
-	async handleJoinGame(client: Socket, gameCode: string): Promise<void> {
+	async handleJoinGame(client: Socket, gameCode: any): Promise<void> {
+
+		if (typeof gameCode != 'string')
+			return;
 
 		try {
 			const token = client.handshake.auth.token;
@@ -206,7 +215,11 @@ export class GameGateway
 	}
 
 	@SubscribeMessage('specGame')
-	async handleSpecGame(client: Socket, gameCode: string): Promise<void> {
+	async handleSpecGame(client: Socket, gameCode: any): Promise<void> {
+
+		if (typeof gameCode != 'string')
+			return;
+
 		try {
 			const token = client.handshake.auth.token;
 			this.userService.checkToken(token);
@@ -239,6 +252,10 @@ export class GameGateway
 
 	@SubscribeMessage('InvGame')
 	async handleInvGame(client: Socket, gameCode: string): Promise<void> {
+
+		if (typeof gameCode != 'string')
+			return;
+			
 		try {
 			const token = client.handshake.auth.token;
 			this.userService.checkToken(token);
