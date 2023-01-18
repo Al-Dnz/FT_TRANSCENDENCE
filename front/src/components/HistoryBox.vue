@@ -7,9 +7,9 @@
 		<div className="lg:pl-4 flex flex-col justify-center overflow-hidden grow-0 ">
 			<span className="font-bold center-x">{{ obj.playerOne.userName }} </span>
 		</div>
-		<div className="flex flex-col justify-center overflow-hidden grow">
-			<div className="hidden lg:block">
-			<span className="center-x inline"> {{ displayDate(obj.createdAt) }} </span>
+		<div className="flex flex-col justify-center overflow-hidden grow ">
+			<div className="hidden lg:block whitespace-nowrap">
+				<span className="center-x inline"> {{ displayDate(obj.createdAt) }} </span>
 			</div>
 			<span className="font-bold center-x" v-if="obj.custom">🧨{{ obj.score1 }} - {{ obj.score2 }}🧨</span>
 			<span className="font-bold center-x" v-else>{{ obj.score1 }} - {{ obj.score2 }}</span>
@@ -52,6 +52,8 @@ export default {
 }
 </script>
   
+
+
 
 
 

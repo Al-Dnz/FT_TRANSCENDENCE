@@ -24,8 +24,10 @@
         <div className="w-44 h-44 mb-4 hidden lg:block">
           <img :src="obj?.actualAvatar.path" className="h-44 w-44 rounded-xl" />
         </div>
-        <div className="bg-slate-300 w-3/4 flex flex-col justify-start items-center overflow-auto rounded-2xl">
-        <span className="center-x">{{ obj?.username }}</span>
+        <div className="bg-slate-300 w-3/4 flex flex-col justify-start items-center overflow-auto rounded-2xl h-40">
+          <p className="text-3xl font-bold center-x">{{ obj?.username }}</p>
+          <span v-if="obj?.username != obj?.login" className="center-x">({{ obj?.login }})</span>
+          <br>
         <span className="center-x">Elo :{{ obj?.stats.level }}</span>
         <div className="flex flex-row justify-center w-full">
           <span>Win : {{ obj?.stats.victories }} </span>
