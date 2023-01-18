@@ -88,17 +88,17 @@ export class MatchService {
 	{
 		let stats = await this.statsRepository.findOneBy({ id: playerOne.stats.id });
 		if (score1 > score2)
-			stats.victories++;
+			stats.victories = stats.victories + 1;
 		else
-			stats.defeats++;
+			stats.defeats = stats.defeats + 1;
 		await this.statsRepository.save(stats);
 		await this.updateElo(playerOne);
 		
 		let stats2 = await this.statsRepository.findOneBy({ id: playerTwo.stats.id });
 		if (score2 > score1)
-			stats2.victories++;
+			stats2.victories = stats2.victories + 1;
 		else
-			stats2.defeats++;	
+			stats2.defeats = stats2.defeats + 1;	
 		await this.statsRepository.save(stats2);
 		await this.updateElo(playerTwo);
 	}
