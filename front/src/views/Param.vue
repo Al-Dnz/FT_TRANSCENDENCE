@@ -31,7 +31,6 @@
                 :declare_text="'Choose your paddle :'" />
         </div> -->
         <div className="h-50 w-full ptb-3 flex flex-col justify-around">
-            <p className="h-6">Use a custom Avatar :</p>
             <div className="flex flex-row justify-center h-44">
                 <div className="flex flex-col justify-center h-full">
                     <input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg"
