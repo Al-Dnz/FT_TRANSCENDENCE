@@ -34,9 +34,6 @@ export class TwoFaController {
 		if (!user.twoFa)
 			return;
 
-		this.logger.log(user.twoFaCode);
-		this.logger.log(body.code);
-
 		const isValidated: boolean = user.twoFaCode === body.code;
 		this.userService.updateTwoFaCode(user, null);
 

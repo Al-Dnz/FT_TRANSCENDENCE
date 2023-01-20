@@ -128,7 +128,7 @@ export class BannedChanService {
 		const bannedChan = bannedChans[0];
 
 		if (!allowed && bannedChan.expirationDate == null)
-			throw new HttpException(`user ${bannedChan.user.login} is ban from ${bannedChan.channel.name}`, HttpStatus.FORBIDDEN);
+			throw new HttpException(`user ${bannedChan.user.login} is banned from ${bannedChan.channel.name}`, HttpStatus.FORBIDDEN);
 		if (!allowed && bannedChan.expirationDate > Date.now())
 		{
 			let delay = (bannedChan.expirationDate - Date.now()) / 60000;
@@ -139,7 +139,7 @@ export class BannedChanService {
 				unit = 'seconds'
 			}
 			delay = Math.trunc(delay);
-			throw new HttpException(`user ${bannedChan.user.login} is ban from ${bannedChan.channel.name} for ${delay} ${unit}`, HttpStatus.FORBIDDEN);
+			throw new HttpException(`user ${bannedChan.user.login} is banned from ${bannedChan.channel.name} for ${delay} ${unit}`, HttpStatus.FORBIDDEN);
 		}
 		else
 			this.remove(bannedChan.id);

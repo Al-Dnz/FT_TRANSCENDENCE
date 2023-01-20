@@ -609,7 +609,7 @@ export class GameGateway
 			this.userService.checkToken(token);
 			const user = await this.userService.getUserByToken(token);
 			this.userService.updateUserSocket(user, client.id);
-			this.logger.log(`User: ${user.login} is connected to game with socket ${client.id}`);
+			this.logger.log(`connexion[${client.id}][${user.login}]`);
 		}
 		catch (error) {
 			this.server.to(client.id).emit('gameError', error.message);
@@ -627,6 +627,7 @@ export class GameGateway
 		// console.log("[clientRoomCustom]",this.clientRoomsCustom);
 		// console.log("[state]",this.state)
 		// console.log("[stateCustom]", this.stateCustom)
+		this.logger.log(`disconnexion[${client.id}]`);
 		try {
 			const token = client.handshake.auth.token;
 			this.userService.checkToken(token);

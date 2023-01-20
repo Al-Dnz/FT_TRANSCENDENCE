@@ -107,7 +107,7 @@ export class MatchController {
 
 		let currentMatches = await this.macthService.findCurrentMatchesByUser(userOne);
 		if (currentMatches.length != 0)
-			throw new HttpException(`${userOne.login} You have already one match in live, pending or invited. Finish it before !`, HttpStatus.FORBIDDEN);
+			throw new HttpException(`You have already one match in live, pending or invited. Finish it before !`, HttpStatus.FORBIDDEN);
 
 		currentMatches = await this.macthService.findCurrentMatchesByUser(userTwo);
 		if (currentMatches.length != 0)

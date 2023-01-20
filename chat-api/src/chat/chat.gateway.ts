@@ -22,14 +22,14 @@ export class ChatGateway
     private blockerBlockedService: BlockerBlockedService
   ) {}
 
-  private logger: Logger = new Logger('MainChatGateway');
+  private logger: Logger = new Logger('ChatGateway');
   @WebSocketServer() server: Server;
 
   afterInit(server: Server) {
     this.logger.log('Initialisation of Main Chat websocket');
   }
   handleDisconnect(client: Socket) {
-    this.logger.log(`Client disconnected: ${client.id}`);
+    this.logger.log(`disconnexion[${client.id}]`);
   }
 
   async handleConnection(client: Socket, ...args: any[]) {
@@ -38,8 +38,7 @@ export class ChatGateway
       this.userService.checkToken(token);
       const user = await this.userService.getUserByToken(token);
       this.userService.updateUserSocket(user, client.id);
-      this.logger.log(`User: ${user.login} is connected to chat with socket ${client.id}`);
-      
+      this.logger.log(`connexion[${client.id}][${user.login}]`);
       const userBlockList = await this.blockerBlockedService.userBlockList(user);
 			this.server.to(client.id).emit('updateBlockList', {blockList: userBlockList});
     }
