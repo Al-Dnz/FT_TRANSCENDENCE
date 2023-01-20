@@ -101,6 +101,8 @@ export default defineComponent({
             });    
         },
 		async updateAvatar() {
+            if (this.file)
+            {
             getCredentials().then((accessToken: string) => {
                 const Aapi = new AvatarsApi(new Configuration({ accessToken: accessToken }))
                 Aapi.uploadUserAvatar({ file: this.file })
@@ -113,6 +115,7 @@ export default defineComponent({
                             }));
                     })
             });
+            }
         },
 		
         set_map(num: number) {
