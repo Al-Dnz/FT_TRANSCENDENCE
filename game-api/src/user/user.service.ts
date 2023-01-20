@@ -37,10 +37,13 @@ export class UserService {
 	async getUserByToken(token: string)
 	{ 
 		const decoded = this.jwtService.decode(token) as IToken;
-		const user = await this.usersRepository.findOneBy({ login: decoded.login });
-		if (!user)
+		const users = await this.usersRepository.find({
+			relations: { stats: true },
+			where: { login: decoded.login }
+		});
+		if (users.length == 0)
 			throw new HttpException(`User ${decoded.login} not found`, HttpStatus.NOT_FOUND);
-		return user
+		return users[0];
 	}
 
 	async getUserByLogin(login: string)

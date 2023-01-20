@@ -51,11 +51,7 @@ export class UserGateway
       this.userService.checkToken(token);
       const responder = await this.userService.getUserByToken(token);
       const asker = await this.userService.getUserByLogin(payload.login);
-
       const match = await this.matchService.findByGameCode(payload.gameCode);
-
-      // if (match.playerOne != asker || match.playerTwo != responder)
-      //   throw new HttpException('One of the match players is not invited to the match', HttpStatus.NOT_FOUND);
 
       if (payload.accepted == true) {
         this.server.to(asker.globalSocketId).emit('globalMsg', `${responder.login} has accepted your invitation to play`);
@@ -89,7 +85,7 @@ export class UserGateway
       const token = client.handshake.auth.token;
       this.userService.checkToken(token);
       const user = await this.userService.getUserByToken(token);
-      this.logger.log(`User ${user.login} is connected`);
+      this.logger.log(`connexion[${client.id}][${user.login}]`);
       this.userService.updateUserStatus(user, UserStatus.online, client.id)
       const payload =
       {
@@ -97,8 +93,6 @@ export class UserGateway
         status: user.status
       }
       this.server.emit('userStatus', payload);
-
-
     } catch (error) {
       client.disconnect();
       this.logger.log(error);
@@ -109,7 +103,7 @@ export class UserGateway
     try {
       const user = await this.userService.getUserBySocketId(client.id);
       this.userService.updateUserStatus(user, UserStatus.offline, null)
-      this.logger.log(`User ${user.login} is disconnected`);
+      this.logger.log(`disconnexion[${client.id}][${user.login}]`);
       const payload =
       {
         login: user.login,
