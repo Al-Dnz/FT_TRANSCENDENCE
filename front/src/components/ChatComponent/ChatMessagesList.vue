@@ -37,19 +37,18 @@ export default defineComponent({
   {
     handleChanConnection(payload: any)
     {
-      if (!payload.channelId || !payload.locked || !payload.messages)
-        return; // payload security
       if (payload.channelId != this.currentChan?.id)
         return;
       this.locked =  payload.locked;
       if (this.locked === false)
         this.$emit('isValidated');
       this.messages = [];
-      this.messages = payload.messages.reverse();
-
-      this.messages = this.messages.sort(function (a: any, b: any) {
-        return a.id - b.id;
-      });
+      if (payload.messages.length > 0) {
+        this.messages = payload.messages.reverse();
+        this.messages = this.messages.sort(function (a: any, b: any) {
+          return a.id - b.id;
+        });
+      }
     },
     receiveMessage(message: any)
     {
