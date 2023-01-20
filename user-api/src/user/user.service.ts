@@ -22,8 +22,18 @@ export class UserService {
 
   private logger: Logger = new Logger('UserService');
 
-  create(login: string, avatarPath: string): Promise<User> {
+  async create(login: string, avatarPath: string): Promise<User> {
     let user = new User(login);
+    let username = login;
+    let id = 1;
+    let sameUsername = await this.userRepository.find({where:{ userName: username }});
+    while (sameUsername.length != 0)
+    {
+      username = `${login}_${id}`;
+      sameUsername = await this.userRepository.find({where:{ userName: username }});
+      id++;
+    }
+    user.userName = username
     user.avatar = new Avatar(avatarPath);
     user.settings = new UserSettings;
     user.stats = new UserStats;
