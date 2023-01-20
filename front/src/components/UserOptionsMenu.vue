@@ -8,7 +8,7 @@
       focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
         aria-label=".form-select-sm example">
         <li @click="goProfile(targetUser?.login)" class="hover:font-semibold cursor-pointer">Profile</li>
-        <li @click="gameInvite" class="hover:font-semibold cursor-pointer">Invite</li>
+        <li @click="gameInvite" class="hover:font-semibold cursor-pointer">Play</li>
         <li v-if="!isBlocked(targetUser?.login)" @click="blockUser()" class="hover:font-semibold cursor-pointer">Block</li>
         <li v-else-if="isBlocked(targetUser?.login)" @click="unblockUser()" class="hover:font-semibold cursor-pointer">Unblock</li>
 
