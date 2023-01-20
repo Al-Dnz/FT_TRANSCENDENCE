@@ -61,6 +61,7 @@ export default defineComponent(
     userChannel: {
       type: Object,
       default: undefined},
+    userChannels: Object,
     blockList: Object
   },
   data(): DataI {
@@ -179,9 +180,9 @@ export default defineComponent(
     {
       if (chan["creator"] && chan["creator"].login === login)
         return "owner";
-      for (let j = 0; j < chan["userChannels"].length; j++) {
-        if (chan["userChannels"] && chan["userChannels"][j].user.login == login)
-          return chan["userChannels"][j].role;
+      for (let j = 0; j < this.userChannels?.length; j++) {
+        if (this.userChannels && this.userChannels[j].user.login == login)
+          return this.userChannels[j].role;
     }
     }
     return "undefined";

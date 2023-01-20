@@ -6,7 +6,7 @@
         <li v-for="userChannel in userchannels" :key="userChannel.id">
           <div class="hover:text-black">
             <ChatChannelUserBox :socket="socket" :currentUser="currentUser"
-            :currentChan="currentChan" :userChannel="userChannel" :blockList="blockList" />
+            :currentChan="currentChan" :userChannels="userchannels" :userChannel="userChannel" :blockList="blockList" />
           </div>
         </li>
 
