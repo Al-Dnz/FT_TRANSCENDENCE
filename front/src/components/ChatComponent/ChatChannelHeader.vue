@@ -69,6 +69,10 @@ export default defineComponent({
   isAdmin() {
     if(this.currentChan?.type === "direct")
       return false;
+    if (!this.currentChan?.creator)
+      return true;
+    if (this.currentChan?.creator.login === this.currentUser?.login)
+      return true;
     if (this.getRole(this.currentUser?.login, this.currentChan) == 'owner' || this.getRole(this.currentUser?.login, this.currentChan) == 'admin' )
       return (true);
     return (false);

@@ -47,6 +47,7 @@
 //fix background color
 import io from 'socket.io-client';
 import {Sprite, ball, paddle } from "../frontJS/game.js"
+let f;
 export default {
   name: 'gameComp',
   data() {
@@ -195,21 +196,19 @@ export default {
   
   unmounted() {
     this.socket.disconnect();
+    window.removeEventListener('keydown', f)
   },
   created() {
     const authPayload = { auth: { token: this.$cookies.get("trans_access") } };
     this.socket = io("http://" + process.env.VUE_APP_IP + ":3005", authPayload);
  
-    window.addEventListener('keydown', (e) => {
+    window.addEventListener('keydown', f = (e) => {
       switch (e.key) {
         case 'ArrowUp':
           this.sendPaddleMove('up');
           break;
         case 'ArrowDown':
           this.sendPaddleMove('down');
-          break;
-        case ' ':
-          this.getInfo();
           break;
       }
     });
