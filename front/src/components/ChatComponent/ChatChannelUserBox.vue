@@ -13,7 +13,7 @@
       </h1>
       <div v-if="userChannel?.user.login !== currentUser?.login" v-show="isOptMenuButtonVisible">
         <UserOptionsMenu :socket="socket" :currentChan="getCurrentChan" :currentUser="getCurrentUser"
-        :targetUser="getUserChannel" :userChannel="userChannel" :blockList="blockList" @toggle-opt-menu="switchOptMenuState"
+        :targetUser="getUserChannel" :userChannels="userChannels" :userChannel="userChannel" :blockList="blockList" @toggle-opt-menu="switchOptMenuState"
         class="h-6 w-6 rounded-full bg-gray-400" />
       </div>
     </div>
@@ -31,6 +31,7 @@ export default defineComponent({
     currentUser: Object,
     currentChan: Object,
     userChannel: Object,
+    userChannels: Object,
     blockList: Object
   },
   components: {
