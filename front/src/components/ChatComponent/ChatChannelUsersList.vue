@@ -62,7 +62,8 @@ export default defineComponent({
     },
 	handleChanUsersList(payload: any)
 	{
-	
+    if (!payload.channelId || !payload.userchannels)
+      return; // payload security
 		if (payload.channelId != this.currentChan?.id)
 			return;
 		this.userchannels = [];

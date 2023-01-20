@@ -76,6 +76,8 @@ export default defineComponent({
   created()
   {
     this.socket?.on('getCurrentChannel', (payload: any) => {
+      if (!payload.channel)
+        return; // payload security
       this.$store.dispatch('setCurrentChannel', payload.channel);
     })
   }
