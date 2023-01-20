@@ -49,7 +49,7 @@ export class UserController {
     async create(@Identity() user: Identity): Promise<UserOutputDto> {
         const found: User | undefined = await this.userService.findOne(user.login);
         if (!found) {
-            return this.userService
+            return await this.userService
                 .create(user.login, user.image_url)
                 .then((value: User) => {
                     return new UserOutputDto(value);
