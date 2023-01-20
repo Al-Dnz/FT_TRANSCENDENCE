@@ -82,7 +82,6 @@ export default defineComponent(
   methods: {
     CanPromote()
     {
-      console.log(this.userChannel)
       if (this.getRole(this.currentUser?.login, this.currentChan) === "owner" &&  !(this.userChannel?.role === "admin" ))
         return true;
       return false;
@@ -178,9 +177,6 @@ export default defineComponent(
   getRole(login: string, chan: any): string {
     if(chan["userChannels"])
     {
-      console.log("GET ROLE");
-      console.log(chan);
-
       if (chan["creator"] && chan["creator"].login === login)
         return "owner";
       for (let j = 0; j < chan["userChannels"].length; j++) {
@@ -249,10 +245,6 @@ export default defineComponent(
       this.canPromote = false;
   },
   setAll() {
-    console.log("userChannel");
-    console.log(this.userChannel);
-    console.log("Current CHannel");
-    console.log(this.currentChan);
     this.setCanBlock();
     this.setCanUnblock();
     this.setCanMute();
@@ -285,7 +277,6 @@ export default defineComponent(
   },
   banUser(date : number)
   {
-    console.log(date);
     const payload = date == 0 ?
     {
       userId: this.targetUser?.id,
@@ -304,9 +295,6 @@ export default defineComponent(
     // this.setCanUnban();
   },
   muteUser() {
-
-    console.log("mute user =>" + this.targetUser?.login);
-
     const payload =
     {
       userLogin: this.targetUser?.login,
@@ -322,9 +310,6 @@ export default defineComponent(
     // this.setCanUnmute();
   },
   unmuteUser() {
-
-    console.log("unmute user =>" + this.targetUser?.login);
-
     const payload =
     {
       userLogin: this.targetUser?.login,

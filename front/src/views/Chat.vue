@@ -190,16 +190,10 @@ export default defineComponent({
           this.changeCurrentChannel(payload.channel);
       })
       this.socket.on('updateUser', (payload: any) => {
-        this.currentUser = payload.user;
-        console.log("currentUser =>");
-        console.log(this.currentUser);
-        
-        
+        this.currentUser = payload.user;        
       })
       this.socket.on('updateBlockList', (payload: any) => {
         this.blockList = payload.blockList;
-        console.log("blockList =>");
-        console.log(this.blockList);
       })
     })
     this.currentChan = this.$store.state.currentChannel;

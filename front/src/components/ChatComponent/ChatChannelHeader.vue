@@ -53,15 +53,11 @@ export default defineComponent({
       this.$emit('toggleInvite');
     },
     quitChannel() {
-      console.log(`QUIT CHANNEL ${this.currentChan?.id} `);
       this.socket?.emit('quitChannel', {id: this.currentChan?.id});
       this.$emit('quitChan');
     },
     setPassword() {
       this.newPassword = '';
-    },
-    removePassword() {
-      console.log('password removed'); //this is where we remove the password
     },
     getRole(login: string, chan: any): string {
       for (let j = 0; j < chan["userChannels"].length; j++) {

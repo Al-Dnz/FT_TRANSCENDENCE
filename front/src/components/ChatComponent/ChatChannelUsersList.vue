@@ -62,11 +62,8 @@ export default defineComponent({
     },
 	handleChanUsersList(payload: any)
 	{
-	
 		if (payload.channelId != this.currentChan?.id)
 			return;
-    // console.log("userChannels newly loaded of channel" + this.currentChan?.id)
-    // console.log(payload);
 		this.userchannels = [];
 		this.userchannels = payload.userchannels
     if(this.userchannels.length > 0)

@@ -66,9 +66,6 @@ data() {
       newType: this.currentChan?.type,
     };
 },
-created() {
-    console.log("Created")
-},
 methods : {
     updateChan()
     {

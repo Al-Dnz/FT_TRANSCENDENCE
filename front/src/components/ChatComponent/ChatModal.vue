@@ -31,10 +31,6 @@ props : {
     ban: {type: Function},
     target: {type: Object}
 },
-created() {
-    console.log("Created")
-    console.log(this.target);
-},
 methods : {
     activate(sec) {
         const num = Date.now() + sec * 1000;

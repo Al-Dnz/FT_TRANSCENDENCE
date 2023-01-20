@@ -39,9 +39,6 @@ data() {
         newUser: '',
     };
 },
-created() {
-    console.log("Created")
-},
 methods : {
     inviteUser()
     {
