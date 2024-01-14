@@ -1,5 +1,25 @@
 # FT_TRANSCENDENCE
 
+## DESCRIPTION
+
+FT_TRANSCENDANCE is an web video-game app that offers online pong games. 
+A chat is avaiable to make friend and play with them
+
+## STACK
+
+Backend: NestJS
+Frontend: VueJS
+Web server:  Nginx 
+Container system: Docker
+
+FT_TRANSCENDANCE is build as a micro-services app. Containers are distributed as follows:
+* Auth service
+* Users service
+* Game service
+* Chat service
+* Frontend service
+* Web-server service
+
 ## LAUNCH
 
 ```
@@ -10,7 +30,7 @@
 http://localhost:8000
 ```
 
-## CAREFFUL
+## ENV VAR
 
 don't forget to set up a .env file at the root of the project with env variable:
 
@@ -36,21 +56,8 @@ EMAIL_FROM=<your_SENDGRID_API_sender_domain>
 EMAIL_PASSWORD=<your_SENDGRID_API_password>
 ```
 
-## EXPLORE DB
+## EXPLORE DB FROM SERVER
 
 ```
 make db
-```
-
-## MODIFY DB
-
-```
-SELECT * FROM "user";
-
-INSERT INTO channel(name) VALUES ('polo_chan');
-
-UPDATE user_channel SET role= 'member' WHERE id = 130;
-
-DELETE FROM channel WHERE unremovable = 'false';
-
 ```
